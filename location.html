@@ -135,6 +135,9 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <dt>scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">lazy val locationService = LocationServiceFactory.make()</code></pre></dd>
+  <dt>java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">private static ILocationService locationService = JLocationServiceFactory.make();</code></pre></dd>
 </dl>
 <h2><a href="#register-a-component" name="register-a-component" class="anchor"><span class="anchor-link"></span></a>Register a component</h2>
 <p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal operations. It must register its location information with Location service so that other components can find it.</p>
@@ -151,10 +154,20 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 val tcpRegistration = TcpRegistration(tcpConnection, 6380)
 
 val httpConnection = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
-val httpRegistration = HttpRegistration(httpConnection, 6380, &quot;path123&quot;)
+val httpRegistration = HttpRegistration(httpConnection, 8080, &quot;path123&quot;)
 
 val akkaConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
 val akkaRegistration = AkkaRegistration(akkaConnection, actorRef)</code></pre></dd>
+  <dt>java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">private TcpConnection tcpConnection = new Connection.TcpConnection(new ComponentId(&quot;redis&quot;, JComponentType.Service));
+private TcpRegistration tcpRegistration = new TcpRegistration(tcpConnection, 6380);
+
+private HttpConnection httpConnection = new Connection.HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
+private HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;);
+
+private AkkaConnection akkaConnection = new Connection.AkkaConnection(new ComponentId(&quot;hcd1&quot;, JComponentType.HCD));
+private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection, actorRef);</code></pre></dd>
 </dl>
 <h2><a href="#basic-operations" name="basic-operations" class="anchor"><span class="anchor-link"></span></a>Basic operations</h2>
 <p>This example demonstrates:</p>
@@ -171,22 +184,48 @@ val akkaRegistration = AkkaRegistration(akkaConnection, actorRef)</code></pre></
   <dt>scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">  async {
-  val registrationResult = await(locationService.register(tcpRegistration))
+  val tcpRegistrationResult = await(locationService.register(tcpRegistration))
 
-  registrationResult.location.connection shouldBe tcpConnection
+  tcpRegistrationResult.location.connection shouldBe tcpConnection
 
-  await(locationService.list) shouldBe List(registrationResult.location)
-  await(locationService.resolve(tcpConnection)) shouldBe Some(registrationResult.location)
+  await(locationService.list) shouldBe List(tcpRegistrationResult.location)
+  await(locationService.resolve(tcpConnection)) shouldBe Some(tcpRegistrationResult.location)
 
-  println(registrationResult.location.uri)
+  println(tcpRegistrationResult.location.uri)
 
-  await(registrationResult.unregister())
+  await(tcpRegistrationResult.unregister())
 
   await(locationService.list) shouldBe List.empty
   await(locationService.resolve(tcpConnection)) shouldBe None
 }
 Await.result(assertionF, 5.seconds)</code></pre></dd>
-</dl>
+  <dt>java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">CompletionStage&lt;Void&gt; completionStage = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
+    Assert.assertEquals(tcpRegistration.connection(), tcpRegistrationResult.location().connection());
+    return locationService.list().thenCompose(locations -&gt; {
+        Assert.assertEquals(expectedLocations, locations);
+        return locationService.resolve(tcpConnection).thenCompose(locationOption -&gt; {
+            Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationOption.get());
+            System.out.println(tcpRegistrationResult.location().uri());
+            return tcpRegistrationResult.unregister().thenCompose(done -&gt; {
+                return locationService.list().thenCompose(locations1 -&gt; {
+                    Assert.assertEquals(Collections.EMPTY_LIST, locations1);
+                    return locationService.resolve(tcpConnection).thenApply(location -&gt; {
+                        Assert.assertEquals(Optional.empty(), location);
+                        return null;
+                    });
+                });
+            });
+        });
+    });
+});
+
+completionStage.toCompletableFuture().get();</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Short note on scala async</div>
+<p>Below code snippets use scala&rsquo;s async library to demonstrate LocationService API. The use of this library is optional and the API will work just fine with higher order functions provided by scala. </p>
+<p>However, this library makes it easy to work with asynchronous code portions. The <code>async</code> marks a block of asynchronous code. It contains one or more await calls, which marks a point at which the computation will be suspended until the awaited Future is complete.</p>
+<p>For more info, please refer: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></div>
 <h2><a href="#tracking" name="tracking" class="anchor"><span class="anchor-link"></span></a>Tracking</h2>
 <p>This example:</p>
 <ul>
@@ -204,12 +243,12 @@ Await.result(assertionF, 5.seconds)</code></pre></dd>
 Thread.sleep(200)
 
 async {
-  val registrationResult = await(locationService.register(tcpRegistration))
-  val registrationResult2 = await(locationService.register(httpRegistration))
+  val tcpRegistrationResult = await(locationService.register(tcpRegistration))
+  val httpRegistrationResult = await(locationService.register(httpRegistration))
 
   Thread.sleep(200)
 
-  await(registrationResult.unregister())
+  await(tcpRegistrationResult.unregister())
   await(locationService.unregister(httpConnection))
 
   Thread.sleep(200)
@@ -217,6 +256,30 @@ async {
 }
 
 Await.result(doneF, 5.seconds)</code></pre></dd>
+  <dt>java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">Pair&lt;KillSwitch, CompletionStage&lt;Done&gt;&gt; stream = locationService.track(tcpConnection).toMat(Sink.foreach(System.out::println), Keep.both()).run(mat);
+
+Thread.sleep(200);
+
+CompletionStage&lt;Void&gt; registrationStage = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
+    return locationService.register(httpRegistration).thenApply(httpRegistrationResult -&gt; {
+        return null;
+    });
+});
+registrationStage.toCompletableFuture().get();
+
+Thread.sleep(200);
+
+CompletionStage&lt;Object&gt; unRegistrationStage = locationService.unregister(tcpConnection).thenCompose(uResult1 -&gt; {
+    return locationService.unregister(httpConnection).thenApply(uResult -&gt; {
+        return null;
+    });
+});
+unRegistrationStage.toCompletableFuture().get();
+
+Thread.sleep(400);
+stream.first().shutdown();</code></pre></dd>
 </dl>
 <h2><a href="#filtering" name="filtering" class="anchor"><span class="anchor-link"></span></a>Filtering</h2>
 <p>This example :</p>
@@ -242,17 +305,60 @@ Await.result(doneF, 5.seconds)</code></pre></dd>
 }
 
 Await.result(assertionF, 5.seconds)</code></pre></dd>
+  <dt>java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//expected list of locations
+ArrayList&lt;Location&gt; expectedLocations1 = new ArrayList&lt;&gt;();
+expectedLocations1.add(tcpRegistration.location(new Networks().hostname()));
+expectedLocations1.add(httpRegistration.location(new Networks().hostname()));
+expectedLocations1.add(akkaRegistration.location(new Networks().hostname()));
+
+//Filter by type
+ArrayList&lt;Location&gt; expectedLocations2 = new ArrayList&lt;&gt;();
+expectedLocations2.add(akkaRegistration.location(new Networks().hostname()));
+
+//Filter by service
+ArrayList&lt;Location&gt; expectedLocations3 = new ArrayList&lt;&gt;();
+expectedLocations3.add(tcpRegistration.location(new Networks().hostname()));
+expectedLocations3.add(httpRegistration.location(new Networks().hostname()));
+
+//Filter by hostname
+ArrayList&lt;Location&gt; expectedLocations4 = new ArrayList&lt;&gt;();
+expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
+expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
+
+CompletionStage&lt;Void&gt; completionStage = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
+    return locationService.register(httpRegistration).thenCompose(httpRegistrationResult -&gt; {
+        return locationService.register(akkaRegistration).thenCompose(akkaRegistrationResult -&gt; {
+            return locationService.list().thenCompose(locations1 -&gt; {
+                Assert.assertEquals(expectedLocations1, locations1);
+                return locationService.list(JConnectionType.AkkaType).thenCompose(locations2 -&gt; {
+                    Assert.assertEquals(expectedLocations2, locations2);
+                    return locationService.list(JComponentType.Service).thenCompose(locations3 -&gt; {
+                        Assert.assertEquals(expectedLocations3, locations3);
+                        return locationService.list(new Networks().hostname()).thenApply(locations4 -&gt; {
+                            Assert.assertEquals(expectedLocations4, locations4);
+                            return null;
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+
+completionStage.toCompletableFuture().get();</code></pre></dd>
 </dl>
 <h2><a href="#shutdown" name="shutdown" class="anchor"><span class="anchor-link"></span></a>Shutdown</h2>
 <p>This example demonstrates how to shutdown a location service. </p>
 <dl>
   <dt>scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">Await.result(locationService.shutdown(), 5.seconds)</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Short note on scala async</div>
-<p>Below code snippets use scala&rsquo;s async library to demonstrate LocationService API. The use of this library is optional and the API will work just fine with higher order functions provided by scala. </p>
-<p>However, this library makes it easy to work with asynchronous code portions. The <code>async</code> marks a block of asynchronous code. It contains one or more await calls, which marks a point at which the computation will be suspended until the awaited Future is complete.</p>
-<p>For more info, please refer: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></div>
+  <pre class="prettyprint"><code class="language-scala">Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
+  <dt>java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">locationService.shutdown().toCompletableFuture().get();</code></pre></dd>
+</dl>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/location.md">here</a>.
 </div>
