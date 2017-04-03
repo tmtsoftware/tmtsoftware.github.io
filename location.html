@@ -132,13 +132,12 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </dl>
 <h2><a href="#create-locationservice" name="create-locationservice" class="anchor"><span class="anchor-link"></span></a>Create LocationService</h2>
 <dl>
-  <dt>scala</dt>
+  <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">lazy val locationService = LocationServiceFactory.make()</code></pre></dd>
-  <dt>java</dt>
+  <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">//static instance is used in testing for reuse and to avoid creating/terminating it for each test.
-private static ILocationService locationService = JLocationServiceFactory.make();</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">ILocationService locationService = JLocationServiceFactory.make();</code></pre></dd>
 </dl>
 <h2><a href="#register-a-component" name="register-a-component" class="anchor"><span class="anchor-link"></span></a>Register a component</h2>
 <p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal operations. It must register its location information with Location service so that other components can find it.</p>
@@ -149,7 +148,7 @@ private static ILocationService locationService = JLocationServiceFactory.make()
   <li>Registrations are service endpoints stored in LocationService.</li>
 </ul>
 <dl>
-  <dt>scala</dt>
+  <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val tcpConnection = TcpConnection(ComponentId(&quot;redis&quot;, ComponentType.Service))
 val tcpRegistration = TcpRegistration(tcpConnection, 6380)
@@ -159,7 +158,7 @@ val httpRegistration = HttpRegistration(httpConnection, 8080, &quot;path123&quot
 
 val akkaConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
 val akkaRegistration = AkkaRegistration(akkaConnection, actorRef)</code></pre></dd>
-  <dt>java</dt>
+  <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">private TcpConnection tcpConnection = new Connection.TcpConnection(new ComponentId(&quot;redis&quot;, JComponentType.Service));
 private TcpRegistration tcpRegistration = new TcpRegistration(tcpConnection, 6380);
@@ -179,7 +178,7 @@ private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection,
   <li>One of the ways to <code>unregister</code> a service is by calling unregister on registrationResult received from <code>register</code> API.</li>
 </ul>
 <dl>
-  <dt>scala</dt>
+  <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">  async {
   val tcpRegistrationResult = await(locationService.register(tcpRegistration))
@@ -197,8 +196,7 @@ private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection,
   await(locationService.resolve(tcpConnection)) shouldBe None
 }
 Await.result(assertionF, 5.seconds)</code></pre></dd>
-  <dt>java-NonBLockingEx
-  </dt>
+  <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletionStage&lt;Void&gt; completionStage = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
     Assert.assertEquals(tcpRegistration.connection(), tcpRegistrationResult.location().connection());
@@ -221,8 +219,7 @@ Await.result(assertionF, 5.seconds)</code></pre></dd>
 });
 
 completionStage.toCompletableFuture().get();</code></pre></dd>
-  <dt>java-BlockingEx
-  </dt>
+  <dt>JavaBlocking</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).toCompletableFuture().get();
 
@@ -262,7 +259,7 @@ Assert.assertEquals(Optional.empty(), locationService.resolve(tcpConnection).toC
   <li>Consumer can shut down the stream using Killswitch.</li>
 </ul>
 <dl>
-  <dt>scala</dt>
+  <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val (killSwitch, doneF) = locationService.track(tcpConnection).toMat(Sink.foreach(println))(Keep.both).run()
 
@@ -282,8 +279,7 @@ async {
 }
 
 Await.result(doneF, 5.seconds)</code></pre></dd>
-  <dt>java-NonBlockingEx
-  </dt>
+  <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">Pair&lt;KillSwitch, CompletionStage&lt;Done&gt;&gt; stream = locationService.track(tcpConnection).toMat(Sink.foreach(System.out::println), Keep.both()).run(mat);
 
@@ -307,8 +303,7 @@ unRegistrationStage.toCompletableFuture().get();
 
 Thread.sleep(400);
 stream.first().shutdown();</code></pre></dd>
-  <dt>java-BlockingEx
-  </dt>
+  <dt>JavaBlocking</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">Pair&lt;KillSwitch, CompletionStage&lt;Done&gt;&gt; stream = locationService.track(tcpConnection).toMat(Sink.foreach(System.out::println), Keep.both()).run(mat);
 
@@ -334,7 +329,7 @@ stream.first().shutdown();</code></pre></dd>
   <li>Note, in the example the akka connection is not listed when filtered using hostname. This is because the actorref is created using local ActorSystem in a test class which doesn&rsquo;t have a hostname.</li>
 </ul>
 <dl>
-  <dt>scala</dt>
+  <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val assertionF: Future[Assertion] = async {
   val tcpRegistrationResult = await(locationService.register(tcpRegistration))
@@ -348,8 +343,7 @@ stream.first().shutdown();</code></pre></dd>
 }
 
 Await.result(assertionF, 5.seconds)</code></pre></dd>
-  <dt>java-NonBlockingEx
-  </dt>
+  <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//expected list of locations
 ArrayList&lt;Location&gt; expectedLocations1 = new ArrayList&lt;&gt;();
@@ -392,8 +386,7 @@ CompletionStage&lt;Void&gt; completionStage = locationService.register(tcpRegist
 });
 
 completionStage.toCompletableFuture().get();</code></pre></dd>
-  <dt>java-BlockingEx
-  </dt>
+  <dt>JavaBlocking</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).toCompletableFuture().get();
 IRegistrationResult httpRegistrationResult = locationService.register(httpRegistration).toCompletableFuture().get();
@@ -426,18 +419,16 @@ Assert.assertEquals(expectedLocations4, locationService.list(new Networks().host
 <h2><a href="#shutdown" name="shutdown" class="anchor"><span class="anchor-link"></span></a>Shutdown</h2>
 <p>This example demonstrates how to shutdown a location service. </p>
 <dl>
-  <dt>scala</dt>
+  <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
-  <dt>java-NonBlockingEx
-  </dt>
+  <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">locationService.shutdown().thenCompose(result -&gt; {
     //can perform additional clean-up here
     return null;
 });</code></pre></dd>
-  <dt>java-BlockingEx
-  </dt>
+  <dt>JavaBlocking</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">locationService.shutdown().toCompletableFuture().get();</code></pre></dd>
 </dl>
