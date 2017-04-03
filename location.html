@@ -34,6 +34,10 @@
 </div>
 <div class="nav-toc">
 <ul>
+  <li><a href="apps.html">Applications</a>
+  <ul>
+    <li><a href="tracklocation.html">track-location-agent</a></li>
+  </ul></li>
   <li><a href="services.html">Services</a>
   <ul>
     <li><a href="location.html" class="active">Location service</a></li>
@@ -74,6 +78,10 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </div>
 <div class="nav-toc">
 <ul>
+  <li><a href="apps.html">Applications</a>
+  <ul>
+    <li><a href="tracklocation.html">track-location-agent</a></li>
+  </ul></li>
   <li><a href="services.html">Services</a>
   <ul>
     <li><a href="location.html" class="active">Location service</a></li>
@@ -134,19 +142,32 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">lazy val locationService = LocationServiceFactory.make()</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">val locationService = LocationServiceFactory.make()</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">ILocationService locationService = JLocationServiceFactory.make();</code></pre></dd>
 </dl>
-<h2><a href="#register-a-component" name="register-a-component" class="anchor"><span class="anchor-link"></span></a>Register a component</h2>
+<h2><a href="#shutdown-locationservice" name="shutdown-locationservice" class="anchor"><span class="anchor-link"></span></a>Shutdown LocationService</h2>
+<p>This example demonstrates how to shutdown a location service. </p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">locationService.shutdown().thenCompose(result -&gt; {
+    //can perform additional clean-up here
+    return null;
+});</code></pre></dd>
+  <dt>JavaBlocking</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">locationService.shutdown().toCompletableFuture().get();</code></pre></dd>
+</dl>
+<h2><a href="#creating-components-connections-and-registrations" name="creating-components-connections-and-registrations" class="anchor"><span class="anchor-link"></span></a>Creating components, connections and registrations</h2>
 <p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal operations. It must register its location information with Location service so that other components can find it.</p>
-<h4><a href="#components-connections-and-registrations" name="components-connections-and-registrations" class="anchor"><span class="anchor-link"></span></a>Components, Connections and Registrations</h4>
-<ul>
-  <li>Components are OMOA entities. They have a name identifier and type such as HCD, Assembly, Service.</li>
-  <li>Connections are the means to reach to components and are categorized as Akka, HTTP, Tcp connection.</li>
-  <li>Registrations are service endpoints stored in LocationService.</li>
-</ul>
+<p><strong>Components</strong> are OMOA entities. They have a name identifier and type such as Container, HCD, Assembly, Service.</p>
+<p><strong>Connections</strong> are the means to reach to components and are categorized as Akka, HTTP, Tcp connection.</p>
+<p><strong>Registrations</strong> are service endpoints stored in LocationService.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -416,22 +437,6 @@ expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
 expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
 Assert.assertEquals(expectedLocations4, locationService.list(new Networks().hostname()).toCompletableFuture().get());</code></pre></dd>
 </dl>
-<h2><a href="#shutdown" name="shutdown" class="anchor"><span class="anchor-link"></span></a>Shutdown</h2>
-<p>This example demonstrates how to shutdown a location service. </p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">locationService.shutdown().thenCompose(result -&gt; {
-    //can perform additional clean-up here
-    return null;
-});</code></pre></dd>
-  <dt>JavaBlocking</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">locationService.shutdown().toCompletableFuture().get();</code></pre></dd>
-</dl>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/location.md">here</a>.
 </div>
@@ -447,11 +452,11 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
   <ul>
     <li><a href="location.html#artifacts">Artifacts</a></li>
     <li><a href="location.html#create-locationservice">Create LocationService</a></li>
-    <li><a href="location.html#register-a-component">Register a component</a></li>
+    <li><a href="location.html#shutdown-locationservice">Shutdown LocationService</a></li>
+    <li><a href="location.html#creating-components-connections-and-registrations">Creating components, connections and registrations</a></li>
     <li><a href="location.html#basic-operations">Basic operations</a></li>
     <li><a href="location.html#tracking">Tracking</a></li>
     <li><a href="location.html#filtering">Filtering</a></li>
-    <li><a href="location.html#shutdown">Shutdown</a></li>
   </ul></li>
 </ul>
 </div>

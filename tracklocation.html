@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>track-location-agent · TMT Common Software (CSW)</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='docs'/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>TMT Common Software (CSW)
+</a>
+<div class="version-number">
+0.1*
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="apps.html">Applications</a>
+  <ul>
+    <li><a href="tracklocation.html" class="active">track-location-agent</a></li>
+  </ul></li>
+  <li><a href="services.html">Services</a>
+  <ul>
+    <li><a href="location.html">Location service</a></li>
+  </ul></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">TMT Common Software (CSW)</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>TMT Common Software (CSW)
+</a>
+<div class="version-number">
+0.1*
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="apps.html">Applications</a>
+  <ul>
+    <li><a href="tracklocation.html" class="active">track-location-agent</a></li>
+  </ul></li>
+  <li><a href="services.html">Services</a>
+  <ul>
+    <li><a href="location.html">Location service</a></li>
+  </ul></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">TMT Common Software (CSW)</a></li>
+  <li><a href="apps.html">Applications</a></li>
+  <li>track-location-agent</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#track-location-agent" name="track-location-agent" class="anchor"><span class="anchor-link"></span></a>track-location-agent</h1>
+<p>A utility application that starts a given external program, registers comma separated list of services the location service and unregisters them when the program exits.</p>
+<h2><a href="#command-line-parameter-options" name="command-line-parameter-options" class="anchor"><span class="anchor-link"></span></a>Command line parameter options</h2>
+<ul>
+  <li><strong>&ndash;names</strong> It&rsquo;s a required parameter. It needs to be a list of comma separated service names without a space after comma.</li>
+  <li><strong>&ndash;command</strong> The parameter is optional. The command that starts the target application. Use use %port to specify the port number. If parameter is not provided value $name.command from config file will be picked up. If value in config file is not found, the service names provided will be registered with Location Service.</li>
+  <li><strong>&ndash;port</strong> Optional port number the application listens on (default: use value of $name.port from config file, or use a random, free port.)</li>
+  <li><strong><app-config></strong> Optional config file in HOCON format. Will be automatically picked based on &ndash;names parameter (Options specified as: $name.command, $name.port, etc.)</li>
+  <li><strong>&ndash;delay</strong> Number of milliseconds to wait for the app to start before registering it with the location service (default: 1000)</li>
+  <li><strong>&ndash;no-exit</strong> For testing: prevents application from exiting after running command</li>
+  <li><strong>&ndash;help</strong> Prints the help message.</li>
+  <li><strong>&ndash;version</strong> Prints the version of the application.</li>
+</ul>
+<h2><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h2>
+<p><strong>Example:</strong> track-location-agent &ndash;name &ldquo;redis&rdquo; &ndash;command &ldquo;redis-server /usr/local/etc/redis.conf&rdquo; &ndash;port 6379<br/><strong>Explanation:</strong> Application will start redis server on port 6379(default redis port) and will register a TcpConnection for the same with LocationService </p>
+<p><strong>Example:</strong> track-location-agent &ndash;name &ldquo;foo&rdquo; &ndash;command &ldquo;sleep 30&rdquo;<br/><strong>Explanation:</strong> <strong>Explanation:</strong> Application will sleep for 30 seconds. Then, will register a service named foo on a random port with LocationService. Once sleep is over after 30 seconds, will unregister foo service.</p>
+<p><strong>Example:</strong> track-location-agent &ndash;name &ldquo;myHttpService&rdquo; &ndash;command &ldquo;python -m SimpleHTTPServer 8080&rdquo; &ndash;port 8080<br/><strong>Explanation:</strong> Application will start a simple HTTP service on port 8080. Then, will register myHttpService as a TCP service with LocationService.</p>
+<p><strong>Example:</strong> track-location-agent &ndash;help<br/><strong>Explanation:</strong> Prints help message</p>
+<p><strong>Example:</strong> track-location-agent &ndash;version<br/><strong>Explanation:</strong> Prints application version</p>
+<div class="source-github">
+The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/tracklocation.md">here</a>.
+</div>
+
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="services.html">Services</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="tracklocation.html#track-location-agent">track-location-agent</a>
+  <ul>
+    <li><a href="tracklocation.html#command-line-parameter-options">Command line parameter options</a></li>
+    <li><a href="tracklocation.html#examples">Examples</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2017</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+
+</html>
