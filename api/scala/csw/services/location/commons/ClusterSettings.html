@@ -195,10 +195,10 @@ and Hostname of an akka.actor.ActorSystem
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>ClusterSettings manages <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/config/1.3.1/config-1.3.1-javadoc.jar/!/index.html#com.typesafe.config.Config" class="extype" target="_top">com.typesafe.config.Config</a> values required by an <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.0-RC2/akka-actor_2.12-2.5.0-RC2-javadoc.jar/!/index.html#akka.actor.ActorSystem" class="extype" target="_top">akka.actor.ActorSystem</a> to boot. It configures mainly
-four parameters of an <code>ActorSystem</code>, namely :</p><ul><li>name (Name is defaulted to a constant value so that ActorSystem joins the cluster while booting)</li><li>akka.remote.netty.tcp.hostname (The hostname to boot an ActorSystem on)</li><li>akka.remote.netty.tcp.port     (The port to boot an ActorSystem on)</li><li>akka.cluster.seed-nodes        (Seed Nodes of the cluster)</li></ul><p>ClusterSettings require three values namely :</p><ul><li>interfaceName (The network interface where cluster is formed.)</li><li>clusterSeed (The host address of the seedNode of the cluster)</li><li>isSeed (Claim self to be the seed of the cluster)</li></ul><p>The config values of the <code>ActorSystem</code> will be evaluated based on the above three settings as follows :</p><ul><li><code>akka.remote.netty.tcp.hostname</code> will be ipV4 address based on <code>interfaceName</code> from <a href="../internal/Networks.html" class="extype" name="csw.services.location.internal.Networks">csw.services.location.internal.Networks</a></li><li><code>akka.remote.netty.tcp.port</code> will be a random port or if <code>isSeed</code> is true then 3552 (Since cluster seeds will always
-run on 3552)</li><li><code>akka.cluster.seed-nodes</code> will be self if <code>isSeed</code> is true otherwise <code>clusterSeed</code> value will be used</li></ul><p>If none of the settings are provided then defaults will be picked as follows :</p><ul><li><code>akka.remote.netty.tcp.hostname</code> will be ipV4 address from <a href="../internal/Networks.html" class="extype" name="csw.services.location.internal.Networks">csw.services.location.internal.Networks</a></li><li><code>akka.remote.netty.tcp.port</code> will be a random port</li><li><code>akka.cluster.seed-nodes</code> will be empty
+four parameters of an <code>ActorSystem</code>, namely :</p><ul><li>name (Name is defaulted to a constant value so that ActorSystem joins the cluster while booting)</li><li>akka.remote.netty.tcp.hostname (The hostname to boot an ActorSystem on)</li><li>akka.remote.netty.tcp.port     (The port to boot an ActorSystem on)</li><li>akka.cluster.seed-nodes        (Seed Nodes of the cluster)</li></ul><p>ClusterSettings require three values namely :</p><ul><li>interfaceName (The network interface where cluster is formed.)</li><li>clusterSeeds (The host address of the seedNode of the cluster)</li><li>isSeed (Claim self to be the seed of the cluster)</li></ul><p>The config values of the <code>ActorSystem</code> will be evaluated based on the above three settings as follows :</p><ul><li><code>akka.remote.netty.tcp.hostname</code> will be ipV4 address based on <code>interfaceName</code> from <a href="../internal/Networks.html" class="extype" name="csw.services.location.internal.Networks">csw.services.location.internal.Networks</a></li><li><code>akka.remote.netty.tcp.port</code> will be a random port or if <code>isSeed</code> is true then 3552 (Since cluster seeds will always
+run on 3552)</li><li><code>akka.cluster.seed-nodes</code> will be self if <code>isSeed</code> is true otherwise <code>clusterSeeds</code> value will be used</li></ul><p>If none of the settings are provided then defaults will be picked as follows :</p><ul><li><code>akka.remote.netty.tcp.hostname</code> will be ipV4 address from <a href="../internal/Networks.html" class="extype" name="csw.services.location.internal.Networks">csw.services.location.internal.Networks</a></li><li><code>akka.remote.netty.tcp.port</code> will be a random port</li><li><code>akka.cluster.seed-nodes</code> will be empty
 and an <code>ActorSystem</code> will be created and a cluster will be formed with no Seed Nodes. It will also self join the cluster.</li></ul><p><code>ClusterSettings</code> can be given in three ways :</p><ul><li>by using the api</li><li>by providing system properties</li><li>or by providing environment variables</li></ul><p>If a <code>ClusterSettings</code> value e.g. isSeed is provided by more than one ways, then the precedence of consumption will be first from</p><ul><li>System Properties</li><li>then from Environment variable</li><li>and then from <code>ClusterSettings</code> api
-</li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Although <code>ClusterSettings</code> can be added through multiple ways, it is recommended that</p><ul><li><code>clusterSeed</code> is provided via environment variable,</li><li><code>isSeed</code> is provided via system properties,</li><li><code>interfaceName</code> is provide via environment variable and</li><li>the <code>ClusterSettings</code> api of providing values should be used for testing purpose only.</li></ul></span></dd></dl><div class="toggleContainer block">
+</li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Although <code>ClusterSettings</code> can be added through multiple ways, it is recommended that</p><ul><li><code>clusterSeeds</code> is provided via environment variable,</li><li><code>isSeed</code> is provided via system properties,</li><li><code>interfaceName</code> is provide via environment variable and</li><li>the <code>ClusterSettings</code> api of providing values should be used for testing purpose only.</li></ul></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -322,10 +322,10 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="csw.services.location.commons.ClusterSettings#ClusterSeedKey" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ClusterSeedKey:String"></a>
+    </li><li name="csw.services.location.commons.ClusterSettings#ClusterSeedsKey" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ClusterSeedsKey:String"></a>
       <span class="permalink">
-      <a href="../../../../csw/services/location/commons/ClusterSettings.html#ClusterSeedKey:String" title="Permalink">
+      <a href="../../../../csw/services/location/commons/ClusterSettings.html#ClusterSeedsKey:String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -334,7 +334,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">ClusterSeedKey</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">ClusterSeedsKey</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       
       
@@ -558,10 +558,10 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
       </span>
       
       
-    </li><li name="csw.services.location.commons.ClusterSettings#joinLocalSeed" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="joinLocalSeed:csw.services.location.commons.ClusterSettings"></a><a id="joinLocalSeed:ClusterSettings"></a>
+    </li><li name="csw.services.location.commons.ClusterSettings#joinLocal" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="joinLocal():csw.services.location.commons.ClusterSettings"></a><a id="joinLocal():ClusterSettings"></a>
       <span class="permalink">
-      <a href="../../../../csw/services/location/commons/ClusterSettings.html#joinLocalSeed:csw.services.location.commons.ClusterSettings" title="Permalink">
+      <a href="../../../../csw/services/location/commons/ClusterSettings.html#joinLocal():csw.services.location.commons.ClusterSettings" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -570,11 +570,43 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">joinLocalSeed</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
+        <span class="name">joinLocal</span><span class="params">()</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
       </span>
       
       <p class="shortcomment cmt">Joins the cluster with seed running on localhost
 </p>
+    </li><li name="csw.services.location.commons.ClusterSettings#joinLocals" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="joinLocals(ports:Int*):csw.services.location.commons.ClusterSettings"></a><a id="joinLocals(Int*):ClusterSettings"></a>
+      <span class="permalink">
+      <a href="../../../../csw/services/location/commons/ClusterSettings.html#joinLocals(ports:Int*):csw.services.location.commons.ClusterSettings" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">joinLocals</span><span class="params">(<span name="ports">ports: <a href="http://scala-lang.org/files/archive/api/2.12.1/index.html#scala.Int" class="extype" target="_top">Int</a>*</span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
+      </span>
+      
+      
+    </li><li name="csw.services.location.commons.ClusterSettings#joinSeeds" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="joinSeeds(seeds:String*):csw.services.location.commons.ClusterSettings"></a><a id="joinSeeds(String*):ClusterSettings"></a>
+      <span class="permalink">
+      <a href="../../../../csw/services/location/commons/ClusterSettings.html#joinSeeds(seeds:String*):csw.services.location.commons.ClusterSettings" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">joinSeeds</span><span class="params">(<span name="seeds">seeds: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
