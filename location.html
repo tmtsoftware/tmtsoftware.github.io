@@ -139,6 +139,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </code></pre></dd>
 </dl>
 <h2><a href="#create-locationservice" name="create-locationservice" class="anchor"><span class="anchor-link"></span></a>Create LocationService</h2>
+<p>LocationServiceFactory exposes a make method to create an instance of LocationService. However, the make call will look for configuration settings managed using ClusterSettings. Verify <a href="https://tmtsoftware.github.io/csw-prod/api/scala/csw/services/location/commons/ClusterSettings.html">ClusterSettings</a> to ensure that LocationService behavior is as expected.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -148,23 +149,18 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <pre class="prettyprint"><code class="language-java">ILocationService locationService = JLocationServiceFactory.make();</code></pre></dd>
 </dl>
 <h2><a href="#shutdown-locationservice" name="shutdown-locationservice" class="anchor"><span class="anchor-link"></span></a>Shutdown LocationService</h2>
-<p>This example demonstrates how to shutdown a location service. </p>
+<p>This example demonstrates how to shutdown a location service. Shutdown will terminate the ActorSystem and will leave the cluster. </p>
+<p><strong>Note:</strong> All the services registered via this instance of LocationService will continue to be available for other cluster members. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">locationService.shutdown().thenCompose(result -&gt; {
-    //can perform additional clean-up here
-    return null;
-});</code></pre></dd>
-  <dt>JavaBlocking</dt>
-  <dd>
   <pre class="prettyprint"><code class="language-java">locationService.shutdown().toCompletableFuture().get();</code></pre></dd>
 </dl>
 <h2><a href="#creating-components-connections-and-registrations" name="creating-components-connections-and-registrations" class="anchor"><span class="anchor-link"></span></a>Creating components, connections and registrations</h2>
-<p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal operations. It must register its location information with Location service so that other components can find it.</p>
+<p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal observatory operations. It must register its location information with Location service so that other components can find it.</p>
 <p><strong>Components</strong> are OMOA entities. They have a name identifier and type such as Container, HCD, Assembly, Service.</p>
 <p><strong>Connections</strong> are the means to reach to components and are categorized as Akka, HTTP, Tcp connection.</p>
 <p><strong>Registrations</strong> are service endpoints stored in LocationService.</p>
@@ -191,13 +187,10 @@ private AkkaConnection akkaConnection = new Connection.AkkaConnection(new Compon
 private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection, actorRef);</code></pre></dd>
 </dl>
 <h2><a href="#basic-operations" name="basic-operations" class="anchor"><span class="anchor-link"></span></a>Basic operations</h2>
-<ul>
-  <li><code>register</code> API takes a <code>Registration</code> parameter and returns a <code>Future</code> of <code>RegistrationResult</code>.</li>
-  <li>The success of <code>register</code> API can be validated by checking the <code>Location</code> instance it contains.</li>
-  <li>The <code>list</code> API returns a list of alive connections.</li>
-  <li>A connection of interest, can be checked if available using the <code>resolve</code> API. If the connection is alive, <code>resolve</code> returns Future of <code>RegistrationResult</code> containing the <code>Location</code>, else failure.</li>
-  <li>One of the ways to <code>unregister</code> a service is by calling unregister on registrationResult received from <code>register</code> API.</li>
-</ul>
+<p><code>register</code> API takes a <code>Registration</code> parameter and returns a handle to registration result. The success of <code>register</code> API can be validated by checking the <code>Location</code> instance pointed by registration result.</p>
+<p>The <code>list</code> API returns a list of alive connections with LocationService.</p>
+<p>A connection of interest, can be checked if available using the <code>resolve</code> API. If the connection is alive, <code>resolve</code> returns the handle to the <code>Location</code>.</p>
+<p>One of the ways to <code>unregister</code> a service is by calling unregister on registration result received from <code>register</code> API.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -262,23 +255,17 @@ Assert.assertEquals(Optional.empty(), locationService.resolve(tcpConnection).toC
 </dl><div class="callout note "><div class="callout-title">async handling in scala and java examples.</div>
 <ul>
   <li>
-  <p><strong>scala:</strong> The code snippets use scala&rsquo;s async library to demonstrate LocationService API. The use of this library is optional and the API will work just fine with higher order functions provided by scala.  However, this library makes it easy to work with asynchronous code portions. The <code>async</code> marks a block of asynchronous code. It contains one or more await calls, which marks a point at which the computation will be suspended until the awaited Future is complete.  For more info, please refer: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></li>
+  <p><strong>scala:</strong> <code>async</code> marks a block of asynchronous code and allows to <code>await</code> the computation till the Future is complete.  For more info, please refer: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></li>
   <li>
-  <p><strong>java non-blocking example:</strong> The code snippets use CompletionStage and thenAsync, thenApply methods to compose the futures. </p></li>
+  <p><strong>java non-blocking example:</strong> The code snippets use <code>CompletionStage</code> and it&rsquo;s <code>thenAsync</code>, <code>thenApply</code> methods. This style allows to compose multiple Futures and not block the calling thread till Futures are complete. </p></li>
   <li>
-  <p><strong>java blocking example:</strong> The code snippets use CompletionStage, CompletableFuture and get blocking call for the future to return.</p></li>
+  <p><strong>java blocking example:</strong> The code snippets use <code>CompletionStage</code>, <code>CompletableFuture</code> using <code>get</code> blocking call. This style blocks the calling thread till the Future is complete.</p></li>
 </ul></div>
 <h2><a href="#tracking" name="tracking" class="anchor"><span class="anchor-link"></span></a>Tracking</h2>
-<ul>
-  <li>The lifecycle of a connection of interest can be followed using <code>track</code> API which takes a <code>Connection</code> instance as a parameter. This Connection being tracked need not already be registered with LocationService. It&rsquo;s alright to track connections that will be registered in future. In return, caller gets two values:
-    <ol>
-      <li>A <strong>source</strong> that will emit stream of <code>TrackingEvents</code> for the connection</li>
-      <li>A <strong>Killswitch</strong> to turn off the stream when no longer needed.</li>
-    </ol>
-  </li>
-  <li>Akka stream API provides many building blocks to process this stream such as Flow and Sink. In example, Sink is used to print each incoming <code>TrackingEvent</code>.</li>
-  <li>Consumer can shut down the stream using Killswitch.</li>
-</ul>
+<p>The lifecycle of a connection of interest can be followed using <code>track</code> API which takes a <code>Connection</code> instance as a parameter. <strong>A <code>Connection</code> need not already be registered with LocationService.</strong> It&rsquo;s alright to track connections that will be registered in future. </p>
+<p>A <code>track</code> function returns two values:<br/>* A <strong>source</strong> that will emit stream of <code>TrackingEvents</code> for the connection.<br/>* A <strong>Killswitch</strong> to turn off the stream when no longer needed. </p>
+<p>Akka stream API provides many building blocks to process this stream such as Flow and Sink. In example, Sink is used to print each incoming <code>TrackingEvent</code>.</p>
+<p>Consumer can shut down the stream using Killswitch.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -342,13 +329,8 @@ Thread.sleep(200);
 stream.first().shutdown();</code></pre></dd>
 </dl>
 <h2><a href="#filtering" name="filtering" class="anchor"><span class="anchor-link"></span></a>Filtering</h2>
-<ul>
-  <li>The <code>List</code> API and it&rsquo;s variants offer means to inquire about available connections with LocationService.</li>
-  <li>The parameterless list returns all available connections</li>
-  <li>The <code>list</code> api with connection type returns connections matching the <code>ConnectionType</code>. In example it is demonstrated using &lsquo;ConnectionType.AkkaType&rsquo;.</li>
-  <li>Similarly, filtering using &lsquo;ComponentType.Service&rsquo; and hostname is also supported by <code>list</code> API.</li>
-  <li>Note, in the example the akka connection is not listed when filtered using hostname. This is because the actorref is created using local ActorSystem in a test class which doesn&rsquo;t have a hostname.</li>
-</ul>
+<p>The <code>list</code> API and it&rsquo;s variants offer means to inquire about available connections with LocationService. The <strong>parameter-less</strong> <code>list</code> returns all available connections</p>
+<p>Other variants are filters using <code>ConnectionType</code>, <code>ComponentType</code> and <code>hostname</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -437,6 +419,12 @@ expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
 expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
 Assert.assertEquals(expectedLocations4, locationService.list(new Networks().hostname()).toCompletableFuture().get());</code></pre></dd>
 </dl>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-location/src/test/scala/csw/services/location/scaladsl/demo/LocationServiceDemoExample.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-location/src/test/java/csw/services/location/javadsl/demo/JLocationServiceNonBlockingDemoExample.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-location/src/test/java/csw/services/location/javadsl/demo/JLocationServiceBlockingDemoExample.java">JavaBlocking Example</a></li>
+</ul>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/location.md">here</a>.
 </div>
@@ -457,6 +445,7 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="location.html#basic-operations">Basic operations</a></li>
     <li><a href="location.html#tracking">Tracking</a></li>
     <li><a href="location.html#filtering">Filtering</a></li>
+    <li><a href="location.html#source-code-for-examples">Source code for examples</a></li>
   </ul></li>
 </ul>
 </div>
