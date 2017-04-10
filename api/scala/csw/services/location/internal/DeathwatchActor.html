@@ -119,12 +119,16 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../index.html">
+        <a title="The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data)." href="../index.html">
               <span class="name">location</span>
             </a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
+      <p class="shortcomment cmt">The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data).</p><div class="fullcomment"><div class="comment cmt"><h4> Location Service </h4><p>The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data).
+The Location Service helps you to find out the hostname and port number for a service,
+as well as other information for determining the correct URI to use, such as path,
+actor system name etc.</p><p>Location Service supports three types of services as follows: Akka, Tcp and HTTP based services.</p><p>Before calling LocationServiceFactory.make() to get an handle of LocationService,
+it is recommended to have below environment variables set to System global environments or system properties:</p><ul><li>interfaceName (The network interface where cluster is formed.) Ex. interfaceName=eth0 if not set, first interface by priority will be picked</li><li>clusterSeeds (The host address of the seedNode of the cluster) Ex. clusterSeeds=&quot;192.168.121.10:3552, 192.168.121.11:3552&quot;</li><li>clusterPort (Specify port on which to start this service) Ex. clusterPort=3552 if this property is not set, service will start on random port</li></ul><p>To use location service, first you have to get an instance of location service using below code:</p><pre><span class="kw">val</span> locationService: LocationService = LocationServiceFactory.make()</pre><p>To register an Akka actor based service, you can use code like this:</p><pre>locationService.register(AkkaRegistration(AkkaConnection(componentId), self))</pre><p>Where self is a reference to the services own actorRef.</p><p>To register an HTTP based service, you can make a call like this:</p><pre>locationService.register(HttpRegistration(HttpConnection(componentId), Port, Path))</pre><p>Here you specify port and path like &quot;/hcd/trombone&quot;, hostname for the local host is automatically determined.</p><p>To register an Tcp based service, you can make a call like this:</p><pre>locationService.register(TcpRegistration(TcpConnection(componentId), Port))</pre><p>Here you specify port and hostname for the local host is automatically determined.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
     </li><li name="csw.services.location.internal" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="internal"></a><a id="internal:internal"></a>
       <span class="permalink">
@@ -729,8 +733,8 @@ As soon as there are changes detected in <code>LWWMap</code>, it looks for previ
         <span class="name">preStart</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.1/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       
-      <p class="shortcomment cmt">Subscribes for changes in <code>LWWMap</code> data before starting this <code>Actor</code>
-</p><div class="fullcomment"><div class="comment cmt"><p>Subscribes for changes in <code>LWWMap</code> data before starting this <code>Actor</code>
+      <p class="shortcomment cmt">Subscribes for changes in <code>LWWMap</code> data before starting this <code>Actor</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Subscribes for changes in <code>LWWMap</code> data before starting this <code>Actor</code>. Current state for <code>LWWMap</code> will given to DeathwatchActor
+through <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-distributed-data_2.12/2.5.0-RC2/akka-distributed-data_2.12-2.5.0-RC2-javadoc.jar/!/index.html#akka.cluster.ddata.Replicator$.Changed" class="extype" target="_top">akka.cluster.ddata.Replicator.Changed</a> message
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.location.internal.DeathwatchActor">DeathwatchActor</a> → Actor</dd></dl></div>
     </li><li name="csw.services.location.internal.DeathwatchActor#receive" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="receive:DeathwatchActor.this.Receive"></a><a id="receive:Receive"></a>
@@ -747,7 +751,9 @@ As soon as there are changes detected in <code>LWWMap</code>, it looks for previ
         <span class="name">receive</span><span class="result">: <a href="#Receive=akka.actor.Actor.Receive" class="extmbr" name="csw.services.location.internal.DeathwatchActor.Receive">Receive</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.location.internal.DeathwatchActor">DeathwatchActor</a> → Actor</dd></dl></div>
+      <p class="shortcomment cmt">Manages <code>Changed</code> event for <code>LWWMap</code> and <code>Terminated</code> event for <code>ActorRef</code>
+</p><div class="fullcomment"><div class="comment cmt"><p>Manages <code>Changed</code> event for <code>LWWMap</code> and <code>Terminated</code> event for <code>ActorRef</code>
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.location.internal.DeathwatchActor">DeathwatchActor</a> → Actor</dd></dl></div>
     </li><li name="akka.actor.Actor#self" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="self:akka.actor.ActorRef"></a><a id="self:ActorRef"></a>
       <span class="permalink">
