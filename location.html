@@ -186,6 +186,17 @@ private HttpRegistration httpRegistration = new HttpRegistration(httpConnection,
 private AkkaConnection akkaConnection = new Connection.AkkaConnection(new ComponentId(&quot;hcd1&quot;, JComponentType.HCD));
 private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection, actorRef);</code></pre></dd>
 </dl>
+<h2><a href="#creating-actorref-for-registering-with-locationservice" name="creating-actorref-for-registering-with-locationservice" class="anchor"><span class="anchor-link"></span></a>Creating ActorRef for registering with LocationService</h2>
+<p>While creating <code>akkaRegistration</code> in above example, make sure the ActorSystem used for creating <code>actorRef</code>,  is created using <code>ActorSystemFactory</code> as follows :</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">val actorSystem = ActorSystemFactory.remote()</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">ActorSystem actorSystem = ActorSystemFactory.remote();</code></pre></dd>
+</dl>
+<p>This is required to start a remote ActorSystem on the interface where csw-cluster is running. All the ActorRefs created using this ActorSystem will now be available for communication from other components that are part of csw-cluster</p>
 <h2><a href="#basic-operations" name="basic-operations" class="anchor"><span class="anchor-link"></span></a>Basic operations</h2>
 <p><code>register</code> API takes a <code>Registration</code> parameter and returns a handle to registration result. The success of <code>register</code> API can be validated by checking the <code>Location</code> instance pointed by registration result.</p>
 <p>The <code>list</code> API returns a list of alive connections with LocationService.</p>
@@ -342,7 +353,7 @@ stream.first().shutdown();</code></pre></dd>
   await(locationService.list).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location, akkaRegistrationResult.location)
   await(locationService.list(ConnectionType.AkkaType)).toSet shouldBe Set(akkaRegistrationResult.location)
   await(locationService.list(ComponentType.Service)).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location)
-  await(locationService.list(new Networks().hostname())).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location)
+  await(locationService.list(new Networks().hostname())).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location, akkaRegistrationResult.location)
 }
 
 Await.result(assertionF, 5.seconds)</code></pre></dd>
@@ -367,6 +378,7 @@ expectedLocations3.add(httpRegistration.location(new Networks().hostname()));
 ArrayList&lt;Location&gt; expectedLocations4 = new ArrayList&lt;&gt;();
 expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
 expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
+expectedLocations4.add(akkaRegistration.location(new Networks().hostname()));
 
 CompletionStage&lt;Void&gt; completionStage = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
     return locationService.register(httpRegistration).thenCompose(httpRegistrationResult -&gt; {
@@ -417,6 +429,7 @@ Assert.assertEquals(expectedLocations3, locationService.list(JComponentType.Serv
 ArrayList&lt;Location&gt; expectedLocations4 = new ArrayList&lt;&gt;();
 expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
 expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
+expectedLocations4.add(akkaRegistration.location(new Networks().hostname()));
 Assert.assertEquals(expectedLocations4, locationService.list(new Networks().hostname()).toCompletableFuture().get());</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
@@ -442,6 +455,7 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="location.html#create-locationservice">Create LocationService</a></li>
     <li><a href="location.html#shutdown-locationservice">Shutdown LocationService</a></li>
     <li><a href="location.html#creating-components-connections-and-registrations">Creating components, connections and registrations</a></li>
+    <li><a href="location.html#creating-actorref-for-registering-with-locationservice">Creating ActorRef for registering with LocationService</a></li>
     <li><a href="location.html#basic-operations">Basic operations</a></li>
     <li><a href="location.html#tracking">Tracking</a></li>
     <li><a href="location.html#filtering">Filtering</a></li>
