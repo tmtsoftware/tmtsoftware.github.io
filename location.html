@@ -157,7 +157,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <pre class="prettyprint"><code class="language-scala">Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">locationService.shutdown().toCompletableFuture().get();</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">locationService.shutdown().get();</code></pre></dd>
 </dl>
 <h2><a href="#creating-components-connections-and-registrations" name="creating-components-connections-and-registrations" class="anchor"><span class="anchor-link"></span></a>Creating components, connections and registrations</h2>
 <p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal observatory operations. It must register its location information with Location service so that other components can find it.</p>
@@ -211,29 +211,29 @@ private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection,
   tcpRegistrationResult.location.connection shouldBe tcpConnection
 
   await(locationService.list) shouldBe List(tcpRegistrationResult.location)
-  await(locationService.resolve(tcpConnection)) shouldBe Some(tcpRegistrationResult.location)
+  await(locationService.find(tcpConnection)) shouldBe Some(tcpRegistrationResult.location)
 
   println(tcpRegistrationResult.location.uri)
 
   await(tcpRegistrationResult.unregister())
 
   await(locationService.list) shouldBe List.empty
-  await(locationService.resolve(tcpConnection)) shouldBe None
+  await(locationService.find(tcpConnection)) shouldBe None
 }
 Await.result(assertionF, 5.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">CompletionStage&lt;Void&gt; completionStage = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;Void&gt; completableFuture = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
     Assert.assertEquals(tcpRegistration.connection(), tcpRegistrationResult.location().connection());
     return locationService.list().thenCompose(locations -&gt; {
         Assert.assertEquals(expectedLocations, locations);
-        return locationService.resolve(tcpConnection).thenCompose(locationOption -&gt; {
+        return locationService.find(tcpConnection).thenCompose(locationOption -&gt; {
             Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationOption.get());
             System.out.println(tcpRegistrationResult.location().uri());
             return tcpRegistrationResult.unregister().thenCompose(done -&gt; {
                 return locationService.list().thenCompose(locations1 -&gt; {
                     Assert.assertEquals(Collections.EMPTY_LIST, locations1);
-                    return locationService.resolve(tcpConnection).thenApply(location -&gt; {
+                    return locationService.find(tcpConnection).thenApply(location -&gt; {
                         Assert.assertEquals(Optional.empty(), location);
                         return null;
                     });
@@ -243,10 +243,10 @@ Await.result(assertionF, 5.seconds)</code></pre></dd>
     });
 });
 
-completionStage.toCompletableFuture().get();</code></pre></dd>
+completableFuture.get();</code></pre></dd>
   <dt>JavaBlocking</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).toCompletableFuture().get();
+  <pre class="prettyprint"><code class="language-java">IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).get();
 
 Assert.assertEquals(tcpRegistration.connection(), tcpRegistrationResult.location().connection());
 
@@ -254,23 +254,23 @@ Assert.assertEquals(tcpRegistration.connection(), tcpRegistrationResult.location
 ArrayList&lt;Location&gt; expectedLocations = new ArrayList&lt;&gt;();
 expectedLocations.add(tcpRegistration.location(new Networks().hostname()));
 
-Assert.assertEquals(expectedLocations, locationService.list().toCompletableFuture().get());
-Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationService.resolve(tcpConnection).toCompletableFuture().get().get());
+Assert.assertEquals(expectedLocations, locationService.list().get());
+Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationService.find(tcpConnection).get().get());
 
 System.out.println(tcpRegistrationResult.location().uri());
 
-tcpRegistrationResult.unregister().toCompletableFuture().get();
+tcpRegistrationResult.unregister().get();
 
-Assert.assertEquals(Collections.EMPTY_LIST, locationService.list().toCompletableFuture().get());
-Assert.assertEquals(Optional.empty(), locationService.resolve(tcpConnection).toCompletableFuture().get());</code></pre></dd>
+Assert.assertEquals(Collections.EMPTY_LIST, locationService.list().get());
+Assert.assertEquals(Optional.empty(), locationService.find(tcpConnection).get());</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">async handling in scala and java examples.</div>
 <ul>
   <li>
   <p><strong>scala:</strong> <code>async</code> marks a block of asynchronous code and allows to <code>await</code> the computation till the Future is complete.  For more info, please refer: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></li>
   <li>
-  <p><strong>java non-blocking example:</strong> The code snippets use <code>CompletionStage</code> and it&rsquo;s <code>thenAsync</code>, <code>thenApply</code> methods. This style allows to compose multiple Futures and not block the calling thread till Futures are complete. </p></li>
+  <p><strong>java non-blocking example:</strong> The code snippets use <code>CompletiableFuture</code> and it&rsquo;s <code>thenAsync</code>, <code>thenApply</code> methods. This style allows to compose multiple Futures and not block the calling thread till Futures are complete. </p></li>
   <li>
-  <p><strong>java blocking example:</strong> The code snippets use <code>CompletionStage</code>, <code>CompletableFuture</code> using <code>get</code> blocking call. This style blocks the calling thread till the Future is complete.</p></li>
+  <p><strong>java blocking example:</strong> The code snippets use <code>CompletableFuture</code> using <code>get</code> blocking call. This style blocks the calling thread till the Future is complete.</p></li>
 </ul></div>
 <h2><a href="#tracking" name="tracking" class="anchor"><span class="anchor-link"></span></a>Tracking</h2>
 <p>The lifecycle of a connection of interest can be followed using <code>track</code> API which takes a <code>Connection</code> instance as a parameter. <strong>A <code>Connection</code> need not already be registered with LocationService.</strong> It&rsquo;s alright to track connections that will be registered in future. </p>
@@ -304,21 +304,21 @@ Await.result(doneF, 5.seconds)</code></pre></dd>
 
 Thread.sleep(200);
 
-CompletionStage&lt;Void&gt; registrationStage = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
+CompletableFuture&lt;Void&gt; registrationFuture = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
     return locationService.register(httpRegistration).thenApply(httpRegistrationResult -&gt; {
         return null;
     });
 });
-registrationStage.toCompletableFuture().get();
+registrationFuture.get();
 
 Thread.sleep(200);
 
-CompletionStage&lt;Object&gt; unRegistrationStage = locationService.unregister(tcpConnection).thenCompose(uResult1 -&gt; {
+CompletableFuture&lt;Object&gt; unRegistrationFuture = locationService.unregister(tcpConnection).thenCompose(uResult1 -&gt; {
     return locationService.unregister(httpConnection).thenApply(uResult -&gt; {
         return null;
     });
 });
-unRegistrationStage.toCompletableFuture().get();
+unRegistrationFuture.toCompletableFuture().get();
 
 Thread.sleep(400);
 stream.first().shutdown();</code></pre></dd>
@@ -328,13 +328,13 @@ stream.first().shutdown();</code></pre></dd>
 
 Thread.sleep(200);
 
-IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).toCompletableFuture().get();
-IRegistrationResult httpRegistrationResult = locationService.register(httpRegistration).toCompletableFuture().get();
+IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).get();
+IRegistrationResult httpRegistrationResult = locationService.register(httpRegistration).get();
 
 Thread.sleep(200);
 
-tcpRegistrationResult.unregister().toCompletableFuture().get();
-locationService.unregister(httpConnection).toCompletableFuture().get();
+tcpRegistrationResult.unregister().get();
+locationService.unregister(httpConnection).get();
 
 Thread.sleep(200);
 stream.first().shutdown();</code></pre></dd>
@@ -380,7 +380,7 @@ expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
 expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
 expectedLocations4.add(akkaRegistration.location(new Networks().hostname()));
 
-CompletionStage&lt;Void&gt; completionStage = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
+CompletableFuture&lt;Void&gt; completableFuture = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
     return locationService.register(httpRegistration).thenCompose(httpRegistrationResult -&gt; {
         return locationService.register(akkaRegistration).thenCompose(akkaRegistrationResult -&gt; {
             return locationService.list().thenCompose(locations1 -&gt; {
@@ -400,37 +400,37 @@ CompletionStage&lt;Void&gt; completionStage = locationService.register(tcpRegist
     });
 });
 
-completionStage.toCompletableFuture().get();</code></pre></dd>
+completableFuture.get();</code></pre></dd>
   <dt>JavaBlocking</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).toCompletableFuture().get();
-IRegistrationResult httpRegistrationResult = locationService.register(httpRegistration).toCompletableFuture().get();
-IRegistrationResult akkaRegistrationResult = locationService.register(akkaRegistration).toCompletableFuture().get();
+  <pre class="prettyprint"><code class="language-java">IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).get();
+IRegistrationResult httpRegistrationResult = locationService.register(httpRegistration).get();
+IRegistrationResult akkaRegistrationResult = locationService.register(akkaRegistration).get();
 
 //expected list of locations
 ArrayList&lt;Location&gt; expectedLocations1 = new ArrayList&lt;&gt;();
 expectedLocations1.add(tcpRegistration.location(new Networks().hostname()));
 expectedLocations1.add(httpRegistration.location(new Networks().hostname()));
 expectedLocations1.add(akkaRegistration.location(new Networks().hostname()));
-Assert.assertEquals(expectedLocations1, locationService.list().toCompletableFuture().get());
+Assert.assertEquals(expectedLocations1, locationService.list().get());
 
 //Filter by type
 ArrayList&lt;Location&gt; expectedLocations2 = new ArrayList&lt;&gt;();
 expectedLocations2.add(akkaRegistration.location(new Networks().hostname()));
-Assert.assertEquals(expectedLocations2, locationService.list(JConnectionType.AkkaType).toCompletableFuture().get());
+Assert.assertEquals(expectedLocations2, locationService.list(JConnectionType.AkkaType).get());
 
 //Filter by service
 ArrayList&lt;Location&gt; expectedLocations3 = new ArrayList&lt;&gt;();
 expectedLocations3.add(tcpRegistration.location(new Networks().hostname()));
 expectedLocations3.add(httpRegistration.location(new Networks().hostname()));
-Assert.assertEquals(expectedLocations3, locationService.list(JComponentType.Service).toCompletableFuture().get());
+Assert.assertEquals(expectedLocations3, locationService.list(JComponentType.Service).get());
 
 //Filter by hostname
 ArrayList&lt;Location&gt; expectedLocations4 = new ArrayList&lt;&gt;();
 expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
 expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
 expectedLocations4.add(akkaRegistration.location(new Networks().hostname()));
-Assert.assertEquals(expectedLocations4, locationService.list(new Networks().hostname()).toCompletableFuture().get());</code></pre></dd>
+Assert.assertEquals(expectedLocations4, locationService.list(new Networks().hostname()).get());</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
