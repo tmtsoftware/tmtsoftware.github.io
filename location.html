@@ -167,13 +167,13 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val tcpConnection = TcpConnection(ComponentId(&quot;redis&quot;, ComponentType.Service))
+  <pre class="prettyprint"><code class="language-scala">val tcpConnection   = TcpConnection(ComponentId(&quot;redis&quot;, ComponentType.Service))
 val tcpRegistration = TcpRegistration(tcpConnection, 6380)
 
-val httpConnection = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
+val httpConnection   = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
 val httpRegistration = HttpRegistration(httpConnection, 8080, &quot;path123&quot;)
 
-val akkaConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
+val akkaConnection   = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
 val akkaRegistration = AkkaRegistration(akkaConnection, actorRef)</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -206,20 +206,20 @@ private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection,
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">  async {
-  val tcpRegistrationResult = await(locationService.register(tcpRegistration))
+    val tcpRegistrationResult = await(locationService.register(tcpRegistration))
 
-  tcpRegistrationResult.location.connection shouldBe tcpConnection
+    tcpRegistrationResult.location.connection shouldBe tcpConnection
 
-  await(locationService.list) shouldBe List(tcpRegistrationResult.location)
-  await(locationService.find(tcpConnection)) shouldBe Some(tcpRegistrationResult.location)
+    await(locationService.list) shouldBe List(tcpRegistrationResult.location)
+    await(locationService.find(tcpConnection)) shouldBe Some(tcpRegistrationResult.location)
 
-  println(tcpRegistrationResult.location.uri)
+    println(tcpRegistrationResult.location.uri)
 
-  await(tcpRegistrationResult.unregister())
+    await(tcpRegistrationResult.unregister())
 
-  await(locationService.list) shouldBe List.empty
-  await(locationService.find(tcpConnection)) shouldBe None
-}
+    await(locationService.list) shouldBe List.empty
+    await(locationService.find(tcpConnection)) shouldBe None
+  }
 Await.result(assertionF, 5.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -274,7 +274,7 @@ Assert.assertEquals(Optional.empty(), locationService.find(tcpConnection).get())
 </ul></div>
 <h2><a href="#tracking" name="tracking" class="anchor"><span class="anchor-link"></span></a>Tracking</h2>
 <p>The lifecycle of a connection of interest can be followed using <code>track</code> API which takes a <code>Connection</code> instance as a parameter. <strong>A <code>Connection</code> need not already be registered with LocationService.</strong> It&rsquo;s alright to track connections that will be registered in future. </p>
-<p>A <code>track</code> function returns two values:<br/>* A <strong>source</strong> that will emit stream of <code>TrackingEvents</code> for the connection.<br/>* A <strong>Killswitch</strong> to turn off the stream when no longer needed. </p>
+<p>A <code>track</code> API returns two values:<br/>* A <strong>source</strong> that will emit stream of <code>TrackingEvents</code> for the connection.<br/>* A <strong>Killswitch</strong> to turn off the stream when no longer needed. </p>
 <p>Akka stream API provides many building blocks to process this stream such as Flow and Sink. In example, Sink is used to print each incoming <code>TrackingEvent</code>.</p>
 <p>Consumer can shut down the stream using Killswitch.</p>
 <dl>
@@ -285,7 +285,7 @@ Assert.assertEquals(Optional.empty(), locationService.find(tcpConnection).get())
 Thread.sleep(200)
 
 async {
-  val tcpRegistrationResult = await(locationService.register(tcpRegistration))
+  val tcpRegistrationResult  = await(locationService.register(tcpRegistration))
   val httpRegistrationResult = await(locationService.register(httpRegistration))
 
   Thread.sleep(200)
@@ -339,6 +339,57 @@ locationService.unregister(httpConnection).get();
 Thread.sleep(200);
 stream.first().shutdown();</code></pre></dd>
 </dl>
+<h2><a href="#subscribing" name="subscribing" class="anchor"><span class="anchor-link"></span></a>Subscribing</h2>
+<p>The <code>subscribe</code> API allows the caller to track a connetion and receive the TrackingEvent notifications via a callback. </p>
+<p>The API expects following parameters :<br/>* An existing connection or a connection to be registered in future.<br/>* A callback that implements <code>Consumer</code>, receives TrackEvent as parameter. </p>
+<p>In return it gives a Killswitch that can be used to turn off the event notifications and release the supplied callback, if required.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">val hostname = new Networks().hostname()
+
+//Test probe actor to receive the TrackingEvent notifications
+val probeActorRef = TestProbe()
+
+val switch = locationService.subscribe(tcpConnection, trackingEvent =&gt; probeActorRef.ref ! trackingEvent)
+
+val assertionF = async {
+  await(locationService.register(tcpRegistration))
+  probeActorRef.expectMsg(LocationUpdated(tcpRegistration.location(hostname)))
+
+  await(locationService.unregister(tcpConnection))
+  probeActorRef.expectMsg(LocationRemoved(tcpRegistration.connection))
+
+  //shutdown the notification stream, should no longer receive any notifications
+  switch.shutdown()
+
+  await(locationService.register(tcpRegistration))
+  probeActorRef.expectNoMsg()
+}
+
+Await.result(assertionF, 10.seconds)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//Test probe actor to receive the TrackingEvent notifications
+TestProbe probe = new TestProbe(actorSystem);
+
+KillSwitch killSwitch = locationService.subscribe(tcpRegistration.connection(), new Consumer&lt;TrackingEvent&gt;() {
+    @Override
+    public void accept(TrackingEvent trackingEvent) {
+        probe.ref().tell(trackingEvent, ActorRef.noSender());
+    }
+});
+
+locationService.register(tcpRegistration);
+probe.expectMsg(new LocationUpdated(tcpRegistration.location(new Networks().hostname())));
+
+locationService.unregister(tcpConnection);
+probe.expectMsg(new LocationRemoved(tcpRegistration.connection()));
+
+//shutdown the notification stream, should no longer receive any notifications
+killSwitch.shutdown();
+probe.expectNoMsg();</code></pre></dd>
+</dl>
 <h2><a href="#filtering" name="filtering" class="anchor"><span class="anchor-link"></span></a>Filtering</h2>
 <p>The <code>list</code> API and it&rsquo;s variants offer means to inquire about available connections with LocationService. The <strong>parameter-less</strong> <code>list</code> returns all available connections</p>
 <p>Other variants are filters using <code>ConnectionType</code>, <code>ComponentType</code> and <code>hostname</code>.</p>
@@ -346,14 +397,17 @@ stream.first().shutdown();</code></pre></dd>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val assertionF: Future[Assertion] = async {
-  val tcpRegistrationResult = await(locationService.register(tcpRegistration))
+  val tcpRegistrationResult  = await(locationService.register(tcpRegistration))
   val httpRegistrationResult = await(locationService.register(httpRegistration))
   val akkaRegistrationResult = await(locationService.register(akkaRegistration))
 
-  await(locationService.list).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location, akkaRegistrationResult.location)
+  await(locationService.list).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location,
+    akkaRegistrationResult.location)
   await(locationService.list(ConnectionType.AkkaType)).toSet shouldBe Set(akkaRegistrationResult.location)
-  await(locationService.list(ComponentType.Service)).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location)
-  await(locationService.list(new Networks().hostname())).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location, akkaRegistrationResult.location)
+  await(locationService.list(ComponentType.Service)).toSet shouldBe Set(tcpRegistrationResult.location,
+    httpRegistrationResult.location)
+  await(locationService.list(new Networks().hostname())).toSet shouldBe Set(tcpRegistrationResult.location,
+    httpRegistrationResult.location, akkaRegistrationResult.location)
 }
 
 Await.result(assertionF, 5.seconds)</code></pre></dd>
@@ -458,6 +512,7 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="location.html#creating-actorref-for-registration">Creating ActorRef for registration</a></li>
     <li><a href="location.html#basic-operations">Basic operations</a></li>
     <li><a href="location.html#tracking">Tracking</a></li>
+    <li><a href="location.html#subscribing">Subscribing</a></li>
     <li><a href="location.html#filtering">Filtering</a></li>
     <li><a href="location.html#source-code-for-examples">Source code for examples</a></li>
   </ul></li>
