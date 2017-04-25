@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-<title>track-location-agent · TMT Common Software (CSW)</title>
+<title>Configuration service · TMT Common Software (CSW)</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='docs'/>
@@ -36,11 +36,13 @@
 <ul>
   <li><a href="apps.html">Applications</a>
   <ul>
-    <li><a href="tracklocation.html" class="active">track-location-agent</a></li>
+    <li><a href="cswclusterseed.html">csw-cluster-seed</a></li>
+    <li><a href="cswlocationagent.html">csw-location-agent</a></li>
   </ul></li>
   <li><a href="services.html">Services</a>
   <ul>
     <li><a href="location.html">Location service</a></li>
+    <li><a href="config.html" class="active">Configuration service</a></li>
   </ul></li>
 </ul>
 </div>
@@ -80,11 +82,13 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <ul>
   <li><a href="apps.html">Applications</a>
   <ul>
-    <li><a href="tracklocation.html" class="active">track-location-agent</a></li>
+    <li><a href="cswclusterseed.html">csw-cluster-seed</a></li>
+    <li><a href="cswlocationagent.html">csw-location-agent</a></li>
   </ul></li>
   <li><a href="services.html">Services</a>
   <ul>
     <li><a href="location.html">Location service</a></li>
+    <li><a href="config.html" class="active">Configuration service</a></li>
   </ul></li>
 </ul>
 </div>
@@ -100,8 +104,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-breadcrumbs">
 <ul>
   <li><a href="index.html">TMT Common Software (CSW)</a></li>
-  <li><a href="apps.html">Applications</a></li>
-  <li>track-location-agent</li>
+  <li><a href="services.html">Services</a></li>
+  <li>Configuration service</li>
 </ul>
 </div>
 </div>
@@ -109,32 +113,34 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#track-location-agent" name="track-location-agent" class="anchor"><span class="anchor-link"></span></a>track-location-agent</h1>
-<p>A utility application that starts a given external program, registers comma separated list of services the location service and unregisters them when the program exits.</p>
-<h2><a href="#command-line-parameter-options" name="command-line-parameter-options" class="anchor"><span class="anchor-link"></span></a>Command line parameter options</h2>
-<ul>
-  <li><strong>&ndash;names</strong> It&rsquo;s a required parameter. It needs to be a list of comma separated service names without a space after comma.</li>
-  <li><strong>&ndash;command</strong> The parameter is optional. The command that starts the target application. Use use %port to specify the port number. If parameter is not provided value $name.command from config file will be picked up. If value in config file is not found, the service names provided will be registered with Location Service.</li>
-  <li><strong>&ndash;port</strong> Optional port number the application listens on (default: use value of $name.port from config file, or use a random, free port.)</li>
-  <li><strong><app-config></strong> Optional config file in HOCON format. Will be automatically picked based on &ndash;names parameter (Options specified as: $name.command, $name.port, etc.)</li>
-  <li><strong>&ndash;delay</strong> Number of milliseconds to wait for the app to start before registering it with the location service (default: 1000)</li>
-  <li><strong>&ndash;no-exit</strong> For testing: prevents application from exiting after running command</li>
-  <li><strong>&ndash;help</strong> Prints the help message.</li>
-  <li><strong>&ndash;version</strong> Prints the version of the application.</li>
-</ul>
-<h2><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h2>
-<p><strong>Example:</strong> track-location-agent &ndash;name &ldquo;redis&rdquo; &ndash;command &ldquo;redis-server /usr/local/etc/redis.conf&rdquo; &ndash;port 6379<br/><strong>Explanation:</strong> Application will start redis server on port 6379(default redis port) and will register a TcpConnection for the same with LocationService </p>
-<p><strong>Example:</strong> track-location-agent &ndash;name &ldquo;foo&rdquo; &ndash;command &ldquo;sleep 30&rdquo;<br/><strong>Explanation:</strong> <strong>Explanation:</strong> Application will sleep for 30 seconds. Then, will register a service named foo on a random port with LocationService. Once sleep is over after 30 seconds, will unregister foo service.</p>
-<p><strong>Example:</strong> track-location-agent &ndash;name &ldquo;myHttpService&rdquo; &ndash;command &ldquo;python -m SimpleHTTPServer 8080&rdquo; &ndash;port 8080<br/><strong>Explanation:</strong> Application will start a simple HTTP service on port 8080. Then, will register myHttpService as a TCP service with LocationService.</p>
-<p><strong>Example:</strong> track-location-agent &ndash;help<br/><strong>Explanation:</strong> Prints help message</p>
-<p><strong>Example:</strong> track-location-agent &ndash;version<br/><strong>Explanation:</strong> Prints application version</p>
+<h1><a href="#configuration-service" name="configuration-service" class="anchor"><span class="anchor-link"></span></a>Configuration service</h1>
+<p>Configuration Service provides a centralized persistent store for any configuration file used in the TMT Software System. All versions of configuration files are retained providing a historical record of each configuration file.</p>
+<h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
+<dl>
+  <dt>sbt</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-config_2.12&quot; % &quot;0.1-SNAPSHOT&quot;
+</code></pre></dd>
+  <dt>maven</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+ &lt;groupId&gt;org.tmt&lt;/groupId&gt;
+ &lt;artifactId&gt;csw-config_2.12&lt;/artifactId&gt;
+ &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
+ &lt;type&gt;pom&lt;/type&gt;
+&lt;/dependency&gt;
+</code></pre></dd>
+  <dt>gradle</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-gradle">dependencies {
+  compile group: &quot;org.tmt&quot;, name: &quot;csw-config_2.12&quot;, version: &quot;0.1-SNAPSHOT&quot;
+}
+</code></pre></dd>
+</dl>
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/tracklocation.md">here</a>.
+The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/config.md">here</a>.
 </div>
 
-<div class="nav-next">
-<p><strong>Next:</strong> <a href="services.html">Services</a></p>
-</div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
 <nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
@@ -142,10 +148,9 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
 <div class="nav-title">On this page:</div>
 <div class="nav-toc">
 <ul>
-  <li><a href="tracklocation.html#track-location-agent">track-location-agent</a>
+  <li><a href="config.html#configuration-service">Configuration service</a>
   <ul>
-    <li><a href="tracklocation.html#command-line-parameter-options">Command line parameter options</a></li>
-    <li><a href="tracklocation.html#examples">Examples</a></li>
+    <li><a href="config.html#artifacts">Artifacts</a></li>
   </ul></li>
 </ul>
 </div>
