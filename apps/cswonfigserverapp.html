@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-<title>Configuration service · TMT Common Software (CSW)</title>
+<title>csw-config-server · TMT Common Software (CSW)</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='docs'/>
@@ -38,12 +38,12 @@
   <ul>
     <li><a href="../apps/cswclusterseed.html">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html">csw-location-agent</a></li>
-    <li><a href="../apps/cswonfigserverapp.html">csw-config-server</a></li>
+    <li><a href="../apps/cswonfigserverapp.html" class="active">csw-config-server</a></li>
   </ul></li>
   <li><a href="../services.html">Services</a>
   <ul>
     <li><a href="../services/location.html">Location service</a></li>
-    <li><a href="../services/config.html" class="active">Configuration service</a></li>
+    <li><a href="../services/config.html">Configuration service</a></li>
   </ul></li>
 </ul>
 </div>
@@ -85,12 +85,12 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <ul>
     <li><a href="../apps/cswclusterseed.html">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html">csw-location-agent</a></li>
-    <li><a href="../apps/cswonfigserverapp.html">csw-config-server</a></li>
+    <li><a href="../apps/cswonfigserverapp.html" class="active">csw-config-server</a></li>
   </ul></li>
   <li><a href="../services.html">Services</a>
   <ul>
     <li><a href="../services/location.html">Location service</a></li>
-    <li><a href="../services/config.html" class="active">Configuration service</a></li>
+    <li><a href="../services/config.html">Configuration service</a></li>
   </ul></li>
 </ul>
 </div>
@@ -106,8 +106,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-breadcrumbs">
 <ul>
   <li><a href="../index.html">TMT Common Software (CSW)</a></li>
-  <li><a href="../services.html">Services</a></li>
-  <li>Configuration service</li>
+  <li><a href="../apps.html">Applications</a></li>
+  <li>csw-config-server</li>
 </ul>
 </div>
 </div>
@@ -115,34 +115,29 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#configuration-service" name="configuration-service" class="anchor"><span class="anchor-link"></span></a>Configuration service</h1>
-<p>Configuration Service provides a centralized persistent store for any configuration file used in the TMT Software System. All versions of configuration files are retained providing a historical record of each configuration file.</p>
-<h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
-<dl>
-  <dt>sbt</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-config_2.12&quot; % &quot;0.1-SNAPSHOT&quot;
-</code></pre></dd>
-  <dt>maven</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
- &lt;groupId&gt;org.tmt&lt;/groupId&gt;
- &lt;artifactId&gt;csw-config_2.12&lt;/artifactId&gt;
- &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
- &lt;type&gt;pom&lt;/type&gt;
-&lt;/dependency&gt;
-</code></pre></dd>
-  <dt>gradle</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: &quot;org.tmt&quot;, name: &quot;csw-config_2.12&quot;, version: &quot;0.1-SNAPSHOT&quot;
-}
-</code></pre></dd>
-</dl>
+<h1><a href="#csw-config-server" name="csw-config-server" class="anchor"><span class="anchor-link"></span></a>csw-config-server</h1>
+<p>A HTTP server application that hosts configuration service.</p>
+<h2><a href="#prerequisites" name="prerequisites" class="anchor"><span class="anchor-link"></span></a>Prerequisites</h2>
+<p>The HTTP server hosting Configuration service, needs to be part of csw-cluster, so that it can be consumed by other components. A required check before starting configuration service, is to ensure cluster is set-up and seed nodes are available. Kindly refer to this <a href="https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html">cluster-seed setup</a>.</p>
+<h2><a href="#command-line-parameter-options" name="command-line-parameter-options" class="anchor"><span class="anchor-link"></span></a>Command line parameter options</h2>
+<ul>
+  <li><strong>&ndash;initRepo</strong> It&rsquo;s an optional parameter. When supplied, server will try to initialize a repository if it does not exist.</li>
+  <li><strong>&ndash;port</strong> It&rsquo;s an optional parameter. When specified the HTTP server will start on this port. Default will be 4000.</li>
+  <li><strong>&ndash;help</strong> Prints the help message.</li>
+  <li><strong>&ndash;version</strong> Prints the version of the application.</li>
+</ul>
+<h2><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h2>
+<p><strong>Example:</strong> csw-config-server &ndash;initRepo<br/><strong>Explanation:</strong> Start HTTP server on default port 4000. Initialize repository if it does not exist and register it with LocationService</p>
+<p><strong>Example:</strong> csw-config-server &ndash;initRepo &ndash;port 4001<br/><strong>Explanation:</strong> Start HTTP server on port 4001. Initialize repository if it does not exist and register it with LocationService </p>
+<p><strong>Example:</strong> csw-config-server &ndash;help<br/><strong>Explanation:</strong> Prints help message</p>
+<p><strong>Example:</strong> csw-config-server &ndash;version<br/><strong>Explanation:</strong> Prints application version</p>
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/config.md">here</a>.
+The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/apps/cswonfigserverapp.md">here</a>.
 </div>
 
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="../services.html">Services</a></p>
+</div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
 <nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
@@ -150,9 +145,11 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
 <div class="nav-title">On this page:</div>
 <div class="nav-toc">
 <ul>
-  <li><a href="../services/config.html#configuration-service">Configuration service</a>
+  <li><a href="../apps/cswonfigserverapp.html#csw-config-server">csw-config-server</a>
   <ul>
-    <li><a href="../services/config.html#artifacts">Artifacts</a></li>
+    <li><a href="../apps/cswonfigserverapp.html#prerequisites">Prerequisites</a></li>
+    <li><a href="../apps/cswonfigserverapp.html#command-line-parameter-options">Command line parameter options</a></li>
+    <li><a href="../apps/cswonfigserverapp.html#examples">Examples</a></li>
   </ul></li>
 </ul>
 </div>
