@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-<title>Configuration service · TMT Common Software (CSW)</title>
+<title>csw-config-client-cli · TMT Common Software (CSW)</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='docs'/>
@@ -39,12 +39,12 @@
     <li><a href="../apps/cswclusterseed.html">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigclientcli.html" class="active">csw-config-client-cli</a></li>
   </ul></li>
   <li><a href="../services.html">Services</a>
   <ul>
     <li><a href="../services/location.html">Location service</a></li>
-    <li><a href="../services/config.html" class="active">Configuration service</a></li>
+    <li><a href="../services/config.html">Configuration service</a></li>
   </ul></li>
 </ul>
 </div>
@@ -87,12 +87,12 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
     <li><a href="../apps/cswclusterseed.html">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigclientcli.html" class="active">csw-config-client-cli</a></li>
   </ul></li>
   <li><a href="../services.html">Services</a>
   <ul>
     <li><a href="../services/location.html">Location service</a></li>
-    <li><a href="../services/config.html" class="active">Configuration service</a></li>
+    <li><a href="../services/config.html">Configuration service</a></li>
   </ul></li>
 </ul>
 </div>
@@ -108,8 +108,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-breadcrumbs">
 <ul>
   <li><a href="../index.html">TMT Common Software (CSW)</a></li>
-  <li><a href="../services.html">Services</a></li>
-  <li>Configuration service</li>
+  <li><a href="../apps.html">Applications</a></li>
+  <li>csw-config-client-cli</li>
 </ul>
 </div>
 </div>
@@ -117,34 +117,81 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#configuration-service" name="configuration-service" class="anchor"><span class="anchor-link"></span></a>Configuration service</h1>
-<p>Configuration Service provides a centralized persistent store for any configuration file used in the TMT Software System. All versions of configuration files are retained providing a historical record of each configuration file.</p>
-<h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
-<dl>
-  <dt>sbt</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-config_2.12&quot; % &quot;0.1-SNAPSHOT&quot;
-</code></pre></dd>
-  <dt>maven</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
- &lt;groupId&gt;org.tmt&lt;/groupId&gt;
- &lt;artifactId&gt;csw-config_2.12&lt;/artifactId&gt;
- &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
- &lt;type&gt;pom&lt;/type&gt;
-&lt;/dependency&gt;
-</code></pre></dd>
-  <dt>gradle</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: &quot;org.tmt&quot;, name: &quot;csw-config_2.12&quot;, version: &quot;0.1-SNAPSHOT&quot;
-}
-</code></pre></dd>
-</dl>
+<h1><a href="#csw-config-client-cli" name="csw-config-client-cli" class="anchor"><span class="anchor-link"></span></a>csw-config-client-cli</h1>
+<p>A command line application that facilitates interaction with config service. It accepts various commands to store, manage and retrieve configuration files.</p>
+<h2><a href="#commands" name="commands" class="anchor"><span class="anchor-link"></span></a>Commands</h2>
+<p>Note: Exactly one command must be specified from the list - {create | update | get | exists | delete | list | history | setDefault | getDefault}</p>
+<h3><a href="#create" name="create" class="anchor"><span class="anchor-link"></span></a>create</h3>
+<p>creates the input file in the repository at a specified path</p>
+<ul>
+  <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
+  <li><code>-i</code>, <code>--in</code> is input file path</li>
+  <li><code>--oversize</code> is optional parameter. Add this option to specify if the input file is large/binary files</li>
+  <li><code>-c, --comment</code> optional create comment</li>
+</ul>
+<h3><a href="#update" name="update" class="anchor"><span class="anchor-link"></span></a>update</h3>
+<p>overwrites the file specified in the repository by the input file</p>
+<ul>
+  <li>&lsquo;path&rsquo; is path in the repository</li>
+  <li><code>-i</code>, <code>--in</code> is input file path</li>
+  <li><code>-c, --comment</code> optional create comment</li>
+</ul>
+<h3><a href="#get" name="get" class="anchor"><span class="anchor-link"></span></a>get</h3>
+<p>retrieves a file for a given path, stored in config service, and writes it to the output file</p>
+<ul>
+  <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
+  <li><code>-o</code>, <code>--out</code> is output file path</li>
+  <li><code>--id</code> optional parameter. version id of the repository file to get.</li>
+  <li><code>--date</code> optional parameter. ex. 2017-04-16T16:15:23.503Z</li>
+</ul>
+<h3><a href="#exists" name="exists" class="anchor"><span class="anchor-link"></span></a>exists</h3>
+<p>checks if the file exists at specified path in the repository</p>
+<ul>
+  <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
+</ul>
+<h3><a href="#delete" name="delete" class="anchor"><span class="anchor-link"></span></a>delete</h3>
+<p>deletes the file at specified path in the repository</p>
+<ul>
+  <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
+</ul>
+<h3><a href="#list" name="list" class="anchor"><span class="anchor-link"></span></a>list</h3>
+<p>lists the files in the repository</p>
+<h3><a href="#history" name="history" class="anchor"><span class="anchor-link"></span></a>history</h3>
+<p>shows versioning history of the file in the repository</p>
+<ul>
+  <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
+  <li><code>--max</code> optional parameter. maximum no of files to be retrieved</li>
+</ul>
+<h3><a href="#setdefault" name="setdefault" class="anchor"><span class="anchor-link"></span></a>setDefault</h3>
+<p>sets default version of the file in the repository</p>
+<ul>
+  <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
+  <li><code>--id</code> optional parameter. version id of file to be set as default.</li>
+</ul>
+<h3><a href="#resetdefault" name="resetdefault" class="anchor"><span class="anchor-link"></span></a>resetDefault</h3>
+<p>resets the default to the latest version of the file in the repository</p>
+<ul>
+  <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
+</ul>
+<h3><a href="#getdefault" name="getdefault" class="anchor"><span class="anchor-link"></span></a>getDefault</h3>
+<p>gets the default version of the file in the repository</p>
+<ul>
+  <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
+  <li><code>-o</code>, <code>--out</code> is output file path</li>
+</ul>
+<h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>&ndash;help</h3>
+<p>Prints the help message.</p>
+<h3><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a>&ndash;version</h3>
+<p>Prints the version of the application.</p>
+<h2><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h2>
+<p>In progress&hellip;</p>
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/config.md">here</a>.
+The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/apps/cswconfigclientcli.md">here</a>.
 </div>
 
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="../services.html">Services</a></p>
+</div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
 <nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
@@ -152,9 +199,10 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
 <div class="nav-title">On this page:</div>
 <div class="nav-toc">
 <ul>
-  <li><a href="../services/config.html#configuration-service">Configuration service</a>
+  <li><a href="../apps/cswconfigclientcli.html#csw-config-client-cli">csw-config-client-cli</a>
   <ul>
-    <li><a href="../services/config.html#artifacts">Artifacts</a></li>
+    <li><a href="../apps/cswconfigclientcli.html#commands">Commands</a></li>
+    <li><a href="../apps/cswconfigclientcli.html#examples">Examples</a></li>
   </ul></li>
 </ul>
 </div>
