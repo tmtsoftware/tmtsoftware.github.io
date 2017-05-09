@@ -295,8 +295,8 @@ Assert.assertEquals(Optional.empty(), locationService.find(tcpConnection).get())
 Thread.sleep(200)
 
 async {
-  val tcpRegistrationResult  = await(locationService.register(tcpRegistration))
-  val httpRegistrationResult = await(locationService.register(httpRegistration))
+  val tcpRegistrationResult = await(locationService.register(tcpRegistration))
+  await(locationService.register(httpRegistration))
 
   Thread.sleep(200)
 
@@ -390,10 +390,10 @@ KillSwitch killSwitch = locationService.subscribe(tcpRegistration.connection(), 
     }
 });
 
-locationService.register(tcpRegistration);
+locationService.register(tcpRegistration).toCompletableFuture().get();
 probe.expectMsg(new LocationUpdated(tcpRegistration.location(new Networks().hostname())));
 
-locationService.unregister(tcpConnection);
+locationService.unregister(tcpConnection).toCompletableFuture().get();
 probe.expectMsg(new LocationRemoved(tcpRegistration.connection()));
 
 //shutdown the notification stream, should no longer receive any notifications
