@@ -421,6 +421,7 @@ Await.result(assertionF, 3.seconds)</code></pre></dd>
   <li><strong>setActiveVersion</strong> : Sets the &ldquo;active version&rdquo; to be the version provided for the file at the given path. If this method is never called in a config&rsquo;s lifetime, the active version will always be the version returned by <code>create</code> function.</li>
   <li><strong>resetActiveVersion</strong> : Resets the &ldquo;active version&rdquo; of the file at the given path to the latest version.</li>
   <li><strong>getActiveVersion</strong> : Returns the revision Id which represents the &ldquo;active version&rdquo; of the file at the given path.</li>
+  <li><strong>getActiveByTime</strong> : Returns the content of active version of the file existed at given instant</li>
 </ul>
 <dl>
   <dt>Scala</dt>
@@ -467,8 +468,23 @@ Await.result(assertionF, 3.seconds)</code></pre></dd>
 
   //take last three revisions
   await(adminApi.historyActive(filePath, maxResults = 3)).map(_.id) shouldBe List(id1, id5, id4)
+
+  //get contents of active version at a specified instance
+  val initialContents = await(adminApi.getActiveByTime(filePath, tBegin)).get
+  await(initialContents.toStringF) shouldBe defaultStrConf
 }
 Await.result(assertionF, 5.seconds)</code></pre></dd>
+</dl>
+<h2><a href="#getmetadata" name="getmetadata" class="anchor"><span class="anchor-link"></span></a>getMetaData</h2>
+<p>Used to get metadata information about config service. It includes:<br/>* repository directory<br/>* annex directory<br/>* min annex file size<br/>* max config file size </p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">val assertF = async {
+  val metaData: ConfigMetadata = await(adminApi.getMetadata)
+  println(s&quot;Server returned =&gt; $metaData&quot;)
+}
+Await.result(assertF, 2.seconds)</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
@@ -503,6 +519,7 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="../services/config.html#list">list</a></li>
     <li><a href="../services/config.html#history">history</a></li>
     <li><a href="../services/config.html#managing-active-versions">Managing active versions</a></li>
+    <li><a href="../services/config.html#getmetadata">getMetaData</a></li>
     <li><a href="../services/config.html#source-code-for-examples">Source code for examples</a></li>
   </ul></li>
 </ul>
