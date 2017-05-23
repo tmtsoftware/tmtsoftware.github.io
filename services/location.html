@@ -183,8 +183,16 @@ val tcpRegistration = TcpRegistration(tcpConnection, 6380)
 val httpConnection   = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
 val httpRegistration = HttpRegistration(httpConnection, 8080, &quot;path123&quot;)
 
-val akkaConnection   = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
-val akkaRegistration = AkkaRegistration(akkaConnection, actorRef)</code></pre></dd>
+val akkaConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
+val akkaRegistration = AkkaRegistration(akkaConnection,
+  actorSystem.actorOf(
+    Props(new Actor {
+    override def receive: Receive = {
+      case &quot;print&quot; =&gt; println(&quot;hello world&quot;)
+    }
+  }),
+    &quot;my-actor-1&quot;
+  ))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">private TcpConnection tcpConnection = new Connection.TcpConnection(new ComponentId(&quot;redis&quot;, JComponentType.Service));
@@ -194,7 +202,14 @@ private HttpConnection httpConnection = new Connection.HttpConnection(new Compon
 private HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;);
 
 private AkkaConnection akkaConnection = new Connection.AkkaConnection(new ComponentId(&quot;hcd1&quot;, JComponentType.HCD));
-private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection, actorRef);</code></pre></dd>
+private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection, actorSystem.actorOf(Props.create(AbstractActor.class, () -&gt; new AbstractActor() {
+            @Override
+            public Receive createReceive() {
+                return ReceiveBuilder.create().build();
+            }
+        }),
+        &quot;my-actor-1&quot;
+));</code></pre></dd>
 </dl>
 <h2><a href="#creating-actorref-for-registration" name="creating-actorref-for-registration" class="anchor"><span class="anchor-link"></span></a>Creating ActorRef for registration</h2>
 <p>While creating <code>akkaRegistration</code> in above example, make sure the ActorSystem used for creating <code>actorRef</code>,  is created using <code>ActorSystemFactory</code> as follows :</p>
@@ -210,7 +225,9 @@ private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection,
 <h2><a href="#basic-operations" name="basic-operations" class="anchor"><span class="anchor-link"></span></a>Basic operations</h2>
 <p><code>register</code> API takes a <code>Registration</code> parameter and returns a handle to registration result. The success of <code>register</code> API can be validated by checking the <code>Location</code> instance pointed by registration result.</p>
 <p>The <code>list</code> API returns a list of alive connections with LocationService.</p>
-<p>A connection of interest, can be checked if available using the <code>resolve</code> API. If the connection is alive, <code>resolve</code> returns the handle to the <code>Location</code>.</p>
+<p>A connection of interest, can be checked if available using the <code>resolve</code> or <code>find</code> API. </p>
+<p><code>resolve</code> will find the location for a connection from the local cache, if not found waits for the event to arrive within specified time limit. Returns None if both fail. </p>
+<p><code>find</code> will return the location for a connection from the local cache and if not found then returns None. </p>
 <p>One of the ways to <code>unregister</code> a service is by calling unregister on registration result received from <code>register</code> API.</p>
 <dl>
   <dt>Scala</dt>
@@ -221,7 +238,7 @@ private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection,
     tcpRegistrationResult.location.connection shouldBe tcpConnection
 
     await(locationService.list) shouldBe List(tcpRegistrationResult.location)
-    await(locationService.find(tcpConnection)) shouldBe Some(tcpRegistrationResult.location)
+    await(locationService.resolve(tcpConnection, 5.seconds)) shouldBe Some(tcpRegistrationResult.location)
 
     println(tcpRegistrationResult.location.uri)
 
@@ -237,7 +254,7 @@ Await.result(assertionF, 5.seconds)</code></pre></dd>
     Assert.assertEquals(tcpRegistration.connection(), tcpRegistrationResult.location().connection());
     return locationService.list().thenCompose(locations -&gt; {
         Assert.assertEquals(expectedLocations, locations);
-        return locationService.find(tcpConnection).thenCompose(locationOption -&gt; {
+        return locationService.resolve(tcpConnection, new FiniteDuration(5, TimeUnit.SECONDS)).thenCompose(locationOption -&gt; {
             Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationOption.get());
             System.out.println(tcpRegistrationResult.location().uri());
             return tcpRegistrationResult.unregister().thenCompose(done -&gt; {
@@ -265,7 +282,7 @@ ArrayList&lt;Location&gt; expectedLocations = new ArrayList&lt;&gt;();
 expectedLocations.add(tcpRegistration.location(new Networks().hostname()));
 
 Assert.assertEquals(expectedLocations, locationService.list().get());
-Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationService.find(tcpConnection).get().get());
+Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationService.resolve(tcpConnection, new FiniteDuration(5, TimeUnit.SECONDS)).get().get());
 
 System.out.println(tcpRegistrationResult.location().uri());
 
