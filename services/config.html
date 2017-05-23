@@ -175,6 +175,12 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 val clientApi: ConfigClientService = ConfigClientFactory.clientApi(actorSystem, locationService)
 //config admin API
 val adminApi: ConfigService = ConfigClientFactory.adminApi(actorSystem, locationService)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//config client API
+IConfigClientService clientApi = JConfigClientFactory.clientApi(actorRuntime.actorSystem(), clientLocationService);
+//config admin API
+IConfigService adminApi = JConfigClientFactory.adminApi(actorRuntime.actorSystem(), clientLocationService);</code></pre></dd>
 </dl>
 <h2><a href="#exists" name="exists" class="anchor"><span class="anchor-link"></span></a>exists</h2>
 <p>Function checks if the file exists at specified path in the repository. If it exists it returns Future of Boolean</p>
@@ -183,29 +189,52 @@ val adminApi: ConfigService = ConfigClientFactory.adminApi(actorSystem, location
   <dd>
   <pre class="prettyprint"><code class="language-scala">//construct the path
 val filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;)
-async {
+
+// create file using admin API
+adminApi.create(filePath, ConfigData.fromString(defaultStrConf), annex = false, &quot;First commit&quot;).await
+
+val doneF = async {
   //check if file exists with config service
   val exists: Boolean = await(clientApi.exists(filePath))
   exists shouldBe true
-}</code></pre></dd>
+}
+Await.result(doneF, 5.seconds)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">Path filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;);
+
+// create file using admin API
+adminApi.create(filePath, ConfigData.fromString(defaultStrConf), false, &quot;commit config file&quot;).get();
+
+Boolean exists = clientApi.exists(filePath).get();
+Assert.assertTrue(exists);</code></pre></dd>
 </dl>
 <h2><a href="#getactive" name="getactive" class="anchor"><span class="anchor-link"></span></a>getActive</h2>
 <p>Function retrieves currently active file for a given path from config service. It returns a Future of Option of ConfigData.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val defaultStrConf: String =
-  &quot;&quot;&quot;
-    |axisName1 = tromboneAxis1
-    |axisName2 = tromboneAxis2
-    |axisName3 = tromboneAxis3
-    |&quot;&quot;&quot;.stripMargin
-async {
+  <pre class="prettyprint"><code class="language-scala">val defaultStrConf: String = &quot;foo { bar { baz : 1234 } }&quot;
+val doneF = async {
   // construct the path
   val filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;)
+
+  await(adminApi.create(filePath, ConfigData.fromString(defaultStrConf), annex = false, &quot;First commit&quot;))
+
   val activeFile: Option[ConfigData] = await(clientApi.getActive(filePath))
   await(activeFile.get.toStringF) shouldBe defaultStrConf
-}</code></pre></dd>
+}
+Await.result(doneF, 5.seconds)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">String defaultStrConf = &quot;foo { bar { baz : 1234 } }&quot;;
+// construct the path
+Path filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;);
+
+adminApi.create(filePath, ConfigData.fromString(defaultStrConf), false, &quot;First commit&quot;).get();
+
+ConfigData activeFile = clientApi.getActive(filePath).get().get();
+Assert.assertEquals(activeFile.toJConfigObject(mat).get().getString(&quot;foo.bar.baz&quot;), &quot;1234&quot;);</code></pre></dd>
 </dl>
 <h2><a href="#create" name="create" class="anchor"><span class="anchor-link"></span></a>create</h2>
 <p>Takes input ConfigData and creates the configuration in the repository at a specified path</p>
@@ -230,11 +259,9 @@ async {
     val config2: ConfigData = ConfigData.fromPath(Paths.get(srcFilePath))
 
     //construct ConfigData from Array[Byte] by reading a local file
-    val stream: InputStream = getClass.getClassLoader.getResourceAsStream(&quot;smallBinary.bin&quot;)
-
+    val stream: InputStream    = getClass.getClassLoader.getResourceAsStream(&quot;smallBinary.bin&quot;)
     def byteArray: Array[Byte] = Stream.continually(stream.read).takeWhile(_ != -1).map(_.toByte).toArray
-
-    val config3 = ConfigData.fromBytes(byteArray)
+    val config3                = ConfigData.fromBytes(byteArray)
 
     //store the config, at a specified path as normal text file
     val id1: ConfigId =
@@ -254,6 +281,22 @@ async {
     id3 shouldEqual ConfigId(5)
   }
 Await.result(futC, 2.seconds)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//construct ConfigData from String containing ASCII text
+String configString = &quot;axisName11111 = tromboneAxis\naxisName22222 = tromboneAxis2\naxisName3 = tromboneAxis3333&quot;;
+ConfigData config1 = ConfigData.fromString(configString);
+
+//construct ConfigData from a local file containing binary data
+URI srcFilePath = getClass().getClassLoader().getResource(&quot;smallBinary.bin&quot;).toURI();
+ConfigData config2 = ConfigData.fromPath(Paths.get(srcFilePath));
+
+ConfigId id1 = adminApi.create(Paths.get(&quot;/hcd/trombone/overnight.conf&quot;), config1, false, &quot;review done&quot;).get();
+ConfigId id2 = adminApi.create(Paths.get(&quot;/hcd/trombone/firmware.bin&quot;), config2, true, &quot;smoke test done&quot;).get();
+
+//CAUTION: for demo example setup these IDs are returned. Don&#39;t assume them in production setup.
+Assert.assertEquals(id1, new ConfigId(&quot;1&quot;));
+Assert.assertEquals(id2, new ConfigId(&quot;3&quot;));</code></pre></dd>
 </dl>
 <h2><a href="#update" name="update" class="anchor"><span class="anchor-link"></span></a>update</h2>
 <p>Takes input ConfigData and overwrites the configuration specified in the repository</p>
@@ -476,19 +519,34 @@ Await.result(assertionF, 3.seconds)</code></pre></dd>
 Await.result(assertionF, 5.seconds)</code></pre></dd>
 </dl>
 <h2><a href="#getmetadata" name="getmetadata" class="anchor"><span class="anchor-link"></span></a>getMetaData</h2>
-<p>Used to get metadata information about config service. It includes:<br/>* repository directory<br/>* annex directory<br/>* min annex file size<br/>* max config file size </p>
+<p>Used to get metadata information about config service. It includes:</p>
+<ul>
+  <li>repository directory</li>
+  <li>annex directory</li>
+  <li>min annex file size</li>
+  <li>max config file size</li>
+</ul>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val assertF = async {
   val metaData: ConfigMetadata = await(adminApi.getMetadata)
+  //repository path must not be empty
+  metaData.repoPath should not be empty
   println(s&quot;Server returned =&gt; $metaData&quot;)
 }
 Await.result(assertF, 2.seconds)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">ConfigMetadata metadata = adminApi.getMetadata().get();
+//repository path must not be empty
+Assert.assertNotEquals(metadata.repoPath(), &quot;&quot;);
+System.out.println(&quot;Server returned =&gt; &quot; + metadata.toString());</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-config-client/src/test/scala/csw/services/config/client/scaladsl/demo/ConfigClientDemoExample.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-config-client/src/test/java/csw/services/config/client/javadsl/demo/JConfigClientDemoExample.java">Java Example</a></li>
 </ul>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/config.md">here</a>.
