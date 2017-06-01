@@ -200,19 +200,19 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ClusterSettings</span><span class="params">(<span name="clusterName">clusterName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol"><span class="name"><a href="Constants$.html">Constants.ClusterName</a></span></span></span>, <span name="values">values: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Any" class="extype" target="_top">Any</a>] = <span class="symbol">Map.empty</span></span>)</span><span class="result"> extends <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/scala-logging/scala-logging_2.12/3.5.0/scala-logging_2.12-3.5.0-javadoc.jar/!/index.html#com.typesafe.scalalogging.LazyLogging" class="extype" target="_top">LazyLogging</a> with <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">ClusterSettings</span><span class="params">(<span name="clusterName">clusterName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol"><span class="name"><a href="Constants$.html">Constants.ClusterName</a></span></span></span>, <span name="values">values: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Any" class="extype" target="_top">Any</a>] = <span class="symbol">Map.empty</span></span>)</span><span class="result"> extends <a href="LocationServiceLogger$.html#SimpleextendsAnyRef" class="extmbr" name="csw.services.logging.scaladsl.BasicLogger.Simple">commons.LocationServiceLogger.Simple</a> with <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>ClusterSettings manages <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/config/1.3.1/config-1.3.1-javadoc.jar/!/index.html#com.typesafe.config.Config" class="extype" target="_top">com.typesafe.config.Config</a> values required by an <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.1/akka-actor_2.12-2.5.1-javadoc.jar/!/index.html#akka.actor.ActorSystem" class="extype" target="_top">akka.actor.ActorSystem</a> to boot. It configures mainly
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>ClusterSettings manages <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/config/1.3.1/config-1.3.1-javadoc.jar/!/index.html#com.typesafe.config.Config" class="extype" target="_top">com.typesafe.config.Config</a> values required by an <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.2/akka-actor_2.12-2.5.2-javadoc.jar/!/index.html#akka.actor.ActorSystem" class="extype" target="_top">akka.actor.ActorSystem</a> to boot. It configures mainly
 four parameters of an <code>ActorSystem</code>, namely :</p><ul><li>name (Name is defaulted to a constant value so that ActorSystem joins the cluster while booting)</li><li>akka.remote.netty.tcp.hostname (The hostname to boot an ActorSystem on)</li><li>akka.remote.netty.tcp.port     (The port to boot an ActorSystem on)</li><li>akka.cluster.seed-nodes        (Seed Nodes of the cluster)</li></ul><p>ClusterSettings require three values namely :</p><ul><li>interfaceName (The network interface where cluster is formed.)</li><li>clusterSeeds (The host address of the seedNode of the cluster)</li><li>clusterPort (Specify port on which to start this service)</li></ul><p>The config values of the <code>ActorSystem</code> will be evaluated based on the above three settings as follows :</p><ul><li><code>akka.remote.netty.tcp.hostname</code> will be ipV4 address based on <code>interfaceName</code> from <a href="../internal/Networks.html" class="extype" name="csw.services.location.internal.Networks">csw.services.location.internal.Networks</a></li><li><code>akka.remote.netty.tcp.port</code> will be a random port or if <code>clusterPort</code> is specified that value will be picked</li><li><code>akka.cluster.seed-nodes</code> will pick values of <code>clusterSeeds</code></li></ul><p>If none of the settings are provided then defaults will be picked as follows :</p><ul><li><code>akka.remote.netty.tcp.hostname</code> will be ipV4 address from <a href="../internal/Networks.html" class="extype" name="csw.services.location.internal.Networks">csw.services.location.internal.Networks</a></li><li><code>akka.remote.netty.tcp.port</code> will be a random port</li><li><code>akka.cluster.seed-nodes</code> will be empty
 and an <code>ActorSystem</code> will be created and a cluster will be formed with no Seed Nodes. It will also self join the cluster.</li></ul><p><code>ClusterSettings</code> can be given in three ways :</p><ul><li>by using the api</li><li>by providing system properties</li><li>or by providing environment variables</li></ul><p>If a <code>ClusterSettings</code> value e.g. clusterPort is provided by more than one ways, then the precedence of consumption will be first from</p><ul><li>System Properties</li><li>then from Environment variable</li><li>and then from <code>ClusterSettings</code> api</li></ul><p><i>Note : </i> Although <code>ClusterSettings</code> can be added through multiple ways, it is recommended that
  -<code>clusterSeeds</code> is provided via environment variable,</p><ul><li><code>clusterPort</code> is provided via system properties,</li><li><code>interfaceName</code> is provide via environment variable and</li><li>the <code>ClusterSettings</code> api of providing values should be used for testing purpose only.</li></ul></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/scala-logging/scala-logging_2.12/3.5.0/scala-logging_2.12-3.5.0-javadoc.jar/!/index.html#com.typesafe.scalalogging.LazyLogging" class="extype" target="_top">LazyLogging</a>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="LocationServiceLogger$.html#SimpleextendsAnyRef" class="extmbr" name="csw.services.logging.scaladsl.BasicLogger.Simple">LocationServiceLogger.Simple</a>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
             <span class="toggle">
               Known Subclasses
@@ -243,7 +243,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="csw.services.location.commons.ClusterSettings"><span>ClusterSettings</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.typesafe.scalalogging.LazyLogging"><span>LazyLogging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="csw.services.location.commons.ClusterSettings"><span>ClusterSettings</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="csw.services.logging.scaladsl.BasicLogger.Simple"><span>Simple</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -471,22 +471,6 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
       </span>
       
       
-    </li><li name="csw.services.location.commons.ClusterSettings#debug" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="debug():Unit"></a>
-      <span class="permalink">
-      <a href="../../../../csw/services/location/commons/ClusterSettings.html#debug():Unit" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">debug</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      
-      
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -605,25 +589,38 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
       </span>
       
       
-    </li><li name="com.typesafe.scalalogging.LazyLogging#logger" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="logger:com.typesafe.scalalogging.Logger"></a><a id="logger:Logger"></a>
+    </li><li name="csw.services.logging.scaladsl.BasicLogger.Simple#log" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="log:csw.services.logging.scaladsl.Logger"></a><a id="log:Logger"></a>
       <span class="permalink">
-      <a href="../../../../csw/services/location/commons/ClusterSettings.html#logger:com.typesafe.scalalogging.Logger" title="Permalink">
+      <a href="../../../../csw/services/location/commons/ClusterSettings.html#log:csw.services.logging.scaladsl.Logger" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">lazy val</span>
+        <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">logger</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/scala-logging/scala-logging_2.12/3.5.0/scala-logging_2.12-3.5.0-javadoc.jar/!/index.html#com.typesafe.scalalogging.Logger" class="extype" target="_top">Logger</a></span>
+        <span class="name">log</span><span class="result">: <a href="../../logging/scaladsl/Logger.html" class="extype" name="csw.services.logging.scaladsl.Logger">Logger</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>LazyLogging</dd><dt>Annotations</dt><dd>
-                <span class="name">@volatile</span><span class="args">()</span>
-              
-        </dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../../logging/scaladsl/BasicLogger$Simple.html" class="extype" name="csw.services.logging.scaladsl.BasicLogger.Simple">Simple</a></dd></dl></div>
+    </li><li name="csw.services.location.commons.ClusterSettings#logDebugString" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="logDebugString():Unit"></a>
+      <span class="permalink">
+      <a href="../../../../csw/services/location/commons/ClusterSettings.html#logDebugString():Unit" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logDebugString</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      
+      
     </li><li name="csw.services.location.commons.ClusterSettings#managementPort" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="managementPort:Option[Any]"></a>
       <span class="permalink">
@@ -736,6 +733,22 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="csw.services.location.commons.ClusterSettings#system" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="system:akka.actor.ActorSystem"></a><a id="system:ActorSystem"></a>
+      <span class="permalink">
+      <a href="../../../../csw/services/location/commons/ClusterSettings.html#system:akka.actor.ActorSystem" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">system</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.2/akka-actor_2.12-2.5.2-javadoc.jar/!/index.html#akka.actor.ActorSystem" class="extype" target="_top">ActorSystem</a></span>
+      </span>
+      
+      
     </li><li name="csw.services.location.commons.ClusterSettings#values" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="values:Map[String,Any]"></a>
       <span class="permalink">
@@ -884,8 +897,8 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
-            </div><div class="parent" name="com.typesafe.scalalogging.LazyLogging">
-              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/scala-logging/scala-logging_2.12/3.5.0/scala-logging_2.12-3.5.0-javadoc.jar/!/index.html#com.typesafe.scalalogging.LazyLogging" class="extype" target="_top">LazyLogging</a></h3>
+            </div><div class="parent" name="csw.services.logging.scaladsl.BasicLogger.Simple">
+              <h3>Inherited from <a href="LocationServiceLogger$.html#SimpleextendsAnyRef" class="extmbr" name="csw.services.logging.scaladsl.BasicLogger.Simple">LocationServiceLogger.Simple</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.2/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
