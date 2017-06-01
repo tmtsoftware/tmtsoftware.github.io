@@ -125,7 +125,15 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li>host address/port pairs</li>
   <li>URL/URIs</li>
   <li>connection protocols</li>
-</ul>
+</ul><div class="callout note "><div class="callout-title">async handling in scala and java examples.</div>
+<ul>
+  <li>
+  <p><strong>Scala:</strong> <code>async</code> marks a block of asynchronous code and allows to <code>await</code> the computation till the Future is complete.  For more info, please refer: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></li>
+  <li>
+  <p><strong>Java non-blocking example:</strong> The code snippets use <code>CompletiableFuture</code> and it&rsquo;s <code>thenAsync</code>, <code>thenApply</code> methods. This style allows to compose multiple Futures and not block the calling thread till Futures are complete. </p></li>
+  <li>
+  <p><strong>Java blocking example:</strong> The code snippets use <code>CompletableFuture</code> using <code>get</code> blocking call. This style blocks the calling thread till the Future is complete.</p></li>
+</ul></div>
 <h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
 <dl>
   <dt>sbt</dt>
@@ -153,10 +161,10 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val locationService = LocationServiceFactory.make()</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">private val locationService = LocationServiceFactory.make()</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">ILocationService locationService = JLocationServiceFactory.make();</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">private ILocationService locationService = JLocationServiceFactory.make();</code></pre></dd>
 </dl>
 <h2><a href="#shutdown-locationservice" name="shutdown-locationservice" class="anchor"><span class="anchor-link"></span></a>Shutdown LocationService</h2>
 <p>This example demonstrates how to shutdown a location service. Shutdown will terminate the ActorSystem and will leave the cluster. </p>
@@ -174,248 +182,140 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <p><strong>Components</strong> are OMOA entities. They have a name identifier and type such as Container, HCD, Assembly, Service.</p>
 <p><strong>Connections</strong> are the means to reach to components and are categorized as Akka, HTTP, Tcp connection.</p>
 <p><strong>Registrations</strong> are service endpoints stored in LocationService.</p>
+<p><code>register</code> API takes a <code>Registration</code> parameter and returns a handle to registration result. The success of <code>register</code> API can be validated by checking the <code>Location</code> instance pointed by registration result.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val tcpConnection   = TcpConnection(ComponentId(&quot;redis&quot;, ComponentType.Service))
-val tcpRegistration = TcpRegistration(tcpConnection, 6380)
+  <pre class="prettyprint"><code class="language-scala"><br/>// add some dummy registrations for illustrative purposes
 
-val httpConnection   = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
-val httpRegistration = HttpRegistration(httpConnection, 8080, &quot;path123&quot;)
+// dummy http connection
+private val httpConnection   = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
+private val httpRegistration = HttpRegistration(httpConnection, 8080, &quot;path123&quot;)
+private val httpRegResult = Await.result(locationService.register(httpRegistration), timeout)
 
-val akkaConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
-val akkaRegistration = AkkaRegistration(akkaConnection,
-  actorSystem.actorOf(
-    Props(new Actor {
-    override def receive: Receive = {
-      case &quot;print&quot; =&gt; println(&quot;hello world&quot;)
-    }
-  }),
-    &quot;my-actor-1&quot;
-  ))</code></pre></dd>
+// dummy HCD connection
+private val hcdConnection   = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
+private val hcdRegistration = AkkaRegistration(hcdConnection, context.actorOf(Props(new Actor {
+  override def receive: Receive = {
+    case &quot;print&quot; =&gt; println(&quot;hello world&quot;)
+  }
+}), name=&quot;my-actor-1&quot;))
+private val hcdRegResult = Await.result(locationService.register(hcdRegistration), timeout)
+
+//. register the client &quot;assembly&quot; created in this example
+private val assemblyConnection   = AkkaConnection(ComponentId(&quot;assembly1&quot;, ComponentType.Assembly))
+private val assemblyRegistration = AkkaRegistration(assemblyConnection, self)
+private val assemblyRegResult = Await.result(locationService.register(assemblyRegistration), timeout)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">private TcpConnection tcpConnection = new Connection.TcpConnection(new ComponentId(&quot;redis&quot;, JComponentType.Service));
-private TcpRegistration tcpRegistration = new TcpRegistration(tcpConnection, 6380);
+  <pre class="prettyprint"><code class="language-java">// dummy http connection
+HttpConnection httpConnection   = new HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
+HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;);
+httpRegResult = locationService.register(httpRegistration).get();
 
-private HttpConnection httpConnection = new Connection.HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
-private HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;);
-
-private AkkaConnection akkaConnection = new Connection.AkkaConnection(new ComponentId(&quot;hcd1&quot;, JComponentType.HCD));
-private AkkaRegistration akkaRegistration = new AkkaRegistration(akkaConnection, actorSystem.actorOf(Props.create(AbstractActor.class, () -&gt; new AbstractActor() {
+// dummy HCD connection
+AkkaConnection hcdConnection = new AkkaConnection(new ComponentId(&quot;hcd1&quot;, JComponentType.HCD));
+AkkaRegistration hcdRegistration = new AkkaRegistration(hcdConnection, getContext().actorOf(Props.create(AbstractActor.class, () -&gt; new AbstractActor() {
             @Override
             public Receive createReceive() {
                 return ReceiveBuilder.create().build();
             }
         }),
         &quot;my-actor-1&quot;
-));</code></pre></dd>
+));
+hcdRegResult = locationService.register(hcdRegistration).get();
+
+//. register the client &quot;assembly&quot; created in this example
+AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(&quot;assembly1&quot;, JComponentType.Assembly));
+AkkaRegistration assemblyRegistration = new AkkaRegistration(assemblyConnection, getSelf());
+assemblyRegResult = locationService.register(assemblyRegistration).get();</code></pre></dd>
 </dl>
 <h2><a href="#creating-actorref-for-registration" name="creating-actorref-for-registration" class="anchor"><span class="anchor-link"></span></a>Creating ActorRef for registration</h2>
 <p>While creating <code>akkaRegistration</code> in above example, make sure the ActorSystem used for creating <code>actorRef</code>,  is created using <code>ActorSystemFactory</code> as follows :</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val actorSystem = ActorSystemFactory.remote()</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">implicit val system = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">ActorSystem actorSystem = ActorSystemFactory.remote();</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">ActorSystem actorSystem = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;);</code></pre></dd>
 </dl>
 <p>This is required to start a remote ActorSystem on the interface where csw-cluster is running. All the ActorRefs created using this ActorSystem will now be available for communication from other components that are part of csw-cluster.</p>
-<h2><a href="#basic-operations" name="basic-operations" class="anchor"><span class="anchor-link"></span></a>Basic operations</h2>
-<p><code>register</code> API takes a <code>Registration</code> parameter and returns a handle to registration result. The success of <code>register</code> API can be validated by checking the <code>Location</code> instance pointed by registration result.</p>
-<p>The <code>list</code> API returns a list of alive connections with LocationService.</p>
-<p>A connection of interest, can be checked if available using the <code>resolve</code> or <code>find</code> API. </p>
-<p><code>resolve</code> will find the location for a connection from the local cache, if not found waits for the event to arrive within specified time limit. Returns None if both fail. </p>
-<p><code>find</code> will return the location for a connection from the local cache and if not found then returns None. </p>
-<p>One of the ways to <code>unregister</code> a service is by calling unregister on registration result received from <code>register</code> API.</p>
+<h2><a href="#resolving-connections" name="resolving-connections" class="anchor"><span class="anchor-link"></span></a>Resolving Connections</h2>
+<p>A connection of interest, can be checked if available using the <code>resolve</code> API. If the connection is alive, <code>resolve</code> returns the handle to the <code>Location</code>. If not, <code>resolve</code> will wait for a time specified as an argument for the component to become available. If it doesn&rsquo;t, it will return a Future[None].</p>
+<p>To check for a connection without a waiting period, use the <code>find</code> API.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">  async {
-    val tcpRegistrationResult = await(locationService.register(tcpRegistration))
+  <pre class="prettyprint"><code class="language-scala">// find connection to LocationServiceExampleComponent in location service
+// [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
+private val exampleConnection = LocationServiceExampleComponent.connection
 
-    tcpRegistrationResult.location.connection shouldBe tcpConnection
+println(s&quot;Attempting to find connection $exampleConnection ...&quot;)
+private val findResult = Await.result(locationService.find(exampleConnection), timeout)
+println(s&quot;Find result: $findResult&quot;)
 
-    await(locationService.list) shouldBe List(tcpRegistrationResult.location)
-    await(locationService.resolve(tcpConnection, 5.seconds)) shouldBe Some(tcpRegistrationResult.location)
+// Output should be:
+//    Attempting to find connection AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) ...
+//    Find result: None
 
-    println(tcpRegistrationResult.location.uri)
-
-    await(tcpRegistrationResult.unregister())
-
-    await(locationService.list) shouldBe List.empty
-    await(locationService.find(tcpConnection)) shouldBe None
-  }
-Await.result(assertionF, 5.seconds)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;Void&gt; completableFuture = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
-    Assert.assertEquals(tcpRegistration.connection(), tcpRegistrationResult.location().connection());
-    return locationService.list().thenCompose(locations -&gt; {
-        Assert.assertEquals(expectedLocations, locations);
-        return locationService.resolve(tcpConnection, new FiniteDuration(5, TimeUnit.SECONDS)).thenCompose(locationOption -&gt; {
-            Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationOption.get());
-            System.out.println(tcpRegistrationResult.location().uri());
-            return tcpRegistrationResult.unregister().thenCompose(done -&gt; {
-                return locationService.list().thenCompose(locations1 -&gt; {
-                    Assert.assertEquals(Collections.EMPTY_LIST, locations1);
-                    return locationService.find(tcpConnection).thenApply(location -&gt; {
-                        Assert.assertEquals(Optional.empty(), location);
-                        return null;
-                    });
-                });
-            });
-        });
-    });
-});
-
-completableFuture.get();</code></pre></dd>
-  <dt>JavaBlocking</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).get();
-
-Assert.assertEquals(tcpRegistration.connection(), tcpRegistrationResult.location().connection());
-
-//expected list of locations
-ArrayList&lt;Location&gt; expectedLocations = new ArrayList&lt;&gt;();
-expectedLocations.add(tcpRegistration.location(new Networks().hostname()));
-
-Assert.assertEquals(expectedLocations, locationService.list().get());
-Assert.assertEquals(tcpRegistration.location(new Networks().hostname()), locationService.resolve(tcpConnection, new FiniteDuration(5, TimeUnit.SECONDS)).get().get());
-
-System.out.println(tcpRegistrationResult.location().uri());
-
-tcpRegistrationResult.unregister().get();
-
-Assert.assertEquals(Collections.EMPTY_LIST, locationService.list().get());
-Assert.assertEquals(Optional.empty(), locationService.find(tcpConnection).get());</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">async handling in scala and java examples.</div>
-<ul>
-  <li>
-  <p><strong>Scala:</strong> <code>async</code> marks a block of asynchronous code and allows to <code>await</code> the computation till the Future is complete.  For more info, please refer: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></li>
-  <li>
-  <p><strong>Java non-blocking example:</strong> The code snippets use <code>CompletiableFuture</code> and it&rsquo;s <code>thenAsync</code>, <code>thenApply</code> methods. This style allows to compose multiple Futures and not block the calling thread till Futures are complete. </p></li>
-  <li>
-  <p><strong>Java blocking example:</strong> The code snippets use <code>CompletableFuture</code> using <code>get</code> blocking call. This style blocks the calling thread till the Future is complete.</p></li>
-</ul></div>
-<h2><a href="#tracking" name="tracking" class="anchor"><span class="anchor-link"></span></a>Tracking</h2>
-<p>The lifecycle of a connection of interest can be followed using <code>track</code> API which takes a <code>Connection</code> instance as a parameter. <strong>A <code>Connection</code> need not already be registered with LocationService.</strong> It&rsquo;s alright to track connections that will be registered in future. </p>
-<p>A <code>track</code> API returns two values:<br/>* A <strong>source</strong> that will emit stream of <code>TrackingEvents</code> for the connection.<br/>* A <strong>Killswitch</strong> to turn off the stream when no longer needed. </p>
-<p>Akka stream API provides many building blocks to process this stream such as Flow and Sink. In example, Sink is used to print each incoming <code>TrackingEvent</code>.</p>
-<p>Consumer can shut down the stream using Killswitch.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val (killSwitch, doneF) = locationService.track(tcpConnection).toMat(Sink.foreach(println))(Keep.both).run()
-
-Thread.sleep(200)
-
-async {
-  val tcpRegistrationResult = await(locationService.register(tcpRegistration))
-  await(locationService.register(httpRegistration))
-
-  Thread.sleep(200)
-
-  await(tcpRegistrationResult.unregister())
-  await(locationService.unregister(httpConnection))
-
-  Thread.sleep(200)
-  killSwitch.shutdown()
+// resolve connection to LocationServiceExampleComponent
+// [start LocationServiceExampleComponent after this command but before timeout]
+println(s&quot;Attempting to resolve $exampleConnection with a wait of $waitForResolveLimit ...&quot;)
+private val resolveResult = Await.result(locationService.resolve(exampleConnection, waitForResolveLimit), waitForResolveLimit + timeout)
+if (resolveResult.isEmpty) {
+  println(s&quot;Timeout waiting for location $exampleConnection to resolve.&quot;)
+} else {
+  println(s&quot;Resolve result: ${locationInfoToString(resolveResult.get)}&quot;)
 }
 
-Await.result(doneF, 5.seconds)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">Pair&lt;KillSwitch, CompletionStage&lt;Done&gt;&gt; stream = locationService.track(tcpConnection).toMat(Sink.foreach(System.out::println), Keep.both()).run(mat);
+// Output should be:
+//    Attempting to resolve AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) with a wait of 30 seconds ...
 
-Thread.sleep(200);
+// If you then start the LocationServiceExampleComponentApp,
+// Output should be:
+//    Resolve result: LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
 
-CompletableFuture&lt;Void&gt; registrationFuture = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
-    return locationService.register(httpRegistration).thenApply(httpRegistrationResult -&gt; {
-        return null;
-    });
-});
-registrationFuture.get();
-
-Thread.sleep(200);
-
-CompletableFuture&lt;Object&gt; unRegistrationFuture = locationService.unregister(tcpConnection).thenCompose(uResult1 -&gt; {
-    return locationService.unregister(httpConnection).thenApply(uResult -&gt; {
-        return null;
-    });
-});
-unRegistrationFuture.toCompletableFuture().get();
-
-Thread.sleep(400);
-stream.first().shutdown();</code></pre></dd>
+// If not,
+// Output should be:
+//    Timeout waiting for location AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) to resolve.</code></pre></dd>
   <dt>JavaBlocking</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">Pair&lt;KillSwitch, CompletionStage&lt;Done&gt;&gt; stream = locationService.track(tcpConnection).toMat(Sink.foreach(System.out::println), Keep.both()).run(mat);
+  <pre class="prettyprint"><code class="language-java">// find connection to LocationServiceExampleComponent in location service
+// [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 
-Thread.sleep(200);
+System.out.println(&quot;Attempting to find connection &quot; + exampleConnection + &quot;...&quot;);
+Optional&lt;Location&gt; findResult = locationService.find(exampleConnection).get();
+if (findResult.isPresent()) {
+    System.out.println(&quot;Find result: &quot; + connectionInfo(findResult.get().connection()));
+} else {
+    System.out.println(&quot;Find result: None&quot;);
+}
+// Output should be:
+//    Attempting to find connection AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) ...
+//    Find result: None
 
-IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).get();
-IRegistrationResult httpRegistrationResult = locationService.register(httpRegistration).get();
-
-Thread.sleep(200);
-
-tcpRegistrationResult.unregister().get();
-locationService.unregister(httpConnection).get();
-
-Thread.sleep(200);
-stream.first().shutdown();</code></pre></dd>
-</dl>
-<h2><a href="#subscribing" name="subscribing" class="anchor"><span class="anchor-link"></span></a>Subscribing</h2>
-<p>The <code>subscribe</code> API allows the caller to track a connetion and receive the TrackingEvent notifications via a callback. </p>
-<p>The API expects following parameters :<br/>* An existing connection or a connection to be registered in future.<br/>* A callback that implements <code>Consumer</code>, receives TrackEvent as parameter. </p>
-<p>In return it gives a Killswitch that can be used to turn off the event notifications and release the supplied callback, if required.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val hostname = new Networks().hostname()
-
-//Test probe actor to receive the TrackingEvent notifications
-val probeActorRef = TestProbe()
-
-val switch = locationService.subscribe(tcpConnection, trackingEvent =&gt; probeActorRef.ref ! trackingEvent)
-
-val assertionF = async {
-  await(locationService.register(tcpRegistration))
-  probeActorRef.expectMsg(LocationUpdated(tcpRegistration.location(hostname)))
-
-  await(locationService.unregister(tcpConnection))
-  probeActorRef.expectMsg(LocationRemoved(tcpRegistration.connection))
-
-  //shutdown the notification stream, should no longer receive any notifications
-  switch.shutdown()
-
-  await(locationService.register(tcpRegistration))
-  probeActorRef.expectNoMsg()
+// resolve connection to LocationServiceExampleComponent
+// [start LocationServiceExampleComponent after this command but before timeout]
+FiniteDuration waitForResolveLimit = new FiniteDuration(30, TimeUnit.SECONDS);
+System.out.println(&quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;);
+Optional&lt;Location&gt; resolveResult = locationService.resolve(exampleConnection, waitForResolveLimit).get();
+if (resolveResult.isPresent()) {
+    System.out.println(&quot;Resolve result: &quot; + connectionInfo(resolveResult.get().connection()));
+} else {
+    System.out.println(&quot;Timeout waiting for location &quot; + exampleConnection + &quot; to resolve.&quot;);
 }
 
-Await.result(assertionF, 10.seconds)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//Test probe actor to receive the TrackingEvent notifications
-TestProbe probe = new TestProbe(actorSystem);
+// Output should be:
+//    Attempting to resolve AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) with a wait of 30 seconds ...
 
-KillSwitch killSwitch = locationService.subscribe(tcpRegistration.connection(), new Consumer&lt;TrackingEvent&gt;() {
-    @Override
-    public void accept(TrackingEvent trackingEvent) {
-        probe.ref().tell(trackingEvent, ActorRef.noSender());
-    }
-});
+// If you then start the LocationServiceExampleComponentApp,
+// Output should be:
+//    Resolve result: LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
 
-locationService.register(tcpRegistration).toCompletableFuture().get();
-probe.expectMsg(new LocationUpdated(tcpRegistration.location(new Networks().hostname())));
-
-locationService.unregister(tcpConnection).toCompletableFuture().get();
-probe.expectMsg(new LocationRemoved(tcpRegistration.connection()));
-
-//shutdown the notification stream, should no longer receive any notifications
-killSwitch.shutdown();
-probe.expectNoMsg();</code></pre></dd>
+// If not,
+// Output should be:
+//    Timeout waiting for location AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) to resolve.</code></pre></dd>
 </dl>
 <h2><a href="#filtering" name="filtering" class="anchor"><span class="anchor-link"></span></a>Filtering</h2>
 <p>The <code>list</code> API and it&rsquo;s variants offer means to inquire about available connections with LocationService. The <strong>parameter-less</strong> <code>list</code> returns all available connections</p>
@@ -423,101 +323,213 @@ probe.expectNoMsg();</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val assertionF: Future[Assertion] = async {
-  val tcpRegistrationResult  = await(locationService.register(tcpRegistration))
-  val httpRegistrationResult = await(locationService.register(httpRegistration))
-  val akkaRegistrationResult = await(locationService.register(akkaRegistration))
+  <pre class="prettyprint"><code class="language-scala">// list connections in location service
+private val connectionList = Await.result(locationService.list, timeout)
+println(&quot;All Registered Connections:&quot;)
+connectionList.foreach(c =&gt; println(s&quot;--- ${locationInfoToString(c)}&quot;))
 
-  await(locationService.list).toSet shouldBe Set(tcpRegistrationResult.location, httpRegistrationResult.location,
-    akkaRegistrationResult.location)
-  await(locationService.list(ConnectionType.AkkaType)).toSet shouldBe Set(akkaRegistrationResult.location)
-  await(locationService.list(ComponentType.Service)).toSet shouldBe Set(tcpRegistrationResult.location,
-    httpRegistrationResult.location)
-  await(locationService.list(new Networks().hostname())).toSet shouldBe Set(tcpRegistrationResult.location,
-    httpRegistrationResult.location, akkaRegistrationResult.location)
-}
+// Output should be:
+//    All Registered Connections:
+//    --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
+//    --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
+//    --- redis-service-tcp, component type=Service, connection type=TcpType
+//    --- configuration-service-http, component type=Service, connection type=HttpType
+//    --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
 
-Await.result(assertionF, 5.seconds)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//expected list of locations
-ArrayList&lt;Location&gt; expectedLocations1 = new ArrayList&lt;&gt;();
-expectedLocations1.add(tcpRegistration.location(new Networks().hostname()));
-expectedLocations1.add(httpRegistration.location(new Networks().hostname()));
-expectedLocations1.add(akkaRegistration.location(new Networks().hostname()));
+// filter connections based on connection type
+private val componentList = Await.result(locationService.list(ComponentType.Assembly), timeout)
+println(&quot;Registered Assemblies:&quot;)
+componentList.foreach(c =&gt; println(s&quot;--- ${locationInfoToString(c)}&quot;))
 
-//Filter by type
-ArrayList&lt;Location&gt; expectedLocations2 = new ArrayList&lt;&gt;();
-expectedLocations2.add(akkaRegistration.location(new Networks().hostname()));
+// Output should be:
+//    Registered Assemblies:
+//    --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
+//    --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
 
-//Filter by service
-ArrayList&lt;Location&gt; expectedLocations3 = new ArrayList&lt;&gt;();
-expectedLocations3.add(tcpRegistration.location(new Networks().hostname()));
-expectedLocations3.add(httpRegistration.location(new Networks().hostname()));
+// filter connections based on component type
+private val akkaList = Await.result(locationService.list(ConnectionType.AkkaType), timeout)
+println(&quot;Registered Akka connections:&quot;)
+akkaList.foreach(c =&gt; println(s&quot;--- ${locationInfoToString(c)}&quot;))
 
-//Filter by hostname
-ArrayList&lt;Location&gt; expectedLocations4 = new ArrayList&lt;&gt;();
-expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
-expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
-expectedLocations4.add(akkaRegistration.location(new Networks().hostname()));
-
-CompletableFuture&lt;Void&gt; completableFuture = locationService.register(tcpRegistration).thenCompose(tcpRegistrationResult -&gt; {
-    return locationService.register(httpRegistration).thenCompose(httpRegistrationResult -&gt; {
-        return locationService.register(akkaRegistration).thenCompose(akkaRegistrationResult -&gt; {
-            return locationService.list().thenCompose(locations1 -&gt; {
-                Assert.assertEquals(expectedLocations1, locations1);
-                return locationService.list(JConnectionType.AkkaType).thenCompose(locations2 -&gt; {
-                    Assert.assertEquals(expectedLocations2, locations2);
-                    return locationService.list(JComponentType.Service).thenCompose(locations3 -&gt; {
-                        Assert.assertEquals(expectedLocations3, locations3);
-                        return locationService.list(new Networks().hostname()).thenApply(locations4 -&gt; {
-                            Assert.assertEquals(expectedLocations4, locations4);
-                            return null;
-                        });
-                    });
-                });
-            });
-        });
-    });
-});
-
-completableFuture.get();</code></pre></dd>
+// Output should be:
+//    Registered Akka connections:
+//    --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
+//    --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
+//    --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+</code></pre></dd>
   <dt>JavaBlocking</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">IRegistrationResult tcpRegistrationResult = locationService.register(tcpRegistration).get();
-IRegistrationResult httpRegistrationResult = locationService.register(httpRegistration).get();
-IRegistrationResult akkaRegistrationResult = locationService.register(akkaRegistration).get();
+  <pre class="prettyprint"><code class="language-java">// list connections in location service
+List&lt;Location&gt; connectionList = locationService.list().get();
+System.out.println(&quot;All Registered Connections:&quot;);
+for (Location loc: connectionList) {
+    System.out.println(&quot;--- &quot; + connectionInfo(loc.connection()));
+}
 
-//expected list of locations
-ArrayList&lt;Location&gt; expectedLocations1 = new ArrayList&lt;&gt;();
-expectedLocations1.add(tcpRegistration.location(new Networks().hostname()));
-expectedLocations1.add(httpRegistration.location(new Networks().hostname()));
-expectedLocations1.add(akkaRegistration.location(new Networks().hostname()));
-Assert.assertEquals(expectedLocations1, locationService.list().get());
+// Output should be:
+//    All Registered Connections:
+//    --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
+//    --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
+//    --- redis-service-tcp, component type=Service, connection type=TcpType
+//    --- configuration-service-http, component type=Service, connection type=HttpType
+//    --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
 
-//Filter by type
-ArrayList&lt;Location&gt; expectedLocations2 = new ArrayList&lt;&gt;();
-expectedLocations2.add(akkaRegistration.location(new Networks().hostname()));
-Assert.assertEquals(expectedLocations2, locationService.list(JConnectionType.AkkaType).get());
 
-//Filter by service
-ArrayList&lt;Location&gt; expectedLocations3 = new ArrayList&lt;&gt;();
-expectedLocations3.add(tcpRegistration.location(new Networks().hostname()));
-expectedLocations3.add(httpRegistration.location(new Networks().hostname()));
-Assert.assertEquals(expectedLocations3, locationService.list(JComponentType.Service).get());
+// filter connections based on connection type
+List&lt;Location&gt; componentList = locationService.list(JComponentType.Assembly).get();
+System.out.println(&quot;Registered Assemblies:&quot;);
+for (Location loc: componentList) {
+    System.out.println(&quot;--- &quot; + connectionInfo(loc.connection()));
+}
 
-//Filter by hostname
-ArrayList&lt;Location&gt; expectedLocations4 = new ArrayList&lt;&gt;();
-expectedLocations4.add(tcpRegistration.location(new Networks().hostname()));
-expectedLocations4.add(httpRegistration.location(new Networks().hostname()));
-expectedLocations4.add(akkaRegistration.location(new Networks().hostname()));
-Assert.assertEquals(expectedLocations4, locationService.list(new Networks().hostname()).get());</code></pre></dd>
+// Output should be:
+//    Registered Assemblies:
+//    --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
+//    --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+
+// filter connections based on component type
+List&lt;Location&gt; akkaList = locationService.list(JConnectionType.AkkaType).get();
+System.out.println(&quot;Registered Akka connections:&quot;);
+for (Location loc : akkaList) {
+    System.out.println(&quot;--- &quot; + connectionInfo(loc.connection()));
+}
+
+// Output should be:
+//    Registered Akka connections:
+//    --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
+//    --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
+//    --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+</code></pre></dd>
+</dl>
+<h2><a href="#unregistering" name="unregistering" class="anchor"><span class="anchor-link"></span></a>Unregistering</h2>
+<p>One of the ways to <code>unregister</code> a service is by calling unregister on registration result received from <code>register</code> API.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">httpRegResult.unregister()
+hcdRegResult.unregister()
+assemblyRegResult.unregister()</code></pre></dd>
+  <dt>JavaBlocking</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">httpRegResult.unregister();
+hcdRegResult.unregister();
+assemblyRegResult.unregister();</code></pre></dd>
+</dl>
+<h2><a href="#tracking-and-subscribing" name="tracking-and-subscribing" class="anchor"><span class="anchor-link"></span></a>Tracking and Subscribing</h2>
+<p>The lifecycle of a connection of interest can be followed using either the <code>track</code> API or the <code>subscribe</code> API. </p>
+<p>These methods take a <code>Connection</code> instance as a parameter. <strong>A <code>Connection</code> need not already be registered with LocationService.</strong> It&rsquo;s alright to track connections that will be registered in future. </p>
+<p>A <code>track</code> API returns two values:<br/>* A <strong>source</strong> that will emit stream of <code>TrackingEvents</code> for the connection.<br/>* A <strong>Killswitch</strong> to turn off the stream when no longer needed. </p>
+<p>Akka stream API provides many building blocks to process this stream such as Flow and Sink. In example, Sink is used to print each incoming <code>TrackingEvent</code>.</p>
+<p>Consumer can shut down the stream using Killswitch.</p>
+<p>The <code>subscribe</code> API allows the caller to track a connetion and receive the TrackingEvent notifications via a callback. </p>
+<p>The API expects following parameters :<br/>* An existing connection or a connection to be registered in future.<br/>* A callback that implements <code>Consumer</code>, receives TrackEvent as parameter. </p>
+<p>In return it gives a Killswitch that can be used to turn off the event notifications and release the supplied callback, if required.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">// the following two methods are examples of two ways to track a connection.
+// both are implemented but only one is really needed.
+
+
+// Method1: track connection to LocationServiceExampleComponent
+// Calls track method for example connection and forwards location messages to this actor
+//
+println(s&quot;Starting to track $exampleConnection&quot;)
+locationService.track(exampleConnection).to(Sink.actorRef(self, AllDone)).run()
+//track returns a Killswitch, that can be used to turn off notifications arbitarily
+//in this case track a connection for 5 seconds, after that schedule switching off the stream
+val killswitch = locationService.track(httpConnection).toMat(Sink.foreach(println))(Keep.left).run()
+context.system.scheduler.scheduleOnce(5.seconds) {
+  killswitch.shutdown()
+}
+
+// Method2: subscribe to LocationServiceExampleComponent events
+println(s&quot;Starting a subscription to $exampleConnection&quot;)
+locationService.subscribe(exampleConnection, trackingEvent =&gt; {
+  // the following println is to distinguish subscription events from tracking events
+  println(&quot;subscription event&quot;)
+  self ! trackingEvent
+})
+
+// [tracking shows component unregister and re-register]
+
+
+
+// Output should be:
+//    Starting to track AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+//    Starting a subscription to AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+//    subscription event
+//    Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+//    Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+
+// If you now stop the LocationServiceExampleComponentApp,
+// Output should be:
+//    subscription event
+//    Location removed AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+//    Location removed AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+
+// If you start the LocationServiceExampleComponentApp again,
+// Output should be:
+//    Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+//    subscription event
+//    Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+</code></pre></dd>
+  <dt>JavaBlocking</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">// the following two methods are examples of two ways to track a connection.
+// both are implemented but only one is really needed.
+
+// track connection to LocationServiceExampleComponent
+// Calls track method for example connection and forwards location messages to this actor
+Materializer mat = ActorMaterializer.create(getContext());
+System.out.println(&quot;Starting to track &quot; + exampleConnection);
+locationService.track(exampleConnection).toMat(Sink.actorRef(getSelf(), AllDone.class), Keep.both()).run(mat);
+
+//track returns a Killswitch, that can be used to turn off notifications arbitarily
+//in this case track a connection for 5 seconds, after that schedule switching off the stream
+Pair pair = (Pair)locationService.track(exampleConnection).toMat(Sink.ignore(), Keep.both()).run(mat);
+context().system().scheduler().scheduleOnce(Duration.create(5, TimeUnit.SECONDS), new Runnable() {
+    @Override
+    public void run() {
+        ((KillSwitch)pair.first()).shutdown();
+    }
+}, context().system().dispatcher());
+
+// subscribe to LocationServiceExampleComponent events
+System.out.println(&quot;Starting a subscription to &quot; + exampleConnection);
+locationService.subscribe(exampleConnection, trackingEvent -&gt; {
+    System.out.println(&quot;subscription event&quot;);
+    getSelf().tell(trackingEvent, ActorRef.noSender());
+});
+
+// [tracking shows component unregister and re-register]
+
+
+
+// Output should be:
+//    Starting to track AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+//    Starting a subscription to AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+//    subscription event
+//    Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+//    Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+
+// If you now stop the LocationServiceExampleComponentApp,
+// Output should be:
+//    subscription event
+//    Location removed AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+//    Location removed AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+
+// If you start the LocationServiceExampleComponentApp again,
+// Output should be:
+//    Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+//    subscription event
+//    Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-location/src/test/scala/csw/services/location/scaladsl/demo/LocationServiceDemoExample.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-location/src/test/java/csw/services/location/javadsl/demo/JLocationServiceNonBlockingDemoExample.java">Java Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-location/src/test/java/csw/services/location/javadsl/demo/JLocationServiceBlockingDemoExample.java">JavaBlocking Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/services/examples/LocationServiceExampleClientApp.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/examples/JLocationServiceExampleClientApp.java">JavaBlocking Example</a></li>
 </ul>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/location.md">here</a>.
@@ -540,10 +552,10 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="../services/location.html#shutdown-locationservice">Shutdown LocationService</a></li>
     <li><a href="../services/location.html#creating-components-connections-and-registrations">Creating components, connections and registrations</a></li>
     <li><a href="../services/location.html#creating-actorref-for-registration">Creating ActorRef for registration</a></li>
-    <li><a href="../services/location.html#basic-operations">Basic operations</a></li>
-    <li><a href="../services/location.html#tracking">Tracking</a></li>
-    <li><a href="../services/location.html#subscribing">Subscribing</a></li>
+    <li><a href="../services/location.html#resolving-connections">Resolving Connections</a></li>
     <li><a href="../services/location.html#filtering">Filtering</a></li>
+    <li><a href="../services/location.html#unregistering">Unregistering</a></li>
+    <li><a href="../services/location.html#tracking-and-subscribing">Tracking and Subscribing</a></li>
     <li><a href="../services/location.html#source-code-for-examples">Source code for examples</a></li>
   </ul></li>
 </ul>
