@@ -190,24 +190,33 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <pre class="prettyprint"><code class="language-scala"><br/>// add some dummy registrations for illustrative purposes
 
 // dummy http connection
-private val httpPort = 8080
-private val httpConnection   = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
-private val httpRegistration = HttpRegistration(httpConnection, httpPort, &quot;path123&quot;)
-private val httpRegResult = Await.result(locationService.register(httpRegistration), timeout)
+val httpPort = 8080
+val httpConnection = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
+val httpRegistration = HttpRegistration(httpConnection, httpPort, &quot;path123&quot;)
+val httpRegResultF = async {
+  await(locationService.register(httpRegistration))
+}
+val httpRegResult = Await.result(httpRegResultF, 2.seconds)
 
 // dummy HCD connection
-private val hcdConnection   = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
-private val hcdRegistration = AkkaRegistration(hcdConnection, context.actorOf(Props(new Actor {
+val hcdConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
+val hcdRegistration = AkkaRegistration(hcdConnection, context.actorOf(Props(new Actor {
   override def receive: Receive = {
-    case &quot;print&quot; =&gt; println(&quot;hello world&quot;)
+    case &quot;print&quot; =&gt; log.info(&quot;hello world&quot;)
   }
-}), name=&quot;my-actor-1&quot;))
-private val hcdRegResult = Await.result(locationService.register(hcdRegistration), timeout)
+}), name = &quot;my-actor-1&quot;))
+val hcdRegResultF = async {
+  await(locationService.register(hcdRegistration))
+}
+val hcdRegResult = Await.result(hcdRegResultF, 2.seconds)
 
-//. register the client &quot;assembly&quot; created in this example
-private val assemblyConnection   = AkkaConnection(ComponentId(&quot;assembly1&quot;, ComponentType.Assembly))
-private val assemblyRegistration = AkkaRegistration(assemblyConnection, self)
-private val assemblyRegResult = Await.result(locationService.register(assemblyRegistration), timeout)</code></pre></dd>
+//register the client &quot;assembly&quot; created in this example
+val assemblyConnection = AkkaConnection(ComponentId(&quot;assembly1&quot;, ComponentType.Assembly))
+val assemblyRegistration = AkkaRegistration(assemblyConnection, self)
+val assemblyRegResultF = async {
+  await(locationService.register(assemblyRegistration))
+}
+val assemblyRegResult = Await.result(assemblyRegResultF, 2.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// dummy http connection
@@ -256,20 +265,24 @@ assemblyRegResult = locationService.register(assemblyRegistration).get();</code>
 // [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 private val exampleConnection = LocationServiceExampleComponent.connection
 
-println(s&quot;Attempting to find connection $exampleConnection ...&quot;)
-private val findResult = Await.result(locationService.find(exampleConnection), timeout)
-println(s&quot;Find result: $findResult&quot;)</code></pre></dd>
+log.info(s&quot;Attempting to find connection $exampleConnection ...&quot;)
+val findResultF = async {
+  await(locationService.find(exampleConnection))
+}
+val findResult = Await.result(findResultF, timeout)
+
+log.info(s&quot;Find result: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// find connection to LocationServiceExampleComponent in location service
 // [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 
-System.out.println(&quot;Attempting to find connection &quot; + exampleConnection + &quot;...&quot;);
+jLogger.info(() -&gt; &quot;Attempting to find connection &quot; + exampleConnection + &quot;...&quot;);
 Optional&lt;Location&gt; findResult = locationService.find(exampleConnection).get();
 if (findResult.isPresent()) {
-    System.out.println(&quot;Find result: &quot; + connectionInfo(findResult.get().connection()));
+    jLogger.info(() -&gt; &quot;Find result: &quot; + connectionInfo(findResult.get().connection()));
 } else {
-    System.out.println(&quot;Find result: None&quot;);
+    jLogger.info(() -&gt; &quot;Find result: None&quot;);
 }</code></pre></dd>
 </dl>
 <p>The output for this find operation when the compoment being search for is not registered should be:</p>
@@ -282,24 +295,27 @@ Find result: None
   <dd>
   <pre class="prettyprint"><code class="language-scala">// resolve connection to LocationServiceExampleComponent
 // [start LocationServiceExampleComponent after this command but before timeout]
-println(s&quot;Attempting to resolve $exampleConnection with a wait of $waitForResolveLimit ...&quot;)
-private val resolveResult = Await.result(locationService.resolve(exampleConnection, waitForResolveLimit), waitForResolveLimit + timeout)
-if (resolveResult.isEmpty) {
-  println(s&quot;Timeout waiting for location $exampleConnection to resolve.&quot;)
-} else {
-  println(s&quot;Resolve result: ${locationInfoToString(resolveResult.get)}&quot;)
+log.info(s&quot;Attempting to resolve $exampleConnection with a wait of $waitForResolveLimit ...&quot;)
+
+val resolveResultF = async {
+  await(locationService.resolve(exampleConnection, waitForResolveLimit))
+}
+private val resolveResult = Await.result(resolveResultF, waitForResolveLimit + timeout)
+resolveResult match {
+  case Some(result) ⇒ log.info(s&quot;Resolve result: ${locationInfoToString(result)}&quot;)
+  case None ⇒ log.info(s&quot;Timeout waiting for location $exampleConnection to resolve.&quot;)
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// resolve connection to LocationServiceExampleComponent
 // [start LocationServiceExampleComponent after this command but before timeout]
 FiniteDuration waitForResolveLimit = new FiniteDuration(30, TimeUnit.SECONDS);
-System.out.println(&quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;);
+jLogger.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;);
 Optional&lt;Location&gt; resolveResult = locationService.resolve(exampleConnection, waitForResolveLimit).get();
 if (resolveResult.isPresent()) {
-    System.out.println(&quot;Resolve result: &quot; + connectionInfo(resolveResult.get().connection()));
+    jLogger.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.get().connection()));
 } else {
-    System.out.println(&quot;Timeout waiting for location &quot; + exampleConnection + &quot; to resolve.&quot;);
+    jLogger.info(() -&gt; &quot;Timeout waiting for location &quot; + exampleConnection + &quot; to resolve.&quot;);
 }</code></pre></dd>
 </dl>
 <p>The output should be:</p>
@@ -317,16 +333,19 @@ if (resolveResult.isPresent()) {
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// list connections in location service
-private val connectionList = Await.result(locationService.list, timeout)
-println(&quot;All Registered Connections:&quot;)
-connectionList.foreach(c =&gt; println(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
+val listF = async {
+  await(locationService.list)
+}
+private val connectionList = Await.result(listF, timeout)
+log.info(&quot;All Registered Connections:&quot;)
+connectionList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// list connections in location service
 List&lt;Location&gt; connectionList = locationService.list().get();
-System.out.println(&quot;All Registered Connections:&quot;);
+jLogger.info(() -&gt; &quot;All Registered Connections:&quot;);
 for (Location loc: connectionList) {
-    System.out.println(&quot;--- &quot; + connectionInfo(loc.connection()));
+    jLogger.info(() -&gt; &quot;--- &quot; + connectionInfo(loc.connection()));
 }</code></pre></dd>
 </dl>
 <p>The output should be:</p>
@@ -343,16 +362,19 @@ for (Location loc: connectionList) {
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// filter connections based on component type
-private val componentList = Await.result(locationService.list(ComponentType.Assembly), timeout)
-println(&quot;Registered Assemblies:&quot;)
-componentList.foreach(c =&gt; println(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
+val filterListF = async {
+  await(locationService.list(ComponentType.Assembly))
+}
+private val componentList = Await.result(filterListF, timeout)
+log.info(&quot;Registered Assemblies:&quot;)
+componentList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// filter connections based on component type
 List&lt;Location&gt; componentList = locationService.list(JComponentType.Assembly).get();
-System.out.println(&quot;Registered Assemblies:&quot;);
+jLogger.info(() -&gt; &quot;Registered Assemblies:&quot;);
 for (Location loc: componentList) {
-    System.out.println(&quot;--- &quot; + connectionInfo(loc.connection()));
+    jLogger.info(() -&gt; &quot;--- &quot; + connectionInfo(loc.connection()));
 }</code></pre></dd>
 </dl>
 <p>The output should be:</p>
@@ -365,16 +387,19 @@ for (Location loc: componentList) {
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// filter connections based on connection type
-private val akkaList = Await.result(locationService.list(ConnectionType.AkkaType), timeout)
-println(&quot;Registered Akka connections:&quot;)
-akkaList.foreach(c =&gt; println(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
+val akkaListF = async {
+ await(locationService.list(ConnectionType.AkkaType))
+}
+private val akkaList = Await.result(akkaListF, timeout)
+log.info(&quot;Registered Akka connections:&quot;)
+akkaList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// filter connections based on connection type
 List&lt;Location&gt; akkaList = locationService.list(JConnectionType.AkkaType).get();
-System.out.println(&quot;Registered Akka connections:&quot;);
+jLogger.info(() -&gt; &quot;Registered Akka connections:&quot;);
 for (Location loc : akkaList) {
-    System.out.println(&quot;--- &quot; + connectionInfo(loc.connection()));
+    jLogger.info(() -&gt; &quot;--- &quot; + connectionInfo(loc.connection()));
 }</code></pre></dd>
 </dl>
 <p>The output should be:</p>
@@ -402,7 +427,7 @@ for (Location loc : akkaList) {
 // Method1: track connection to LocationServiceExampleComponent
 // Calls track method for example connection and forwards location messages to this actor
 //
-println(s&quot;Starting to track $exampleConnection&quot;)
+log.info(s&quot;Starting to track $exampleConnection&quot;)
 locationService.track(exampleConnection).to(Sink.actorRef(self, AllDone)).run()
 //track returns a Killswitch, that can be used to turn off notifications arbitarily
 //in this case track a connection for 5 seconds, after that schedule switching off the stream
@@ -412,10 +437,10 @@ context.system.scheduler.scheduleOnce(5.seconds) {
 }
 
 // Method2: subscribe to LocationServiceExampleComponent events
-println(s&quot;Starting a subscription to $exampleConnection&quot;)
+log.info(s&quot;Starting a subscription to $exampleConnection&quot;)
 locationService.subscribe(exampleConnection, trackingEvent =&gt; {
   // the following println is to distinguish subscription events from tracking events
-  println(&quot;subscription event&quot;)
+  log.info(&quot;subscription event&quot;)
   self ! trackingEvent
 })</code></pre></dd>
   <dt>Java</dt>
@@ -426,7 +451,7 @@ locationService.subscribe(exampleConnection, trackingEvent =&gt; {
 // track connection to LocationServiceExampleComponent
 // Calls track method for example connection and forwards location messages to this actor
 Materializer mat = ActorMaterializer.create(getContext());
-System.out.println(&quot;Starting to track &quot; + exampleConnection);
+jLogger.info(() -&gt; &quot;Starting to track &quot; + exampleConnection);
 locationService.track(exampleConnection).toMat(Sink.actorRef(getSelf(), AllDone.class), Keep.both()).run(mat);
 
 //track returns a Killswitch, that can be used to turn off notifications arbitarily
@@ -440,9 +465,9 @@ context().system().scheduler().scheduleOnce(Duration.create(5, TimeUnit.SECONDS)
 }, context().system().dispatcher());
 
 // subscribe to LocationServiceExampleComponent events
-System.out.println(&quot;Starting a subscription to &quot; + exampleConnection);
+jLogger.info(() -&gt; &quot;Starting a subscription to &quot; + exampleConnection);
 locationService.subscribe(exampleConnection, trackingEvent -&gt; {
-    System.out.println(&quot;subscription event&quot;);
+    jLogger.info(() -&gt; &quot;subscription event&quot;);
     getSelf().tell(trackingEvent, ActorRef.noSender());
 });</code></pre></dd>
 </dl>
@@ -469,9 +494,12 @@ Location updated LocationServiceExampleComponent-assembly-akka, component type=A
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">httpRegResult.unregister()
-hcdRegResult.unregister()
-assemblyRegResult.unregister()</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">val unregisterF = async {
+  httpRegResult.unregister()
+  hcdRegResult.unregister()
+  assemblyRegResult.unregister()
+}
+Await.result(unregisterF, 5.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">httpRegResult.unregister();
@@ -480,8 +508,8 @@ assemblyRegResult.unregister();</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/services/examples/LocationServiceExampleClientApp.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/java/csw/services/examples/JLocationServiceExampleClientApp.java">JavaBlocking Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/services/location/LocationServiceExampleClientApp.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/java/csw/services/location/JLocationServiceExampleClient.java">JavaBlocking Example</a></li>
 </ul>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/location.md">here</a>.
