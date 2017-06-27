@@ -191,10 +191,10 @@ IConfigService adminApi = JConfigClientFactory.adminApi(actorRuntime.actorSystem
   <pre class="prettyprint"><code class="language-scala">//construct the path
 val filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;)
 
-// create file using admin API
-adminApi.create(filePath, ConfigData.fromString(defaultStrConf), annex = false, &quot;First commit&quot;).await
-
 val doneF = async {
+  // create file using admin API
+  await(adminApi.create(filePath, ConfigData.fromString(defaultStrConf), annex = false, &quot;First commit&quot;))
+
   //check if file exists with config service
   val exists: Boolean = await(clientApi.exists(filePath))
   exists shouldBe true
@@ -306,9 +306,9 @@ Assert.assertEquals(id2, new ConfigId(&quot;3&quot;));</code></pre></dd>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val futU = async {
   val destPath = Paths.get(&quot;/hcd/trombone/debug.bin&quot;)
-  val newId = adminApi
-    .update(destPath, ConfigData.fromString(defaultStrConf), comment = &quot;debug statements&quot;)
-    .await
+  val newId = await(
+      adminApi
+        .update(destPath, ConfigData.fromString(defaultStrConf), comment = &quot;debug statements&quot;))
 
   //validate the returned id
   newId shouldEqual ConfigId(7)
@@ -331,7 +331,7 @@ Assert.assertEquals(newId, new ConfigId(&quot;5&quot;));</code></pre></dd>
   val unwantedFilePath = Paths.get(&quot;/hcd/trombone/debug.bin&quot;)
   await(adminApi.delete(unwantedFilePath, &quot;no longer needed&quot;))
   //validates the file is deleted
-  adminApi.getLatest(unwantedFilePath).await shouldBe None
+  await(adminApi.getLatest(unwantedFilePath)) shouldBe None
 }
 Await.result(futD, 2.seconds)</code></pre></dd>
   <dt>Java</dt>
