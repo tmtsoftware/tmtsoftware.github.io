@@ -47,6 +47,7 @@
   <ul>
     <li><a href="../services/location.html" class="active page">Location service</a></li>
     <li><a href="../services/config.html" class="page">Configuration service</a></li>
+    <li><a href="../services/logging.html" class="page">Logging service</a></li>
   </ul></li>
 </ul>
 </div>
@@ -96,6 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <ul>
     <li><a href="../services/location.html" class="active page">Location service</a></li>
     <li><a href="../services/config.html" class="page">Configuration service</a></li>
+    <li><a href="../services/logging.html" class="page">Logging service</a></li>
   </ul></li>
 </ul>
 </div>
@@ -246,7 +248,7 @@ assemblyRegResult = locationService.register(assemblyRegistration).get();</code>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">implicit val system = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">implicit val system: ActorSystem = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">ActorSystem actorSystem = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;);</code></pre></dd>
@@ -265,7 +267,7 @@ assemblyRegResult = locationService.register(assemblyRegistration).get();</code>
 // [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 private val exampleConnection = LocationServiceExampleComponent.connection
 
-log.info(s&quot;Attempting to find connection $exampleConnection ...&quot;)
+log.info(Map(&quot;@msg&quot; → &quot;Attempting to find connection&quot;, &quot;exampleConnection&quot; → exampleConnection.toString))
 val findResultF = async {
   await(locationService.find(exampleConnection))
 }
@@ -277,7 +279,13 @@ log.info(s&quot;Find result: $findResult&quot;)</code></pre></dd>
   <pre class="prettyprint"><code class="language-java">// find connection to LocationServiceExampleComponent in location service
 // [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 
-jLogger.info(() -&gt; &quot;Attempting to find connection &quot; + exampleConnection + &quot;...&quot;);
+jLogger.info(() -&gt; {
+    HashMap&lt;String, String&gt; map = new HashMap&lt;&gt;();
+    map.put(&quot;@msg&quot;, &quot;Attempting to find connection&quot;);
+    map.put(&quot;exampleConnection&quot;, exampleConnection.toString());
+    return map;
+});
+
 Optional&lt;Location&gt; findResult = locationService.find(exampleConnection).get();
 if (findResult.isPresent()) {
     jLogger.info(() -&gt; &quot;Find result: &quot; + connectionInfo(findResult.get().connection()));
