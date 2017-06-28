@@ -152,6 +152,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-conf">akka {
+  // Customised AkkaLogger to intercept akka log messages generated from akka framework code
   loggers = [csw.services.logging.compat.AkkaLogger]
   loglevel = info
   actor {
@@ -218,37 +219,37 @@ csw-logging {
   <li>TRACE</li>
 </ul>
 <p>There are separate log levels for the logging API(logLevel), Akka logging(akkaLogLevel), and Slf4J(slf4jLogLevel). The initial values of these are set in the configuration file as seen above. These can be overriden in the application.conf file.</p>
-<p>These values can also be changed dynamically by calling methods**** on the LoggingSystem class.</p>
+<p>These values can also be changed dynamically by calling methods on <code>LoggingSystem</code> class.</p>
 <h2><a href="#log-structure" name="log-structure" class="anchor"><span class="anchor-link"></span></a>Log Structure</h2>
 <p>All messages are logged by default as Json. Logs can contain the following fields. These are listed in alphabetical order (this is the order displayed by the Json pretty printer).</p>
 <ul>
-  <li>@componentName: The name of the component if present</li>
-  <li>@host: The local host name</li>
-  <li>@name: The name and version of the application being run</li>
-  <li>@severity: The message level: trace, debug, info, warn, error or fatal</li>
-  <li>actor: The path for an actor when using ActorLogging</li>
-  <li>class: The class for ClassLogging or ActorLogging</li>
-  <li>file: The file containing the log call</li>
-  <li>kind: Either slf4j or akka. Not present for logger API</li>
-  <li>line: The line where the message was logged</li>
-  <li>message: The log message</li>
-  <li>timestamp: The time the message was logged</li>
-  <li>trace: Information for any exception specified in the logging call</li>
+  <li><code>@componentName</code>: The name of the component if present</li>
+  <li><code>@host</code>: The local host name</li>
+  <li><code>@name</code>: The name and version of the application being run</li>
+  <li><code>@severity</code>: The message level: trace, debug, info, warn, error or fatal</li>
+  <li><code>actor</code>: The path for an actor when using ActorLogging</li>
+  <li><code>class</code>: The class for ClassLogging or ActorLogging</li>
+  <li><code>file</code>: The file containing the log call</li>
+  <li><code>kind</code>: Either slf4j or akka. Not present for logger API</li>
+  <li><code>line</code>: The line where the message was logged</li>
+  <li><code>message</code>: The log message</li>
+  <li><code>timestamp</code>: The time the message was logged</li>
+  <li><code>trace</code>: Information for any exception specified in the logging call</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>@host and @name will appear in log statements only if <em>fullHeaders</em> is set as true in the configuration</li>
 </ul></div>
 <h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2>
-<p>In order to start logging you need to start <code>LoggingSystem</code> as follows:</p>
+<p>In order to make logging statements appear in your program you need to start <code>LoggingSystem</code> as the first thing in your application. <code>LoggingSystem</code> should be started only once in your application. The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files for your application in it.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(&quot;foo-name&quot;, &quot;hostname&quot;, system, Seq(StdOutAppender))</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(&quot;foo-name&quot;, &quot;hostname&quot;, ActorSystem(&quot;logging-system&quot;), Seq(StdOutAppender))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">List&lt;LogAppenderBuilder&gt; appenders = Arrays.asList(JLogAppenderBuilders.StdOutAppender, JLogAppenderBuilders.FileAppender);
 
-LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;foo-name&quot;, &quot;hostname&quot;, actorSystem, appenders);</code></pre></dd>
+LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;foo-name&quot;, &quot;hostname&quot;, ActorSystem.apply(&quot;logging-system&quot;), appenders);</code></pre></dd>
 </dl>
 <h2><a href="#enable-logging" name="enable-logging" class="anchor"><span class="anchor-link"></span></a>Enable logging</h2>
 <h3><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable generic logging</h3>
@@ -319,7 +320,7 @@ public interface JExampleLogger extends JComponentLogger {
       <li>For non-actor class inherit <code>JExampleLogger</code></li>
     </ul>
   </dd>
-</dl><div class="callout note "><div class="callout-title">For java you need to get logger instance in your class </div>
+</dl><div class="callout note "><div class="callout-title">If you are writing java code you need to get logger instance in your class </div>
 <dl>
   <dt>Java</dt>
   <dd>
@@ -330,21 +331,21 @@ public interface JExampleLogger extends JComponentLogger {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">log.info(s&quot;Find result: $findResult&quot;)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; &quot;Find result: None&quot;);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; &quot;Result of the find call : None&quot;);</code></pre></dd>
 </dl>
 <p>The output of log statement will be:</p>
 <pre><code>{&quot;@componentName&quot;:&quot;examples&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.20.68:51135/user/$a&quot;,
+   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.20.68:51495/user/$a&quot;,
  &quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
  &quot;line&quot;:119,
- &quot;message&quot;:&quot;Find result: None&quot;,
- &quot;timestamp&quot;:&quot;2017-06-28T17:17:34.853000000+05:30&quot;
+ &quot;message&quot;:&quot;Result of the find call: None&quot;,
+ &quot;timestamp&quot;:&quot;2017-06-28T18:11:48.208000000+05:30&quot;
 }
 
 </code></pre>
