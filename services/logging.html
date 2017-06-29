@@ -207,7 +207,7 @@ csw-logging {
   }
 </code></pre></dd>
 </dl>
-<p>These values can be overridden directly in your reference.conf or application.conf</p>
+<p>These values can be overridden directly in your <code>reference.conf</code> or <code>application.conf</code></p>
 <h2><a href="#log-levels" name="log-levels" class="anchor"><span class="anchor-link"></span></a>Log Levels</h2>
 <p>Following Log levels are supported by csw-logging library</p>
 <ul>
@@ -225,7 +225,7 @@ csw-logging {
 <ul>
   <li><code>@componentName</code>: The name of the component if present</li>
   <li><code>@host</code>: The local host name</li>
-  <li><code>@name</code>: The name and version of the application being run</li>
+  <li><code>@name</code>: The name of the application being run</li>
   <li><code>@severity</code>: The message level: trace, debug, info, warn, error or fatal</li>
   <li><code>actor</code>: The path for an actor when using ActorLogging</li>
   <li><code>class</code>: The class for ClassLogging or ActorLogging</li>
@@ -250,6 +250,16 @@ csw-logging {
   <pre class="prettyprint"><code class="language-java">List&lt;LogAppenderBuilder&gt; appenders = Arrays.asList(JLogAppenderBuilders.StdOutAppender, JLogAppenderBuilders.FileAppender);
 
 LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;foo-name&quot;, &quot;hostname&quot;, ActorSystem.apply(&quot;logging-system&quot;), appenders);</code></pre></dd>
+</dl>
+<h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2>
+<p>Make sure you stop the <code>LoggingSystem</code> at the end of your application.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">Await.result(loggingSystem.stop, 30.seconds)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">loggingSystem.javaStop().get();</code></pre></dd>
 </dl>
 <h2><a href="#enable-logging" name="enable-logging" class="anchor"><span class="anchor-link"></span></a>Enable logging</h2>
 <h3><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable generic logging</h3>
@@ -389,6 +399,13 @@ public interface JExampleLogger extends JComponentLogger {
   <dd>
   <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
 </dl>
+<h2><a href="#garbage-collection-logging" name="garbage-collection-logging" class="anchor"><span class="anchor-link"></span></a>Garbage Collection Logging</h2>
+<p>Garbage collection events are logged to the gc log when enabled by the <code>gc</code> configuration option.</p>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/services/location/LocationServiceExampleClientApp.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/java/csw/services/location/JLocationServiceExampleClient.java">Java Example</a></li>
+</ul>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/logging.md">here</a>.
 </div>
@@ -407,8 +424,11 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="../services/logging.html#log-levels" class="header">Log Levels</a></li>
     <li><a href="../services/logging.html#log-structure" class="header">Log Structure</a></li>
     <li><a href="../services/logging.html#create-loggingsystem" class="header">Create LoggingSystem</a></li>
+    <li><a href="../services/logging.html#stop-loggingsystem" class="header">Stop LoggingSystem</a></li>
     <li><a href="../services/logging.html#enable-logging" class="header">Enable logging</a></li>
     <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
+    <li><a href="../services/logging.html#garbage-collection-logging" class="header">Garbage Collection Logging</a></li>
+    <li><a href="../services/logging.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </div>
