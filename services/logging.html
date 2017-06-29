@@ -226,6 +226,7 @@ csw-logging {
   <li><code>@componentName</code>: The name of the component if present</li>
   <li><code>@host</code>: The local host name</li>
   <li><code>@name</code>: The name of the application being run</li>
+  <li><code>@version</code>: The version of the application being run</li>
   <li><code>@severity</code>: The message level: trace, debug, info, warn, error or fatal</li>
   <li><code>actor</code>: The path for an actor when using ActorLogging</li>
   <li><code>class</code>: The class for ClassLogging or ActorLogging</li>
@@ -237,19 +238,19 @@ csw-logging {
   <li><code>trace</code>: Information for any exception specified in the logging call</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
 <ul>
-  <li>@host and @name will appear in log statements only if <em>fullHeaders</em> is set as true in the configuration</li>
+  <li>@host, @name and @version will appear in log statements only if <em>fullHeaders</em> is set as true in the configuration</li>
 </ul></div>
 <h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2>
 <p>In order to make logging statements appear in your program you need to start <code>LoggingSystem</code> as the first thing in your application. <code>LoggingSystem</code> should be started only once in your application. The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files for your application in it.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(&quot;foo-name&quot;, &quot;hostname&quot;, ActorSystem(&quot;logging-system&quot;), Seq(StdOutAppender))</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem(&quot;logging-system&quot;), Seq(StdOutAppender))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">List&lt;LogAppenderBuilder&gt; appenders = Arrays.asList(JLogAppenderBuilders.StdOutAppender, JLogAppenderBuilders.FileAppender);
 
-LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;foo-name&quot;, &quot;hostname&quot;, ActorSystem.apply(&quot;logging-system&quot;), appenders);</code></pre></dd>
+LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem.apply(&quot;logging-system&quot;), appenders);</code></pre></dd>
 </dl>
 <h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2>
 <p>Make sure you stop the <code>LoggingSystem</code> at the end of your application.</p>
