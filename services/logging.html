@@ -163,7 +163,16 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 }
 
 csw-logging {
-    appenders {
+
+    // By default we provide log statements to be logged in a file
+    appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;]
+
+    component-log-levels {
+      // This block contains log level configuration for Components.
+      // ex: TroboneHcd = debug
+    }
+
+    appender-config {
       file {
         // Include standard headers
         fullHeaders = true
@@ -202,19 +211,24 @@ csw-logging {
     akkaLogLevel = info
     // Enable timing logging
     time = false
-    //Enable garbage collection loggign
+    //Enable garbage collection logging
     gc = false
-  }
+}
 </code></pre></dd>
 </dl>
 <p>These values can be overridden directly in your <code>reference.conf</code> or <code>application.conf</code>. Also you can set a <code>logLevel</code> for each component in your reference.conf/application.conf by it&rsquo;s component name as follows:</p>
-<pre><code>filters {
-    tromboneHcd = info
+<pre><code>component-log-levels {
+    tromboneHcd = debug
     tromboneAssembly = error
   }
   
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> are the name of components that will be registered with <code>LocationService</code> </p></div>
+<p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> are the name of components that will be registered with <code>LocationService</code>. By default all components will log at <code>INFO</code> level. </p></div>
+<p>We provide <code>FileAppender</code> as our default logging appender. If you want to use <code>StdOutAppender</code> or some custom appender along with <code>FileAppender</code> then you can override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
+<pre><code><br/>appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;, &quot;csw.services.logging.appenders.StdOutAppender$&quot;]
+
+</code></pre><div class="callout note "><div class="callout-title">Note</div>
+<p>Make sure you provide full path of the appender since it will be spawned using java reflection.</p></div>
 <h2><a href="#log-levels" name="log-levels" class="anchor"><span class="anchor-link"></span></a>Log Levels</h2>
 <p>Following Log levels are supported by csw-logging library</p>
 <ul>
@@ -252,7 +266,7 @@ csw-logging {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem(&quot;logging-system&quot;), Seq(StdOutAppender))</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem(&quot;logging-system&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">List&lt;LogAppenderBuilder&gt; appenders = Arrays.asList(JLogAppenderBuilders.StdOutAppender, JLogAppenderBuilders.FileAppender);
@@ -371,13 +385,12 @@ public interface JExampleLogger extends JComponentLogger {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">log.info(Map(&quot;@msg&quot; → &quot;Attempting to find connection&quot;, &quot;exampleConnection&quot; → exampleConnection.toString))</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">log.info(&quot;Attempting to find connection&quot;, Map(&quot;exampleConnection&quot; → exampleConnection.toString))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; {
-    HashMap&lt;String, String&gt; map = new HashMap&lt;&gt;();
-    map.put(&quot;@msg&quot;, &quot;Attempting to find connection&quot;);
-    map.put(&quot;exampleConnection&quot;, exampleConnection.toString());
+  <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; &quot;Attempting to find connection&quot;, () -&gt; {
+    HashMap&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+    map.put(&quot;exampleConnection&quot;, exampleConnection);
     return map;
 });</code></pre></dd>
 </dl>
@@ -402,7 +415,7 @@ public interface JExampleLogger extends JComponentLogger {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">log.error(runtimeException.getMessage, runtimeException)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
