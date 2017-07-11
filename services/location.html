@@ -267,7 +267,7 @@ assemblyRegResult = locationService.register(assemblyRegistration).get();</code>
 // [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 private val exampleConnection = LocationServiceExampleComponent.connection
 
-log.info(&quot;Attempting to find connection&quot;, Map(&quot;exampleConnection&quot; → exampleConnection.toString))
+log.info(&quot;Attempting to find connection&quot;, Map(Keys.OBS_ID → &quot;foo_obs_id&quot;, &quot;exampleConnection&quot; → exampleConnection.name))
 val findResultF = async {
   await(locationService.find(exampleConnection))
 }
@@ -281,7 +281,8 @@ log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
 
 jLogger.info(() -&gt; &quot;Attempting to find connection&quot;, () -&gt; {
     HashMap&lt;String, Object&gt; map = new HashMap&lt;&gt;();
-    map.put(&quot;exampleConnection&quot;, exampleConnection);
+    map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
+    map.put(&quot;exampleConnection&quot;, exampleConnection.name());
     return map;
 });
 
