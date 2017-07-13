@@ -366,7 +366,7 @@ public interface JExampleLogger extends JComponentLogger {
   <pre class="prettyprint"><code class="language-scala">log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; &quot;Result of the find call : None&quot;);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">jLogger.info(&quot;Result of the find call : None&quot;);</code></pre></dd>
 </dl>
 <p>The output of log statement will be:</p>
 <pre><code>{&quot;@componentName&quot;:&quot;examples&quot;,
@@ -388,12 +388,11 @@ public interface JExampleLogger extends JComponentLogger {
   <pre class="prettyprint"><code class="language-scala">log.info(&quot;Attempting to find connection&quot;, Map(Keys.OBS_ID → &quot;foo_obs_id&quot;, &quot;exampleConnection&quot; → exampleConnection.name))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; &quot;Attempting to find connection&quot;, () -&gt; {
-    HashMap&lt;String, Object&gt; map = new HashMap&lt;&gt;();
-    map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
-    map.put(&quot;exampleConnection&quot;, exampleConnection.name());
-    return map;
-});</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
+map.put(&quot;exampleConnection&quot;, exampleConnection.name());
+
+jLogger.info(&quot;Attempting to find connection&quot;, map);</code></pre></dd>
 </dl>
 <p>The output of log statement will be: </p>
 <pre><code>{&quot;@componentName&quot;:&quot;examples&quot;,
@@ -419,7 +418,7 @@ public interface JExampleLogger extends JComponentLogger {
   <pre class="prettyprint"><code class="language-scala">log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">jLogger.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">jLogger.info(runtimeException.getMessage(), runtimeException);</code></pre></dd>
 </dl>
 <h2><a href="#garbage-collection-logging" name="garbage-collection-logging" class="anchor"><span class="anchor-link"></span></a>Garbage Collection Logging</h2>
 <p>Garbage collection events are logged to the gc log when enabled by the <code>gc</code> configuration option.</p>
