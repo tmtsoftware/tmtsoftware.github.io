@@ -149,27 +149,22 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <h2><a href="#configuration" name="configuration" class="anchor"><span class="anchor-link"></span></a>Configuration</h2>
 <p>These are the relevant default configuration values for logging</p>
 <dl>
-  <dt>Scala</dt>
+  <dt>logging.conf
+  </dt>
   <dd>
-  <pre class="prettyprint"><code class="language-conf">akka {
-  // Customised AkkaLogger to intercept akka log messages generated from akka framework code
-  loggers = [csw.services.logging.compat.AkkaLogger]
-  loglevel = info
-  actor {
-    debug {
-      lifecycle = off
-    }
-  }
-}
+  <pre class="prettyprint"><code class="language-conf">csw-logging {
 
-csw-logging {
+    // Default appender and is recommended only for dev setup. To use multiple appenders give comma seperated list of appenders.
+    appenders = [&quot;csw.services.logging.appenders.StdOutAppender$&quot;]
 
-    // By default we provide log statements to be logged in a file
-    appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;]
+    // Recommended for production setup - Uncomment below line to enable FileAppender
+    //appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;]
 
     component-log-levels {
-      // This block contains log level configuration for Components.
-      // ex: TroboneHcd = debug
+      // By default each compoent will use log level specified by `csw-logging.logLevel`. If required, this block allows overriding log level configuration for one/more components.
+      // -- Example --
+      // TromboneHcd = debug
+      // TromboneAssembly = error
     }
 
     appender-config {
@@ -178,8 +173,8 @@ csw-logging {
         fullHeaders = true
         // Sort the fields in Json objects
         sorted = true
-        // Directory to hold log files
-        logPath = &quot;target/log&quot;
+        // Directory to hold log files.
+        logPath = &quot;/tmp/&quot;
         // Include the service name as a sub-directory for logs
         serviceInPath = false
         // Common log messages below this level are removed, none removed when set to trace
@@ -207,8 +202,8 @@ csw-logging {
     logLevel = info
     // Log level for slf4j messages
     slf4jLogLevel = info
-    // Log level for Akka messages, should be &gt;= akka.loglevel
-    akkaLogLevel = info
+    // Log level for Akka messages
+    akkaLogLevel = warn
     // Enable timing logging
     time = false
     //Enable garbage collection logging
@@ -223,12 +218,44 @@ csw-logging {
   }
   
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> is the name of component that will be registered with <code>LocationService</code>. By default all components will log at <code>INFO</code> level. </p></div>
-<p>We provide <code>FileAppender</code> as our default logging appender. If you want to use <code>StdOutAppender</code> or some custom appender along with <code>FileAppender</code> then you can override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
+<p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> is the name of component that will be registered with <code>LocationService</code>. By default all components will log at level specified by <code>csw-logging.logLevel</code>. </p></div>
+<p>Library provides <code>StdOutAppender</code> as default logging appender. If you want to use <code>FileAppender</code> or some custom appender along with <code>StdOutAppender</code> then you can override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
 <pre><code><br/>appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;, &quot;csw.services.logging.appenders.StdOutAppender$&quot;]
 
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
 <p>Make sure you provide full path of the appender since it will be spawned using java reflection. In csw code base, a working example of custom appender can be found at: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-logging/src/test/scala/csw/services/logging/appenders/CustomAppenderTest.scala">Custom Appender</a></p></div>
+<p>For <code>StdOutAppender</code> specify the format of log statements in <code>csw-logging.stdout</code> via <code>csw-logging.stdout.pretty</code> and <code>csw-logging.stdout.oneLine</code>.<br/>Turning <code>pretty</code> on or off will produce log statements in following format:</p>
+<dl>
+  <dt>pretty=true</dt>
+  <dd>
+  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@severity&quot;:&quot;INFO&quot;,
+ &quot;actor&quot;:
+   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.124.238:51256/user/$a&quot;,
+ &quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,
+ &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
+ &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
+ &quot;line&quot;:131,
+ &quot;message&quot;:&quot;Attempting to find connection&quot;,
+ &quot;obsId&quot;:&quot;foo_obs_id&quot;,
+ &quot;timestamp&quot;:&quot;2017-07-20T08:15:01.657Z&quot;
+}
+</code></pre></dd>
+  <dt>pretty=false</dt>
+  <dd>
+  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,&quot;@severity&quot;:&quot;INFO&quot;,&quot;actor&quot;:&quot;akka.tcp://csw-examples-locationServiceClient@10.131.124.238:51172/user/$a&quot;,&quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,&quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,&quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,&quot;line&quot;:131,&quot;message&quot;:&quot;Attempting to find connection&quot;,&quot;obsId&quot;:&quot;foo_obs_id&quot;,&quot;timestamp&quot;:&quot;2017-07-20T08:03:08.065Z&quot;}
+</code></pre></dd>
+</dl>
+<p>Similarly, turning <code>oneLine</code> on will produce log statements in following format:</p>
+<dl>
+  <dt>oneLine=true</dt>
+  <dd>
+  <pre><code>[INFO] Attempting to find connection (LocationServiceExampleClientApp.scala 131)
+</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<ul>
+  <li>If <code>oneLine</code> is set to <code>true</code> then value of <code>pretty</code> will be ignored</li>
+</ul></div>
 <h2><a href="#log-levels" name="log-levels" class="anchor"><span class="anchor-link"></span></a>Log Levels</h2>
 <p>Following Log levels are supported by csw-logging library</p>
 <ul>
@@ -259,19 +286,22 @@ csw-logging {
   <li><code>trace</code>: Information for any exception specified in the logging call</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
 <ul>
-  <li>@host, @name and @version will appear in log statements only if <em>fullHeaders</em> is set as true in the configuration</li>
+  <li><code>@host</code>, <code>@name</code> and <code>@version</code> will appear in log statements only if <em>fullHeaders</em> is set as true in the configuration</li>
+  <li><code>file</code> and <code>line</code> will appear only if log statements are being logged from scala classes/actors</li>
 </ul></div>
 <h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2>
-<p>In order to make logging statements appear in your program you need to start <code>LoggingSystem</code> as the first thing in your application. <code>LoggingSystem</code> should be started only once in your application. The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files for your application in it.</p>
+<p>For logging statements to appear in the program start <code>LoggingSystem</code> as the first thing in an application. <code>LoggingSystem</code> should be started only once in an application. The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem(&quot;logging-system&quot;))</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(
+  &quot;application-name&quot;,
+  &quot;application-version&quot;,
+  &quot;hostname&quot;,
+  ActorSystem(&quot;logging-system&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">List&lt;LogAppenderBuilder&gt; appenders = Arrays.asList(JLogAppenderBuilders.StdOutAppender, JLogAppenderBuilders.FileAppender);
-
-LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem.apply(&quot;logging-system&quot;), appenders);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem.apply(&quot;logging-system&quot;));</code></pre></dd>
 </dl>
 <h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2>
 <p>Make sure you stop the <code>LoggingSystem</code> at the end of your application.</p>
@@ -311,14 +341,14 @@ LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;application-name
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">object ExampleLogger extends ComponentLogger(&quot;examples&quot;)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">object ExampleLogger extends ComponentLogger(&quot;my-component-name&quot;)</code></pre></dd>
   <dt>Actor Java Class</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//JExampleLoggerActor is used for actor java class only
 public abstract class JExampleLoggerActor extends JComponentLoggerActor {
     @Override
     public String componentName() {
-        return &quot;examples&quot;;
+        return &quot;my-component-name&quot;;
     }
 }</code></pre></dd>
   <dt>Non-Actor Java class
@@ -352,12 +382,20 @@ public interface JExampleLogger extends JComponentLogger {
       <li>For non-actor class inherit <code>JExampleLogger</code></li>
     </ul>
   </dd>
-</dl><div class="callout note "><div class="callout-title">If you are writing java code you need to get logger instance in your class </div>
+</dl><div class="callout note "><div class="callout-title">Example to mixin above loggers in actors </div>
 <dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">class LocationServiceExampleClient(locationService: LocationService)(
+    implicit mat: Materializer)
+    extends ExampleLogger.Actor</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">private ILogger jLogger = getLogger();</code></pre></dd>
-</dl></div>
+  <pre class="prettyprint"><code class="language-java">public class JLocationServiceExampleClient extends JExampleLoggerActor {
+
+    private ILogger log = getLogger();</code></pre></dd>
+</dl>
+<p>You can mixin loggers for classes in a similar way </p></div>
 <h2><a href="#log-statements" name="log-statements" class="anchor"><span class="anchor-link"></span></a>Log statements</h2>
 <p>A basic info statement can be written as follows:</p>
 <dl>
@@ -366,51 +404,81 @@ public interface JExampleLogger extends JComponentLogger {
   <pre class="prettyprint"><code class="language-scala">log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">jLogger.info(&quot;Result of the find call : None&quot;);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">log.info(&quot;Result of the find call : None&quot;);</code></pre></dd>
 </dl>
 <p>The output of log statement will be:</p>
-<pre><code>{&quot;@componentName&quot;:&quot;examples&quot;,
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.20.68:51495/user/$a&quot;,
+   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.124.238:50721/user/$a&quot;,
  &quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
- &quot;line&quot;:119,
+ &quot;line&quot;:141,
  &quot;message&quot;:&quot;Result of the find call: None&quot;,
- &quot;timestamp&quot;:&quot;2017-06-28T18:11:48.208000000+05:30&quot;
+ &quot;timestamp&quot;:&quot;2017-07-20T06:47:46.468Z&quot;
 }
-
-</code></pre>
+</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@severity&quot;:&quot;INFO&quot;,
+ &quot;actor&quot;:
+   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.124.238:50737/user/LocationServiceExampleClient&quot;,
+ &quot;class&quot;:&quot;csw.services.location.JLocationServiceExampleClient&quot;,
+ &quot;message&quot;:&quot;Result of the find call : None&quot;,
+ &quot;timestamp&quot;:&quot;2017-07-20T06:49:13.059Z&quot;
+}
+</code></pre></dd>
+</dl>
 <p>You can also use a <code>Map</code> in message as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">log.info(&quot;Attempting to find connection&quot;, Map(Keys.OBS_ID → &quot;foo_obs_id&quot;, &quot;exampleConnection&quot; → exampleConnection.name))</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">log.info(&quot;Attempting to find connection&quot;,
+         Map(Keys.OBS_ID → &quot;foo_obs_id&quot;,
+             &quot;exampleConnection&quot; → exampleConnection.name))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
 map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
 map.put(&quot;exampleConnection&quot;, exampleConnection.name());
 
-jLogger.info(&quot;Attempting to find connection&quot;, map);</code></pre></dd>
+log.info(&quot;Attempting to find connection&quot;, map);</code></pre></dd>
 </dl>
 <p>The output of log statement will be: </p>
-<pre><code>{&quot;@componentName&quot;:&quot;examples&quot;,
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.22.99:52787/user/$a&quot;,
+   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.124.238:50721/user/$a&quot;,
  &quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,
+ &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
- &quot;line&quot;:113,
- &quot;message&quot;:
-   {&quot;@msg&quot;:&quot;Attempting to find connection&quot;,
-    &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
-    &quot;obsId&quot;:&quot;foo_obs_id&quot;
-   },
- &quot;timestamp&quot;:&quot;2017-07-10T11:37:12:943000000&quot;
+ &quot;line&quot;:131,
+ &quot;message&quot;:&quot;Attempting to find connection&quot;,
+ &quot;obsId&quot;:&quot;foo_obs_id&quot;,
+ &quot;timestamp&quot;:&quot;2017-07-20T06:47:46.464Z&quot;
 }
-
-</code></pre>
+</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@severity&quot;:&quot;INFO&quot;,
+ &quot;actor&quot;:
+   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.124.238:50737/user/LocationServiceExampleClient&quot;,
+ &quot;class&quot;:&quot;csw.services.location.JLocationServiceExampleClient&quot;,
+ &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
+ &quot;message&quot;:&quot;Attempting to find connection&quot;,
+ &quot;obsId&quot;:&quot;foo_obs_id&quot;,
+ &quot;timestamp&quot;:&quot;2017-07-20T06:49:13.054Z&quot;
+}
+</code></pre></dd>
+</dl>
 <p>Also you can log an error with stacktrace as follows:</p>
 <dl>
   <dt>Scala</dt>
@@ -418,10 +486,8 @@ jLogger.info(&quot;Attempting to find connection&quot;, map);</code></pre></dd>
   <pre class="prettyprint"><code class="language-scala">log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">jLogger.info(runtimeException.getMessage(), runtimeException);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">log.info(runtimeException.getMessage(), runtimeException);</code></pre></dd>
 </dl>
-<h2><a href="#garbage-collection-logging" name="garbage-collection-logging" class="anchor"><span class="anchor-link"></span></a>Garbage Collection Logging</h2>
-<p>Garbage collection events are logged to the gc log when enabled by the <code>gc</code> configuration option.</p>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/services/location/LocationServiceExampleClientApp.scala">Scala Example</a></li>
@@ -448,7 +514,6 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="../services/logging.html#stop-loggingsystem" class="header">Stop LoggingSystem</a></li>
     <li><a href="../services/logging.html#enable-logging" class="header">Enable logging</a></li>
     <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
-    <li><a href="../services/logging.html#garbage-collection-logging" class="header">Garbage Collection Logging</a></li>
     <li><a href="../services/logging.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
