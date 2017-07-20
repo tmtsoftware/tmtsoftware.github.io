@@ -154,14 +154,16 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <dd>
   <pre class="prettyprint"><code class="language-conf">csw-logging {
 
-    // Default appender and is recommended only for dev setup. To use multiple appenders give comma seperated list of appenders.
+    // Default appender and is recommended only for dev setup.
+    // To use multiple appenders give comma seperated list of appenders.
     appenders = [&quot;csw.services.logging.appenders.StdOutAppender$&quot;]
 
     // Recommended for production setup - Uncomment below line to enable FileAppender
     //appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;]
 
     component-log-levels {
-      // By default each compoent will use log level specified by `csw-logging.logLevel`. If required, this block allows overriding log level configuration for one/more components.
+      // By default each compoent will use log level specified by `csw-logging.logLevel`. If required, this block allows
+      // overriding log level configuration for one/more components.
       // -- Example --
       // TromboneHcd = debug
       // TromboneAssembly = error
@@ -211,7 +213,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 }
 </code></pre></dd>
 </dl>
-<p>These values can be overridden directly in your <code>reference.conf</code> or <code>application.conf</code>. Also you can set a <code>logLevel</code> for each component in your reference.conf/application.conf by it&rsquo;s component name as follows:</p>
+<p>These values can be overridden directly in the <code>reference.conf</code> or <code>application.conf</code>. Also <code>logLevel</code> for each component can be set in reference.conf/application.conf as follows:</p>
 <pre><code>component-log-levels {
     tromboneHcd = debug
     tromboneAssembly = error
@@ -219,12 +221,12 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
 <p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> is the name of component that will be registered with <code>LocationService</code>. By default all components will log at level specified by <code>csw-logging.logLevel</code>. </p></div>
-<p>Library provides <code>StdOutAppender</code> as default logging appender. If you want to use <code>FileAppender</code> or some custom appender along with <code>StdOutAppender</code> then you can override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
+<p>Library provides <code>StdOutAppender</code> as default logging appender. To use <code>FileAppender</code> or some custom appender along-with <code>StdOutAppender</code>, override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
 <pre><code><br/>appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;, &quot;csw.services.logging.appenders.StdOutAppender$&quot;]
 
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>Make sure you provide full path of the appender since it will be spawned using java reflection. In csw code base, a working example of custom appender can be found at: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-logging/src/test/scala/csw/services/logging/appenders/CustomAppenderTest.scala">Custom Appender</a></p></div>
-<p>For <code>StdOutAppender</code> specify the format of log statements in <code>csw-logging.stdout</code> via <code>csw-logging.stdout.pretty</code> and <code>csw-logging.stdout.oneLine</code>.<br/>Turning <code>pretty</code> on or off will produce log statements in following format:</p>
+<p>Make sure to provide full path of the appender since it will be spawned using java reflection. In csw code base, a working example of custom appender can be found at: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-logging/src/test/scala/csw/services/logging/appenders/CustomAppenderTest.scala">Custom Appender</a></p></div>
+<p>For <code>StdOutAppender</code> specify the format of log statements in <code>csw-logging.stdout</code> via <code>csw-logging.stdout.pretty</code> and <code>csw-logging.stdout.oneLine</code>.<br/>Turning <code>pretty</code> <strong>on</strong> or <strong>off</strong> will produce log statements in following format:</p>
 <dl>
   <dt>pretty=true</dt>
   <dd>
@@ -266,10 +268,10 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li>DEBUG</li>
   <li>TRACE</li>
 </ul>
-<p>There are separate log levels for the logging API(logLevel), Akka logging(akkaLogLevel), and Slf4J(slf4jLogLevel). The initial values of these are set in the configuration file as seen above. These can be overriden in the application.conf file.</p>
+<p>Library allows separate log levels for the logging API(logLevel), Akka logging(akkaLogLevel), and Slf4J(slf4jLogLevel). The initial values of these are set in the configuration file as seen above. These can be overriden in the application.conf file.</p>
 <p>These values can also be changed dynamically by calling methods on <code>LoggingSystem</code> class.</p>
 <h2><a href="#log-structure" name="log-structure" class="anchor"><span class="anchor-link"></span></a>Log Structure</h2>
-<p>All messages are logged by default as Json. Logs can contain the following fields. These are listed in alphabetical order (this is the order displayed by the Json pretty printer).</p>
+<p>All messages are logged by default as Json. Logs can contain following fields:</p>
 <ul>
   <li><code>@componentName</code>: The name of the component if present</li>
   <li><code>@host</code>: The local host name</li>
@@ -290,7 +292,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li><code>file</code> and <code>line</code> will appear only if log statements are being logged from scala classes/actors</li>
 </ul></div>
 <h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2>
-<p>For logging statements to appear in the program start <code>LoggingSystem</code> as the first thing in an application. <code>LoggingSystem</code> should be started only once in an application. The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files.</p>
+<p>For logging statements to appear in the program, start <code>LoggingSystem</code> at an earliest location in an application. <strong>Also note, <code>LoggingSystem</code> should be started only once in an application.</strong> The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -302,9 +304,12 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem.apply(&quot;logging-system&quot;));</code></pre></dd>
-</dl>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<ul>
+  <li>The <code>hostname</code> that is provided while creating <code>LoggingSystem</code> will appear in log statements against <code>@host</code> tag</li>
+</ul></div>
 <h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2>
-<p>Make sure you stop the <code>LoggingSystem</code> at the end of your application.</p>
+<p>Please ensure to stop <code>LoggingSystem</code> before application exits.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -315,7 +320,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </dl>
 <h2><a href="#enable-logging" name="enable-logging" class="anchor"><span class="anchor-link"></span></a>Enable logging</h2>
 <h3><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable generic logging</h3>
-<p>To enable logging for some utility code that does not require <code>@componentName</code> in log statements you can inherit following traits</p>
+<p>To enable logging for some utility code that does not require <code>@componentName</code> in log statements, inherit from following traits:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -337,7 +342,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </dd>
 </dl>
 <h3><a href="#enable-component-level-logging" name="enable-component-level-logging" class="anchor"><span class="anchor-link"></span></a>Enable component level logging</h3>
-<p>Whereas, if you want to include <code>@componentName</code> in your log statements you need to first create an object/abstract class/interface as follows:</p>
+<p>To include <code>@componentName</code> in your log statements, create an object/abstract class/interface as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -362,7 +367,7 @@ public interface JExampleLogger extends JComponentLogger {
     }
 }</code></pre></dd>
 </dl>
-<p>Then, you need to inherit following object/interface</p>
+<p>Then, inherit following object/interface:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -395,7 +400,7 @@ public interface JExampleLogger extends JComponentLogger {
 
     private ILogger log = getLogger();</code></pre></dd>
 </dl>
-<p>You can mixin loggers for classes in a similar way </p></div>
+<p>Loggers for classes can be mixed in a similar way </p></div>
 <h2><a href="#log-statements" name="log-statements" class="anchor"><span class="anchor-link"></span></a>Log statements</h2>
 <p>A basic info statement can be written as follows:</p>
 <dl>
@@ -433,7 +438,7 @@ public interface JExampleLogger extends JComponentLogger {
 }
 </code></pre></dd>
 </dl>
-<p>You can also use a <code>Map</code> in message as follows:</p>
+<p>Library allows usage of <code>Map</code> in message as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -479,7 +484,7 @@ log.info(&quot;Attempting to find connection&quot;, map);</code></pre></dd>
 }
 </code></pre></dd>
 </dl>
-<p>Also you can log an error with stacktrace as follows:</p>
+<p>Library allows to log an error with it&rsquo;s full stacktrace as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -493,6 +498,8 @@ log.info(&quot;Attempting to find connection&quot;, map);</code></pre></dd>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/services/location/LocationServiceExampleClientApp.scala">Scala Example</a></li>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/java/csw/services/location/JLocationServiceExampleClient.java">Java Example</a></li>
 </ul>
+<h2><a href="#acknowledgement" name="acknowledgement" class="anchor"><span class="anchor-link"></span></a>Acknowledgement</h2>
+<p>The codebase in <strong>csw-logging</strong> module is based on <a href="https://github.com/nestorpersist/logging">persist-logging library</a> library. We appreciate efforts put in by authors of the persist-logging library which made our development fast and easy.</p>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/logging.md">here</a>.
 </div>
@@ -515,6 +522,7 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="../services/logging.html#enable-logging" class="header">Enable logging</a></li>
     <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
     <li><a href="../services/logging.html#source-code-for-examples" class="header">Source code for examples</a></li>
+    <li><a href="../services/logging.html#acknowledgement" class="header">Acknowledgement</a></li>
   </ul></li>
 </ul>
 </div>
