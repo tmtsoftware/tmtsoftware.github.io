@@ -158,7 +158,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
     // To use multiple appenders give comma seperated list of appenders.
     appenders = [&quot;csw.services.logging.appenders.StdOutAppender$&quot;]
 
-    // Recommended for production setup - Uncomment below line to enable FileAppender
+    // Recommended for production setup - Uncomment below line and comment above to enable FileAppender
     //appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;]
 
     component-log-levels {
@@ -177,10 +177,11 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
         sorted = true
         // Directory to hold log files.
         logPath = &quot;/tmp/&quot;
-        // Include the service name as a sub-directory for logs
-        serviceInPath = false
         // Common log messages below this level are removed, none removed when set to trace
         logLevelLimit = trace
+        // Flag to turn file rotation ON or OFF. Currently log file is rotated daily at 12:00 pm UTC time. By turning this flag off
+        // file rotation will not happen.
+        rotate = true
       }
       stdout {
         // Include standard headers
@@ -200,7 +201,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
         oneLine = false
       }
     }
-    // Log level for logger API
+    // If component does not specify their log level in component-log-levels block,
+    // Then this will be considered as default log level for that component.
     logLevel = info
     // Log level for slf4j messages
     slf4jLogLevel = info
@@ -296,14 +298,13 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">private val loggingSystem = LoggingSystemFactory.start(
-  &quot;application-name&quot;,
-  &quot;application-version&quot;,
-  &quot;hostname&quot;,
-  ActorSystem(&quot;logging-system&quot;))</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">private val host = InetAddress.getLocalHost.getHostName
+// Only call this once per application
+val loggingSystem: LoggingSystem = LoggingSystemFactory.start(&quot;LocationServiceExampleClient&quot;, &quot;0.1&quot;, host, system)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">LoggingSystem loggingSystem = JLoggingSystemFactory.start(&quot;application-name&quot;, &quot;application-version&quot;, &quot;hostname&quot;, ActorSystem.apply(&quot;logging-system&quot;));</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
+loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&quot;, &quot;0.1&quot;, host, actorSystem);</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>The <code>hostname</code> that is provided while creating <code>LoggingSystem</code> will appear in log statements against <code>@host</code> tag</li>
@@ -313,10 +314,12 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">Await.result(loggingSystem.stop, 30.seconds)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">// Only call this once per application
+Await.result(loggingSystem.stop, 30.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">loggingSystem.javaStop().get();</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">// Only call this once per application
+loggingSystem.javaStop().get();</code></pre></dd>
 </dl>
 <h2><a href="#enable-logging" name="enable-logging" class="anchor"><span class="anchor-link"></span></a>Enable logging</h2>
 <h3><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable generic logging</h3>
@@ -391,8 +394,8 @@ public interface JExampleLogger extends JComponentLogger {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class LocationServiceExampleClient(locationService: LocationService)(
-    implicit mat: Materializer)
+  <pre class="prettyprint"><code class="language-scala">class LocationServiceExampleClient(locationService: LocationService,
+                                   loggingSystem: LoggingSystem)(implicit mat: Materializer)
     extends ExampleLogger.Actor</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -409,7 +412,7 @@ public interface JExampleLogger extends JComponentLogger {
   <pre class="prettyprint"><code class="language-scala">log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">log.info(&quot;Result of the find call : None&quot;);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">log.info(() -&gt; &quot;Result of the find call : None&quot;);</code></pre></dd>
 </dl>
 <p>The output of log statement will be:</p>
 <dl>
@@ -443,15 +446,15 @@ public interface JExampleLogger extends JComponentLogger {
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">log.info(&quot;Attempting to find connection&quot;,
-         Map(Keys.OBS_ID → &quot;foo_obs_id&quot;,
-             &quot;exampleConnection&quot; → exampleConnection.name))</code></pre></dd>
+         Map(Keys.OBS_ID → &quot;foo_obs_id&quot;, &quot;exampleConnection&quot; → exampleConnection.name))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
-map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
-map.put(&quot;exampleConnection&quot;, exampleConnection.name());
-
-log.info(&quot;Attempting to find connection&quot;, map);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">log.info(() -&gt; &quot;Attempting to find connection&quot;, () -&gt; {
+    Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+    map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
+    map.put(&quot;exampleConnection&quot;, exampleConnection.name());
+    return map;
+});</code></pre></dd>
 </dl>
 <p>The output of log statement will be: </p>
 <dl>
@@ -491,8 +494,11 @@ log.info(&quot;Attempting to find connection&quot;, map);</code></pre></dd>
   <pre class="prettyprint"><code class="language-scala">log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">log.info(runtimeException.getMessage(), runtimeException);</code></pre></dd>
-</dl>
+  <pre class="prettyprint"><code class="language-java">log.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<ul>
+  <li>It is recommended in java to use api that has <code>Supplier</code> for <code>msg</code> and <code>map</code> since it is more efficient compared to non-supplier version of it</li>
+</ul></div>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/services/location/LocationServiceExampleClientApp.scala">Scala Example</a></li>

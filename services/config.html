@@ -309,8 +309,9 @@ Assert.assertEquals(id2, new ConfigId(&quot;3&quot;));</code></pre></dd>
   <pre class="prettyprint"><code class="language-scala">val futU = async {
   val destPath = Paths.get(&quot;/hcd/trombone/debug.bin&quot;)
   val newId = await(
-      adminApi
-        .update(destPath, ConfigData.fromString(defaultStrConf), comment = &quot;debug statements&quot;))
+    adminApi
+      .update(destPath, ConfigData.fromString(defaultStrConf), comment = &quot;debug statements&quot;)
+  )
 
   //validate the returned id
   newId shouldEqual ConfigId(7)
@@ -464,8 +465,9 @@ val paths: List[(Path, FileType)] = List[(Path, FileType)](
 paths map {
   case (path, fileType) ⇒
     val createF = async {
-      await(adminApi.create(path, ConfigData.fromString(defaultStrConf), FileType.Annex == fileType,
-          &quot;initial commit&quot;))
+      await(
+        adminApi.create(path, ConfigData.fromString(defaultStrConf), FileType.Annex == fileType, &quot;initial commit&quot;)
+      )
     }
     Await.result(createF, 2.seconds)
 }
@@ -486,7 +488,10 @@ val assertionF = async {
 
   //retrieve list using pattern; for demonstration purpose validate return values
   await(adminApi.list(None, Some(&quot;.*.conf&quot;))).map(info ⇒ info.path.toString).toSet shouldBe Set(
-      &quot;a/b/c/hcd/hcd.conf&quot;, &quot;a/c/trombone.conf&quot;, &quot;testing/test.conf&quot;)
+    &quot;a/b/c/hcd/hcd.conf&quot;,
+    &quot;a/c/trombone.conf&quot;,
+    &quot;testing/test.conf&quot;
+  )
   //retrieve list using pattern and file type; for demonstration purpose validate return values
   await(adminApi.list(Some(FileType.Normal), Some(&quot;.*.conf&quot;))).map(info ⇒ info.path.toString).toSet shouldBe
   Set(&quot;a/b/c/hcd/hcd.conf&quot;, &quot;testing/test.conf&quot;)
@@ -631,8 +636,11 @@ Assert.assertEquals(new ArrayList&lt;&gt;(Arrays.asList(id2, id1)),
   //validate full history
   val fullHistory = await(adminApi.historyActive(filePath))
   fullHistory.map(_.id) shouldBe List(id1, id5, id4, id3, id1)
-  fullHistory.map(_.comment) shouldBe List(s&quot;$id1 active&quot;, &quot;latest active&quot;, s&quot;$id4 active&quot;, s&quot;$id3 active&quot;,
-    &quot;initializing active file with the first version&quot;)
+  fullHistory.map(_.comment) shouldBe List(s&quot;$id1 active&quot;,
+                                           &quot;latest active&quot;,
+                                           s&quot;$id4 active&quot;,
+                                           s&quot;$id3 active&quot;,
+                                           &quot;initializing active file with the first version&quot;)
 
   //drop initial revision and take only update revisions
   val fragmentedHistory = await(adminApi.historyActive(filePath, tBegin, tEnd))
