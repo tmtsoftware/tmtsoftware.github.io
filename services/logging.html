@@ -504,6 +504,25 @@ public interface JExampleLogger extends JComponentLogger {
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/services/location/LocationServiceExampleClientApp.scala">Scala Example</a></li>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/java/csw/services/location/JLocationServiceExampleClient.java">Java Example</a></li>
 </ul>
+<h2><a href="#performance" name="performance" class="anchor"><span class="anchor-link"></span></a>Performance</h2>
+<p>Performance results documented on this page is measured in terms of Throughput and obtained with the JMH Java benchmark harness. Sourcecode for all the JMH benchmarks can be found here at <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-benchmark/src/main">CSW Benchmarks</a> </p>
+<p><a href="https://en.wikipedia.org/wiki/Throughput">Wikipedia</a> definition of Throughput is the maximum rate of production or the maximum rate at which something can be processed. In our case, throughput is defined as how many messages can be logged in a certain period of time.</p>
+<h3><a href="#test-machine-configuration-" name="test-machine-configuration-" class="anchor"><span class="anchor-link"></span></a>Test Machine Configuration :</h3>
+<ul>
+  <li>MacBook Pro (Retina, 15-inch, Mid 2015)</li>
+  <li>Processor Name: Intel Core i7</li>
+  <li>Processor Speed: 2.8 GHz</li>
+  <li>No. of Processors: 1</li>
+  <li>No. of Cores: 4</li>
+  <li>L2 Cache (per Core): 256 KB</li>
+  <li>L3 Cache: 6 MB</li>
+  <li>Memory: 16 GB 1600 MHz DDR3</li>
+  <li>JDK: 1.8.0_121</li>
+</ul>
+<p><img src="./logging-appenders-perf-results.png" alt="Logging Appenders Throughput" /></p>
+<p>Above graph includes the throughput results for File and StdOut appender when messages are logged with synchronous and asynchronous mode. </p>
+<p>In synchronous mode, messages are not dropped when multiple threads are logging simultaneously.</p>
+<p>In asynchronous mode, all the logging messages are sent to LogActor (Akka actor) which is a fire and forget call. It is the responsibility of LogActor to write a message to console/file. LogActor uses BoundedMailbox with a mailbox-capacity = 262144, messages are dropped if mailbox gets full. FileAppender flushes the buffered output stream on every log message which guarantees that there is no loss of log message on system failure. All the above results were taken with immediate flush. </p>
 <h2><a href="#acknowledgement" name="acknowledgement" class="anchor"><span class="anchor-link"></span></a>Acknowledgement</h2>
 <p>The codebase in <strong>csw-logging</strong> module is based on <a href="https://github.com/nestorpersist/logging">persist-logging library</a> library. We appreciate efforts put in by authors of the persist-logging library which made our development fast and easy.</p>
 <div class="source-github">
@@ -528,6 +547,7 @@ The source code for this page can be found <a href="https://github.com/tmtsoftwa
     <li><a href="../services/logging.html#enable-logging" class="header">Enable logging</a></li>
     <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
     <li><a href="../services/logging.html#source-code-for-examples" class="header">Source code for examples</a></li>
+    <li><a href="../services/logging.html#performance" class="header">Performance</a></li>
     <li><a href="../services/logging.html#acknowledgement" class="header">Acknowledgement</a></li>
   </ul></li>
 </ul>
