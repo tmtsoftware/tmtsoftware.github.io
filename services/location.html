@@ -261,7 +261,7 @@ assemblyRegResult = locationService.register(assemblyRegistration).get();</code>
 // [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 val exampleConnection: AkkaConnection = LocationServiceExampleComponent.connection
 
-log.info(&quot;Attempting to find connection&quot;,
+log.info(s&quot;Attempting to find $exampleConnection&quot;,
          Map(Keys.OBS_ID → &quot;foo_obs_id&quot;, &quot;exampleConnection&quot; → exampleConnection.name))
 val findResult: Option[Location] = Await.result(locationService.find(exampleConnection), timeout)
 
@@ -271,12 +271,11 @@ log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <pre class="prettyprint"><code class="language-java">// find connection to LocationServiceExampleComponent in location service
 // [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 
-log.info(() -&gt; &quot;Attempting to find connection&quot;, () -&gt; {
-    Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
-    map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
-    map.put(&quot;exampleConnection&quot;, exampleConnection.name());
-    return map;
-});
+log.info(&quot;Attempting to find &quot; + exampleConnection,
+        new HashMap&lt;String, Object&gt;() {{
+            put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
+            put(&quot;exampleConnection&quot;, exampleConnection.name());
+        }});
 
 Optional&lt;Location&gt; findResult = locationService.find(exampleConnection).get();
 if (findResult.isPresent()) {
@@ -286,8 +285,8 @@ if (findResult.isPresent()) {
 }</code></pre></dd>
 </dl>
 <p>The logging output from the above example when the given component is not registered should include:</p>
-<pre><code>Attempting to find connection AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) ...
-Find result: None
+<pre><code>[INFO] Attempting to find connection AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+[INFO] Result of the find call: None 
 </code></pre>
 <p>An example of the resolve command is shown in the following: </p>
 <dl>
@@ -310,22 +309,29 @@ resolveResult match {
   <pre class="prettyprint"><code class="language-java">// resolve connection to LocationServiceExampleComponent
 // [start LocationServiceExampleComponent after this command but before timeout]
 FiniteDuration waitForResolveLimit = new FiniteDuration(30, TimeUnit.SECONDS);
-log.info(&quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;);
+
+log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; {
+    Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+    map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
+    map.put(&quot;exampleConnection&quot;, exampleConnection.name());
+    return map;
+});
+
 Optional&lt;Location&gt; resolveResult = locationService.resolve(exampleConnection, waitForResolveLimit).get();
 if (resolveResult.isPresent()) {
-    log.info(&quot;Resolve result: &quot; + connectionInfo(resolveResult.get().connection()));
+    log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.get().connection()));
 } else {
-    log.info(&quot;Timeout waiting for location &quot; + exampleConnection + &quot; to resolve.&quot;);
+    log.info(() -&gt; &quot;Timeout waiting for location &quot; + exampleConnection + &quot; to resolve.&quot;);
 }</code></pre></dd>
 </dl>
 <p>The logging output from the above example should include:</p>
-<pre><code>Attempting to resolve AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) with a wait of 30 seconds ...
+<pre><code>[INFO] Attempting to resolve AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) with a wait of 30 seconds ...
 </code></pre>
 <p>If you then start the LocationServiceExampleComponentApp, the following message will be logged:</p>
-<pre><code>Resolve result: LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+<pre><code>[INFO] Resolve result: LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
 </code></pre>
 <p>If not, eventually the operation will timeout and the output should read:</p>
-<pre><code>Timeout waiting for location AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) to resolve.
+<pre><code>[INFO] Timeout waiting for location AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) to resolve.
 </code></pre>
 <h2><a href="#filtering" name="filtering" class="anchor"><span class="anchor-link"></span></a>Filtering</h2>
 <p>The <code>list</code> API and its variants offer means to inquire about available connections with the LocationService. The <strong>parameter-less</strong> <code>list</code> returns all available connections</p>
@@ -346,12 +352,12 @@ for (Location loc: connectionList) {
 }</code></pre></dd>
 </dl>
 <p>The log output from the above should contain:</p>
-<pre><code>All Registered Connections:
---- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
---- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
---- redis-service-tcp, component type=Service, connection type=TcpType
---- configuration-service-http, component type=Service, connection type=HttpType
---- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+<pre><code>[INFO] All Registered Connections:
+[INFO] --- configuration-service-http, component type=Service, connection type=HttpType
+[INFO] --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
+[INFO] --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+[INFO] --- redis-service-tcp, component type=Service, connection type=TcpType
+[INFO] --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
 </code></pre>
 <p>Other variants are filters using <code>ConnectionType</code>, <code>ComponentType</code>, and <code>hostname</code>.</p>
 <p>Filtering by component type is shown below:</p>
@@ -372,9 +378,9 @@ for (Location loc: componentList) {
 }</code></pre></dd>
 </dl>
 <p>The log output from the above code should contain:</p>
-<pre><code>Registered Assemblies:
---- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
---- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+<pre><code>[INFO] Registered Assemblies:
+[INFO] --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+[INFO] --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
 </code></pre>
 <p>Filtering by connection type is shown below:</p>
 <dl>
@@ -394,10 +400,10 @@ for (Location loc : akkaList) {
 }</code></pre></dd>
 </dl>
 <p>The log output should contain:</p>
-<pre><code>Registered Akka connections:
---- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
---- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
---- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+<pre><code>[INFO] Registered Akka connections:
+[INFO] --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
+[INFO] --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+[INFO] --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
 </code></pre>
 <h2><a href="#tracking-and-subscribing" name="tracking-and-subscribing" class="anchor"><span class="anchor-link"></span></a>Tracking and Subscribing</h2>
 <p>The lifecycle of a connection of interest can be followed using either the <code>track</code> API or the <code>subscribe</code> API. </p>
@@ -469,21 +475,22 @@ locationService.subscribe(exampleConnection, trackingEvent -&gt; {
 });</code></pre></dd>
 </dl>
 <p>The log output should contain the following:</p>
-<pre><code>Starting to track AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
-Starting a subscription to AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
-subscription event
-Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
-Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+<pre><code>[INFO] Starting to track AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) LocationUpdated(HttpLocation(HttpConnection(ComponentId(configuration,Service)),http://131.215.210.170:8080/path123))
+[INFO] Starting a subscription to AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+[INFO] Subscribing to connection LocationServiceExampleComponent-assembly-akka
+[INFO] Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+[INFO] subscription event
+[INFO] Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
 </code></pre>
 <p>If you now stop the LocationServiceExampleComponentApp, it would log:</p>
-<pre><code>subscription event
-Location removed AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
-Location removed AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+<pre><code>[INFO] subscription event
+[INFO] Location removed AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
+[INFO] Location removed AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))
 </code></pre>
 <p>If you start the LocationServiceExampleComponentApp again, the log output should be:</p>
-<pre><code>Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
-subscription event
-Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+<pre><code>[INFO] subscription event
+[INFO] Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+[INFO] Location updated LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
 </code></pre>
 <p>Note: the line after the words &ldquo;subscription event&rdquo; in our example is generated by the subscription, and the other line is from tracking. These two events could come in any order.</p>
 <h2><a href="#unregistering" name="unregistering" class="anchor"><span class="anchor-link"></span></a>Unregistering</h2>
