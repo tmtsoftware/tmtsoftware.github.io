@@ -188,6 +188,7 @@ Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
 <p><strong>Connections</strong> are the means to reach components and are categorized as <code>Akka</code>, <code>HTTP</code>, or <code>Tcp</code> type connections.</p>
 <p><strong>Registrations</strong> are service endpoints stored in LocationService.</p>
 <p>The <code>register</code> API takes a <code>Registration</code> parameter and returns a future registration result. If registration fails for some reason, the returned future will fail with an exception. (Registration will fail if the <code>csw-cluster-seed</code> application is not running or could not be found or if the given component name was already registered.)</p>
+<p>The following example shows registration of both UnTyped ActorRef and Typed ActorRef:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -208,16 +209,29 @@ import akka.typed.scaladsl.adapter._
 // dummy HCD connection
 val hcdConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
 val hcdRegistration =
-  AkkaRegistration(hcdConnection, context.actorOf(Props(new Actor {
-    override def receive: Receive = {
-      case &quot;print&quot; =&gt; log.info(&quot;hello world&quot;)
-    }
-  }), name = &quot;my-actor-1&quot;), logAdminActorRef)
+  AkkaRegistration(
+    hcdConnection,
+    context.actorOf(Props(new akka.actor.Actor {
+      override def receive: Receive = {
+        case &quot;print&quot; =&gt; log.info(&quot;hello world&quot;)
+      }
+    }), name = &quot;my-actor-1&quot;),
+    logAdminActorRef
+  )
+
+// Register unTyped ActorRef with Location service. Import scaladsl adapter to implicitly convert
+// UnTyped ActorRefs to Typed ActorRef[Nothing]
 val hcdRegResult: RegistrationResult = Await.result(locationService.register(hcdRegistration), 2.seconds)
 
-//register the client &quot;assembly&quot; created in this example
-val assemblyConnection                    = AkkaConnection(ComponentId(&quot;assembly1&quot;, ComponentType.Assembly))
-val assemblyRegistration                  = AkkaRegistration(assemblyConnection, self, logAdminActorRef)
+def behavior(): Behavior[String] = Actor.deferred { ctx =&gt;
+  Actor.same
+}
+val typedActorRef: ActorRef[String] = context.system.spawn(behavior(), &quot;typed-actor-ref&quot;)
+
+val assemblyConnection = AkkaConnection(ComponentId(&quot;assembly1&quot;, ComponentType.Assembly))
+
+// Register Typed ActorRef[String] with Location Service
+val assemblyRegistration                  = AkkaRegistration(assemblyConnection, typedActorRef, logAdminActorRef)
 val assemblyRegResult: RegistrationResult = Await.result(locationService.register(assemblyRegistration), 2.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -239,13 +253,21 @@ ActorRef actorRef = getContext().actorOf(Props.create(AbstractActor.class, () -&
         &quot;my-actor-1&quot;
 );
 
-//Use javadsl Adapter to convert UnTyped ActorRefs to Typed ActorRef[Nothing]
+// Register UnTyped ActorRef with Location service. Use javadsl Adapter to convert UnTyped ActorRefs
+// to Typed ActorRef[Nothing]
 AkkaRegistration hcdRegistration = new AkkaRegistration(hcdConnection, Adapter.toTyped(actorRef), logAdminActorRef);
 hcdRegResult = locationService.register(hcdRegistration).get();
 
-//. register the client &quot;assembly&quot; created in this example
+
+Behavior&lt;String&gt; behavior = Actor.deferred(ctx -&gt; {
+    return Actor.same();
+});
+akka.typed.ActorRef&lt;String&gt; typedActorRef = Adapter.spawn(context(), behavior, &quot;typed-actor-ref&quot;);
+
 AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(&quot;assembly1&quot;, JComponentType.Assembly));
-AkkaRegistration assemblyRegistration = new AkkaRegistration(assemblyConnection, Adapter.toTyped(getSelf()), logAdminActorRef);
+
+// Register Typed ActorRef[String] with Location Service
+AkkaRegistration assemblyRegistration = new AkkaRegistration(assemblyConnection, typedActorRef, logAdminActorRef);
 assemblyRegResult = locationService.register(assemblyRegistration).get();</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Notice the <code>logAdminActorRef</code> that is used while registering any connection. For an application, make sure there is only one <code>logAdminActorRef</code> used for all registrations. </p></div><div class="callout note "><div class="callout-title">Note</div>
@@ -350,10 +372,10 @@ if (resolveResult.isPresent()) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val typedActorRef: ActorRef[Int] = akkaLocation.typedRef[Int]</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">val typedActorRef: ActorRef[String] = akkaLocation.typedRef[String]</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">akka.typed.ActorRef&lt;Integer&gt; typedActorRef = akkaLocation.jTypedRef(Integer.class);</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">akka.typed.ActorRef&lt;String&gt; typedActorRef = akkaLocation.jTypedRef(String.class);</code></pre></dd>
 </dl>
 <p>If an UnTyped ActorRef was used while registering, then at retrieval, using just <code>actorRef</code> instead of <code>typedRef</code> from <code>AkkaLocation</code> would suffice. </p></div>
 <h2><a href="#filtering" name="filtering" class="anchor"><span class="anchor-link"></span></a>Filtering</h2>
