@@ -213,7 +213,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
     //Enable garbage collection logging
     gc = false
 }</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
+</dl><div class="callout note "><div class="callout-title">IMPORTANT !!!</div>
 <p>It is required to include <code>logging.conf</code> that is shipped with this library in <code>application.conf</code> as follows:</p>
 <pre><code>include &quot;logging.conf&quot;
 </code></pre>
@@ -360,7 +360,7 @@ loggingSystem.javaStop().get();</code></pre></dd>
 <dl>
   <dt>Scala Immutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">object GenericImmutableLogger {
+  <pre class="prettyprint"><code class="language-scala">object GenericImmutableSample {
   def behavior(): Behavior[_] = Actor.immutable[Any] { (ctx, msg) ⇒
     val log = GenericLogger.immutable(ctx)
 
@@ -369,13 +369,13 @@ loggingSystem.javaStop().get();</code></pre></dd>
 }</code></pre></dd>
   <dt>Java Immutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JGenericImmutableActorLogger {
+  <pre class="prettyprint"><code class="language-java">public class JGenericImmutableSample {
 
     public static &lt;T&gt; Behavior&lt;T&gt; behavior(String componentName) {
         return Actor.immutable((ctx, msg) -&gt; {
 
-            //JGenericImmutableActorLogger.class will appear against class tag in log statements
-            ILogger log = JGenericLoggerImmutable.getLogger(ctx, JGenericImmutableActorLogger.class);
+            //JGenericImmutableSample.class will appear against class tag in log statements
+            ILogger log = JGenericLoggerImmutable.getLogger(ctx, JGenericImmutableSample.class);
 
             return Actor.same();
         });
@@ -385,19 +385,113 @@ loggingSystem.javaStop().get();</code></pre></dd>
 </dl>
 <h3><a href="#enable-component-level-logging" name="enable-component-level-logging" class="anchor"><span class="anchor-link"></span></a>Enable component level logging</h3>
 <p>To include <code>@componentName</code> in your log statements, follow one of the below approaches:</p>
-<h4><a href="#common-component-name-for-multiple-actors-classes" name="common-component-name-for-multiple-actors-classes" class="anchor"><span class="anchor-link"></span></a>Common component name for multiple actors/classes</h4>
-<p>If log statements appearing from multiple actors/classes has same <code>@componentName</code> to be displayed and it is a constant, then this is the recommended approach. Create an object/abstract class/interface as follows:</p>
+<h4><a href="#runtime-component-name-for-each-actor-class" name="runtime-component-name-for-each-actor-class" class="anchor"><span class="anchor-link"></span></a>Runtime component name for each actor/class</h4>
+<p>If the component name is not a constant and is available only at runtime in an actor or class, then this is the recommended approach. Component developers will have to mostly use this approach. For reference, <code>csw-framework</code> uses this approach and it can referred for <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorInfoFactory.scala">Simple Logger</a> and <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/container/ContainerBehavior.scala">Mutable Actor</a>. For this approach, mixin loggers as follows:</p>
 <dl>
-  <dt>Scala</dt>
+  <dt>Scala Mutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">object ExampleLogger extends CommonComponentLogger(&quot;my-component-name&quot;)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">class MutableActorSample(ctx: ActorContext[Any], _componentName: String)
+    extends ComponentLogger.MutableActor(ctx, _componentName) {
+
+  override def onMessage(msg: Any): Behavior[Any] = ???
+
+}</code></pre></dd>
+  <dt>Scala Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">class ActorSample(_componentName: String) extends ComponentLogger.Actor(_componentName) {
+
+  override def receive: Nothing = ???
+}</code></pre></dd>
+  <dt>Scala Class</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">class Sample(_componentName: String) extends ComponentLogger.Simple {
+
+  override protected def componentName(): String = _componentName
+
+}</code></pre></dd>
 </dl>
 <dl>
   <dt>Java Mutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">//JExampleLoggerMutableActor is used for mutable actor java class only
-public abstract class JExampleLoggerMutableActor extends JCommonComponentLoggerMutableActor&lt;Object&gt; {
-    public JExampleLoggerMutableActor(ActorContext&lt;Object&gt; ctx) {
+  <pre class="prettyprint"><code class="language-java">public class JMutableActorSample extends JComponentLoggerMutableActor&lt;Object&gt; {
+
+    private ILogger log;
+    public JMutableActorSample(ActorContext&lt;Object&gt; ctx, String _componentName) {
+        log = getLogger(ctx, _componentName);
+    }
+
+    @Override
+    public Actor.Receive&lt;Object&gt; createReceive() {
+        return null;
+    }
+}</code></pre></dd>
+  <dt>Java Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">public class JActorSample extends JComponentLoggerActor {
+
+    private ILogger log;
+
+    public JActorSample(String _componentName) {
+        this.log = getLogger(_componentName);
+    }
+
+    @Override
+    public Receive createReceive() {
+        return null;
+    }
+}</code></pre></dd>
+  <dt>Java Class</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">public class JSample implements JComponentLogger {
+
+    private ILogger log;
+
+    public JSample(String _componentName) {
+        this.log = getLogger(_componentName);
+    }
+}</code></pre></dd>
+</dl>
+<p>For immutable actors, refer the following example:</p>
+<dl>
+  <dt>Scala Immutable Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">object ImmutableSample {
+  def behavior(_componentName: String): Behavior[_] = Actor.immutable[Any] { (ctx, msg) ⇒
+    val log = ComponentLogger.immutable(ctx, _componentName)
+
+    Actor.same
+  }
+}</code></pre></dd>
+  <dt>Java Immutable Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">public class JImmutableSample {
+
+    public static &lt;T&gt; Behavior&lt;T&gt; behavior(String componentName) {
+        return Actor.immutable((ctx, msg) -&gt; {
+
+            //JImmutableSample.class will appear against class tag in log statements
+            ILogger log = JComponentLoggerImmutable.getLogger(ctx, componentName, JImmutableSample.class);
+
+            return Actor.same();
+        });
+    }
+
+}</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
+<h4><a href="#common-component-name-for-multiple-actors-classes" name="common-component-name-for-multiple-actors-classes" class="anchor"><span class="anchor-link"></span></a>Common component name for multiple actors/classes</h4>
+<p>If log statements appearing from multiple actors/classes has same <code>@componentName</code> to be displayed and it is a constant, then this is the recommended approach. This approach is less-likely to be used by component developers. For reference, it is used in <code>csw-location</code> service and can be referred <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-location/src/main/scala/csw/services/location/commons/LocationServiceLogger.scala">here</a>. To use this approach, create an object/abstract class/interface as follows:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">object SampleLogger extends CommonComponentLogger(&quot;my-component-name&quot;)</code></pre></dd>
+</dl>
+<dl>
+  <dt>Java Mutable Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//JMutableActorSample is used for mutable actor java class only
+public abstract class JMutableActorSample extends JCommonComponentLoggerMutableActor&lt;Object&gt; {
+    public JMutableActorSample(ActorContext&lt;Object&gt; ctx) {
         super(ctx);
     }
 
@@ -408,8 +502,8 @@ public abstract class JExampleLoggerMutableActor extends JCommonComponentLoggerM
 }</code></pre></dd>
   <dt>Java Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">//JExampleLoggerActor is used for untyped actor java class only
-public abstract class JExampleLoggerActor extends JCommonComponentLoggerActor {
+  <pre class="prettyprint"><code class="language-java">//JActorSample is used for untyped actor java class only
+public abstract class JActorSample extends JCommonComponentLoggerActor {
     @Override
     public String componentName() {
         return &quot;my-component-name&quot;;
@@ -417,8 +511,8 @@ public abstract class JExampleLoggerActor extends JCommonComponentLoggerActor {
 }</code></pre></dd>
   <dt>Java class</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">//JExampleLogger is used for non-actor java class only
-public interface JExampleLogger extends JCommonComponentLogger {
+  <pre class="prettyprint"><code class="language-java">//JSample is used for non-actor java class only
+public interface JSample extends JCommonComponentLogger {
     @Override
     default String componentName() {
         return &quot;my-component-name&quot;;
@@ -459,10 +553,10 @@ public interface JExampleLogger extends JCommonComponentLogger {
   <dd>
   <pre class="prettyprint"><code class="language-scala">class LocationServiceExampleClient(locationService: LocationService, loggingSystem: LoggingSystem)(
     implicit mat: Materializer
-) extends ExampleLogger.Actor</code></pre></dd>
+) extends SampleLogger.Actor</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JLocationServiceExampleClient extends JExampleLoggerActor {
+  <pre class="prettyprint"><code class="language-java">public class JLocationServiceExampleClient extends JActorSample {
 
     private ILogger log = getLogger();</code></pre></dd>
 </dl>
@@ -471,22 +565,22 @@ public interface JExampleLogger extends JCommonComponentLogger {
 <dl>
   <dt>Scala Immutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">object CommonImmutableLogger {
+  <pre class="prettyprint"><code class="language-scala">object CommonImmutableSample {
   def behavior(): Behavior[_] = Actor.immutable[Any] { (ctx, msg) ⇒
-    val log = ExampleLogger.immutable(ctx)
+    val log = SampleLogger.immutable(ctx)
 
     Actor.same
   }
 }</code></pre></dd>
   <dt>Java Immutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JComponentImmutableActorLogger {
+  <pre class="prettyprint"><code class="language-java">public class JImmutableSample {
 
     public static &lt;T&gt; Behavior&lt;T&gt; behavior(String componentName) {
         return Actor.immutable((ctx, msg) -&gt; {
 
-            //JComponentImmutableActorLogger.class will appear against class tag in log statements
-            ILogger log = JComponentLoggerImmutable.getLogger(ctx, componentName, JComponentImmutableActorLogger.class);
+            //JImmutableSample.class will appear against class tag in log statements
+            ILogger log = JComponentLoggerImmutable.getLogger(ctx, componentName, JImmutableSample.class);
 
             return Actor.same();
         });
@@ -495,101 +589,7 @@ public interface JExampleLogger extends JCommonComponentLogger {
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
-<h4><a href="#runtime-component-name-for-each-actor-class" name="runtime-component-name-for-each-actor-class" class="anchor"><span class="anchor-link"></span></a>Runtime component name for each actor/class</h4>
-<p>If the component name is not a constant and is available only at runtime in an actor or class, then this is the recommended approach. Mixin loggers as follows:</p>
-<dl>
-  <dt>Scala Mutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class ComponentMutableLogger(ctx: ActorContext[Any], _componentName: String)
-    extends ComponentLogger.MutableActor(ctx, _componentName) {
-
-  override def onMessage(msg: Any): Behavior[Any] = ???
-
-}</code></pre></dd>
-  <dt>Scala Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class ComponentActorLogger(_componentName: String) extends ComponentLogger.Actor(_componentName) {
-
-  override def receive: Nothing = ???
-}</code></pre></dd>
-  <dt>Scala class</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class ComponentSimpleLogger(_componentName: String) extends ComponentLogger.Simple {
-
-  override protected def componentName(): String = _componentName
-
-}</code></pre></dd>
-</dl>
-<dl>
-  <dt>Java Mutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JComponentMutableActorLogger extends JComponentLoggerMutableActor&lt;Object&gt; {
-
-    private ILogger log;
-    public JComponentMutableActorLogger(ActorContext&lt;Object&gt; ctx, String _componentName) {
-        log = getLogger(ctx, _componentName);
-    }
-
-    @Override
-    public Actor.Receive&lt;Object&gt; createReceive() {
-        return null;
-    }
-}</code></pre></dd>
-  <dt>Java Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JComponentActorLogger extends JComponentLoggerActor {
-
-    private ILogger log;
-
-    public JComponentActorLogger(String _componentName) {
-        this.log = getLogger(_componentName);
-    }
-
-    @Override
-    public Receive createReceive() {
-        return null;
-    }
-}</code></pre></dd>
-  <dt>Java class</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JComponentSimpleLogger implements JComponentLogger {
-
-    private ILogger log;
-
-    public JComponentSimpleLogger(String _componentName) {
-        this.log = getLogger(_componentName);
-    }
-}</code></pre></dd>
-</dl>
-<p>For immutable actors, refer the following example:</p>
-<dl>
-  <dt>Scala Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">object ComponentImmutableLogger {
-  def behavior(_componentName: String): Behavior[_] = Actor.immutable[Any] { (ctx, msg) ⇒
-    val log = ComponentLogger.immutable(ctx, _componentName)
-
-    Actor.same
-  }
-}</code></pre></dd>
-  <dt>Java Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JComponentImmutableActorLogger {
-
-    public static &lt;T&gt; Behavior&lt;T&gt; behavior(String componentName) {
-        return Actor.immutable((ctx, msg) -&gt; {
-
-            //JComponentImmutableActorLogger.class will appear against class tag in log statements
-            ILogger log = JComponentLoggerImmutable.getLogger(ctx, componentName, JComponentImmutableActorLogger.class);
-
-            return Actor.same();
-        });
-    }
-
-}</code></pre></dd>
-</dl>
-<p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p><div class="callout note "><div class="callout-title">Note</div>
-<p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
+<p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p>
 <h2><a href="#log-statements" name="log-statements" class="anchor"><span class="anchor-link"></span></a>Log statements</h2>
 <p>Logging statements are used very much like existing logging services such as log4j. For Java, there is an additional way of writing log messages using Supplier methods (lambdas). The use of lambdas is more efficient since the computations in a message (e.g. string concatenation) are not performed unless the message is actually being logged. Therefore, these supplier methods should be used in cases where high performance is required (see <a href="#java-logging-string-vs-supplier-api-performance">performance results below</a>).</p>
 <p>A basic info statement can be written as follows:</p>
