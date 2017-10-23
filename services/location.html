@@ -128,6 +128,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li>host address/port pairs</li>
   <li>URL/URIs paths</li>
   <li>connection protocols</li>
+  <li>log-admin actor reference</li>
 </ul><div class="callout note "><div class="callout-title">async handling in scala and java examples.</div>
 <ul>
   <li>
@@ -192,7 +193,8 @@ Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala"><br/>private val logAdminActorRef: ActorRef[LogControlMessages] =
+  <pre class="prettyprint"><code class="language-scala"><br/>// logAdminActorRef handles dynamically setting/getting log level of the component
+private val logAdminActorRef: ActorRef[LogControlMessages] =
   LogAdminActorFactory.make(context.system)
 
 // add some dummy registrations for illustrative purposes
@@ -202,6 +204,8 @@ val httpPort                          = 8080
 val httpConnection                    = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
 val httpRegistration                  = HttpRegistration(httpConnection, httpPort, &quot;path123&quot;, logAdminActorRef)
 val httpRegResult: RegistrationResult = Await.result(locationService.register(httpRegistration), 2.seconds)
+
+// ************************************************************************************************************
 
 // import scaladsl adapter to implicitly convert UnTyped ActorRefs to Typed ActorRef[Nothing]
 import akka.typed.scaladsl.adapter._
@@ -223,6 +227,8 @@ val hcdRegistration =
 // UnTyped ActorRefs to Typed ActorRef[Nothing]
 val hcdRegResult: RegistrationResult = Await.result(locationService.register(hcdRegistration), 2.seconds)
 
+// ************************************************************************************************************
+
 def behavior(): Behavior[String] = Actor.deferred { ctx =&gt;
   Actor.same
 }
@@ -235,12 +241,15 @@ val assemblyRegistration                  = AkkaRegistration(assemblyConnection,
 val assemblyRegResult: RegistrationResult = Await.result(locationService.register(assemblyRegistration), 2.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">akka.typed.ActorRef&lt;LogControlMessages&gt; logAdminActorRef = LogAdminActorFactory.make(context().system());
+  <pre class="prettyprint"><code class="language-java"><br/>// logAdminActorRef handles dynamically setting/getting log level of the component
+akka.typed.ActorRef&lt;LogControlMessages&gt; logAdminActorRef = LogAdminActorFactory.make(context().system());
 
 // dummy http connection
 HttpConnection httpConnection   = new HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
 HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;, logAdminActorRef);
 httpRegResult = locationService.register(httpRegistration).get();
+
+// ************************************************************************************************************
 
 // dummy HCD connection
 AkkaConnection hcdConnection = new AkkaConnection(new ComponentId(&quot;hcd1&quot;, JComponentType.HCD));
@@ -258,6 +267,7 @@ ActorRef actorRef = getContext().actorOf(Props.create(AbstractActor.class, () -&
 AkkaRegistration hcdRegistration = new AkkaRegistration(hcdConnection, Adapter.toTyped(actorRef), logAdminActorRef);
 hcdRegResult = locationService.register(hcdRegistration).get();
 
+// ************************************************************************************************************
 
 Behavior&lt;String&gt; behavior = Actor.deferred(ctx -&gt; {
     return Actor.same();
@@ -270,8 +280,9 @@ AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(&quot;ass
 AkkaRegistration assemblyRegistration = new AkkaRegistration(assemblyConnection, typedActorRef, logAdminActorRef);
 assemblyRegResult = locationService.register(assemblyRegistration).get();</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>Notice the <code>logAdminActorRef</code> that is used while registering any connection. For an application, make sure there is only one <code>logAdminActorRef</code> used for all registrations. </p></div><div class="callout note "><div class="callout-title">Note</div>
-<p>The <code>AkkaRegistration</code> api takes only Typed ActorRefs. Hence, to register an UnTyped ActorRef for an akka connection, it needs to be adapted to Typed <code>ActorRef[Nothing]</code>. This can be achieved using adapter provided for scaladsl and javadsl. The usage of adapter is shown in above snippet for scala and java both. </p></div>
+<p>Notice the <code>logAdminActorRef</code> that is used while registering any connection. It is used to dynamically change the log level of a component. For an application, make sure there is only one <code>logAdminActorRef</code> used for all registrations. The source code of <code>LogAdminActor</code> can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-logging/src/main/scala/csw/services/logging/internal/LogAdminActor.scala">here</a>. </p></div><div class="callout note "><div class="callout-title">Note</div>
+<p>The <code>AkkaRegistration</code> api takes only Typed ActorRefs. Hence, to register an UnTyped ActorRef for an akka connection, it needs to be adapted to Typed <code>ActorRef[Nothing]</code>. This can be achieved using adapter provided for scaladsl and javadsl. The usage of adapter is shown in above snippet for scala and java both. </p>
+<p>Also, note that for components, the registration will be taken care of via <code>csw-framework</code>. Hence, component developers won&rsquo;t register any connections during their development. So, above demonstration of registering connections is for explanatory and testing purpose only. </p></div>
 <h2><a href="#creating-actorref-for-registration" name="creating-actorref-for-registration" class="anchor"><span class="anchor-link"></span></a>Creating ActorRef for registration</h2>
 <p>Make sure the ActorSystem used to start actors using the location service is created using <code>ActorSystemFactory</code> as follows:</p>
 <dl>
@@ -368,7 +379,7 @@ if (resolveResult.isPresent()) {
 <p>If not, eventually the operation will timeout and the output should read:</p>
 <pre><code>[INFO] Timeout waiting for location AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) to resolve.
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>Once the akka location is found or resolved, there could be a need to give a specific type to the actorRef. Since, the type of the ActorRef used while registering cannot be restored due to the concept of <code>erasure</code>, the ActorRef can still be typed while retrieving as follows:</p>
+<p>The <code>resolve</code> and <code>find</code> api returns the concrete <code>Location</code> type i.e. <code>Akkalocation</code>, <code>HttpLocation</code> or <code>TcpLocation</code> as demonstrated in this section. Once the akka location is found or resolved, we need to retain the type to the actorRef, since the explicit type annotation is removed from the program, before it is executed at run-time (refer <a href="https://en.wikipedia.org/wiki/Type_erasure">type erasure</a>). Retaining the type can be acheived using following <code>AkkaLocation</code> api:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -376,8 +387,7 @@ if (resolveResult.isPresent()) {
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">akka.typed.ActorRef&lt;String&gt; typedActorRef = akkaLocation.jTypedRef(String.class);</code></pre></dd>
-</dl>
-<p>If an UnTyped ActorRef was used while registering, then at retrieval, using just <code>actorRef</code> instead of <code>typedRef</code> from <code>AkkaLocation</code> would suffice. </p></div>
+</dl></div>
 <h2><a href="#filtering" name="filtering" class="anchor"><span class="anchor-link"></span></a>Filtering</h2>
 <p>The <code>list</code> API and its variants offer means to inquire about available connections with the LocationService. The <strong>parameter-less</strong> <code>list</code> returns all available connections</p>
 <dl>
