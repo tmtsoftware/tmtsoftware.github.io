@@ -361,7 +361,7 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <dt>Scala Immutable Actor</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">object GenericImmutableSample {
-  def behavior(): Behavior[_] = Actor.immutable[Any] { (ctx, msg) ⇒
+  def behavior(): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] { (ctx, msg) ⇒
     val log = GenericLogger.immutable(ctx)
 
     Actor.same
@@ -371,7 +371,7 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <dd>
   <pre class="prettyprint"><code class="language-java">public class JGenericImmutableSample {
 
-    public static &lt;T&gt; Behavior&lt;T&gt; behavior(String componentName) {
+    public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
         return Actor.immutable((ctx, msg) -&gt; {
 
             //JGenericImmutableSample.class will appear against class tag in log statements
@@ -390,10 +390,10 @@ loggingSystem.javaStop().get();</code></pre></dd>
 <dl>
   <dt>Scala Mutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class MutableActorSample(ctx: ActorContext[Any], _componentName: String)
+  <pre class="prettyprint"><code class="language-scala">class MutableActorSample(ctx: ActorContext[ComponentDomainMessage], _componentName: String)
     extends ComponentLogger.MutableActor(ctx, _componentName) {
 
-  override def onMessage(msg: Any): Behavior[Any] = ???
+  override def onMessage(msg: ComponentDomainMessage): Behavior[ComponentDomainMessage] = ???
 
 }</code></pre></dd>
   <dt>Scala Actor</dt>
@@ -413,15 +413,15 @@ loggingSystem.javaStop().get();</code></pre></dd>
 <dl>
   <dt>Java Mutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JMutableActorSample extends JComponentLoggerMutableActor&lt;Object&gt; {
+  <pre class="prettyprint"><code class="language-java">public class JMutableActorSample extends JComponentLoggerMutableActor&lt;ComponentDomainMessage&gt; {
 
     private ILogger log;
-    public JMutableActorSample(ActorContext&lt;Object&gt; ctx, String _componentName) {
+    public JMutableActorSample(ActorContext&lt;ComponentDomainMessage&gt; ctx, String _componentName) {
         log = getLogger(ctx, _componentName);
     }
 
     @Override
-    public Actor.Receive&lt;Object&gt; createReceive() {
+    public Actor.Receive&lt;ComponentDomainMessage&gt; createReceive() {
         return null;
     }
 }</code></pre></dd>
@@ -456,17 +456,18 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <dt>Scala Immutable Actor</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">object ImmutableSample {
-  def behavior(_componentName: String): Behavior[_] = Actor.immutable[Any] { (ctx, msg) ⇒
-    val log = ComponentLogger.immutable(ctx, _componentName)
+  def behavior(_componentName: String): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] {
+    (ctx, msg) ⇒
+      val log = ComponentLogger.immutable(ctx, _componentName)
 
-    Actor.same
+      Actor.same
   }
 }</code></pre></dd>
   <dt>Java Immutable Actor</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">public class JImmutableSample {
 
-    public static &lt;T&gt; Behavior&lt;T&gt; behavior(String componentName) {
+    public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
         return Actor.immutable((ctx, msg) -&gt; {
 
             //JImmutableSample.class will appear against class tag in log statements
@@ -477,6 +478,13 @@ loggingSystem.javaStop().get();</code></pre></dd>
     }
 
 }</code></pre></dd>
+</dl>
+<p>Considering there is a domain message hierarchy for component as follows:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">sealed trait ComponentDomainMessage        extends DomainMessage
+case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
 <h4><a href="#common-component-name-for-multiple-actors-classes" name="common-component-name-for-multiple-actors-classes" class="anchor"><span class="anchor-link"></span></a>Common component name for multiple actors/classes</h4>
@@ -490,8 +498,8 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <dt>Java Mutable Actor</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//JMutableActorSample is used for mutable actor java class only
-public abstract class JMutableActorSample extends JCommonComponentLoggerMutableActor&lt;Object&gt; {
-    public JMutableActorSample(ActorContext&lt;Object&gt; ctx) {
+public abstract class JMutableActorSample extends JCommonComponentLoggerMutableActor&lt;ComponentDomainMessage&gt; {
+    public JMutableActorSample(ActorContext&lt;ComponentDomainMessage&gt; ctx) {
         super(ctx);
     }
 
@@ -566,7 +574,7 @@ public interface JSample extends JCommonComponentLogger {
   <dt>Scala Immutable Actor</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">object CommonImmutableSample {
-  def behavior(): Behavior[_] = Actor.immutable[Any] { (ctx, msg) ⇒
+  def behavior(): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] { (ctx, msg) ⇒
     val log = SampleLogger.immutable(ctx)
 
     Actor.same
@@ -576,7 +584,7 @@ public interface JSample extends JCommonComponentLogger {
   <dd>
   <pre class="prettyprint"><code class="language-java">public class JImmutableSample {
 
-    public static &lt;T&gt; Behavior&lt;T&gt; behavior(String componentName) {
+    public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
         return Actor.immutable((ctx, msg) -&gt; {
 
             //JImmutableSample.class will appear against class tag in log statements
@@ -587,6 +595,13 @@ public interface JSample extends JCommonComponentLogger {
     }
 
 }</code></pre></dd>
+</dl>
+<p>Considering there is a domain message hierarchy for component as follows:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">sealed trait ComponentDomainMessage        extends DomainMessage
+case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
 <p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p>
