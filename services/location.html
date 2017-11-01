@@ -222,6 +222,8 @@ Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
 private val logAdminActorRef: ActorRef[LogControlMessages] =
   LogAdminActorFactory.make(context.system)
 
+private val registrationFactory = new RegistrationFactory(logAdminActorRef)
+
 // add some dummy registrations for illustrative purposes
 
 // dummy http connection
@@ -237,16 +239,15 @@ import akka.typed.scaladsl.adapter._
 
 // dummy HCD connection
 val hcdConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
-val hcdRegistration =
-  AkkaRegistration(
-    hcdConnection,
-    context.actorOf(Props(new akka.actor.Actor {
-      override def receive: Receive = {
-        case &quot;print&quot; =&gt; log.info(&quot;hello world&quot;)
-      }
-    }), name = &quot;my-actor-1&quot;),
-    logAdminActorRef
-  )
+val hcdRegistration: AkkaRegistration = registrationFactory.akkaTyped(
+  hcdConnection,
+  &quot;nfiraos.ncc.tromboneHcd&quot;,
+  context.actorOf(Props(new akka.actor.Actor {
+    override def receive: Receive = {
+      case &quot;print&quot; =&gt; log.info(&quot;hello world&quot;)
+    }
+  }), name = &quot;my-actor-1&quot;)
+)
 
 // Register UnTyped ActorRef with Location service. Import scaladsl adapter to implicitly convert
 // UnTyped ActorRefs to Typed ActorRef[Nothing]
@@ -262,7 +263,9 @@ val typedActorRef: ActorRef[String] = context.system.spawn(behavior(), &quot;typ
 val assemblyConnection = AkkaConnection(ComponentId(&quot;assembly1&quot;, ComponentType.Assembly))
 
 // Register Typed ActorRef[String] with Location Service
-val assemblyRegistration                  = AkkaRegistration(assemblyConnection, typedActorRef, logAdminActorRef)
+val assemblyRegistration: AkkaRegistration =
+  registrationFactory.akkaTyped(assemblyConnection, &quot;nfiraos.ncc.tromboneAssembly&quot;, typedActorRef)
+
 val assemblyRegResult: RegistrationResult = Await.result(locationService.register(assemblyRegistration), 2.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -287,9 +290,11 @@ ActorRef actorRef = getContext().actorOf(Props.create(AbstractActor.class, () -&
         &quot;my-actor-1&quot;
 );
 
+RegistrationFactory registrationFactory = new RegistrationFactory(logAdminActorRef);
+
 // Register UnTyped ActorRef with Location service. Use javadsl Adapter to convert UnTyped ActorRefs
 // to Typed ActorRef[Nothing]
-AkkaRegistration hcdRegistration = new AkkaRegistration(hcdConnection, Adapter.toTyped(actorRef), logAdminActorRef);
+AkkaRegistration hcdRegistration = registrationFactory.akkaTyped(hcdConnection, &quot;nfiraos.ncc.tromboneHcd&quot;, Adapter.toTyped(actorRef));
 hcdRegResult = locationService.register(hcdRegistration).get();
 
 // ************************************************************************************************************
@@ -302,7 +307,7 @@ akka.typed.ActorRef&lt;String&gt; typedActorRef = Adapter.spawn(context(), behav
 AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(&quot;assembly1&quot;, JComponentType.Assembly));
 
 // Register Typed ActorRef[String] with Location Service
-AkkaRegistration assemblyRegistration = new AkkaRegistration(assemblyConnection, typedActorRef, logAdminActorRef);
+AkkaRegistration assemblyRegistration = registrationFactory.akkaTyped(assemblyConnection, &quot;nfiraos.ncc.tromboneAssembly&quot;, typedActorRef);
 assemblyRegResult = locationService.register(assemblyRegistration).get();</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Notice the <code>logAdminActorRef</code> that is used while registering any connection. It is used to dynamically change the log level of a component. For an application, make sure there is only one <code>logAdminActorRef</code> used for all registrations. The source code of <code>LogAdminActor</code> can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-logging/src/main/scala/csw/services/logging/internal/LogAdminActor.scala">here</a>. </p></div><div class="callout note "><div class="callout-title">Note</div>
@@ -491,6 +496,27 @@ for (Location loc : akkaList) {
 <pre><code>[INFO] Registered Akka connections:
 [INFO] --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
 [INFO] --- LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType
+[INFO] --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
+</code></pre>
+<p>Filtering akka connections by prefix is shown below:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">// filter akka locations based on prefix
+val akkaLocations: List[AkkaLocation] = Await.result(locationService.listByPrefix(&quot;nfiraos.ncc&quot;), timeout)
+log.info(&quot;Registered akka locations for nfiraos.ncc&quot;)
+akkaLocations.foreach(c ⇒ log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">List&lt;AkkaLocation&gt; akkaLocations = locationService.listByPrefix(&quot;nfiraos.ncc&quot;).get();
+log.info(&quot;Registered akka locations for nfiraos.ncc&quot;);
+for (Location loc : akkaLocations) {
+    log.info(&quot;--- &quot; + connectionInfo(loc.connection()));
+}</code></pre></dd>
+</dl>
+<p>The log output should contain:</p>
+<pre><code>[INFO] Registered akka locations for nfiraos.ncc
+[INFO] --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
 [INFO] --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
 </code></pre>
 <h2><a href="#tracking-and-subscribing" name="tracking-and-subscribing" class="anchor"><span class="anchor-link"></span></a>Tracking and Subscribing</h2>
