@@ -101,10 +101,12 @@ TMT Common Software (CSW)
     <li><a href="../services/logging.html#configuration" class="header">Configuration</a></li>
     <li><a href="../services/logging.html#log-levels" class="header">Log Levels</a></li>
     <li><a href="../services/logging.html#log-structure" class="header">Log Structure</a></li>
+    <li><a href="../services/logging.html#enable-component-logging" class="header">Enable component logging</a></li>
+    <li><a href="../services/logging.html#enable-generic-logging" class="header">Enable generic logging</a></li>
+    <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
+    <li><a href="../services/logging.html#enable-common-component-logging" class="header">Enable common component logging</a></li>
     <li><a href="../services/logging.html#create-loggingsystem" class="header">Create LoggingSystem</a></li>
     <li><a href="../services/logging.html#stop-loggingsystem" class="header">Stop LoggingSystem</a></li>
-    <li><a href="../services/logging.html#enable-logging" class="header">Enable logging</a></li>
-    <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
     <li><a href="../services/logging.html#source-code-for-examples" class="header">Source code for examples</a></li>
     <li><a href="../services/logging.html#performance" class="header">Performance</a></li>
     <li><a href="../services/logging.html#acknowledgement" class="header">Acknowledgement</a></li>
@@ -132,10 +134,12 @@ TMT Common Software (CSW)
     <li><a href="../services/logging.html#configuration" class="header">Configuration</a></li>
     <li><a href="../services/logging.html#log-levels" class="header">Log Levels</a></li>
     <li><a href="../services/logging.html#log-structure" class="header">Log Structure</a></li>
+    <li><a href="../services/logging.html#enable-component-logging" class="header">Enable component logging</a></li>
+    <li><a href="../services/logging.html#enable-generic-logging" class="header">Enable generic logging</a></li>
+    <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
+    <li><a href="../services/logging.html#enable-common-component-logging" class="header">Enable common component logging</a></li>
     <li><a href="../services/logging.html#create-loggingsystem" class="header">Create LoggingSystem</a></li>
     <li><a href="../services/logging.html#stop-loggingsystem" class="header">Stop LoggingSystem</a></li>
-    <li><a href="../services/logging.html#enable-logging" class="header">Enable logging</a></li>
-    <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
     <li><a href="../services/logging.html#source-code-for-examples" class="header">Source code for examples</a></li>
     <li><a href="../services/logging.html#performance" class="header">Performance</a></li>
     <li><a href="../services/logging.html#acknowledgement" class="header">Acknowledgement</a></li>
@@ -324,97 +328,8 @@ TMT Common Software (CSW)
   <li><code>@host</code>, <code>@name</code> and <code>@version</code> will appear in log statements only if <em>fullHeaders</em> is set as true in the configuration</li>
   <li><code>file</code> and <code>line</code> will appear only in log statements from Scala classes/actors. This is typical for Java logging tools, and is due to the lack of macro support in Java.</li>
 </ul></div>
-<h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2>
-<p>For logging statements to appear in the program, start <code>LoggingSystem</code> at an earliest location in an application. <strong>Also note, <code>LoggingSystem</code> should be started only once in an application.</strong> The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">private val host = InetAddress.getLocalHost.getHostName
-// Only call this once per application
-val loggingSystem: LoggingSystem = LoggingSystemFactory.start(&quot;LocationServiceExampleClient&quot;, &quot;0.1&quot;, host, system)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
-loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&quot;, &quot;0.1&quot;, host, actorSystem);</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<ul>
-  <li>The <code>hostname</code> that is provided while creating <code>LoggingSystem</code> will appear in log statements against <code>@host</code> tag</li>
-</ul></div>
-<h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2>
-<p>Please ensure to stop <code>LoggingSystem</code> before application exits.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">// Only call this once per application
-Await.result(loggingSystem.stop, 30.seconds)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">// Only call this once per application
-loggingSystem.javaStop().get();</code></pre></dd>
-</dl>
-<h2><a href="#enable-logging" name="enable-logging" class="anchor"><span class="anchor-link"></span></a>Enable logging</h2>
-<h3><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable generic logging</h3>
-<p>To enable logging for some utility code that does not require <code>@componentName</code> in log statements, inherit from following traits:</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <ul>
-    <li>For typed mutable actor class extend <code>GenericLogger.MutableActor</code></li>
-  </ul></dd>
-  <dd>
-    <ul>
-      <li>For actor class extend <code>GenericLogger.Actor</code></li>
-    </ul>
-    <ul>
-      <li>For non-actor class extend <code>GenericLogger.Simple</code></li>
-    </ul>
-  </dd>
-  <dt>Java</dt>
-  <dd>
-  <ul>
-    <li>For typed mutable actor class inherit <code>JGenericLoggerMutableActor</code></li>
-  </ul></dd>
-  <dd>
-    <ul>
-      <li>For actor class inherit <code>JGenericLoggerActor</code></li>
-    </ul>
-    <ul>
-      <li>For non-actor class inherit <code>JGenericLogger</code></li>
-    </ul>
-  </dd>
-</dl>
-<p>For immutable actors, refer the following example:</p>
-<dl>
-  <dt>Scala Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">object GenericImmutableSample {
-  def behavior(): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] { (ctx, msg) ⇒
-    val log = GenericLogger.immutable(ctx)
-
-    log.info(s&quot;Received msg: [$msg]&quot;)
-    Actor.same
-  }
-}</code></pre></dd>
-  <dt>Java Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JGenericImmutableSample {
-
-    public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
-        return Actor.immutable((ctx, msg) -&gt; {
-
-            //JGenericImmutableSample.class will appear against class tag in log statements
-            ILogger log = JGenericLoggerImmutable.getLogger(ctx, JGenericImmutableSample.class);
-
-            return Actor.same();
-        });
-    }
-
-}</code></pre></dd>
-</dl>
-<h3><a href="#enable-component-level-logging" name="enable-component-level-logging" class="anchor"><span class="anchor-link"></span></a>Enable component level logging</h3>
-<p>To include <code>@componentName</code> in your log statements, follow one of the below approaches:</p>
-<h4><a href="#runtime-component-name-for-each-actor-class" name="runtime-component-name-for-each-actor-class" class="anchor"><span class="anchor-link"></span></a>Runtime component name for each actor/class</h4>
-<p>If the component name is not a constant and is available only at runtime in an actor or class, then this is the recommended approach. Component developers will have to mostly use this approach. For reference, <code>csw-framework</code> uses this approach and it can referred for <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorInfoFactory.scala">Simple Logger</a> and <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/container/ContainerBehavior.scala">Mutable Actor</a>. For this approach, mixin loggers as follows:</p>
+<h2><a href="#enable-component-logging" name="enable-component-logging" class="anchor"><span class="anchor-link"></span></a>Enable component logging</h2>
+<p>Component developers are expected to mix-in one of the following trait/classes in order to access <code>log</code> instance in the class.</p>
 <dl>
   <dt>Scala Mutable Actor</dt>
   <dd>
@@ -514,97 +429,46 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <dd>
   <pre class="prettyprint"><code class="language-scala">sealed trait ComponentDomainMessage        extends DomainMessage
 case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
+</dl>
+<p>For reference, <code>csw-framework</code> uses similar steps and it can referred for <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorInfoFactory.scala">Simple Logger</a> and <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/container/ContainerBehavior.scala">Mutable Actor</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
-<h4><a href="#common-component-name-for-multiple-actors-classes" name="common-component-name-for-multiple-actors-classes" class="anchor"><span class="anchor-link"></span></a>Common component name for multiple actors/classes</h4>
-<p>If log statements appearing from multiple actors/classes has same <code>@componentName</code> to be displayed and it is a constant, then this is the recommended approach. This approach is less-likely to be used by component developers. For reference, it is used in <code>csw-location</code> service and can be referred <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-location/src/main/scala/csw/services/location/commons/LocationServiceLogger.scala">here</a>. To use this approach, create an object/abstract class/interface as follows:</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">object SampleLogger extends CommonComponentLogger(&quot;my-component-name&quot;)</code></pre></dd>
-</dl>
-<dl>
-  <dt>Java Mutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//JMutableActorSample is used for mutable actor java class only
-public abstract class JMutableActorSample extends JCommonComponentLoggerMutableActor&lt;ComponentDomainMessage&gt; {
-    public JMutableActorSample(ActorContext&lt;ComponentDomainMessage&gt; ctx) {
-        super(ctx);
-    }
-
-    @Override
-    public String componentName() {
-        return &quot;my-component-name&quot;;
-    }
-}</code></pre></dd>
-  <dt>Java Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//JActorSample is used for untyped actor java class only
-public abstract class JActorSample extends JCommonComponentLoggerActor {
-    @Override
-    public String componentName() {
-        return &quot;my-component-name&quot;;
-    }
-}</code></pre></dd>
-  <dt>Java class</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//JSample is used for non-actor java class only
-public interface JSample extends JCommonComponentLogger {
-    @Override
-    default String componentName() {
-        return &quot;my-component-name&quot;;
-    }
-}</code></pre></dd>
-</dl>
-<p>Then, inherit following object/interface:</p>
+<h2><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable generic logging</h2>
+<p>To enable logging for some utility code that does not require <code>@componentName</code> in log statements, inherit from following traits:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
   <ul>
-    <li>For all mutable actors that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.MutableActor</code></li>
+    <li>For typed mutable actor class extend <code>GenericLogger.MutableActor</code></li>
   </ul></dd>
   <dd>
     <ul>
-      <li>For all untyped actors that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.Actor</code></li>
+      <li>For actor class extend <code>GenericLogger.Actor</code></li>
     </ul>
     <ul>
-      <li>For all non-actor classes that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.Simple</code></li>
+      <li>For non-actor class extend <code>GenericLogger.Simple</code></li>
     </ul>
   </dd>
   <dt>Java</dt>
   <dd>
   <ul>
-    <li>For all mutable actors that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLoggerMutableActor</code></li>
+    <li>For typed mutable actor class inherit <code>JGenericLoggerMutableActor</code></li>
   </ul></dd>
   <dd>
     <ul>
-      <li>For all untyped actors that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLoggerActor</code></li>
+      <li>For actor class inherit <code>JGenericLoggerActor</code></li>
     </ul>
     <ul>
-      <li>For all non-actor classes that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLogger</code></li>
+      <li>For non-actor class inherit <code>JGenericLogger</code></li>
     </ul>
   </dd>
-</dl><div class="callout note "><div class="callout-title">Example to mixin above loggers in actors </div>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class LocationServiceExampleClient(locationService: LocationService, loggingSystem: LoggingSystem)(
-    implicit mat: Materializer
-) extends SampleLogger.Actor</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JLocationServiceExampleClient extends JActorSample {
-
-    private ILogger log = getLogger();</code></pre></dd>
 </dl>
-<p>Loggers for Mutable actors and classes can be mixed in a similar way.</p></div>
 <p>For immutable actors, refer the following example:</p>
 <dl>
   <dt>Scala Immutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">object CommonImmutableSample {
+  <pre class="prettyprint"><code class="language-scala">object GenericImmutableSample {
   def behavior(): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] { (ctx, msg) ⇒
-    val log = SampleLogger.immutable(ctx)
+    val log = GenericLogger.immutable(ctx)
 
     log.info(s&quot;Received msg: [$msg]&quot;)
     Actor.same
@@ -612,13 +476,13 @@ public interface JSample extends JCommonComponentLogger {
 }</code></pre></dd>
   <dt>Java Immutable Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JImmutableSample {
+  <pre class="prettyprint"><code class="language-java">public class JGenericImmutableSample {
 
     public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
         return Actor.immutable((ctx, msg) -&gt; {
 
-            //JImmutableSample.class will appear against class tag in log statements
-            ILogger log = JComponentLoggerImmutable.getLogger(ctx, componentName, JImmutableSample.class);
+            //JGenericImmutableSample.class will appear against class tag in log statements
+            ILogger log = JGenericLoggerImmutable.getLogger(ctx, JGenericImmutableSample.class);
 
             return Actor.same();
         });
@@ -626,14 +490,6 @@ public interface JSample extends JCommonComponentLogger {
 
 }</code></pre></dd>
 </dl>
-<p>Considering there is a domain message hierarchy for component as follows:</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">sealed trait ComponentDomainMessage        extends DomainMessage
-case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
 <p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p>
 <h2><a href="#log-statements" name="log-statements" class="anchor"><span class="anchor-link"></span></a>Log statements</h2>
 <p>Logging statements are used very much like existing logging services such as log4j. For Java, there is an additional way of writing log messages using Supplier methods (lambdas). The use of lambdas is more efficient since the computations in a message (e.g. string concatenation) are not performed unless the message is actually being logged. Therefore, these supplier methods should be used in cases where high performance is required (see <a href="#java-logging-string-vs-supplier-api-performance">performance results below</a>).</p>
@@ -779,6 +635,155 @@ log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <dd>
   <pre class="prettyprint"><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
 log.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
+</dl>
+<h2><a href="#enable-common-component-logging" name="enable-common-component-logging" class="anchor"><span class="anchor-link"></span></a>Enable common component logging</h2>
+<h3><a href="#available-for-custom-non-component-implementations-of-logging" name="available-for-custom-non-component-implementations-of-logging" class="anchor"><span class="anchor-link"></span></a>Available for custom(non-component) implementations of logging</h3>
+<p>If log statements appearing from multiple actors/classes has same <code>@componentName</code> to be displayed and it is a constant, then this is the recommended approach. This approach is less-likely to be used by component developers. For reference, it is used in <code>csw-location</code> service and can be referred <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-location/src/main/scala/csw/services/location/commons/LocationServiceLogger.scala">here</a>. To use this approach, create an object/abstract class/interface as follows:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">object SampleLogger extends CommonComponentLogger(&quot;my-component-name&quot;)</code></pre></dd>
+</dl>
+<dl>
+  <dt>Java Mutable Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//JMutableActorSample is used for mutable actor java class only
+public abstract class JMutableActorSample extends JCommonComponentLoggerMutableActor&lt;ComponentDomainMessage&gt; {
+    public JMutableActorSample(ActorContext&lt;ComponentDomainMessage&gt; ctx) {
+        super(ctx);
+    }
+
+    @Override
+    public String componentName() {
+        return &quot;my-component-name&quot;;
+    }
+}</code></pre></dd>
+  <dt>Java Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//JActorSample is used for untyped actor java class only
+public abstract class JActorSample extends JCommonComponentLoggerActor {
+    @Override
+    public String componentName() {
+        return &quot;my-component-name&quot;;
+    }
+}</code></pre></dd>
+  <dt>Java class</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//JSample is used for non-actor java class only
+public interface JSample extends JCommonComponentLogger {
+    @Override
+    default String componentName() {
+        return &quot;my-component-name&quot;;
+    }
+}</code></pre></dd>
+</dl>
+<p>Then, inherit following object/interface:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <ul>
+    <li>For all mutable actors that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.MutableActor</code></li>
+  </ul></dd>
+  <dd>
+    <ul>
+      <li>For all untyped actors that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.Actor</code></li>
+    </ul>
+    <ul>
+      <li>For all non-actor classes that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.Simple</code></li>
+    </ul>
+  </dd>
+  <dt>Java</dt>
+  <dd>
+  <ul>
+    <li>For all mutable actors that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLoggerMutableActor</code></li>
+  </ul></dd>
+  <dd>
+    <ul>
+      <li>For all untyped actors that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLoggerActor</code></li>
+    </ul>
+    <ul>
+      <li>For all non-actor classes that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLogger</code></li>
+    </ul>
+  </dd>
+</dl><div class="callout note "><div class="callout-title">Example to mixin above loggers in actors </div>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">class LocationServiceExampleClient(locationService: LocationService, loggingSystem: LoggingSystem)(
+    implicit mat: Materializer
+) extends SampleLogger.Actor</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">public class JLocationServiceExampleClient extends JActorSample {
+
+    private ILogger log = getLogger();</code></pre></dd>
+</dl>
+<p>Loggers for Mutable actors and classes can be mixed in a similar way.</p></div>
+<p>For immutable actors, refer the following example:</p>
+<dl>
+  <dt>Scala Immutable Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">object CommonImmutableSample {
+  def behavior(): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] { (ctx, msg) ⇒
+    val log = SampleLogger.immutable(ctx)
+
+    log.info(s&quot;Received msg: [$msg]&quot;)
+    Actor.same
+  }
+}</code></pre></dd>
+  <dt>Java Immutable Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">public class JImmutableSample {
+
+    public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
+        return Actor.immutable((ctx, msg) -&gt; {
+
+            //JImmutableSample.class will appear against class tag in log statements
+            ILogger log = JComponentLoggerImmutable.getLogger(ctx, componentName, JImmutableSample.class);
+
+            return Actor.same();
+        });
+    }
+
+}</code></pre></dd>
+</dl>
+<p>Considering there is a domain message hierarchy for component as follows:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">sealed trait ComponentDomainMessage        extends DomainMessage
+case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
+<h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2>
+<h3><a href="#available-for-test-understanding-purpose" name="available-for-test-understanding-purpose" class="anchor"><span class="anchor-link"></span></a>Available for test/understanding purpose</h3>
+<p>For logging statements to appear in the program, start <code>LoggingSystem</code> at an earliest location in an application. <strong>Also note, <code>LoggingSystem</code> should be started only once in an application.</strong> The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">private val host = InetAddress.getLocalHost.getHostName
+// Only call this once per application
+val loggingSystem: LoggingSystem = LoggingSystemFactory.start(&quot;LocationServiceExampleClient&quot;, &quot;0.1&quot;, host, system)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
+loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&quot;, &quot;0.1&quot;, host, actorSystem);</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<ul>
+  <li>The <code>hostname</code> that is provided while creating <code>LoggingSystem</code> will appear in log statements against <code>@host</code> tag</li>
+</ul></div>
+<h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2>
+<h3><a href="#available-for-test-understanding-purpose" name="available-for-test-understanding-purpose" class="anchor"><span class="anchor-link"></span></a>Available for test/understanding purpose</h3>
+<p>Please ensure to stop <code>LoggingSystem</code> before application exits.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">// Only call this once per application
+Await.result(loggingSystem.stop, 30.seconds)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">// Only call this once per application
+loggingSystem.javaStop().get();</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
