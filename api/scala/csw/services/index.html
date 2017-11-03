@@ -161,10 +161,41 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../framework/index.html"><span class="name">framework</span></a>
+        <a title="This project contains the framework for creating components, such as HCDs and Assemblies." href="../framework/index.html"><span class="name">framework</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <p class="shortcomment cmt">This project contains the framework for creating components, such as HCDs and Assemblies.</p><div class="fullcomment"><div class="comment cmt"><p>This project contains the framework for creating components, such as HCDs and Assemblies.</p><p>A Component is composed of an actor instance of <a href="../framework/internal/component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a> and an
+implementation of <a href="../framework/scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">csw.framework.scaladsl.ComponentHandlers</a> which defines a given component.
+Each component is created by an actor instance of <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>.</p><p>Components are either created by an actor instance of <a href="../framework/internal/container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a> or as a
+Standalone actor instance of <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a> from a configuration file.</p><h5> Container Config Files </h5><p>Here is an example of a config file for creating a container with the name <i>Container-1</i> that
+contains one assembly (named <i>Assembly-1</i>) and depends on the services of two HCDs (<i>HCD-2A</i> and <i>HCD-2B</i>).
+The assembly is implemented by the given class (<code>csw.services.pkg.TestAssembly</code>).
+A <code>Supervisor</code> actor will be created to manage the assembly, which includes registering it with the
+location service, using the given name and prefix. The prefix can be used to distribute parts of the
+configurations to different HCDs. HCDs register themselves with the Location Service and specify a unique
+prefix that can be used for this purpose.</p><pre>container {
+name = Container-<span class="num">1</span>
+components {
+  Assembly-<span class="num">1</span> {
+    <span class="kw">type</span> = Assembly
+    <span class="kw">class</span> = csw.pkgDemo.assembly1.Assembly1
+    prefix = tcs.base.assembly1
+    connectionType: [akka]
+    connections = [
+      {
+        name: HCD-<span class="num">2</span>A
+        <span class="kw">type</span>: HCD
+        connectionType: [akka]
+      }
+      {
+        name: HCD-<span class="num">2</span>B
+        <span class="kw">type</span>: HCD
+        connectionType: [akka]
+      }
+    ]
+  }
+ }
+}</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages" visbl="pub" class="indented2 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="messages"></a><a id="messages:messages"></a>
       <span class="permalink">
