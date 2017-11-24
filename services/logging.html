@@ -90,6 +90,7 @@ TMT Common Software (CSW)
     <li><a href="../services/location.html" class="page">Location service</a></li>
     <li><a href="../services/config.html" class="page">Configuration service</a></li>
     <li><a href="../services/logging.html" class="active page">Logging service</a></li>
+    <li><a href="../services/messages.html" class="page">csw-messages</a></li>
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -104,7 +105,7 @@ TMT Common Software (CSW)
     <li><a href="../services/logging.html#enable-component-logging" class="header">Enable component logging</a></li>
     <li><a href="../services/logging.html#enable-generic-logging" class="header">Enable generic logging</a></li>
     <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
-    <li><a href="../services/logging.html#enable-common-component-logging" class="header">Enable common component logging</a></li>
+    <li><a href="../services/logging.html#create-loggerfactory" class="header">Create LoggerFactory</a></li>
     <li><a href="../services/logging.html#create-loggingsystem" class="header">Create LoggingSystem</a></li>
     <li><a href="../services/logging.html#stop-loggingsystem" class="header">Stop LoggingSystem</a></li>
     <li><a href="../services/logging.html#source-code-for-examples" class="header">Source code for examples</a></li>
@@ -137,7 +138,7 @@ TMT Common Software (CSW)
     <li><a href="../services/logging.html#enable-component-logging" class="header">Enable component logging</a></li>
     <li><a href="../services/logging.html#enable-generic-logging" class="header">Enable generic logging</a></li>
     <li><a href="../services/logging.html#log-statements" class="header">Log statements</a></li>
-    <li><a href="../services/logging.html#enable-common-component-logging" class="header">Enable common component logging</a></li>
+    <li><a href="../services/logging.html#create-loggerfactory" class="header">Create LoggerFactory</a></li>
     <li><a href="../services/logging.html#create-loggingsystem" class="header">Create LoggingSystem</a></li>
     <li><a href="../services/logging.html#stop-loggingsystem" class="header">Stop LoggingSystem</a></li>
     <li><a href="../services/logging.html#source-code-for-examples" class="header">Source code for examples</a></li>
@@ -268,21 +269,21 @@ TMT Common Software (CSW)
   <dt>pretty=true</dt>
   <dd>
   <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@host&quot;:&quot;INsaloni.local&quot;,
+ &quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
- &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.124.238:51256/user/$a&quot;,
+ &quot;@version&quot;:&quot;0.1&quot;,
+ &quot;actor&quot;:&quot;akka://csw-examples-locationServiceClient/user/$a&quot;,
  &quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,
- &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
- &quot;line&quot;:131,
- &quot;message&quot;:&quot;Attempting to find connection&quot;,
- &quot;obsId&quot;:&quot;foo_obs_id&quot;,
- &quot;timestamp&quot;:&quot;2017-07-20T08:15:01.657Z&quot;
+ &quot;line&quot;:149,
+ &quot;message&quot;:&quot;Result of the find call: None&quot;,
+ &quot;timestamp&quot;:&quot;2017-11-24T04:07:23.370Z&quot;
 }
 </code></pre></dd>
   <dt>pretty=false</dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,&quot;@severity&quot;:&quot;INFO&quot;,&quot;actor&quot;:&quot;akka.tcp://csw-examples-locationServiceClient@10.131.124.238:51172/user/$a&quot;,&quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,&quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,&quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,&quot;line&quot;:131,&quot;message&quot;:&quot;Attempting to find connection&quot;,&quot;obsId&quot;:&quot;foo_obs_id&quot;,&quot;timestamp&quot;:&quot;2017-07-20T08:03:08.065Z&quot;}
+  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,&quot;@host&quot;:&quot;INsaloni.local&quot;,&quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,&quot;@severity&quot;:&quot;INFO&quot;,&quot;@version&quot;:&quot;0.1&quot;,&quot;actor&quot;:&quot;akka://csw-examples-locationServiceClient/user/$a&quot;,&quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,&quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,&quot;line&quot;:149,&quot;message&quot;:&quot;Result of the find call: None&quot;,&quot;timestamp&quot;:&quot;2017-11-24T04:16:42.108Z&quot;}
 </code></pre></dd>
 </dl>
 <p>Similarly, turning <code>oneLine</code> on will produce log statements in following format:</p>
@@ -329,53 +330,44 @@ TMT Common Software (CSW)
   <li><code>file</code> and <code>line</code> will appear only in log statements from Scala classes/actors. This is typical for Java logging tools, and is due to the lack of macro support in Java.</li>
 </ul></div>
 <h2><a href="#enable-component-logging" name="enable-component-logging" class="anchor"><span class="anchor-link"></span></a>Enable component logging</h2>
-<p>Component developers are expected to mix-in one of the following trait/classes in order to access <code>log</code> instance in the class.</p>
+<p>Component developers will have an instance of <code>LoggerFactory</code> available from <code>csw-framework</code>. This instance will already have a <code>componentName</code> set by <code>csw-framework</code> which will appear in log statements against <code>@componentName</code> tag. Next, to get the <code>Logger</code> from <code>LoggerFactory</code> use one of the following ways: </p>
 <dl>
-  <dt>Scala Mutable Actor</dt>
+  <dt>Scala Class</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class MutableActorSample(ctx: ActorContext[ComponentDomainMessage], _componentName: String)
-    extends ComponentLogger.MutableActor(ctx, _componentName) {
+  <pre class="prettyprint"><code class="language-scala">class SampleClass(loggerFactory: LoggerFactory) {
 
-  override def onMessage(msg: ComponentDomainMessage): Behavior[ComponentDomainMessage] = ???
-
+  val log: Logger = loggerFactory.getLogger
 }</code></pre></dd>
   <dt>Scala Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class ActorSample(_componentName: String) extends ComponentLogger.Actor(_componentName) {
+  <pre class="prettyprint"><code class="language-scala">class SampleActor(loggerFactory: LoggerFactory) extends akka.actor.Actor {
 
-  override def receive: Nothing = ???
+  val log: Logger = loggerFactory.getLogger(context)
+
+  override def receive = ???
 }</code></pre></dd>
-  <dt>Scala Class</dt>
+  <dt>Scala Typed Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class Sample(_componentName: String) extends ComponentLogger.Simple {
+  <pre class="prettyprint"><code class="language-scala">class SampleTypedActor(loggerFactory: LoggerFactory, ctx: ActorContext[ComponentDomainMessage]) {
 
-  override protected def componentName(): String = _componentName
-
+  val log: Logger = loggerFactory.getLogger(ctx)
 }</code></pre></dd>
 </dl>
 <dl>
-  <dt>Java Mutable Actor</dt>
+  <dt>Java Class</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JMutableActorSample extends JComponentLoggerMutableActor&lt;ComponentDomainMessage&gt; {
+  <pre class="prettyprint"><code class="language-java">public class JSampleClass {
 
-    private ILogger log;
-    public JMutableActorSample(ActorContext&lt;ComponentDomainMessage&gt; ctx, String _componentName) {
-        log = getLogger(ctx, _componentName);
-    }
-
-    @Override
-    public Actor.Receive&lt;ComponentDomainMessage&gt; createReceive() {
-        return null;
+    public JSampleClass(JLoggerFactory loggerFactory) {
+        ILogger log = loggerFactory.getLogger(getClass());
     }
 }</code></pre></dd>
   <dt>Java Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JActorSample extends JComponentLoggerActor {
+  <pre class="prettyprint"><code class="language-java">class JSampleActor extends akka.actor.AbstractActor {
 
-    private ILogger log;
-
-    public JActorSample(String _componentName) {
-        this.log = getLogger(_componentName);
+    public JSampleActor(JLoggerFactory loggerFactory) {
+        ILogger log = loggerFactory.getLogger(context(), getClass());
     }
 
     @Override
@@ -383,114 +375,74 @@ TMT Common Software (CSW)
         return null;
     }
 }</code></pre></dd>
+  <dt>Java Typed Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">class JSampleTypedActor {
+
+    public JSampleTypedActor(JLoggerFactory loggerFactory, ActorContext&lt;ComponentDomainMessage&gt; ctx) {
+        ILogger log = loggerFactory.getLogger(ctx, getClass());
+    }
+}</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>The <code>LoggerFactory</code> can be changed to <code>JLoggerFactory</code> by using <code>asJava</code> method and <code>JLoggerFactory</code> can be changed to <code>LoggerFactory</code> by using <code>asScala</code> method </p></div>
+<h2><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable generic logging</h2>
+<p>In case there is a need to log statements without <code>@componentName</code> tag, which can be due to unavailability of componentName in some utility code, then use the <code>GenericLoggerFactory</code> as follows:</p>
+<dl>
+  <dt>Scala Class</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">class GenericClass {
+
+  val log: Logger = GenericLoggerFactory.getLogger
+}</code></pre></dd>
+  <dt>Scala Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">class GenericActor extends akka.actor.AbstractActor {
+
+  val log: Logger = GenericLoggerFactory.getLogger(context)
+
+  override def createReceive() = ???
+}</code></pre></dd>
+  <dt>Scala Typed Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">class GenericTypedActor(ctx: ActorContext[ComponentDomainMessage]) {
+
+  val log: Logger = GenericLoggerFactory.getLogger(ctx)
+}</code></pre></dd>
+</dl>
+<dl>
   <dt>Java Class</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JSample implements JComponentLogger {
+  <pre class="prettyprint"><code class="language-java">public class JGenericClass {
 
-    private ILogger log;
+    ILogger log = JGenericLoggerFactory.getLogger(getClass());
+}</code></pre></dd>
+  <dt>Java Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">class JGenericActor extends akka.actor.AbstractActor {
 
-    public JSample(String _componentName) {
-        this.log = getLogger(_componentName);
+    ILogger log = JGenericLoggerFactory.getLogger(context(), getClass());
+
+    @Override
+    public Receive createReceive() {
+        return null;
+    }
+}</code></pre></dd>
+  <dt>Java Typed Actor</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">class JGenericTypedActor {
+
+    public JGenericTypedActor(ActorContext&lt;ComponentDomainMessage&gt; ctx) {
+        ILogger log = JGenericLoggerFactory.getLogger(ctx, getClass());
     }
 }</code></pre></dd>
 </dl>
-<p>For immutable actors, refer the following example:</p>
-<dl>
-  <dt>Scala Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">object ImmutableSample {
-  def behavior(_componentName: String): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] {
-    (ctx, msg) ⇒
-      val log = ComponentLogger.immutable(ctx, _componentName)
-
-      log.info(s&quot;Received msg: [$msg]&quot;)
-      Actor.same
-  }
-}</code></pre></dd>
-  <dt>Java Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JImmutableSample {
-
-    public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
-        return Actor.immutable((ctx, msg) -&gt; {
-
-            //JImmutableSample.class will appear against class tag in log statements
-            ILogger log = JComponentLoggerImmutable.getLogger(ctx, componentName, JImmutableSample.class);
-
-            return Actor.same();
-        });
-    }
-
-}</code></pre></dd>
-</dl>
-<p>Considering there is a domain message hierarchy for component as follows:</p>
+<p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p><div class="callout note "><div class="callout-title">The `ComponentDomainMessage` shown in above examples is defiined as follows</div>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">sealed trait ComponentDomainMessage        extends DomainMessage
 case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code></pre></dd>
-</dl>
-<p>For reference, <code>csw-framework</code> uses similar steps and it can referred for <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorInfoFactory.scala">Simple Logger</a> and <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/container/ContainerBehavior.scala">Mutable Actor</a>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
-<h2><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable generic logging</h2>
-<p>To enable logging for some utility code that does not require <code>@componentName</code> in log statements, inherit from following traits:</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <ul>
-    <li>For typed mutable actor class extend <code>GenericLogger.MutableActor</code></li>
-  </ul></dd>
-  <dd>
-    <ul>
-      <li>For actor class extend <code>GenericLogger.Actor</code></li>
-    </ul>
-    <ul>
-      <li>For non-actor class extend <code>GenericLogger.Simple</code></li>
-    </ul>
-  </dd>
-  <dt>Java</dt>
-  <dd>
-  <ul>
-    <li>For typed mutable actor class inherit <code>JGenericLoggerMutableActor</code></li>
-  </ul></dd>
-  <dd>
-    <ul>
-      <li>For actor class inherit <code>JGenericLoggerActor</code></li>
-    </ul>
-    <ul>
-      <li>For non-actor class inherit <code>JGenericLogger</code></li>
-    </ul>
-  </dd>
-</dl>
-<p>For immutable actors, refer the following example:</p>
-<dl>
-  <dt>Scala Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">object GenericImmutableSample {
-  def behavior(): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] { (ctx, msg) ⇒
-    val log = GenericLogger.immutable(ctx)
-
-    log.info(s&quot;Received msg: [$msg]&quot;)
-    Actor.same
-  }
-}</code></pre></dd>
-  <dt>Java Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JGenericImmutableSample {
-
-    public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
-        return Actor.immutable((ctx, msg) -&gt; {
-
-            //JGenericImmutableSample.class will appear against class tag in log statements
-            ILogger log = JGenericLoggerImmutable.getLogger(ctx, JGenericImmutableSample.class);
-
-            return Actor.same();
-        });
-    }
-
-}</code></pre></dd>
-</dl>
-<p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p>
+</dl></div>
 <h2><a href="#log-statements" name="log-statements" class="anchor"><span class="anchor-link"></span></a>Log statements</h2>
 <p>Logging statements are used very much like existing logging services such as log4j. For Java, there is an additional way of writing log messages using Supplier methods (lambdas). The use of lambdas is more efficient since the computations in a message (e.g. string concatenation) are not performed unless the message is actually being logged. Therefore, these supplier methods should be used in cases where high performance is required (see <a href="#java-logging-string-vs-supplier-api-performance">performance results below</a>).</p>
 <p>A basic info statement can be written as follows:</p>
@@ -511,22 +463,26 @@ case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code>
   <dt>Scala</dt>
   <dd>
   <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@host&quot;:&quot;INsaloni.local&quot;,
+ &quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
- &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@131.215.210.170:55532/user/$a&quot;,
+ &quot;@version&quot;:&quot;0.1&quot;,
+ &quot;actor&quot;:&quot;akka://csw-examples-locationServiceClient/user/$a&quot;,
  &quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
- &quot;line&quot;:116,
+ &quot;line&quot;:149,
  &quot;message&quot;:&quot;Result of the find call: None&quot;,
- &quot;timestamp&quot;:&quot;2017-07-26T19:39:59.764Z&quot;
+ &quot;timestamp&quot;:&quot;2017-11-24T04:07:23.370Z&quot;
 }
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@host&quot;:&quot;INsaloni.local&quot;,
+ &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@131.215.210.170:55556/user/LocationServiceExampleClient&quot;,
+   &quot;akka://csw-examples-locationServiceClient/user/LocationServiceExampleClient&quot;,
  &quot;class&quot;:&quot;csw.services.location.JLocationServiceExampleClient&quot;,
  &quot;message&quot;:
    &quot;Find result: LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType&quot;,
@@ -537,9 +493,11 @@ case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code>
   </dt>
   <dd>
   <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@host&quot;:&quot;INsaloni.local&quot;,
+ &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@131.215.210.170:55556/user/LocationServiceExampleClient&quot;,
+   &quot;akka://csw-examples-locationServiceClient/user/LocationServiceExampleClient&quot;,
  &quot;class&quot;:&quot;csw.services.location.JLocationServiceExampleClient&quot;,
  &quot;message&quot;:
    &quot;Resolve result: LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType&quot;,
@@ -575,46 +533,54 @@ case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code>
   <dt>Scala</dt>
   <dd>
   <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@host&quot;:&quot;INsaloni.local&quot;,
+ &quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
- &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@131.215.210.170:55532/user/$a&quot;,
+ &quot;@version&quot;:&quot;0.1&quot;,
+ &quot;actor&quot;:&quot;akka://csw-examples-locationServiceClient/user/$a&quot;,
  &quot;class&quot;:&quot;csw.services.location.LocationServiceExampleClient&quot;,
  &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
- &quot;line&quot;:110,
+ &quot;line&quot;:143,
  &quot;message&quot;:
    &quot;Attempting to find AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))&quot;,
  &quot;obsId&quot;:&quot;foo_obs_id&quot;,
- &quot;timestamp&quot;:&quot;2017-07-26T19:39:59.756Z&quot;
+ &quot;timestamp&quot;:&quot;2017-11-24T04:17:46.567Z&quot;
 }
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@host&quot;:&quot;INsaloni.local&quot;,
+ &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
+ &quot;@version&quot;:&quot;0.1&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@131.215.210.170:55556/user/LocationServiceExampleClient&quot;,
+   &quot;akka://csw-examples-locationServiceClient/user/LocationServiceExampleClient&quot;,
  &quot;class&quot;:&quot;csw.services.location.JLocationServiceExampleClient&quot;,
  &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
  &quot;message&quot;:
    &quot;Attempting to find AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly))&quot;,
  &quot;obsId&quot;:&quot;foo_obs_id&quot;,
- &quot;timestamp&quot;:&quot;2017-07-26T19:44:58.575Z&quot;
+ &quot;timestamp&quot;:&quot;2017-11-24T04:22:02.582Z&quot;
 }
 </code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
   <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+ &quot;@host&quot;:&quot;INsaloni.local&quot;,
+ &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
+ &quot;@version&quot;:&quot;0.1&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@131.215.210.170:55556/user/LocationServiceExampleClient&quot;,
+   &quot;akka://csw-examples-locationServiceClient/user/LocationServiceExampleClient&quot;,
  &quot;class&quot;:&quot;csw.services.location.JLocationServiceExampleClient&quot;,
  &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
  &quot;message&quot;:
    &quot;Attempting to resolve AkkaConnection(ComponentId(LocationServiceExampleComponent,Assembly)) with a wait of 30 seconds...&quot;,
  &quot;obsId&quot;:&quot;foo_obs_id&quot;,
- &quot;timestamp&quot;:&quot;2017-07-26T19:44:58.628Z&quot;
+ &quot;timestamp&quot;:&quot;2017-11-24T04:22:02.589Z&quot;
 }
 </code></pre></dd>
 </dl>
@@ -636,125 +602,23 @@ log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <pre class="prettyprint"><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
 log.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
 </dl>
-<h2><a href="#enable-common-component-logging" name="enable-common-component-logging" class="anchor"><span class="anchor-link"></span></a>Enable common component logging</h2>
-<h3><a href="#available-for-custom-non-component-implementations-of-logging" name="available-for-custom-non-component-implementations-of-logging" class="anchor"><span class="anchor-link"></span></a>Available for custom(non-component) implementations of logging</h3>
-<p>If log statements appearing from multiple actors/classes has same <code>@componentName</code> to be displayed and it is a constant, then this is the recommended approach. This approach is less-likely to be used by component developers. For reference, it is used in <code>csw-location</code> service and can be referred <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-location/src/main/scala/csw/services/location/commons/LocationServiceLogger.scala">here</a>. To use this approach, create an object/abstract class/interface as follows:</p>
+<h2><a href="#create-loggerfactory" name="create-loggerfactory" class="anchor"><span class="anchor-link"></span></a>Create LoggerFactory</h2>
+<h3><a href="#available-for-test-understanding-purpose" name="available-for-test-understanding-purpose" class="anchor"><span class="anchor-link"></span></a>Available for test/understanding purpose</h3>
+<p>In order to create a LoggerFactory with a custom componentName refer the following code:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">object SampleLogger extends CommonComponentLogger(&quot;my-component-name&quot;)</code></pre></dd>
-</dl>
-<dl>
-  <dt>Java Mutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//JMutableActorSample is used for mutable actor java class only
-public abstract class JMutableActorSample extends JCommonComponentLoggerMutableActor&lt;ComponentDomainMessage&gt; {
-    public JMutableActorSample(ActorContext&lt;ComponentDomainMessage&gt; ctx) {
-        super(ctx);
-    }
+  <pre class="prettyprint"><code class="language-scala">val loggerFactory: LoggerFactory = new LoggerFactory(&quot;my-component-name&quot;)
 
-    @Override
-    public String componentName() {
-        return &quot;my-component-name&quot;;
-    }
-}</code></pre></dd>
-  <dt>Java Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//JActorSample is used for untyped actor java class only
-public abstract class JActorSample extends JCommonComponentLoggerActor {
-    @Override
-    public String componentName() {
-        return &quot;my-component-name&quot;;
-    }
-}</code></pre></dd>
-  <dt>Java class</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//JSample is used for non-actor java class only
-public interface JSample extends JCommonComponentLogger {
-    @Override
-    default String componentName() {
-        return &quot;my-component-name&quot;;
-    }
-}</code></pre></dd>
-</dl>
-<p>Then, inherit following object/interface:</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <ul>
-    <li>For all mutable actors that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.MutableActor</code></li>
-  </ul></dd>
-  <dd>
-    <ul>
-      <li>For all untyped actors that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.Actor</code></li>
-    </ul>
-    <ul>
-      <li>For all non-actor classes that need &lsquo;my-component-name&rsquo;, extend <code>ExampleLogger.Simple</code></li>
-    </ul>
-  </dd>
+// convert a scala LoggerFactory to java JLoggerFactory
+val jLoggerFactory: JLoggerFactory = loggerFactory.asJava</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <ul>
-    <li>For all mutable actors that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLoggerMutableActor</code></li>
-  </ul></dd>
-  <dd>
-    <ul>
-      <li>For all untyped actors that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLoggerActor</code></li>
-    </ul>
-    <ul>
-      <li>For all non-actor classes that need &lsquo;my-component-name&rsquo;, inherit <code>JExampleLogger</code></li>
-    </ul>
-  </dd>
-</dl><div class="callout note "><div class="callout-title">Example to mixin above loggers in actors </div>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class LocationServiceExampleClient(locationService: LocationService, loggingSystem: LoggingSystem)(
-    implicit mat: Materializer
-) extends SampleLogger.Actor</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JLocationServiceExampleClient extends JActorSample {
+  <pre class="prettyprint"><code class="language-java">JLoggerFactory jLoggerFactory = new JLoggerFactory(&quot;my-component-name&quot;);
 
-    private ILogger log = getLogger();</code></pre></dd>
+// convert a java JLoggerFactory to scala LoggerFactory
+LoggerFactory loggerFactory = jLoggerFactory.asScala();</code></pre></dd>
 </dl>
-<p>Loggers for Mutable actors and classes can be mixed in a similar way.</p></div>
-<p>For immutable actors, refer the following example:</p>
-<dl>
-  <dt>Scala Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">object CommonImmutableSample {
-  def behavior(): Behavior[ComponentDomainMessage] = Actor.immutable[ComponentDomainMessage] { (ctx, msg) ⇒
-    val log = SampleLogger.immutable(ctx)
-
-    log.info(s&quot;Received msg: [$msg]&quot;)
-    Actor.same
-  }
-}</code></pre></dd>
-  <dt>Java Immutable Actor</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JImmutableSample {
-
-    public static &lt;ComponentDomainMessage&gt; Behavior&lt;ComponentDomainMessage&gt; behavior(String componentName) {
-        return Actor.immutable((ctx, msg) -&gt; {
-
-            //JImmutableSample.class will appear against class tag in log statements
-            ILogger log = JComponentLoggerImmutable.getLogger(ctx, componentName, JImmutableSample.class);
-
-            return Actor.same();
-        });
-    }
-
-}</code></pre></dd>
-</dl>
-<p>Considering there is a domain message hierarchy for component as follows:</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">sealed trait ComponentDomainMessage        extends DomainMessage
-case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p><em>While writing java code make sure to call <code>getLogger</code> method in concrete class only as shown in above java example. The runtime class from where the <code>getLogger</code> method is called, will be picked to display against <code>class</code> tag in log statements</em> </p></div>
 <h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2>
 <h3><a href="#available-for-test-understanding-purpose" name="available-for-test-understanding-purpose" class="anchor"><span class="anchor-link"></span></a>Available for test/understanding purpose</h3>
 <p>For logging statements to appear in the program, start <code>LoggingSystem</code> at an earliest location in an application. <strong>Also note, <code>LoggingSystem</code> should be started only once in an application.</strong> The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files.</p>
@@ -806,7 +670,7 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <li>JDK: 1.8.0_121</li>
 </ul>
 <h3><a href="#scala-logging-appenders-throughput" name="scala-logging-appenders-throughput" class="anchor"><span class="anchor-link"></span></a>Scala Logging : Appender&rsquo;s Throughput</h3>
-<p><img src="./logging-appenders-perf-results.png" alt="Logging Appenders Throughput" /></p>
+<p><img src="../images/logging-perf/logging-appenders-perf-results.png" alt="Logging Appenders Throughput" /></p>
 <p>Above graph includes the throughput results for File and StdOut appender&rsquo;s using scala&rsquo;s logging API. Java&rsquo;s logging API throughput results are included further down this page.<br/>As shown in the above graph, experiment was carried out for 1, 2, 4, 8 and 16 threads. That means, multiple threads are logging messages concurrently. </p><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>Numbers indicated in the graph does not mean that those number of messages are actually written to file or console. These are the number of logging messages sent to LogActor asynchronously for the period of one second.</li>
@@ -819,7 +683,7 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <li><strong>Log Level Enabled</strong> : Results are obtained for <code>log.info</code> when default log level was set to info, that means the logging messages were sent to LogActor for writing it to file.</li>
   <li><strong>Log Level Disabled</strong> : Results are obtained for <code>log.trace</code> when default log level was set to info, that means the logging messages were not written to file.</li>
 </ul></div>
-<p><img src="./java-scala-logging-throughput-comparision.png" alt="Java Scala Throughput Comparision" /></p>
+<p><img src="../images/logging-perf/java-scala-logging-throughput-comparision.png" alt="Java Scala Throughput Comparision" /></p>
 <p>This graph is produced based on the result generated by <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-benchmark/src/main/java/csw/services/logging/perf/jmh/JE2ELoggingBenchmark.java">JE2ELoggingBenchmark</a> and <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-benchmark/src/main/scala/csw/services/logging/perf/jmh/E2ELoggingBenchmark.scala">E2ELoggingBenchmark</a></p><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>As you can see in the above graph, Supplier version of Java log API and by name of scala API is very efficient and throughput is much higher than String version. It is recommended to use Supplier API by java developers.</li>
@@ -855,6 +719,19 @@ Previous
 </span>
 Configuration service
 </span>
+</div>
+</a>
+<a href="../services/messages.html" title="csw-messages" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
+csw-messages
+</span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
 </div>
 </a>
 </nav>
