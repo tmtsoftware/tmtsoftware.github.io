@@ -102,6 +102,7 @@ TMT Common Software (CSW)
     <li><a href="../../services/messages/states.html#currentstate" class="header">CurrentState</a></li>
     <li><a href="../../services/messages/states.html#json-serialization" class="header">JSON serialization</a></li>
     <li><a href="../../services/messages/states.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
+    <li><a href="../../services/messages/states.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -126,6 +127,7 @@ TMT Common Software (CSW)
     <li><a href="../../services/messages/states.html#currentstate" class="header">CurrentState</a></li>
     <li><a href="../../services/messages/states.html#json-serialization" class="header">JSON serialization</a></li>
     <li><a href="../../services/messages/states.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
+    <li><a href="../../services/messages/states.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -147,27 +149,27 @@ TMT Common Software (CSW)
 val prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)
 
 //key
-val charKey      = KeyType.CharKey.make(&quot;charKey&quot;)
-val intKey       = KeyType.IntKey.make(&quot;intKey&quot;)
-val booleanKey   = KeyType.BooleanKey.make(&quot;booleanKey&quot;)
-val timestampKey = KeyType.TimestampKey.make(&quot;timestampKey&quot;)
-val notUsedKey   = KeyType.StringKey.make(&quot;notUsed&quot;)
+val charKey: Key[Char]         = KeyType.CharKey.make(&quot;charKey&quot;)
+val intKey: Key[Int]           = KeyType.IntKey.make(&quot;intKey&quot;)
+val booleanKey: Key[Boolean]   = KeyType.BooleanKey.make(&quot;booleanKey&quot;)
+val timestampKey: Key[Instant] = KeyType.TimestampKey.make(&quot;timestampKey&quot;)
+val notUsedKey: Key[String]    = KeyType.StringKey.make(&quot;notUsed&quot;)
 
 //parameters
-val charParam    = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits)
-val intParam     = intKey.set(1, 2, 3).withUnits(meter)
-val booleanParam = booleanKey.set(true, false)
-val timestamp    = timestampKey.set(Instant.now)
+val charParam: Parameter[Char]       = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits)
+val intParam: Parameter[Int]         = intKey.set(1, 2, 3).withUnits(meter)
+val booleanParam: Parameter[Boolean] = booleanKey.set(true, false)
+val timestamp: Parameter[Instant]    = timestampKey.set(Instant.now)
 
 //create DemandState and use sequential add
-val ds1 = DemandState(prefix).add(charParam).add(intParam)
+val ds1: DemandState = DemandState(prefix).add(charParam).add(intParam)
 //create DemandState and add more than one Parameters using madd
-val ds2 = DemandState(prefix).madd(intParam, booleanParam)
+val ds2: DemandState = DemandState(prefix).madd(intParam, booleanParam)
 //create DemandState using apply
-val ds3 = DemandState(prefix, Set(timestamp))
+val ds3: DemandState = DemandState(prefix, Set(timestamp))
 
 //access keys
-val charKeyExists = ds1.exists(charKey) //true
+val charKeyExists: Boolean = ds1.exists(charKey) //true
 
 //access Parameters
 val p1: Option[Parameter[Int]] = ds1.get(intKey)
@@ -184,11 +186,59 @@ val missingKeys: Set[String] = ds3.missingKeys(
 )
 
 //remove keys
-val ds4 = ds3.remove(timestampKey)
+val ds4: DemandState = ds3.remove(timestampKey)
 
 //update existing keys - set it back by an hour
-val ds5 = ds3.add(timestampKey.set(Instant.now().minusSeconds(3600)))
+val ds5: DemandState = ds3.add(timestampKey.set(Instant.now().minusSeconds(3600)))
 </code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//prefix
+String prefix = &quot;wfos.prog.cloudcover&quot;;
+
+//keys
+Key&lt;Character&gt; charKey = JKeyTypes.CharKey().make(&quot;charKey&quot;);
+Key&lt;Integer&gt; intKey = JKeyTypes.IntKey().make(&quot;intKey&quot;);
+Key&lt;Boolean&gt; booleanKey = JKeyTypes.BooleanKey().make(&quot;booleanKey&quot;);
+Key&lt;Instant&gt; timestampKey = JKeyTypes.TimestampKey().make(&quot;timestampKey&quot;);
+Key&lt;String&gt; notUsedKey = JKeyTypes.StringKey().make(&quot;notUsed&quot;);
+
+
+ObsId obsId = new ObsId(&quot;Obs001&quot;);
+
+//parameters
+Parameter&lt;Character&gt; charParam = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits);
+Parameter&lt;Integer&gt; intParam = intKey.set(1, 2, 3).withUnits(meter);
+Parameter&lt;Boolean&gt; booleanParam = booleanKey.set(true, false);
+Parameter&lt;Instant&gt; timestamp = timestampKey.set(Instant.now());
+
+//create DemandState and use sequential add
+DemandState ds1 = new DemandState(prefix).add(charParam).add(intParam);
+//create DemandState and add more than one Parameters using madd
+DemandState ds2 = new DemandState(prefix).madd(intParam, booleanParam);
+//create DemandState using apply
+DemandState ds3 = new DemandState(prefix).add(timestamp);
+
+//access keys
+Boolean charKeyExists = ds1.exists(charKey); //true
+
+//access Parameters
+Optional&lt;Parameter&lt;Integer&gt;&gt; p1 = ds1.jGet(intKey);
+
+//access values
+List&lt;Character&gt; v1 = ds1.jGet(charKey).get().jValues();
+List&lt;Boolean&gt; v2 = ds2.parameter(booleanKey).jValues();
+Set&lt;String&gt; missingKeys = ds3.jMissingKeys(charKey,
+        intKey,
+        booleanKey,
+        timestampKey,
+        notUsedKey);
+
+//remove keys
+DemandState ds4 = ds3.remove(timestampKey);
+
+//update existing keys - set it back by an hour
+DemandState ds5 = ds3.add(timestampKey.set(Instant.now().minusSeconds(3600)));</code></pre></dd>
 </dl>
 <h3><a href="#currentstate" name="currentstate" class="anchor"><span class="anchor-link"></span></a>CurrentState</h3>
 <p>A state variable that is published by a component that describes its internal state. Used by Assemblies to determine command completion in Command Service.</p>
@@ -241,6 +291,54 @@ val cs4 = cs3.remove(timestampKey)
 //update existing keys - set it back by an hour
 val cs5 = cs3.add(timestampKey.set(Instant.now().minusSeconds(3600)))
 </code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//prefix
+String prefix = &quot;wfos.prog.cloudcover&quot;;
+
+//keys
+Key&lt;Character&gt; charKey = JKeyTypes.CharKey().make(&quot;charKey&quot;);
+Key&lt;Integer&gt; intKey = JKeyTypes.IntKey().make(&quot;intKey&quot;);
+Key&lt;Boolean&gt; booleanKey = JKeyTypes.BooleanKey().make(&quot;booleanKey&quot;);
+Key&lt;Instant&gt; timestampKey = JKeyTypes.TimestampKey().make(&quot;timestampKey&quot;);
+Key&lt;String&gt; notUsedKey = JKeyTypes.StringKey().make(&quot;notUsed&quot;);
+
+
+ObsId obsId = new ObsId(&quot;Obs001&quot;);
+
+//parameters
+Parameter&lt;Character&gt; charParam = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits);
+Parameter&lt;Integer&gt; intParam = intKey.set(1, 2, 3).withUnits(meter);
+Parameter&lt;Boolean&gt; booleanParam = booleanKey.set(true, false);
+Parameter&lt;Instant&gt; timestamp = timestampKey.set(Instant.now());
+
+//create CurrentState and use sequential add
+CurrentState cs1 = new CurrentState(prefix).add(charParam).add(intParam);
+//create CurrentState and add more than one Parameters using madd
+CurrentState cs2 = new CurrentState(prefix).madd(intParam, booleanParam);
+//create CurrentState using apply
+CurrentState cs3 = new CurrentState(prefix).add(timestamp);
+
+//access keys
+Boolean charKeyExists = cs1.exists(charKey); //true
+
+//access Parameters
+Optional&lt;Parameter&lt;Integer&gt;&gt; p1 = cs1.jGet(intKey);
+
+//access values
+List&lt;Character&gt; v1 = cs1.jGet(charKey).get().jValues();
+List&lt;Boolean&gt; v2 = cs2.parameter(booleanKey).jValues();
+Set&lt;String&gt; missingKeys = cs3.jMissingKeys(charKey,
+        intKey,
+        booleanKey,
+        timestampKey,
+        notUsedKey);
+
+//remove keys
+CurrentState cs4 = cs3.remove(timestampKey);
+
+//update existing keys - set it back by an hour
+CurrentState cs5 = cs3.add(timestampKey.set(Instant.now().minusSeconds(3600)));</code></pre></dd>
 </dl>
 <h3><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON serialization</h3>
 <p>State variables can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize DemandState and CurrentState.</p>
@@ -278,6 +376,35 @@ val scFromPrettyStr = JsonSupport.readStateVariable[DemandState](Json.parse(str)
 //json support - read
 val ds1: DemandState  = JsonSupport.readStateVariable[DemandState](dsJson)
 val cs1: CurrentState = JsonSupport.readStateVariable[CurrentState](csJson)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//key
+Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyTypes.DoubleMatrixKey().make(&quot;myMatrix&quot;);
+
+//values
+Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
+MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
+
+//parameter
+Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
+
+//state variables
+DemandState ds = new DemandState(&quot;wfos.blue.filter&quot;).add(i1);
+CurrentState cs = new CurrentState(&quot;wfos.blue.filter&quot;).add(i1);
+
+//json support - write
+JsValue dsJson = JavaJsonSupport.writeStateVariable(ds);
+JsValue csJson = JavaJsonSupport.writeStateVariable(cs);
+
+//optionally prettify
+String str = Json.prettyPrint(dsJson);
+
+//construct DemandState from string
+DemandState dsFromPrettyStr = JavaJsonSupport.readStateVariable(DemandState.class, Json.parse(str));
+
+//json support - read
+DemandState ds1 = JavaJsonSupport.readStateVariable(DemandState.class, dsJson);
+CurrentState cs1 = JavaJsonSupport.readStateVariable(CurrentState.class, csJson);</code></pre></dd>
 </dl>
 <h3><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key constraint</h3>
 <p>By choice, a ParameterSet in either <strong>DemandState</strong> or <strong>CurrentState</strong> will be optimized to store only unique keys. In other words, trying to store multiple keys with same name, will be automatically optimized by removing duplicates.</p><div class="callout note "><div class="callout-title">Note</div>
@@ -328,7 +455,53 @@ val uniqueKeys2 = changedStatusEvent.paramSet.toList.map(_.keyName)
 val finalStatusEvent = statusEvent.madd(Set(miscParam1, encParam1))
 //now contains encoderKey, filterKey, miscKey
 val uniqueKeys3 = finalStatusEvent.paramSet.toList.map(_.keyName)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; encoderKey = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; filterKey = JKeyTypes.IntKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; miscKey = JKeyTypes.IntKey().make(&quot;misc.&quot;);
+
+//prefix
+String prefix = &quot;wfos.blue.filter&quot;;
+
+//params
+Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);
+Parameter&lt;Integer&gt; encParam2 = encoderKey.set(2);
+Parameter&lt;Integer&gt; encParam3 = encoderKey.set(3);
+
+Parameter&lt;Integer&gt; filterParam1 = filterKey.set(1);
+Parameter&lt;Integer&gt; filterParam2 = filterKey.set(2);
+Parameter&lt;Integer&gt; filterParam3 = filterKey.set(3);
+
+Parameter&lt;Integer&gt; miscParam1 = miscKey.set(100);
+
+//Demand state with duplicate key via madd
+DemandState state = new DemandState(prefix).madd(
+        encParam1,
+        encParam2,
+        encParam3,
+        filterParam1,
+        filterParam2,
+        filterParam3);
+//four duplicate keys are removed; now contains one Encoder and one Filter key
+List&lt;String&gt; uniqueKeys1 = state.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+
+//try adding duplicate keys via add + madd
+DemandState changedState = state.add(encParam3).madd(filterParam1, filterParam2, filterParam3);
+//duplicate keys will not be added. Should contain one Encoder and one Filter key
+List&lt;String&gt; uniqueKeys2 = changedState.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+
+//miscKey(unique) will be added; encoderKey(duplicate) will not be added
+DemandState finalState = changedState.madd(miscParam1, encParam1);
+//now contains encoderKey, filterKey, miscKey
+List&lt;String&gt; uniqueKeys3 = finalState.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/StateVariablesTest.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JStateVariablesTest.java">Java Example</a></li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/messages/states.md" title="Edit this page" class="md-source-file md-edit">

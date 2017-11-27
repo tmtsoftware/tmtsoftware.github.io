@@ -101,6 +101,7 @@ TMT Common Software (CSW)
     <li><a href="../../services/messages/result.html#runid" class="header">RunId</a></li>
     <li><a href="../../services/messages/result.html#json-serialization" class="header">JSON serialization</a></li>
     <li><a href="../../services/messages/result.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
+    <li><a href="../../services/messages/result.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -124,6 +125,7 @@ TMT Common Software (CSW)
     <li><a href="../../services/messages/result.html#runid" class="header">RunId</a></li>
     <li><a href="../../services/messages/result.html#json-serialization" class="header">JSON serialization</a></li>
     <li><a href="../../services/messages/result.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
+    <li><a href="../../services/messages/result.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -142,6 +144,9 @@ TMT Common Software (CSW)
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val runId: RunId = RunId()</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">RunId runId = RunId.apply();</code></pre></dd>
 </dl>
 <p>Creating a Result requires:</p>
 <ul>
@@ -190,6 +195,46 @@ val missingKeys: Set[String] = r3.missingKeys(k1, k2, k3, k4)
 
 //remove keys
 val r4: Result = r3.remove(k3)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; k1 = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; k2 = JKeyTypes.IntKey().make(&quot;windspeed&quot;);
+Key&lt;String&gt; k3 = JKeyTypes.StringKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; k4 = JKeyTypes.IntKey().make(&quot;notUsed&quot;);
+
+//prefix
+String prefix = &quot;wfos.prog.cloudcover&quot;;
+
+ObsId obsId = new ObsId(&quot;Obs001&quot;);
+
+//parameters
+Parameter&lt;Integer&gt; p1 = k1.set(22);
+Parameter&lt;Integer&gt; p2 = k2.set(44);
+Parameter&lt;String&gt; p3 = k3.set(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;);
+
+//Create Result using madd
+Result r1 = new Result(runId, obsId, prefix).madd(p1, p2);
+//Create Result using madd
+Result r2 = new Result(runId, obsId, prefix).madd(p1, p2);
+//Create Result and use madd, add
+Result r3 = new Result(runId, obsId, prefix).madd(p1, p2).add(p3);
+
+//access keys
+Boolean k1Exists = r1.exists(k1); //true
+
+//access Parameters
+Optional&lt;Parameter&lt;Integer&gt;&gt; p4 = r1.jGet(k1);
+
+//access values
+List&lt;Integer&gt; v1 = r1.jGet(k1).get().jValues();
+List&lt;Integer&gt; v2 = r2.parameter(k2).jValues();
+
+//k4 is missing
+Set&lt;String&gt; missingKeys = r3.jMissingKeys(k1, k2, k3, k4);
+
+//remove keys
+Result r4 = r3.remove(k3);</code></pre></dd>
 </dl>
 <h3><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON serialization</h3>
 <p>State variables can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize DemandState and CurrentState.</p>
@@ -215,7 +260,7 @@ val obsId: ObsId = ObsId(&quot;Obs001&quot;)
 //parameter
 val i1: Parameter[MatrixData[Double]] = k1.set(m1)
 
-//commands
+//result
 val result: Result = Result(runId, obsId, prefix).add(i1)
 
 //json support - write
@@ -224,11 +269,40 @@ val resultJson: JsValue = JsonSupport.writeResult(result)
 //optionally prettify
 val str: String = Json.prettyPrint(resultJson)
 
-//construct command from string
+//construct result from string
 val scFromPrettyStr: Result = JsonSupport.readResult(Json.parse(str))
 
 //json support - read
 val result1: Result = JsonSupport.readResult(resultJson)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//key
+Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyTypes.DoubleMatrixKey().make(&quot;myMatrix&quot;);
+
+//values
+Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
+MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
+
+//parameter
+Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
+
+//ObsId
+ObsId obsId = new ObsId(&quot;Obs001&quot;);
+
+//prefix
+String prefix = &quot;wfos.prog.cloudcover&quot;;
+
+//result
+Result result = new Result(runId, obsId, prefix).add(i1);
+
+//json support - write
+JsValue resultJson = JavaJsonSupport.writeResult(result);
+
+//optionally prettify
+String str = Json.prettyPrint(resultJson);
+
+//construct result from string
+Result result1 = JavaJsonSupport.readResult(Json.parse(str));</code></pre></dd>
 </dl>
 <h3><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key constraint</h3>
 <p>By choice, a ParameterSet in <strong>Result</strong> will be optimized to store only unique keys. In other words, trying to store multiple keys with same name, will be automatically optimized by removing duplicates.</p><div class="callout note "><div class="callout-title">Note</div>
@@ -284,7 +358,56 @@ val uniqueKeys2 = changedResult.paramSet.toList.map(_.keyName)
 val finalResult = result.madd(Set(miscParam1, encParam1))
 //now contains encoderKey, filterKey, miscKey
 val uniqueKeys3 = finalResult.paramSet.toList.map(_.keyName)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; encoderKey = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; filterKey = JKeyTypes.IntKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; miscKey = JKeyTypes.IntKey().make(&quot;misc.&quot;);
+
+//ObsId
+ObsId obsId = new ObsId(&quot;Obs001&quot;);
+
+//prefix
+String prefix = &quot;wfos.blue.filter&quot;;
+
+//params
+Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);
+Parameter&lt;Integer&gt; encParam2 = encoderKey.set(2);
+Parameter&lt;Integer&gt; encParam3 = encoderKey.set(3);
+
+Parameter&lt;Integer&gt; filterParam1 = filterKey.set(1);
+Parameter&lt;Integer&gt; filterParam2 = filterKey.set(2);
+Parameter&lt;Integer&gt; filterParam3 = filterKey.set(3);
+
+Parameter&lt;Integer&gt; miscParam1 = miscKey.set(100);
+
+//Setup command with duplicate key via madd
+Result result = new Result(runId, obsId, prefix).madd(
+        encParam1,
+        encParam2,
+        encParam3,
+        filterParam1,
+        filterParam2,
+        filterParam3);
+//four duplicate keys are removed; now contains one Encoder and one Filter key
+List&lt;String&gt; uniqueKeys1 = result.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+
+//try adding duplicate keys via add + madd
+Result changedResult = result.add(encParam3).madd(filterParam1, filterParam2, filterParam3);
+//duplicate keys will not be added. Should contain one Encoder and one Filter key
+List&lt;String&gt; uniqueKeys2 = changedResult.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+
+//miscKey(unique) will be added; encoderKey(duplicate) will not be added
+Result finalResult = result.madd(miscParam1, encParam1);
+//now contains encoderKey, filterKey, miscKey
+List&lt;String&gt; uniqueKeys3 = finalResult.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/ResultTest.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JResultTest.java">Java Example</a></li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/messages/result.md" title="Edit this page" class="md-source-file md-edit">

@@ -106,6 +106,7 @@ TMT Common Software (CSW)
     <li><a href="../../services/messages/events.html#json-serialization" class="header">JSON serialization</a></li>
     <li><a href="../../services/messages/events.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
     <li><a href="../../services/messages/events.html#protobuf" class="header">Protobuf</a></li>
+    <li><a href="../../services/messages/events.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -134,6 +135,7 @@ TMT Common Software (CSW)
     <li><a href="../../services/messages/events.html#json-serialization" class="header">JSON serialization</a></li>
     <li><a href="../../services/messages/events.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
     <li><a href="../../services/messages/events.html#protobuf" class="header">Protobuf</a></li>
+    <li><a href="../../services/messages/events.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -153,7 +155,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala"><br/>//default constructor will return current time in UTC
+  <pre class="prettyprint"><code class="language-scala">//default constructor will return current time in UTC
 val now: EventTime = EventTime()
 
 //using constructor
@@ -164,6 +166,20 @@ val currentTime: EventTime = EventTime.toCurrent
 
 //some past time using utility function
 val aDayAgo = EventTime.toEventTime(Instant.now.minusSeconds(86400))
+</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java"><br/>//apply returns current time in UTC
+EventTime now = EventTime.apply();
+
+//using constructor
+EventTime anHourAgo = new EventTime(Instant.now().minusSeconds(3600));
+
+//return current time in UTC
+EventTime currentTime = EventTime.toCurrent();
+
+//some past time using utility function
+EventTime aDayAgo = EventTime.toEventTime(Instant.now().minusSeconds(86400));
 </code></pre></dd>
 </dl>
 <h3><a href="#eventinfo" name="eventinfo" class="anchor"><span class="anchor-link"></span></a>EventInfo</h3>
@@ -181,7 +197,7 @@ val aDayAgo = EventTime.toEventTime(Instant.now.minusSeconds(86400))
 val info1: EventInfo = EventInfo(&quot;wfos.blue.filter&quot;)
 
 //given subsystem and time is an hour ago
-val info2: EventInfo = EventInfo(&quot;wfos.blue.filter&quot;, EventTime(Instant.now()))
+val info2: EventInfo = EventInfo(&quot;wfos.blue.filter&quot;, EventTime(Instant.now().minusSeconds(3600)))
 
 //supply subsystem, time, ObsId
 val info3 = EventInfo(
@@ -197,6 +213,19 @@ val info4 = EventInfo(
   Some(ObsId(&quot;Obs001&quot;)),
   UUID.randomUUID().toString
 )</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//with only a subsystem, time will default to now
+EventInfo eventInfo1 = EventInfo.apply(&quot;wfos.blue.filter&quot;);
+
+//given subsystem and time is now
+EventInfo eventInfo2 = EventInfo.apply(&quot;wfos.blue.filter&quot;, EventTime.apply(Instant.now()));
+
+//supply subsystem, time, ObsId
+EventInfo eventInfo3 = EventInfo.apply(&quot;wfos.blue.filter&quot;, EventTime.apply(), ObsId.apply(&quot;Obs001&quot;));
+
+//with all values
+EventInfo eventInfo4 = EventInfo.apply(new Prefix(&quot;wfos.prog.cloudcover&quot;), EventTime.apply(), ObsId.apply(&quot;Obs001&quot;).asOption(), UUID.randomUUID().toString());</code></pre></dd>
 </dl>
 <h3><a href="#status-event" name="status-event" class="anchor"><span class="anchor-link"></span></a>Status Event</h3>
 <p>StatusEvents are the published internal state or status values of a component that may be of interest to other components in the system.</p>
@@ -240,6 +269,44 @@ val missingKeys: Set[String] = se3.missingKeys(k1, k2, k3, k4)
 //remove keys
 val se4: StatusEvent = se3.remove(k3)
 </code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; k1 = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; k2 = JKeyTypes.IntKey().make(&quot;windspeed&quot;);
+Key&lt;String&gt; k3 = JKeyTypes.StringKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; k4 = JKeyTypes.IntKey().make(&quot;notUsed&quot;);
+
+//prefixes
+String ck1 = &quot;wfos.prog.cloudcover&quot;;
+String ck3 = &quot;wfos.red.detector&quot;;
+
+//parameters
+Parameter&lt;Integer&gt; p1 = k1.set(22);
+Parameter&lt;Integer&gt; p2 = k2.set(44);
+Parameter&lt;String&gt; p3 = k3.set(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;);
+
+//Create StatusEvent using madd
+StatusEvent se1 = new StatusEvent(ck1).madd(p1, p2);
+//Create StatusEvent using add
+StatusEvent se2 = new StatusEvent(ck3).add(p1).add(p2);
+//Create StatusEvent and use add
+StatusEvent se3 = new StatusEvent(ck3).add(p1).add(p2).add(p3);
+
+//access keys
+Boolean k1Exists = se1.exists(k1); //true
+
+//access Parameters
+Optional&lt;Parameter&lt;Integer&gt;&gt; p4 = se1.jGet(k1);
+
+//access values
+List&lt;Integer&gt; v1 = se1.jGet(k1).get().jValues();
+List&lt;Integer&gt; v2 = se2.parameter(k2).jValues();
+//k4 is missing
+Set&lt;String&gt; missingKeys = se3.jMissingKeys(k1, k2, k3, k4);
+
+//remove keys
+StatusEvent se4 = se3.remove(k3);</code></pre></dd>
 </dl>
 <h3><a href="#observe-event" name="observe-event" class="anchor"><span class="anchor-link"></span></a>Observe Event</h3>
 <p>ObserveEvent is used to describe an event within a standardized data acquisition process. Published only by Science Detector Assemblies, who emit ObserveEvents during their exposures to signal the occurrence of specific activities/actions during the acquisition of data. Observe Events are published by the detector system using the Event Service.</p>
@@ -283,6 +350,44 @@ val missingKeys: Set[String] = se3.missingKeys(k1, k2, k3, k4)
 //remove keys
 val se4: ObserveEvent = se3.remove(k3)
 </code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; k1 = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; k2 = JKeyTypes.IntKey().make(&quot;windspeed&quot;);
+Key&lt;String&gt; k3 = JKeyTypes.StringKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; k4 = JKeyTypes.IntKey().make(&quot;notUsed&quot;);
+
+//prefixes
+String ck1 = &quot;wfos.prog.cloudcover&quot;;
+String ck3 = &quot;wfos.red.detector&quot;;
+
+//parameters
+Parameter&lt;Integer&gt; p1 = k1.set(22);
+Parameter&lt;Integer&gt; p2 = k2.set(44);
+Parameter&lt;String&gt; p3 = k3.set(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;);
+
+//Create ObserveEvent using madd
+ObserveEvent oc1 = new ObserveEvent(ck1).madd(p1, p2);
+//Create ObserveEvent using add
+ObserveEvent oc2 = new ObserveEvent(ck3).add(p1).add(p2);
+//Create ObserveEvent and use add
+ObserveEvent oc3 = new ObserveEvent(ck3).add(p1).add(p2).add(p3);
+
+//access keys
+Boolean k1Exists = oc1.exists(k1); //true
+
+//access Parameters
+Optional&lt;Parameter&lt;Integer&gt;&gt; p4 = oc1.jGet(k1);
+
+//access values
+List&lt;Integer&gt; v1 = oc1.jGet(k1).get().jValues();
+List&lt;Integer&gt; v2 = oc2.parameter(k2).jValues();
+//k4 is missing
+Set&lt;String&gt; missingKeys = oc3.jMissingKeys(k1, k2, k3, k4);
+
+//remove keys
+ObserveEvent oc4 = oc3.remove(k3);</code></pre></dd>
 </dl>
 <h3><a href="#system-event" name="system-event" class="anchor"><span class="anchor-link"></span></a>System Event</h3>
 <p>SystemEvent is used to describe a demand or other algorithm input from one component to the other.</p>
@@ -333,6 +438,44 @@ val paramSize: Int   = se5.size
 //update existing key with set
 val se6: SystemEvent = se5.add(k2.set(5, 6, 7, 8))
 </code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; k1 = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; k2 = JKeyTypes.IntKey().make(&quot;windspeed&quot;);
+Key&lt;String&gt; k3 = JKeyTypes.StringKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; k4 = JKeyTypes.IntKey().make(&quot;notUsed&quot;);
+
+//prefixes
+String ck1 = &quot;wfos.prog.cloudcover&quot;;
+String ck3 = &quot;wfos.red.detector&quot;;
+
+//parameters
+Parameter&lt;Integer&gt; p1 = k1.set(22);
+Parameter&lt;Integer&gt; p2 = k2.set(44);
+Parameter&lt;String&gt; p3 = k3.set(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;);
+
+//Create SystemEvent using madd
+SystemEvent se1 = new SystemEvent(ck1).madd(p1, p2);
+//Create SystemEvent using add
+SystemEvent se2 = new SystemEvent(ck3).add(p1).add(p2);
+//Create SystemEvent and use add
+SystemEvent se3 = new SystemEvent(ck3).add(p1).add(p2).add(p3);
+
+//access keys
+Boolean k1Exists = se1.exists(k1); //true
+
+//access Parameters
+Optional&lt;Parameter&lt;Integer&gt;&gt; p4 = se1.jGet(k1);
+
+//access values
+List&lt;Integer&gt; v1 = se1.jGet(k1).get().jValues();
+List&lt;Integer&gt; v2 = se2.parameter(k2).jValues();
+//k4 is missing
+Set&lt;String&gt; missingKeys = se3.jMissingKeys(k1, k2, k3, k4);
+
+//remove keys
+SystemEvent oc4 = se3.remove(k3);</code></pre></dd>
 </dl>
 <h3><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON serialization</h3>
 <p>Events can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize Status, Observe and System events.</p>
@@ -359,20 +502,51 @@ val observeEvent: ObserveEvent = ObserveEvent(&quot;wfos.blue.filter&quot;).add(
 val systemEvent: SystemEvent   = SystemEvent(&quot;wfos.blue.filter&quot;).add(i1)
 
 //json support - write
-val scJson: JsValue = JsonSupport.writeEvent(statusEvent)
-val ocJson: JsValue = JsonSupport.writeEvent(observeEvent)
-val wcJson: JsValue = JsonSupport.writeEvent(systemEvent)
+val statusJson: JsValue  = JsonSupport.writeEvent(statusEvent)
+val observeJson: JsValue = JsonSupport.writeEvent(observeEvent)
+val systemJson: JsValue  = JsonSupport.writeEvent(systemEvent)
 
 //optionally prettify
-val str: String = Json.prettyPrint(scJson)
+val str: String = Json.prettyPrint(statusJson)
 
 //construct command from string
 val statusEventFromPrettyStr: StatusEvent = JsonSupport.readEvent[StatusEvent](Json.parse(str))
 
 //json support - read
-val statusEvent1: StatusEvent   = JsonSupport.readEvent[StatusEvent](scJson)
-val observeEvent1: ObserveEvent = JsonSupport.readEvent[ObserveEvent](ocJson)
-val systemEvent1: SystemEvent   = JsonSupport.readEvent[SystemEvent](wcJson)</code></pre></dd>
+val statusEvent1: StatusEvent   = JsonSupport.readEvent[StatusEvent](statusJson)
+val observeEvent1: ObserveEvent = JsonSupport.readEvent[ObserveEvent](observeJson)
+val systemEvent1: SystemEvent   = JsonSupport.readEvent[SystemEvent](systemJson)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//key
+Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyTypes.DoubleMatrixKey().make(&quot;myMatrix&quot;);
+
+//values
+Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
+MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
+
+//parameter
+Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
+
+//events
+StatusEvent statusEvent = new StatusEvent(&quot;wfos.blue.filter&quot;).add(i1);
+ObserveEvent observeEvent = new ObserveEvent(&quot;wfos.blue.filter&quot;).add(i1);
+SystemEvent systemEvent = new SystemEvent(&quot;wfos.blue.filter&quot;).add(i1);
+
+//json support - write
+JsValue statusJson = JavaJsonSupport.writeEvent(statusEvent);
+JsValue observeJson = JavaJsonSupport.writeEvent(observeEvent);
+JsValue systemJson = JavaJsonSupport.writeEvent(systemEvent);
+
+//optionally prettify
+String str = Json.prettyPrint(statusJson);
+
+//construct DemandState from string
+StatusEvent statusFromPrettyStr = JavaJsonSupport.readEvent(StatusEvent.class, Json.parse(str));
+
+//json support - read
+ObserveEvent observeEvent1 = JavaJsonSupport.readEvent(ObserveEvent.class, observeJson);
+SystemEvent systemEvent1 = JavaJsonSupport.readEvent(SystemEvent.class, systemJson);</code></pre></dd>
 </dl>
 <h3><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key constraint</h3>
 <p>By choice, a ParameterSet in either <strong>StatusEvent, ObserveEvent,</strong> or <strong>SystemEvent</strong> command will be optimized to store only unique keys. In other words, trying to store multiple keys with same name, will be automatically optimized by removing duplicates.</p><div class="callout note "><div class="callout-title">Note</div>
@@ -423,6 +597,47 @@ val uniqueKeys2 = changedStatusEvent.paramSet.toList.map(_.keyName)
 val finalStatusEvent = statusEvent.madd(Set(miscParam1, encParam1))
 //now contains encoderKey, filterKey, miscKey
 val uniqueKeys3 = finalStatusEvent.paramSet.toList.map(_.keyName)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; encoderKey = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; filterKey = JKeyTypes.IntKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; miscKey = JKeyTypes.IntKey().make(&quot;misc.&quot;);
+
+//prefix
+String prefix = &quot;wfos.blue.filter&quot;;
+
+//params
+Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);
+Parameter&lt;Integer&gt; encParam2 = encoderKey.set(2);
+Parameter&lt;Integer&gt; encParam3 = encoderKey.set(3);
+
+Parameter&lt;Integer&gt; filterParam1 = filterKey.set(1);
+Parameter&lt;Integer&gt; filterParam2 = filterKey.set(2);
+Parameter&lt;Integer&gt; filterParam3 = filterKey.set(3);
+
+Parameter&lt;Integer&gt; miscParam1 = miscKey.set(100);
+
+//StatusEvent with duplicate key via madd
+StatusEvent event = new StatusEvent(prefix).madd(
+        encParam1,
+        encParam2,
+        encParam3,
+        filterParam1,
+        filterParam2,
+        filterParam3);
+//four duplicate keys are removed; now contains one Encoder and one Filter key
+List&lt;String&gt; uniqueKeys1 = event.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+
+//try adding duplicate keys via add + madd
+StatusEvent changedEvent = event.add(encParam3).madd(filterParam1, filterParam2, filterParam3);
+//duplicate keys will not be added. Should contain one Encoder and one Filter key
+List&lt;String&gt; uniqueKeys2 = changedEvent.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+
+//miscKey(unique) will be added; encoderKey(duplicate) will not be added
+StatusEvent finalEvent = changedEvent.madd(miscParam1, encParam1);
+//now contains encoderKey, filterKey, miscKey
+List&lt;String&gt; uniqueKeys3 = finalEvent.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h3><a href="#protobuf" name="protobuf" class="anchor"><span class="anchor-link"></span></a>Protobuf</h3>
 <p>Protobuf aka Protocol buffers, are a language-neutral, platform-neutral extensible mechanism for serializing structured data. For more, visit <a href="https://developers.google.com/protocol-buffers/">Protobuf home page</a></p>
@@ -433,9 +648,7 @@ val uniqueKeys3 = finalStatusEvent.paramSet.toList.map(_.keyName)</code></pre></
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">import csw_protobuf.events.PbEvent
-
-//Some variety in EventInfo
+  <pre class="prettyprint"><code class="language-scala">//Some variety in EventInfo
 val info1 = EventInfo(&quot;wfos.blue.filter&quot;)
 val info2 = EventInfo(&quot;wfos.blue.filter&quot;, Instant.now().minusSeconds(60))
 val info3 = EventInfo(&quot;wfos.blue.filter&quot;, Instant.now(), ObsId(&quot;Obs002&quot;))
@@ -463,17 +676,66 @@ val systemEvent1: SystemEvent  = SystemEvent(info3).add(param)
 val systemEvent2: SystemEvent  = SystemEvent(info4).add(param)
 
 //convert events to protobuf bytestring
-val byteArray1: Array[Byte] = statusEvent.toPb.toByteString.toByteArray
-val byteArray2: Array[Byte] = observeEvent.toPb.toByteString.toByteArray
-val byteArray3: Array[Byte] = systemEvent1.toPb.toByteString.toByteArray
-val byteArray4: Array[Byte] = systemEvent2.toPb.toByteString.toByteArray
+val byteArray1: Array[Byte] = statusEvent.toPb
+val byteArray2: Array[Byte] = observeEvent.toPb
+val byteArray3: Array[Byte] = systemEvent1.toPb
+val byteArray4: Array[Byte] = systemEvent2.toPb
 
 //convert protobuf bytestring to events
-val pbStatusEvent: StatusEvent   = StatusEvent.fromPb(PbEvent.parseFrom(byteArray1))
-val pbObserveEvent: ObserveEvent = ObserveEvent.fromPb(PbEvent.parseFrom(byteArray2))
-val pbSystemEvent1: SystemEvent  = SystemEvent.fromPb(PbEvent.parseFrom(byteArray3))
-val pbSystemEvent2: SystemEvent  = SystemEvent.fromPb(PbEvent.parseFrom(byteArray4))</code></pre></dd>
+val pbStatusEvent: StatusEvent   = StatusEvent.fromPb(byteArray1)
+val pbObserveEvent: ObserveEvent = ObserveEvent.fromPb(byteArray2)
+val pbSystemEvent1: SystemEvent  = SystemEvent.fromPb(byteArray3)
+val pbSystemEvent2: SystemEvent  = SystemEvent.fromPb(byteArray4)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java"><br/>//Some variety in EventInfo
+EventInfo eventInfo1 = EventInfo.apply(&quot;wfos.blue.filter&quot;);
+EventInfo eventInfo2 = EventInfo.apply(
+        &quot;wfos.blue.filter&quot;,
+        EventTime.apply(Instant.now()));
+EventInfo eventInfo3 = EventInfo.apply(
+        &quot;wfos.blue.filter&quot;,
+        EventTime.apply(),
+        ObsId.apply(&quot;Obs001&quot;));
+EventInfo eventInfo4 = EventInfo.apply(
+        new Prefix(&quot;wfos.prog.cloudcover&quot;),
+        EventTime.apply(),
+        ObsId.apply(&quot;Obs001&quot;).asOption(),
+        UUID.randomUUID().toString());
+
+//Key
+Key&lt;RaDec&gt; raDecKey = JKeyTypes.RaDecKey().make(&quot;raDecKey&quot;);
+
+//values
+RaDec raDec1 = new RaDec(10.20, 40.20);
+RaDec raDec2 = new RaDec(100.20, 400.20);
+
+//parameters
+Parameter&lt;RaDec&gt; param = raDecKey.set(raDec1, raDec2).withUnits(JUnits.arcmin);
+
+//events
+StatusEvent statusEvent = StatusEvent.from(eventInfo1).add(param);
+ObserveEvent observeEvent = ObserveEvent.from(eventInfo2).add(param);
+SystemEvent systemEvent1 = SystemEvent.from(eventInfo3).add(param);
+SystemEvent systemEvent2 = SystemEvent.from(eventInfo4).add(param);
+
+//convert events to protobuf bytestring
+byte[] byteArray1 = statusEvent.toPb();
+byte[] byteArray2 = observeEvent.toPb();
+byte[] byteArray3 = systemEvent1.toPb();
+byte[] byteArray4 = systemEvent2.toPb();
+
+//convert protobuf bytestring to events
+StatusEvent pbStatusEvent = StatusEvent.fromPb(byteArray1);
+ObserveEvent pbObserveEvent = ObserveEvent.fromPb(byteArray2);
+SystemEvent pbSystemEvent1 = SystemEvent.fromPb(byteArray3);
+SystemEvent pbSystemEvent2 = SystemEvent.fromPb(byteArray4);</code></pre></dd>
 </dl>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/EventsTest.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JEventsTest.java">Java Example</a></li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/messages/events.md" title="Edit this page" class="md-source-file md-edit">
