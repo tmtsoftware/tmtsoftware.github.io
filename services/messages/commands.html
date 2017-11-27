@@ -105,6 +105,7 @@ TMT Common Software (CSW)
     <li><a href="../../services/messages/commands.html#wait-command" class="header">Wait Command</a></li>
     <li><a href="../../services/messages/commands.html#json-serialization" class="header">JSON serialization</a></li>
     <li><a href="../../services/messages/commands.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
+    <li><a href="../../services/messages/commands.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -132,6 +133,7 @@ TMT Common Software (CSW)
     <li><a href="../../services/messages/commands.html#wait-command" class="header">Wait Command</a></li>
     <li><a href="../../services/messages/commands.html#json-serialization" class="header">JSON serialization</a></li>
     <li><a href="../../services/messages/commands.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
+    <li><a href="../../services/messages/commands.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -149,6 +151,9 @@ TMT Common Software (CSW)
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val obsId: ObsId = ObsId(&quot;Obs001&quot;)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">ObsId obsId = new ObsId(&quot;Obs001&quot;);</code></pre></dd>
 </dl>
 <h3><a href="#prefix" name="prefix" class="anchor"><span class="anchor-link"></span></a>Prefix</h3>
 <p>Identifies a <a href="subsystem.html">Subsystem</a> in TMT observatory. Component developer should supply a valid prefix string and the subsystem will be automatically parsed from it. </p>
@@ -162,11 +167,23 @@ val prefix1: Prefix = Prefix(Subsystem.NFIRAOS, &quot;nfiraos.ncc.trombone&quot;
 //just by supplying prefix
 val prefix2: Prefix = Prefix(&quot;tcs.mobie.blue.filter&quot;)
 
-//invalid prefix string that cant be mapped to a valid subsystem, will automatically get Subsystem.BAD
+//invalid prefix string that cant be mapped to a valid subsystem,
+// will automatically get Subsystem.BAD
 val badPrefix: Prefix = Prefix(&quot;abcdefgh&quot;)
 
 //use implicit conversion to convert from String to Prefix
 val prefix3: Prefix = &quot;wfos.prog.cloudcover&quot;</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//using constructor, supplying subsystem and prefix both
+Prefix prefix1 = new Prefix(JSubsystem.NFIRAOS, &quot;nfiraos.ncc.trombone&quot;);
+
+//just by supplying prefix
+Prefix prefix2 = new Prefix(&quot;tcs.mobie.blue.filter&quot;);
+
+//invalid prefix string that cant be mapped to a valid subsystem,
+// will automatically get Subsystem.BAD
+Prefix badPrefix = new Prefix(&quot;abcdefgh&quot;);</code></pre></dd>
 </dl>
 <h3><a href="#setup-command" name="setup-command" class="anchor"><span class="anchor-link"></span></a>Setup Command</h3>
 <p>This command is used to describe a goal that a system should match. Component developer will require to supply following arguments to create <code>Setup</code> command.</p>
@@ -181,7 +198,7 @@ val prefix3: Prefix = &quot;wfos.prog.cloudcover&quot;</code></pre></dd>
   <pre class="prettyprint"><code class="language-scala">//keys
 val k1: Key[Int]    = KeyType.IntKey.make(&quot;encoder&quot;)
 val k2: Key[String] = KeyType.StringKey.make(&quot;stringThing&quot;)
-val k2bad: Key[Int] = KeyType.IntKey.make(&quot;stringThing&quot;)
+val k2bad: Key[Int] = KeyType.IntKey.make(&quot;missingKey&quot;)
 val k3: Key[Int]    = KeyType.IntKey.make(&quot;filter&quot;)
 val k4: Key[Float]  = KeyType.FloatKey.make(&quot;correction&quot;)
 
@@ -192,7 +209,7 @@ val prefix: Prefix = Prefix(&quot;wfos.red.detector&quot;)
 val i1: Parameter[Int]    = k1.set(22)
 val i2: Parameter[String] = k2.set(&quot;A&quot;)
 
-//create setup, add sequentially using add
+//create Setup, add sequentially using add
 val sc1: Setup = Setup(obsId, prefix).add(i1).add(i2)
 
 //access keys
@@ -223,6 +240,53 @@ val sc4: Setup = sc3.remove(b1)
 //list all keys
 val allKeys: Set[String] = sc4.paramSet.map(_.keyName)
 </code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; k1 = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;String&gt; k2 = JKeyTypes.StringKey().make(&quot;stringThing&quot;);
+Key&lt;Integer&gt; k2bad = JKeyTypes.IntKey().make(&quot;missingKey&quot;);
+Key&lt;Integer&gt; k3 = JKeyTypes.IntKey().make(&quot;filter&quot;);
+Key&lt;Float&gt; k4 = JKeyTypes.FloatKey().make(&quot;correction&quot;);
+
+//prefix
+String prefixName = &quot;wfos.red.detector&quot;;
+Prefix prefix = new Prefix(prefixName);
+
+//parameters
+Parameter&lt;Integer&gt; i1 = k1.set(22);
+Parameter&lt;String&gt; i2 = k2.set(&quot;A&quot;);
+
+//create setup, add sequentially using add
+Setup sc1 = new Setup(obsId, prefixName).add(i1).add(i2);
+
+//access keys
+Boolean k1Exists = sc1.exists(k1); //true
+
+//access parameters
+Optional&lt;Parameter&lt;Integer&gt;&gt; optParam1 = sc1.jGet(k1); //present
+Optional&lt;Parameter&lt;Integer&gt;&gt; optK2Bad = sc1.jGet(k2bad); //absent
+
+//add more than one parameters, using madd
+Setup sc2 = sc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(1.0f, 2.0f));
+int paramSize = sc2.size();
+
+//add binary payload
+Key&lt;Byte&gt; byteKey1 = JKeyTypes.ByteKey().make(&quot;byteKey1&quot;);
+Key&lt;Byte&gt; byteKey2 = JKeyTypes.ByteKey().make(&quot;byteKey2&quot;);
+Byte[] bytes1 = {10, 20};
+Byte[] bytes2 = {30, 40};
+
+Parameter&lt;Byte&gt; b1 = byteKey1.set(bytes1);
+Parameter&lt;Byte&gt; b2 = byteKey2.set(bytes2);
+
+Setup sc3 = new Setup(obsId, prefixName).add(b1).add(b2);
+
+//remove a key
+Setup sc4 = sc3.remove(b1);
+
+//list all keys
+java.util.List&lt;String&gt; allKeys = sc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h3><a href="#observe-command" name="observe-command" class="anchor"><span class="anchor-link"></span></a>Observe Command</h3>
 <p>This command describes a science observation. Sent only to Science Detector Assemblies and Sequencers.</p>
@@ -232,7 +296,7 @@ val allKeys: Set[String] = sc4.paramSet.map(_.keyName)
   <pre class="prettyprint"><code class="language-scala">//keys
 val k1: Key[Boolean] = KeyType.BooleanKey.make(&quot;repeat&quot;)
 val k2: Key[Int]     = KeyType.IntKey.make(&quot;expTime&quot;)
-val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;stringThing&quot;)
+val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;missingKey&quot;)
 val k3: Key[Int]     = KeyType.IntKey.make(&quot;filter&quot;)
 val k4: Key[Instant] = KeyType.TimestampKey.make(&quot;creation-time&quot;)
 
@@ -243,11 +307,11 @@ val prefix: Prefix = Prefix(&quot;wfos.red.detector&quot;)
 val i1: Parameter[Boolean] = k1.set(true, false, true, false)
 val i2: Parameter[Int]     = k2.set(1, 2, 3, 4)
 
-//create observe, add sequentially using add
+//create Observe, add sequentially using add
 val oc1: Observe = Observe(obsId, prefix).add(i1).add(i2)
 
-//access params using apply method
-val k1Param: Parameter[Boolean] = oc1(k1) //true
+//access parameters using apply method
+val k1Param: Parameter[Boolean] = oc1.get(k1).get //true
 val values: Array[Boolean]      = k1Param.values
 
 //access parameters
@@ -264,6 +328,47 @@ val oc3: Observe = oc1.add(k2.set(5, 6, 7, 8))
 //remove a key
 val oc4: Observe = oc2.remove(k4)
 </code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Boolean&gt; k1 = JKeyTypes.BooleanKey().make(&quot;repeat&quot;);
+Key&lt;Integer&gt; k2 = JKeyTypes.IntKey().make(&quot;expTime&quot;);
+Key&lt;Integer&gt; k2bad = JKeyTypes.IntKey().make(&quot;missingKey&quot;);
+Key&lt;Integer&gt; k3 = JKeyTypes.IntKey().make(&quot;filter&quot;);
+Key&lt;Instant&gt; k4 = JKeyTypes.TimestampKey().make(&quot;creation-time&quot;);
+
+//prefix
+String prefixName = &quot;wfos.red.detector&quot;;
+Prefix prefix = new Prefix(prefixName);
+
+//parameters
+Boolean[] boolArray = {true, false, true, false};
+Parameter&lt;Boolean&gt; i1 = k1.set(boolArray);
+Parameter&lt;Integer&gt; i2 = k2.set(1, 2, 3, 4);
+
+//create Observe, add sequentially using add
+Observe oc1 = new Observe(obsId, prefixName).add(i1).add(i2);
+
+//access parameters
+Optional&lt;Parameter&lt;Boolean&gt;&gt; k1Param = oc1.jGet(k1); //present
+java.util.List&lt;Boolean&gt; values = k1Param.get().jValues();
+
+//access parameters
+Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = oc1.jGet(k2bad.keyName(), JKeyTypes.FloatArrayKey());
+
+//add more than one parameters, using madd
+Observe oc2 = oc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(Instant.now()));
+int paramSize = oc2.size();
+
+//update existing key with set
+Integer[] intArray = {5, 6, 7, 8};
+Observe oc3 = oc1.add(k2.set(intArray));
+
+//remove a key
+Observe oc4 = oc2.remove(k4);
+
+//list all keys
+java.util.List&lt;String&gt; allKeys = oc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h3><a href="#wait-command" name="wait-command" class="anchor"><span class="anchor-link"></span></a>Wait Command</h3>
 <p>This command causes a Sequencer to wait until notified.</p>
@@ -273,7 +378,7 @@ val oc4: Observe = oc2.remove(k4)
   <pre class="prettyprint"><code class="language-scala">//keys
 val k1: Key[Boolean] = KeyType.BooleanKey.make(&quot;repeat&quot;)
 val k2: Key[Int]     = KeyType.IntKey.make(&quot;expTime&quot;)
-val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;stringThing&quot;)
+val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;missingKey&quot;)
 val k3: Key[Int]     = KeyType.IntKey.make(&quot;filter&quot;)
 val k4: Key[Instant] = KeyType.TimestampKey.make(&quot;creation-time&quot;)
 
@@ -305,6 +410,47 @@ val wc3: Wait = wc1.add(k2.set(5, 6, 7, 8))
 //remove a key
 val wc4: Wait = wc2.remove(k4)
 </code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Boolean&gt; k1 = JKeyTypes.BooleanKey().make(&quot;repeat&quot;);
+Key&lt;Integer&gt; k2 = JKeyTypes.IntKey().make(&quot;expTime&quot;);
+Key&lt;Integer&gt; k2bad = JKeyTypes.IntKey().make(&quot;missingKey&quot;);
+Key&lt;Integer&gt; k3 = JKeyTypes.IntKey().make(&quot;filter&quot;);
+Key&lt;Instant&gt; k4 = JKeyTypes.TimestampKey().make(&quot;creation-time&quot;);
+
+//prefix
+String prefixName = &quot;wfos.red.detector&quot;;
+Prefix prefix = new Prefix(prefixName);
+
+//parameters
+Boolean[] boolArray = {true, false, true, false};
+Parameter&lt;Boolean&gt; i1 = k1.set(boolArray);
+Parameter&lt;Integer&gt; i2 = k2.set(1, 2, 3, 4);
+
+//create Wait, add sequentially using add
+Wait wc1 = new Wait(obsId, prefixName).add(i1).add(i2);
+
+//access parameters using jGet
+Optional&lt;Parameter&lt;Boolean&gt;&gt; k1Param = wc1.jGet(k1); //present
+java.util.List&lt;Boolean&gt; values = k1Param.get().jValues();
+
+//access parameters
+Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = wc1.jGet(&quot;absentKeyHere&quot;, JKeyTypes.FloatArrayKey());
+
+//add more than one parameters, using madd
+Wait wc2 = wc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(Instant.now()));
+int paramSize = wc2.size();
+
+//update existing key with set
+Integer[] intArray = {5, 6, 7, 8};
+Wait wc3 = wc1.add(k2.set(intArray));
+
+//remove a key
+Wait wc4 = wc2.remove(k4);
+
+//list all keys
+java.util.List&lt;String&gt; allKeys = wc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h3><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON serialization</h3>
 <p>Commands can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize Setup, Observe and Wait commands.</p>
@@ -345,6 +491,35 @@ val scFromPrettyStr = JsonSupport.readSequenceCommand[Setup](Json.parse(str))
 val sc1: Setup   = JsonSupport.readSequenceCommand[Setup](scJson)
 val oc1: Observe = JsonSupport.readSequenceCommand[Observe](ocJson)
 val wc1: Wait    = JsonSupport.readSequenceCommand[Wait](wcJson)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//key
+Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyTypes.DoubleMatrixKey().make(&quot;myMatrix&quot;);
+
+//values
+Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
+MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
+
+//parameter
+Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
+
+//commands
+Setup sc = new Setup(obsId, &quot;wfos.blue.filter&quot;).add(i1);
+Observe oc = new Observe(obsId, &quot;wfos.blue.filter&quot;).add(i1);
+Wait wc = new Wait(obsId, &quot;wfos.blue.filter&quot;).add(i1);
+
+//json support - write
+JsValue scJson = JavaJsonSupport.writeSequenceCommand(sc);
+JsValue ocJson = JavaJsonSupport.writeSequenceCommand(oc);
+JsValue wcJson = JavaJsonSupport.writeSequenceCommand(wc);
+
+//optionally prettify
+String str = Json.prettyPrint(scJson);
+
+//construct command from string
+Setup sc1 = JavaJsonSupport.readSequenceCommand(Setup.class, Json.parse(str));
+Observe oc1 = JavaJsonSupport.readSequenceCommand(Observe.class, ocJson);
+Wait wc1 = JavaJsonSupport.readSequenceCommand(Wait.class, wcJson);</code></pre></dd>
 </dl>
 <h3><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key constraint</h3>
 <p>By choice, a ParameterSet in either <strong>Setup, Observe,</strong> or <strong>Wait</strong> command will be optimized to store only unique keys. In other words, trying to store multiple keys with same name, will be automatically optimized by removing duplicates.</p><div class="callout note "><div class="callout-title">Note</div>
@@ -365,18 +540,18 @@ val obsId = ObsId(&quot;Obs001&quot;)
 val prefix = &quot;wfos.blue.filter&quot;
 
 //params
-val encParam1 = encoderKey.set(1)
-val encParam2 = encoderKey.set(2)
-val encParam3 = encoderKey.set(3)
+val encParam1: Parameter[Int] = encoderKey.set(1)
+val encParam2: Parameter[Int] = encoderKey.set(2)
+val encParam3: Parameter[Int] = encoderKey.set(3)
 
-val filterParam1 = filterKey.set(1)
-val filterParam2 = filterKey.set(2)
-val filterParam3 = filterKey.set(3)
+val filterParam1: Parameter[Int] = filterKey.set(1)
+val filterParam2: Parameter[Int] = filterKey.set(2)
+val filterParam3: Parameter[Int] = filterKey.set(3)
 
 val miscParam1 = miscKey.set(100)
 
 //Setup command with duplicate key via constructor
-val setup = Setup(
+val setup: Setup = Setup(
   obsId,
   prefix,
   Set(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3)
@@ -385,7 +560,7 @@ val setup = Setup(
 val uniqueKeys1 = setup.paramSet.toList.map(_.keyName)
 
 //try adding duplicate keys via add + madd
-val changedSetup = setup
+val changedSetup: Setup = setup
   .add(encParam3)
   .madd(
     filterParam1,
@@ -393,13 +568,59 @@ val changedSetup = setup
     filterParam3
   )
 //duplicate keys will not be added. Should contain one Encoder and one Filter key
-val uniqueKeys2 = changedSetup.paramSet.toList.map(_.keyName)
+val uniqueKeys2: List[String] = changedSetup.paramSet.toList.map(_.keyName)
 
 //miscKey(unique) will be added; encoderKey(duplicate) will not be added
-val finalSetUp = setup.madd(Set(miscParam1, encParam1))
+val finalSetUp: Setup = setup.madd(Set(miscParam1, encParam1))
 //now contains encoderKey, filterKey, miscKey
-val uniqueKeys3 = finalSetUp.paramSet.toList.map(_.keyName)</code></pre></dd>
+val uniqueKeys3: List[String] = finalSetUp.paramSet.toList.map(_.keyName)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">//keys
+Key&lt;Integer&gt; encoderKey = JKeyTypes.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; filterKey = JKeyTypes.IntKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; miscKey = JKeyTypes.IntKey().make(&quot;misc.&quot;);
+
+//prefix
+String prefix = &quot;wfos.blue.filter&quot;;
+
+//params
+Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);
+Parameter&lt;Integer&gt; encParam2 = encoderKey.set(2);
+Parameter&lt;Integer&gt; encParam3 = encoderKey.set(3);
+
+Parameter&lt;Integer&gt; filterParam1 = filterKey.set(1);
+Parameter&lt;Integer&gt; filterParam2 = filterKey.set(2);
+Parameter&lt;Integer&gt; filterParam3 = filterKey.set(3);
+
+Parameter&lt;Integer&gt; miscParam1 = miscKey.set(100);
+
+//Setup command with duplicate key via madd
+Setup setup = new Setup(obsId, prefix).madd(
+        encParam1,
+        encParam2,
+        encParam3,
+        filterParam1,
+        filterParam2,
+        filterParam3);
+//four duplicate keys are removed; now contains one Encoder and one Filter key
+List&lt;String&gt; uniqueKeys1 = setup.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+
+//try adding duplicate keys via add + madd
+Setup changedSetup = setup.add(encParam3).madd(filterParam1, filterParam2, filterParam3);
+//duplicate keys will not be added. Should contain one Encoder and one Filter key
+List&lt;String&gt; uniqueKeys2 = changedSetup.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+
+//miscKey(unique) will be added; encoderKey(duplicate) will not be added
+Setup finalSetUp = setup.madd(miscParam1, encParam1);
+//now contains encoderKey, filterKey, miscKey
+List&lt;String&gt; uniqueKeys3 = finalSetUp.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/CommandsTest.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JCommandsTest.java">Java Example</a></li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/messages/commands.md" title="Edit this page" class="md-source-file md-edit">
