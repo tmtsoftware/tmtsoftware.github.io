@@ -377,7 +377,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala Typed Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class SampleTypedActor(loggerFactory: LoggerFactory, ctx: ActorContext[ComponentDomainMessage]) {
+  <pre class="prettyprint"><code class="language-scala">class SampleTypedActor(loggerFactory: LoggerFactory, ctx: ActorContext[TopLevelActorDomainMessage]) {
 
   val log: Logger = loggerFactory.getLogger(ctx)
 }</code></pre></dd>
@@ -385,7 +385,7 @@ TMT Common Software (CSW)
   <dd>
   <pre class="prettyprint"><code class="language-java">class JSampleTypedActor {
 
-    public JSampleTypedActor(JLoggerFactory loggerFactory, ActorContext&lt;ComponentDomainMessage&gt; ctx) {
+    public JSampleTypedActor(JLoggerFactory loggerFactory, ActorContext&lt;TopLevelActorDomainMessage&gt; ctx) {
         ILogger log = loggerFactory.getLogger(ctx, getClass());
     }
 }</code></pre></dd>
@@ -433,7 +433,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala Typed Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class GenericTypedActor(ctx: ActorContext[ComponentDomainMessage]) {
+  <pre class="prettyprint"><code class="language-scala">class GenericTypedActor(ctx: ActorContext[TopLevelActorDomainMessage]) {
 
   val log: Logger = GenericLoggerFactory.getLogger(ctx)
 }</code></pre></dd>
@@ -441,7 +441,7 @@ TMT Common Software (CSW)
   <dd>
   <pre class="prettyprint"><code class="language-java">class JGenericTypedActor {
 
-    public JGenericTypedActor(ActorContext&lt;ComponentDomainMessage&gt; ctx) {
+    public JGenericTypedActor(ActorContext&lt;TopLevelActorDomainMessage&gt; ctx) {
         ILogger log = JGenericLoggerFactory.getLogger(ctx, getClass());
     }
 }</code></pre></dd>
@@ -450,8 +450,8 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">sealed trait ComponentDomainMessage        extends DomainMessage
-case class ComponentStatistics(value: Int) extends ComponentDomainMessage</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">sealed trait TopLevelActorDomainMessage        extends DomainMessage
+case class TopLevelActorStatistics(value: Int) extends TopLevelActorDomainMessage</code></pre></dd>
 </dl></div>
 <h2><a href="#log-statements" name="log-statements" class="anchor"><span class="anchor-link"></span></a>Log statements</h2>
 <p>Logging statements are used very much like existing logging services such as log4j. For Java, there is an additional way of writing log messages using Supplier methods (lambdas). The use of lambdas is more efficient since the computations in a message (e.g. string concatenation) are not performed unless the message is actually being logged. Therefore, these supplier methods should be used in cases where high performance is required (see <a href="#java-logging-string-vs-supplier-api-performance">performance results below</a>).</p>
