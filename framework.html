@@ -237,6 +237,9 @@ locationServiceUsage = RegisterOnly
     private ActorRef&lt;DiagPublisherMessages&gt; diagPublisher;
     private ActorRef&lt;AssemblyCommandHandlerMsgs&gt; commandHandler;
     private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
+    private IConfigClientService configClient;
+    private ActorSystem actorSystem;
+    private Materializer mat;
 
     public JTromboneAssemblyHandlers(
             akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
@@ -254,6 +257,9 @@ locationServiceUsage = RegisterOnly
         this.locationService = locationService;
         runningHcds = new HashMap&lt;&gt;();
         commandResponseAdapter = ctx.spawnAdapter(DiagPublisherMessages.CommandResponseE::new);
+        actorSystem = Adapter.toUntyped(ctx.getSystem());
+        mat = ActorMaterializer.create(actorSystem);
+        configClient = JConfigClientFactory.clientApi(actorSystem, locationService);
     }
 </code></pre></dd>
   <dt>Hcd/Scala</dt>
@@ -298,7 +304,10 @@ locationServiceUsage = RegisterOnly
         this.ctx = ctx;
         this.log = loggerFactory.getLogger(getClass());
     }</code></pre></dd>
-</dl>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p><strong>converting typed actor system to untyped actor system</strong> </p>
+<p>The <code>ctx</code> available to the component is of type <code>akka.typed.scaladsl.ActorContext</code> in scala or <code>akka.typed.javadsl.ActorContext</code> in java. This context can be used to get resources such as actor system which is also typed. In order to get the untyped version of actor system or actor references, akka has provided some implicit extension methods in scala and static methods in java which can be used by adding the following import </p>
+<p><code>import akka.typed.scaladsl.adapter._</code> for scala and, <code>import akka.typed.javadsl.Adapter.*</code> for java</p></div>
 <p>A component can be created by a factory which extends <code>ComponentBehaviorFactory</code> base class and provides a definition of <code>handlers</code> method to return the appropriate implementation of <code>ComponentHandlers</code>.</p>
 <dl>
   <dt>Assembly/Scala</dt>
@@ -376,7 +385,7 @@ locationServiceUsage = RegisterOnly
   <dd>
   <pre class="prettyprint"><code class="language-scala">def initialize(): Future[Unit] = async {
   // fetch config (preferably from configuration service)
-  val (calculationConfig, controlConfig) = await(getAssemblyConfigs)
+  val (calculationConfig, controlConfig) = await(getAssemblyConfigsLocal)
   ac = AssemblyContext(componentInfo, calculationConfig, controlConfig)
 
   // create a worker actor which is used by this assembly
@@ -396,19 +405,21 @@ locationServiceUsage = RegisterOnly
           diagPublisher = ctx.spawnAnonymous(DiagPublisher.make(ac, runningHcds(maybeConnection.get), Some(eventPublisher)))
           commandHandler =
             ctx.spawnAnonymous(new TromboneAssemblyCommandBehaviorFactory().make(ac, runningHcds, Some(eventPublisher)))
-        case None ⇒ throw new RuntimeException(&quot;Could not resolve hcd location, Initialization failure.&quot;)
+        case None ⇒
+          // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
+          // for the Hcd to be available
+          throw HcdNotFoundException()
       }
     case None ⇒ Future.successful(Unit)
   }
-
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
     // fetch config (preferably from configuration service)
-    CompletableFuture&lt;AssemblyContext&gt; assemblyContextCompletableFuture = getAssemblyCalculationConfig()
-            .thenCombine(getAssemblyControlConfig(),
+    CompletableFuture&lt;AssemblyContext&gt; assemblyContextCompletableFuture = getAssemblyLocalCalculationConfig()
+            .thenCombine(getAssemblyLocalControlConfig(),
                     (calculationConf, controlConf) -&gt; ac = new AssemblyContext(componentInfo, calculationConf, controlConf));
 
     // create a worker actor which is used by this assembly
@@ -424,15 +435,14 @@ public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
     // required worker actors required by this assembly
     Optional&lt;CompletableFuture&lt;Void&gt;&gt; voidCompletableFuture = mayBeConnection.map(connection -&gt; {
         CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; eventualHcdLocation = locationService.resolve(connection.&lt;AkkaLocation&gt;of(), FiniteDuration.apply(5, TimeUnit.SECONDS));
-
         return eventualEventPublisher.thenAcceptBoth(eventualHcdLocation, (eventPublisher, hcdLocation) -&gt; {
-            hcdLocation.map(hcd -&gt; {
-                runningHcds.put(connection, Optional.of(hcd.jComponent()));
-                diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(hcd.component()), Optional.of(eventPublisher)));
-                return Optional.empty();
+            if(!hcdLocation.isPresent())
+                throw new HcdNotFoundException();
+            else
+                runningHcds.put(connection, Optional.of(hcdLocation.get().jComponent()));
+                diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(hcdLocation.get().component()), Optional.of(eventPublisher)));
             });
         });
-    });
 
     return voidCompletableFuture.get().thenApply(x -&gt; BoxedUnit.UNIT);
 }</code></pre></dd>
@@ -538,7 +548,7 @@ public void onGoOnline() {
 </dl>
 <h3><a href="#handling-commands" name="handling-commands" class="anchor"><span class="anchor-link"></span></a>Handling commands</h3>
 <h4><a href="#validatecommand" name="validatecommand" class="anchor"><span class="anchor-link"></span></a>validateCommand</h4>
-<p>On receiving a command a component developer is required to validate the <code>ControlCommand</code> received. If the command is valid to be processed, <code>Accepted</code> response should be returned from this method. Otherwise, <code>Invalid</code> response should be returned.</p>
+<p>On receiving a command a component is required to validate the <code>ControlCommand</code> received. If the command is valid to be processed, <code>Accepted</code> response should be returned from this method. Otherwise, <code>Invalid</code> response should be returned.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -686,6 +696,65 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 </dl>
 <h3><a href="#publishing-state" name="publishing-state" class="anchor"><span class="anchor-link"></span></a>Publishing State</h3>
 <p>A component has access to an actor <code>pubSubRef</code> which can be used to publish its <code>CurrentState</code>. Any subscriber of this component will receive the published state.</p>
+<h3><a href="#handling-exceptions" name="handling-exceptions" class="anchor"><span class="anchor-link"></span></a>Handling Exceptions</h3>
+<p>A component should create exceptions belonging to following two types:</p>
+<ol>
+  <li>
+    <p><strong>FailureRestart</strong> : As a part of any handler, if an exception can be handled by restarting the component, an exception of type <code>FailureRestart</code> should be thrown to let the framework restart the component. The component&rsquo;s state will be cleared/reinitialized. The <code>onInitialize</code> handler will be invoked again.</p>
+    <dl>
+      <dt>Scala</dt>
+      <dd>
+      <pre class="prettyprint"><code class="language-scala">locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
+  case Some(akkaLocation) ⇒
+    runningHcds = runningHcds.updated(hcdConnection.get, Some(akkaLocation.component))
+    diagPublisher = ctx.spawnAnonymous(DiagPublisher.make(ac, runningHcds(maybeConnection.get), Some(eventPublisher)))
+    commandHandler =
+      ctx.spawnAnonymous(new TromboneAssemblyCommandBehaviorFactory().make(ac, runningHcds, Some(eventPublisher)))
+  case None ⇒
+    // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
+    // for the Hcd to be available
+    throw HcdNotFoundException()</code></pre></dd>
+      <dt>Java</dt>
+      <dd>
+      <pre class="prettyprint"><code class="language-java">return eventualEventPublisher.thenAcceptBoth(eventualHcdLocation, (eventPublisher, hcdLocation) -&gt; {
+    if(!hcdLocation.isPresent())
+        throw new HcdNotFoundException();
+    else
+        runningHcds.put(connection, Optional.of(hcdLocation.get().jComponent()));
+        diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(hcdLocation.get().component()), Optional.of(eventPublisher)));
+    });
+});</code></pre></dd>
+    </dl>
+  </li>
+  <li>
+    <p><strong>FailureStop</strong> : As a part of any handler, an exception can be thrown of type <code>FailureStop</code> which will result in terminating the component. The <code>onShutdown</code> handler will be invoked to facilitate graceful shutdown.</p>
+    <dl>
+      <dt>Scala</dt>
+      <dd>
+      <pre class="prettyprint"><code class="language-scala">private def getAssemblyConfigs: Future[(TromboneCalculationConfig, TromboneControlConfig)] = {
+  configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).flatMap {
+    case Some(config) ⇒ config.toConfigObject.map(x ⇒ (TromboneCalculationConfig(x), TromboneControlConfig(x)))
+    case None         ⇒
+      // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
+      // cofiguration service and started again
+      throw ConfigNotAvailableException()
+  }
+}</code></pre></dd>
+      <dt>Java</dt>
+      <dd>
+      <pre class="prettyprint"><code class="language-java">private CompletableFuture&lt;TromboneCalculationConfig&gt; getAssemblyCalculationConfig() {
+    return configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).thenCompose((mayBeConfig) -&gt; {
+        if(mayBeConfig.isPresent())
+            return (mayBeConfig.get().toJConfigObject(mat).thenApply(TromboneCalculationConfig::apply));
+        else
+            // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
+            // cofiguration service and started again
+            throw new ConfigNotAvailableException();
+    });
+}</code></pre></dd>
+    </dl>
+  </li>
+</ol>
 <h2><a href="#container-for-deployment" name="container-for-deployment" class="anchor"><span class="anchor-link"></span></a>Container for deployment</h2>
 <p>A container is a component which starts one or more Components and keeps track of the components within a single JVM process. When started, the container also registers itself with the Location Service. The components to be hosted by the container is defined using a <code>ContainerInfo</code> model which has a set of ComponentInfo objects. It is usually described as a configuration file but can also be created programmatically.</p>
 <dl>
