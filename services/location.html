@@ -84,6 +84,7 @@ TMT Common Software (CSW)
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../services.html" class="page">Services</a>
   <ul>
@@ -92,6 +93,7 @@ TMT Common Software (CSW)
     <li><a href="../services/logging.html" class="page">Logging service</a></li>
     <li><a href="../services/messages.html" class="page">csw-messages</a></li>
   </ul></li>
+  <li><a href="../framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
@@ -168,7 +170,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-location_2.12&quot; % &quot;0.1-SNAPSHOT&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-location&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
   <dt>maven</dt>
   <dd>
@@ -204,10 +206,10 @@ TMT Common Software (CSW)
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// Only call this once per application
-Await.result(locationService.shutdown(), 20.seconds)</code></pre></dd>
+Await.result(locationService.shutdown(ActorTerminatedReason), 20.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">locationService.shutdown().get();</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">locationService.shutdown(CoordinatedShutdownReasons.actorTerminatedReason()).get();</code></pre></dd>
 </dl>
 <h2><a href="#creating-components-connections-and-registrations" name="creating-components-connections-and-registrations" class="anchor"><span class="anchor-link"></span></a>Creating components, connections and registrations</h2>
 <p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal observatory operations. It must register its location information with Location service so that other components can find it.</p>
@@ -415,14 +417,14 @@ if (resolveResult.isPresent()) {
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// If the component type is HCD or Assembly, use this to get the correct ActorRef
-val typedComponentRef: ActorRef[ComponentMessage] = akkaLocation.componentRef()
+val typedComponentRef: ActorRef[ComponentMessage] = akkaLocation.component.value
 
 // If the component type is Container, use this to get the correct ActorRef
-val typedContainerRef: ActorRef[ContainerExternalMessage] = akkaLocation.containerRef()</code></pre></dd>
+val typedContainerRef: ActorRef[ContainerExternalMessage] = akkaLocation.containerRef</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// If the component type is HCD or Assembly, use this to get the correct ActorRef
-akka.typed.ActorRef&lt;ComponentMessage&gt; typedComponentRef = akkaLocation.componentRef();
+akka.typed.ActorRef&lt;ComponentMessage&gt; typedComponentRef = akkaLocation.jComponent().value();
 
 // If the component type is Container, use this to get the correct ActorRef
 akka.typed.ActorRef&lt;ContainerExternalMessage&gt; typedContainerRef = akkaLocation.containerRef();</code></pre></dd>
