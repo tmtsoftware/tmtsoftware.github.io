@@ -102,7 +102,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="framework.html#artifacts" class="header">Artifacts</a></li>
     <li><a href="framework.html#componentinfo" class="header">ComponentInfo</a></li>
-    <li><a href="framework.html#creating-an-assembly-or-hcd" class="header">Creating an Assembly or Hcd</a></li>
+    <li><a href="framework.html#creating-an-assembly-or-hcd-component" class="header">Creating an Assembly or Hcd Component</a></li>
     <li><a href="framework.html#container-for-deployment" class="header">Container for deployment</a></li>
     <li><a href="framework.html#standalone-components" class="header">Standalone components</a></li>
   </ul></li>
@@ -127,7 +127,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="framework.html#artifacts" class="header">Artifacts</a></li>
     <li><a href="framework.html#componentinfo" class="header">ComponentInfo</a></li>
-    <li><a href="framework.html#creating-an-assembly-or-hcd" class="header">Creating an Assembly or Hcd</a></li>
+    <li><a href="framework.html#creating-an-assembly-or-hcd-component" class="header">Creating an Assembly or Hcd Component</a></li>
     <li><a href="framework.html#container-for-deployment" class="header">Container for deployment</a></li>
     <li><a href="framework.html#standalone-components" class="header">Standalone components</a></li>
   </ul></li>
@@ -204,8 +204,8 @@ locationServiceUsage = RegisterOnly
     </ul>
   </li>
 </ul>
-<h2><a href="#creating-an-assembly-or-hcd" name="creating-an-assembly-or-hcd" class="anchor"><span class="anchor-link"></span></a>Creating an Assembly or Hcd</h2>
-<p>A component is implemented by extending the <code>ComponentHandlers</code> base class. </p>
+<h2><a href="#creating-an-assembly-or-hcd-component" name="creating-an-assembly-or-hcd-component" class="anchor"><span class="anchor-link"></span></a>Creating an Assembly or Hcd Component</h2>
+<p>A component is implemented by extending the <code>ComponentHandlers</code> base class. These handlers are executed under an actor (Top Level Actor or TLA) defined in the framework which handles the lifecycle and supervision of this component.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -548,7 +548,7 @@ public void onGoOnline() {
 </dl>
 <h3><a href="#handling-commands" name="handling-commands" class="anchor"><span class="anchor-link"></span></a>Handling commands</h3>
 <h4><a href="#validatecommand" name="validatecommand" class="anchor"><span class="anchor-link"></span></a>validateCommand</h4>
-<p>On receiving a command a component is required to validate the <code>ControlCommand</code> received. If the command is valid to be processed, <code>Accepted</code> response should be returned from this method. Otherwise, <code>Invalid</code> response should be returned.</p>
+<p>A command can be sent as a <code>Submit</code> or <code>Oneway</code> message to the component actor. If a command can be completed immediately, a <code>CommandResponse</code> indicating the final response for the command can be returned. If a command requires time for processing, the component is required to validate the <code>ControlCommand</code> received and return a validation result as <code>Accepted</code> or <code>Invalid</code>. The final response for a command sent as <code>Submit</code> can be obtained by the sender command by querying or subscribing for this response to the component as described here. </p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -589,19 +589,19 @@ public CommandResponse validateCommand(ControlCommand controlCommand) {
 </dl>
 <p>If a response can be provided immediately, a final <code>CommandResponse</code> such as <code>CommandCompleted</code> or <code>Error</code> can be sent from this handler.</p>
 <h4><a href="#onsubmit" name="onsubmit" class="anchor"><span class="anchor-link"></span></a>onSubmit</h4>
-<p>In case a command is received as a submit, command response should be updated in the <code>CommandResponseManager</code>. <code>CommandResponseManager</code> is an actor whose reference <code>commandResponseManager</code> is available in the <code>ComponentHandlers</code>. </p>
+<p>On receiving a command as <code>Submit</code>, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. In case a command is received as a submit, command response should be updated in the <code>CommandResponseManager</code>. <code>CommandResponseManager</code> is an actor whose reference <code>commandResponseManager</code> is available in the <code>ComponentHandlers</code>. </p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = {
-  // forward the received command to an actor created as a worker actor for this component to process commands
+  // commandHandler is a worker actor created for this component to process commands
   commandHandler ! CommandMessageE(Submit(controlCommand, commandResponseAdapter))
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public void onSubmit(ControlCommand controlCommand) {
-    // forward the received command to an actor created as a worker actor for this component to process commands
+    // commandHandler is a worker actor created for this component to process commands
     commandHandler.tell(new CommandMessageE(new Submit(controlCommand, commandResponseAdapter)));
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
@@ -619,19 +619,19 @@ public void onSubmit(ControlCommand controlCommand) {
 }</code></pre></dd>
 </dl>
 <h4><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h4>
-<p>In case a command is received as a oneway, command response should not be provided to the sender.</p>
+<p>On receiving a command as <code>Oneway</code>, the <code>onOneway</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>.In case a command is received as a oneway, command response should not be provided to the sender.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = {
-  // forward the received command to an actor created as a worker actor for this component to process commands
+  // commandHandler is a worker actor created for this component to process commands
   commandHandler ! CommandMessageE(Oneway(controlCommand, commandResponseAdapter))
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public void onOneway(ControlCommand controlCommand) {
-    // forward the received command to an actor created as a worker actor for this component to process commands
+    // commandHandler is a worker actor created for this component to process commands
     commandHandler.tell(new CommandMessageE(new Submit(controlCommand, commandResponseAdapter)));
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
@@ -649,9 +649,9 @@ public void onOneway(ControlCommand controlCommand) {
 }</code></pre></dd>
 </dl>
 <h3><a href="#tracking-connections" name="tracking-connections" class="anchor"><span class="anchor-link"></span></a>Tracking Connections</h3>
-<p>The component framework tracks the set of connections specified for a component in <code>ComponentInfo</code>. The framework also provides a helper <code>trackConnection</code> method to track any connection other than those present in <code>ComponentInfo</code>.</p>
+<p>The component framework tracks the set of connections specified for a component in <code>ComponentInfo</code> if the <code>locationServiceUsage</code> property is set to <code>RegisterAndTrackServices</code>. The framework also provides a helper <code>trackConnection</code> method to track any connection other than those present in <code>ComponentInfo</code>.</p>
 <h4><a href="#onlocationtrackingevent" name="onlocationtrackingevent" class="anchor"><span class="anchor-link"></span></a>onLocationTrackingEvent</h4>
-<p>The <code>onLocationTrackingEvent</code> handler can be used to take action on the <code>TrackingEvent</code> for a particular connection. </p>
+<p>The <code>onLocationTrackingEvent</code> handler can be used to take action on the <code>TrackingEvent</code> for a particular connection. This event could be for the connections in <code>ComponentInfo</code> tracked automatically or for the connections tracked explicitly using <code>trackConnection</code> method.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
