@@ -93,7 +93,16 @@ TMT Common Software (CSW)
     <li><a href="services/logging.html" class="page">Logging service</a></li>
     <li><a href="services/messages.html" class="page">csw-messages</a></li>
   </ul></li>
-  <li><a href="framework.html" class="active page">Framework for creating components (HCD, Assembly, Container)</a></li>
+  <li><a href="framework.html" class="active page">Framework for creating components (HCD, Assembly, Container)</a>
+  <ul>
+    <li><a href="framework/describing-components.html" class="page">ComponentInfo</a></li>
+    <li><a href="framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
+    <li><a href="framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="framework/tracking-connections.html" class="page">Tracking Connections</a></li>
+    <li><a href="framework/publishing-state.html" class="page">Publishing State</a></li>
+    <li><a href="framework/handling-exceptions.html" class="page">Handling Exceptions</a></li>
+    <li><a href="framework/deploying-components.html" class="page">Deploying Components</a></li>
+  </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
@@ -101,10 +110,6 @@ TMT Common Software (CSW)
   <li><a href="framework.html#framework-for-creating-components-hcd-assembly-container-" class="header">Framework for creating components (HCD, Assembly, Container)</a>
   <ul>
     <li><a href="framework.html#artifacts" class="header">Artifacts</a></li>
-    <li><a href="framework.html#componentinfo" class="header">ComponentInfo</a></li>
-    <li><a href="framework.html#creating-an-assembly-or-hcd-component" class="header">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="framework.html#container-for-deployment" class="header">Container for deployment</a></li>
-    <li><a href="framework.html#standalone-components" class="header">Standalone components</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -126,10 +131,6 @@ TMT Common Software (CSW)
   <li><a href="framework.html#framework-for-creating-components-hcd-assembly-container-" class="header">Framework for creating components (HCD, Assembly, Container)</a>
   <ul>
     <li><a href="framework.html#artifacts" class="header">Artifacts</a></li>
-    <li><a href="framework.html#componentinfo" class="header">ComponentInfo</a></li>
-    <li><a href="framework.html#creating-an-assembly-or-hcd-component" class="header">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="framework.html#container-for-deployment" class="header">Container for deployment</a></li>
-    <li><a href="framework.html#standalone-components" class="header">Standalone components</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -141,6 +142,7 @@ TMT Common Software (CSW)
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#framework-for-creating-components-hcd-assembly-container-" name="framework-for-creating-components-hcd-assembly-container-" class="anchor"><span class="anchor-link"></span></a>Framework for creating components (HCD, Assembly, Container)</h1>
+<p><strong>csw-framework</strong> library provides support for creating a component as defined by the TMT. </p>
 <h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
 <dl>
   <dt>sbt</dt>
@@ -163,648 +165,17 @@ TMT Common Software (CSW)
 }
 </code></pre></dd>
 </dl>
-<h2><a href="#componentinfo" name="componentinfo" class="anchor"><span class="anchor-link"></span></a>ComponentInfo</h2>
-<p><code>ComponentInfo</code> model describes a component by specifying following details It is usually described as a configuration file but can also be created programmatically.</p>
-<dl>
-  <dt>AssemblyInfo</dt>
-  <dd>
-  <pre><code>name = &quot;Sample_Assembly&quot;
-componentType = assembly
-behaviorFactoryClassName = package.component.SampleAssembly
-prefix = abc.sample.prefix
-locationServiceUsage = RegisterAndTrackServices
-connections = [
-    {
-      name: &quot;Sample_Assembly&quot;
-      componentType: assembly
-      connectionType: akka
-    }
-  ]
-</code></pre></dd>
-  <dt>HcdInfo</dt>
-  <dd>
-  <pre><code>name = &quot;Sample_Hcd&quot;
-componentType = hcd
-behaviorFactoryClassName = package.component.SampleHcd
-prefix = abc.sample.prefix
-locationServiceUsage = RegisterOnly
-</code></pre></dd>
-</dl>
-<p>Following is the summary of properties in the ComponentInfo config/model:</p>
+<div class="toc ">
 <ul>
-  <li><strong>name</strong> : The name of the component</li>
-  <li><strong>componentType</strong> : The type of the component which could be <code>Container</code>, <code>Assembly</code>, <code>Hcd</code> or <code>Service</code></li>
-  <li><strong>behaviorFactoryClassName</strong> : The fully qualified name of the class which extends the factory class <code>ComponentBehaviorFactory</code></li>
-  <li><strong>prefix</strong> : A valid subsystem to which this component belongs.</li>
-  <li><strong>locationServiceUsage</strong> : Indicates how the location service should be leveraged for this component by the framework. Following values are supported:
-    <ul>
-      <li>DoNotRegister : Do not register this component with location service</li>
-      <li>RegisterOnly : Register this component with location service</li>
-      <li>RegisterAndTrackServices : Register this component with location service as well as track the components/services mentioned against <code>connections</code> property</li>
-    </ul>
-  </li>
+  <li><a href="framework/describing-components.html" class="page">ComponentInfo</a></li>
+  <li><a href="framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
+  <li><a href="framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+  <li><a href="framework/tracking-connections.html" class="page">Tracking Connections</a></li>
+  <li><a href="framework/publishing-state.html" class="page">Publishing State</a></li>
+  <li><a href="framework/handling-exceptions.html" class="page">Handling Exceptions</a></li>
+  <li><a href="framework/deploying-components.html" class="page">Deploying Components</a></li>
 </ul>
-<h2><a href="#creating-an-assembly-or-hcd-component" name="creating-an-assembly-or-hcd-component" class="anchor"><span class="anchor-link"></span></a>Creating an Assembly or Hcd Component</h2>
-<p>A component is implemented by extending the <code>ComponentHandlers</code> base class. These handlers are executed under an actor (Top Level Actor or TLA) defined in the framework which handles the lifecycle and supervision of this component.</p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class TromboneAssemblyHandlers(
-    ctx: ActorContext[TopLevelActorMessage],
-    componentInfo: ComponentInfo,
-    commandResponseManager: ActorRef[CommandResponseManagerMessage],
-    pubSubRef: ActorRef[PublisherMessage[CurrentState]],
-    locationService: LocationService,
-    loggerFactory: LoggerFactory
-) extends ComponentHandlers[DiagPublisherMessages](
-      ctx,
-      componentInfo,
-      commandResponseManager,
-      pubSubRef,
-      locationService,
-      loggerFactory
-    ) {</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JTromboneAssemblyHandlers extends JComponentHandlers&lt;DiagPublisherMessages&gt; {
-
-    // private state of this component
-    private AssemblyContext ac;
-    private ComponentInfo componentInfo;
-    private ActorContext&lt;TopLevelActorMessage&gt; ctx;
-    private ILocationService locationService;
-    private Map&lt;Connection, Optional&lt;JComponentRef&gt;&gt; runningHcds;
-    private ActorRef&lt;DiagPublisherMessages&gt; diagPublisher;
-    private ActorRef&lt;AssemblyCommandHandlerMsgs&gt; commandHandler;
-    private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
-    private IConfigClientService configClient;
-    private ActorSystem actorSystem;
-    private Materializer mat;
-
-    public JTromboneAssemblyHandlers(
-            akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
-            ComponentInfo componentInfo,
-            ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
-            ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
-            ILocationService locationService,
-            JLoggerFactory loggerFactory,
-            Class&lt;DiagPublisherMessages&gt; klass
-
-    ) {
-        super(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory, klass);
-        this.componentInfo = componentInfo;
-        this.ctx = ctx;
-        this.locationService = locationService;
-        runningHcds = new HashMap&lt;&gt;();
-        commandResponseAdapter = ctx.spawnAdapter(DiagPublisherMessages.CommandResponseE::new);
-        actorSystem = Adapter.toUntyped(ctx.getSystem());
-        mat = ActorMaterializer.create(actorSystem);
-        configClient = JConfigClientFactory.clientApi(actorSystem, locationService);
-    }
-</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class TromboneHcdHandlers(
-    ctx: ActorContext[TopLevelActorMessage],
-    componentInfo: ComponentInfo,
-    commandResponseManager: ActorRef[CommandResponseManagerMessage],
-    pubSubRef: ActorRef[PublisherMessage[CurrentState]],
-    locationService: LocationService,
-    loggerFactory: LoggerFactory
-) extends ComponentHandlers[TromboneMessage](
-      ctx,
-      componentInfo,
-      commandResponseManager,
-      pubSubRef,
-      locationService,
-      loggerFactory
-    ) {</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JTromboneHcdHandlers extends JComponentHandlers&lt;TromboneMessage&gt; {
-
-    // private state of this component
-    private ILogger log;
-    private AxisResponse.AxisUpdate current;
-    private AxisResponse.AxisStatistics stats;
-    private ActorRef&lt;AxisRequest&gt; tromboneAxis;
-    private AxisConfig axisConfig;
-    private ActorContext&lt;TopLevelActorMessage&gt; ctx;
-
-    public JTromboneHcdHandlers(
-            ActorContext&lt;TopLevelActorMessage&gt; ctx,
-            ComponentInfo componentInfo,
-            ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
-            ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
-            ILocationService locationService,
-            JLoggerFactory loggerFactory,
-            Class&lt;TromboneMessage&gt; klass
-    ) {
-        super(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory, klass);
-        this.ctx = ctx;
-        this.log = loggerFactory.getLogger(getClass());
-    }</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p><strong>converting typed actor system to untyped actor system</strong> </p>
-<p>The <code>ctx</code> available to the component is of type <code>akka.typed.scaladsl.ActorContext</code> in scala or <code>akka.typed.javadsl.ActorContext</code> in java. This context can be used to get resources such as actor system which is also typed. In order to get the untyped version of actor system or actor references, akka has provided some implicit extension methods in scala and static methods in java which can be used by adding the following import </p>
-<p><code>import akka.typed.scaladsl.adapter._</code> for scala and, <code>import akka.typed.javadsl.Adapter.*</code> for java</p></div>
-<p>A component can be created by a factory which extends <code>ComponentBehaviorFactory</code> base class and provides a definition of <code>handlers</code> method to return the appropriate implementation of <code>ComponentHandlers</code>.</p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class TromboneAssemblyBehaviorFactory extends ComponentBehaviorFactory[DiagPublisherMessages] {
-  override def handlers(
-      ctx: ActorContext[TopLevelActorMessage],
-      componentInfo: ComponentInfo,
-      commandResponseManager: ActorRef[CommandResponseManagerMessage],
-      pubSubRef: ActorRef[PublisherMessage[CurrentState]],
-      locationService: LocationService,
-      loggerFactory: LoggerFactory
-  ): ComponentHandlers[DiagPublisherMessages] =
-    new TromboneAssemblyHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory)
-}</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JTromboneAssemblyBehaviorFactory extends JComponentBehaviorFactory&lt;DiagPublisherMessages&gt; {
-
-    public JTromboneAssemblyBehaviorFactory() {
-        super(DiagPublisherMessages.class);
-    }
-
-    @Override
-    public JComponentHandlers&lt;DiagPublisherMessages&gt; jHandlers(
-            ActorContext&lt;TopLevelActorMessage&gt; ctx,
-            ComponentInfo componentInfo,
-            ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
-            ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
-            ILocationService locationService,
-            JLoggerFactory loggerFactory
-    ) {
-        return new JTromboneAssemblyHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory, DiagPublisherMessages.class);
-    }
-}</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">class TromboneHcdBehaviorFactory extends ComponentBehaviorFactory[TromboneMessage] {
-  override def handlers(
-      ctx: ActorContext[TopLevelActorMessage],
-      componentInfo: ComponentInfo,
-      commandResponseManager: ActorRef[CommandResponseManagerMessage],
-      pubSubRef: ActorRef[PublisherMessage[CurrentState]],
-      locationService: LocationService,
-      loggerFactory: LoggerFactory
-  ): ComponentHandlers[TromboneMessage] =
-    new TromboneHcdHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory)
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">public class JTromboneHcdBehaviorFactory extends JComponentBehaviorFactory&lt;TromboneMessage&gt; {
-
-    public JTromboneHcdBehaviorFactory() {
-        super(TromboneMessage.class);
-    }
-
-    @Override
-    public JComponentHandlers&lt;TromboneMessage&gt; jHandlers(
-            ActorContext&lt;TopLevelActorMessage&gt; ctx,
-            ComponentInfo componentInfo,
-            ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
-            ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
-            ILocationService locationService,
-            JLoggerFactory loggerFactory
-    ) {
-        return null;
-    }
-}</code></pre></dd>
-</dl>
-<h3><a href="#lifecycle-support" name="lifecycle-support" class="anchor"><span class="anchor-link"></span></a>Lifecycle support</h3>
-<h4><a href="#initialize" name="initialize" class="anchor"><span class="anchor-link"></span></a>initialize</h4>
-<p>The <code>initialize</code> handler is invoked when the component is created. This is different than constructor initialization to allow non-blocking asynchronous operations. The component can initialize state such as configuration to be fetched from configuration service, location of components or services to be fetched from location service etc.</p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">def initialize(): Future[Unit] = async {
-  // fetch config (preferably from configuration service)
-  val (calculationConfig, controlConfig) = await(getAssemblyConfigsLocal)
-  ac = AssemblyContext(componentInfo, calculationConfig, controlConfig)
-
-  // create a worker actor which is used by this assembly
-  val eventPublisher = ctx.spawnAnonymous(TrombonePublisher.make(ac))
-
-  // find a Hcd connection from the connections provided in componentInfo
-  val maybeConnection =
-    componentInfo.connections.find(connection ⇒ connection.componentId.componentType == ComponentType.HCD)
-
-  // If an Hcd is found as a connection, resolve its location from location service and create other
-  // required worker actors required by this assembly
-  maybeConnection match {
-    case hcdConnection @ Some(hcd) ⇒
-      locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
-        case Some(akkaLocation) ⇒
-          runningHcds = runningHcds.updated(hcdConnection.get, Some(akkaLocation.component))
-          diagPublisher = ctx.spawnAnonymous(DiagPublisher.make(ac, runningHcds(maybeConnection.get), Some(eventPublisher)))
-          commandHandler =
-            ctx.spawnAnonymous(new TromboneAssemblyCommandBehaviorFactory().make(ac, runningHcds, Some(eventPublisher)))
-        case None ⇒
-          // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
-          // for the Hcd to be available
-          throw HcdNotFoundException()
-      }
-    case None ⇒ Future.successful(Unit)
-  }
-}</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
-    // fetch config (preferably from configuration service)
-    CompletableFuture&lt;AssemblyContext&gt; assemblyContextCompletableFuture = getAssemblyLocalCalculationConfig()
-            .thenCombine(getAssemblyLocalControlConfig(),
-                    (calculationConf, controlConf) -&gt; ac = new AssemblyContext(componentInfo, calculationConf, controlConf));
-
-    // create a worker actor which is used by this assembly
-    CompletableFuture&lt;ActorRef&lt;TrombonePublisherMsg&gt;&gt; eventualEventPublisher =
-            assemblyContextCompletableFuture.thenApply(ac -&gt; ctx.spawnAnonymous(TrombonePublisher.make(ac)));
-
-    // find a Hcd connection from the connections provided in componentInfo
-    Optional&lt;Connection&gt; mayBeConnection = componentInfo.getConnections().stream()
-            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD)
-            .findFirst();
-
-    // If an Hcd is found as a connection, resolve its location from location service and create other
-    // required worker actors required by this assembly
-    Optional&lt;CompletableFuture&lt;Void&gt;&gt; voidCompletableFuture = mayBeConnection.map(connection -&gt; {
-        CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; eventualHcdLocation = locationService.resolve(connection.&lt;AkkaLocation&gt;of(), FiniteDuration.apply(5, TimeUnit.SECONDS));
-        return eventualEventPublisher.thenAcceptBoth(eventualHcdLocation, (eventPublisher, hcdLocation) -&gt; {
-            if(!hcdLocation.isPresent())
-                throw new HcdNotFoundException();
-            else
-                runningHcds.put(connection, Optional.of(hcdLocation.get().jComponent()));
-                diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(hcdLocation.get().component()), Optional.of(eventPublisher)));
-            });
-        });
-
-    return voidCompletableFuture.get().thenApply(x -&gt; BoxedUnit.UNIT);
-}</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def initialize(): Future[Unit] = async {
-  // fetch config (preferably from configuration service)
-  axisConfig = await(getAxisConfig)
-
-  // create a worker actor which is used by this hcd
-  tromboneAxis = ctx.spawnAnonymous(AxisSimulator.behavior(axisConfig, ctx.self))
-
-  // initialise some state by using the worker actor created above
-  current = await(tromboneAxis ? InitialState)
-  stats = await(tromboneAxis ? GetStatistics)
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
-    // fetch config (preferably from configuration service)
-    CompletableFuture&lt;Void&gt; configInitialisation = getAxisConfig()
-            .thenAccept(config -&gt; {
-                axisConfig = config;
-                // create a worker actor which is used by this hcd
-                tromboneAxis = ctx.spawnAnonymous(AxisSimulator.behavior(axisConfig, ctx.getSelf().narrow()));
-            });
-
-    // initialise some state by using the worker actor created above
-    CompletableFuture&lt;Void&gt; initialAxisState = AskPattern.ask(
-            tromboneAxis,
-            AxisRequests.InitialState::new,
-            new Timeout(5, TimeUnit.SECONDS),
-            ctx.getSystem().scheduler()
-    ).thenAccept(axisUpdate -&gt; current = axisUpdate).toCompletableFuture();
-
-    // initialise some state by using the worker actor created above
-    CompletableFuture&lt;Void&gt; initialAxisStats = AskPattern.ask(
-            tromboneAxis,
-            AxisRequests.GetStatistics::new,
-            new Timeout(5, TimeUnit.SECONDS),
-            ctx.getSystem().scheduler()
-    ).thenAccept(axisStatistics -&gt; stats = axisStatistics).toCompletableFuture();
-
-    return CompletableFuture.allOf(configInitialisation, initialAxisStats, initialAxisState).thenApply(x -&gt; BoxedUnit.UNIT);
-}</code></pre></dd>
-</dl>
-<h4><a href="#onshutdown" name="onshutdown" class="anchor"><span class="anchor-link"></span></a>onShutdown</h4>
-<p>The <code>onShutdown</code> handler can be used for carrying out the tasks which will allow the component to shutdown gracefully. </p>
-<h4><a href="#isonline" name="isonline" class="anchor"><span class="anchor-link"></span></a>isOnline</h4>
-<p>A component has access to <code>isOnline</code> boolean flag which can be used to determine if the component is online or offline state.</p>
-<h4><a href="#ongooffline" name="ongooffline" class="anchor"><span class="anchor-link"></span></a>onGoOffline</h4>
-<p>A component can be notified to run in offline mode in case it is not in use. The component can change its behavior if needed as a part of this handler.</p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onGoOffline(): Unit = {
-  // do something when going offline
-}</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onGoOffline() {
-    // do something when going offline
-}</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onGoOffline(): Unit = {
-  // do something when going offline
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onGoOffline() {
-    // do something when going offline
-}</code></pre></dd>
-</dl>
-<h4><a href="#ongoonline" name="ongoonline" class="anchor"><span class="anchor-link"></span></a>onGoOnline</h4>
-<p>A component can be notified to run in online mode again in case it was put to run in offline mode. The component can change its behavior if needed as a part of this handler.</p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onGoOnline(): Unit = {
-  // do something when going online
-}</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onGoOnline() {
-    // do something when going online
-}</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onGoOnline(): Unit = {
-  // do something when going online
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onGoOnline() {
-    // do something when going online
-}</code></pre></dd>
-</dl>
-<h3><a href="#handling-commands" name="handling-commands" class="anchor"><span class="anchor-link"></span></a>Handling commands</h3>
-<h4><a href="#validatecommand" name="validatecommand" class="anchor"><span class="anchor-link"></span></a>validateCommand</h4>
-<p>A command can be sent as a <code>Submit</code> or <code>Oneway</code> message to the component actor. If a command can be completed immediately, a <code>CommandResponse</code> indicating the final response for the command can be returned. If a command requires time for processing, the component is required to validate the <code>ControlCommand</code> received and return a validation result as <code>Accepted</code> or <code>Invalid</code>. The final response for a command sent as <code>Submit</code> can be obtained by the sender command by querying or subscribing for this response to the component as described here. </p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): CommandResponse = controlCommand match {
-  case _: Setup   ⇒ validateOneSetup(controlCommand.asInstanceOf[Setup])
-  case _: Observe ⇒ Accepted(controlCommand.runId)
-  case x          ⇒ Invalid(controlCommand.runId, UnsupportedCommandIssue(s&quot;command $x is not supported by this component.&quot;))
-}</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public CommandResponse validateCommand(ControlCommand controlCommand) {
-    if (controlCommand instanceof Setup) {
-        return new CommandResponse.Completed(controlCommand.runId());
-    } else if (controlCommand instanceof Observe) {
-        return new CommandResponse.Completed(controlCommand.runId());
-    } else {
-        return new CommandResponse.Invalid(controlCommand.runId(), new CommandIssue.UnsupportedCommandIssue(&quot;command&quot; + controlCommand + &quot;is not supported by this component.&quot;));
-    }
-}</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): CommandResponse = controlCommand match {
-  case setup: Setup     ⇒ ParamValidation.validateSetup(setup)
-  case observe: Observe ⇒ ParamValidation.validateObserve(observe)
-  case x                ⇒ Invalid(controlCommand.runId, UnsupportedCommandIssue(s&quot;command $x is not supported by this component.&quot;))
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public CommandResponse validateCommand(ControlCommand controlCommand) {
-    if (controlCommand instanceof Setup || controlCommand instanceof Observe) {
-        return new CommandResponse.Completed(controlCommand.runId());
-    } else {
-        return new CommandResponse.Invalid(controlCommand.runId(), new CommandIssue.UnsupportedCommandIssue(&quot;command&quot; + controlCommand + &quot;is not supported by this component.&quot;));
-    }
-}</code></pre></dd>
-</dl>
-<p>If a response can be provided immediately, a final <code>CommandResponse</code> such as <code>CommandCompleted</code> or <code>Error</code> can be sent from this handler.</p>
-<h4><a href="#onsubmit" name="onsubmit" class="anchor"><span class="anchor-link"></span></a>onSubmit</h4>
-<p>On receiving a command as <code>Submit</code>, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. In case a command is received as a submit, command response should be updated in the <code>CommandResponseManager</code>. <code>CommandResponseManager</code> is an actor whose reference <code>commandResponseManager</code> is available in the <code>ComponentHandlers</code>. </p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = {
-  // commandHandler is a worker actor created for this component to process commands
-  commandHandler ! CommandMessageE(Submit(controlCommand, commandResponseAdapter))
-}</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onSubmit(ControlCommand controlCommand) {
-    // commandHandler is a worker actor created for this component to process commands
-    commandHandler.tell(new CommandMessageE(new Submit(controlCommand, commandResponseAdapter)));
-}</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = {
-  // process command
-  onSetup(controlCommand.asInstanceOf[Setup])
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onSubmit(ControlCommand controlCommand) {
-    // process command
-    onSetup((Setup)controlCommand);
-}</code></pre></dd>
-</dl>
-<h4><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h4>
-<p>On receiving a command as <code>Oneway</code>, the <code>onOneway</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>.In case a command is received as a oneway, command response should not be provided to the sender.</p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = {
-  // commandHandler is a worker actor created for this component to process commands
-  commandHandler ! CommandMessageE(Oneway(controlCommand, commandResponseAdapter))
-}</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onOneway(ControlCommand controlCommand) {
-    // commandHandler is a worker actor created for this component to process commands
-    commandHandler.tell(new CommandMessageE(new Submit(controlCommand, commandResponseAdapter)));
-}</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = {
-  // process command
-  onSetup(controlCommand.asInstanceOf[Setup])
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onOneway(ControlCommand controlCommand) {
-    // process command
-    onSetup((Setup)controlCommand);
-}</code></pre></dd>
-</dl>
-<h3><a href="#tracking-connections" name="tracking-connections" class="anchor"><span class="anchor-link"></span></a>Tracking Connections</h3>
-<p>The component framework tracks the set of connections specified for a component in <code>ComponentInfo</code> if the <code>locationServiceUsage</code> property is set to <code>RegisterAndTrackServices</code>. The framework also provides a helper <code>trackConnection</code> method to track any connection other than those present in <code>ComponentInfo</code>.</p>
-<h4><a href="#onlocationtrackingevent" name="onlocationtrackingevent" class="anchor"><span class="anchor-link"></span></a>onLocationTrackingEvent</h4>
-<p>The <code>onLocationTrackingEvent</code> handler can be used to take action on the <code>TrackingEvent</code> for a particular connection. This event could be for the connections in <code>ComponentInfo</code> tracked automatically or for the connections tracked explicitly using <code>trackConnection</code> method.</p>
-<dl>
-  <dt>Assembly/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
-  trackingEvent match {
-    case LocationUpdated(location) =&gt;
-      runningHcds = runningHcds + (location.connection → Some(
-        location.asInstanceOf[AkkaLocation].component
-      ))
-    case LocationRemoved(connection) =&gt;
-      runningHcds = runningHcds + (connection → None)
-  }
-  commandHandler ! UpdateHcdLocations(runningHcds)
-}</code></pre></dd>
-  <dt>Assembly/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
-    if (trackingEvent instanceof LocationUpdated) {
-        // do something for the tracked location when it is updated
-    } else if (trackingEvent instanceof LocationRemoved) {
-        // do something for the tracked location when it is no longer available
-    }
-}</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = trackingEvent match {
-  case LocationUpdated(location)   =&gt; // do something for the tracked location when it is updated
-  case LocationRemoved(connection) =&gt; // do something for the tracked location when it is no longer available
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
-    if (trackingEvent instanceof LocationUpdated) {
-        // do something for the tracked location when it is updated
-    }
-    else if (trackingEvent instanceof LocationRemoved) {
-        // do something for the tracked location when it is no longer available
-    }
-}</code></pre></dd>
-</dl>
-<h3><a href="#publishing-state" name="publishing-state" class="anchor"><span class="anchor-link"></span></a>Publishing State</h3>
-<p>A component has access to an actor <code>pubSubRef</code> which can be used to publish its <code>CurrentState</code>. Any subscriber of this component will receive the published state.</p>
-<h3><a href="#handling-exceptions" name="handling-exceptions" class="anchor"><span class="anchor-link"></span></a>Handling Exceptions</h3>
-<p>A component should create exceptions belonging to following two types:</p>
-<ol>
-  <li>
-    <p><strong>FailureRestart</strong> : As a part of any handler, if an exception can be handled by restarting the component, an exception of type <code>FailureRestart</code> should be thrown to let the framework restart the component. The component&rsquo;s state will be cleared/reinitialized. The <code>onInitialize</code> handler will be invoked again.</p>
-    <dl>
-      <dt>Scala</dt>
-      <dd>
-      <pre class="prettyprint"><code class="language-scala">locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
-  case Some(akkaLocation) ⇒
-    runningHcds = runningHcds.updated(hcdConnection.get, Some(akkaLocation.component))
-    diagPublisher = ctx.spawnAnonymous(DiagPublisher.make(ac, runningHcds(maybeConnection.get), Some(eventPublisher)))
-    commandHandler =
-      ctx.spawnAnonymous(new TromboneAssemblyCommandBehaviorFactory().make(ac, runningHcds, Some(eventPublisher)))
-  case None ⇒
-    // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
-    // for the Hcd to be available
-    throw HcdNotFoundException()</code></pre></dd>
-      <dt>Java</dt>
-      <dd>
-      <pre class="prettyprint"><code class="language-java">return eventualEventPublisher.thenAcceptBoth(eventualHcdLocation, (eventPublisher, hcdLocation) -&gt; {
-    if(!hcdLocation.isPresent())
-        throw new HcdNotFoundException();
-    else
-        runningHcds.put(connection, Optional.of(hcdLocation.get().jComponent()));
-        diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(hcdLocation.get().component()), Optional.of(eventPublisher)));
-    });
-});</code></pre></dd>
-    </dl>
-  </li>
-  <li>
-    <p><strong>FailureStop</strong> : As a part of any handler, an exception can be thrown of type <code>FailureStop</code> which will result in terminating the component. The <code>onShutdown</code> handler will be invoked to facilitate graceful shutdown.</p>
-    <dl>
-      <dt>Scala</dt>
-      <dd>
-      <pre class="prettyprint"><code class="language-scala">private def getAssemblyConfigs: Future[(TromboneCalculationConfig, TromboneControlConfig)] = {
-  configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).flatMap {
-    case Some(config) ⇒ config.toConfigObject.map(x ⇒ (TromboneCalculationConfig(x), TromboneControlConfig(x)))
-    case None         ⇒
-      // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
-      // cofiguration service and started again
-      throw ConfigNotAvailableException()
-  }
-}</code></pre></dd>
-      <dt>Java</dt>
-      <dd>
-      <pre class="prettyprint"><code class="language-java">private CompletableFuture&lt;TromboneCalculationConfig&gt; getAssemblyCalculationConfig() {
-    return configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).thenCompose((mayBeConfig) -&gt; {
-        if(mayBeConfig.isPresent())
-            return (mayBeConfig.get().toJConfigObject(mat).thenApply(TromboneCalculationConfig::apply));
-        else
-            // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
-            // cofiguration service and started again
-            throw new ConfigNotAvailableException();
-    });
-}</code></pre></dd>
-    </dl>
-  </li>
-</ol>
-<h2><a href="#container-for-deployment" name="container-for-deployment" class="anchor"><span class="anchor-link"></span></a>Container for deployment</h2>
-<p>A container is a component which starts one or more Components and keeps track of the components within a single JVM process. When started, the container also registers itself with the Location Service. The components to be hosted by the container is defined using a <code>ContainerInfo</code> model which has a set of ComponentInfo objects. It is usually described as a configuration file but can also be created programmatically.</p>
-<dl>
-  <dt>SampleContainerInfo</dt>
-  <dd>
-  <pre><code>name = &quot;Sample_Container&quot;
-components: [
-  {
-    name = &quot;SampleAssembly&quot;
-    componentType = assembly
-    behaviorFactoryClassName = package.component.SampleAssembly
-    prefix = abc.sample.prefix
-    locationServiceUsage = RegisterAndTrackServices
-    connections = [
-      {
-        name: Sample_Hcd_1
-        componentType: hcd
-        connectionType: akka
-      },
-      {
-        name: Sample_Hcd_2
-        componentType: hcd
-        connectionType: akka
-      },
-      {
-        name: Sample_Hcd_3
-        componentType: hcd
-        connectionType: akka
-      }
-    ]
-  },
-  {
-    name = &quot;Sample_Hcd_1&quot;
-    componentType = hcd
-    behaviorFactoryClassName = package.component.SampleHcd
-    prefix = abc.sample.prefix
-    locationServiceUsage = RegisterOnly
-  },
-  {
-    name = &quot;Sample_Hcd_2&quot;
-    componentType: hcd
-    behaviorFactoryClassName: package.component.SampleHcd
-    prefix: abc.sample.prefix
-    locationServiceUsage = RegisterOnly
-  }
-]
-</code></pre></dd>
-</dl>
-<h2><a href="#standalone-components" name="standalone-components" class="anchor"><span class="anchor-link"></span></a>Standalone components</h2>
-<p>A component can be run alone in a Standalone mode without sharing it&rsquo;s jvm space with any other component. </p>
+</div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/framework.md" title="Edit this page" class="md-source-file md-edit">
@@ -834,6 +205,19 @@ Previous
 </span>
 Result
 </span>
+</div>
+</a>
+<a href="framework/describing-components.html" title="ComponentInfo" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
+ComponentInfo
+</span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
 </div>
 </a>
 </nav>
