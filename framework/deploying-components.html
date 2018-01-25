@@ -103,6 +103,7 @@ TMT Common Software (CSW)
     <li><a href="../framework/handling-exceptions.html" class="page">Handling Exceptions</a></li>
     <li><a href="../framework/deploying-components.html" class="active page">Deploying Components</a></li>
   </ul></li>
+  <li><a href="../command.html" class="page">Communication using Commands</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
@@ -144,17 +145,37 @@ TMT Common Software (CSW)
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h2><a href="#deploying-components" name="deploying-components" class="anchor"><span class="anchor-link"></span></a>Deploying Components</h2>
-<p>A main application needs to be created which uses framework provided utility <code>csw.apps.containercmd.ContainerCmd</code> to start a container or standalone component. The utility supports following parameters which can be provided as arguments to the application : * fully qualified path of the configuration file * <strong>local</strong> if the above path is a path to a file available on local disk. If this argument is not provided the file will be looked up in the <code>configuration service</code> using the same path. * <strong>standalone</strong> if the configuration file describes a component to be run in standalone mode. If this argument is not provided the application expects a configuration file describing a container component and will use it to start a container with all the components as described in the file.</p>
+<p>A main application needs to be created which uses framework provided utility <code>csw.apps.containercmd.ContainerCmd</code> to start a container or standalone component. The utility supports following parameters which can be provided as arguments to the application :</p>
+<ul>
+  <li>fully qualified path of the configuration file</li>
+  <li><strong>local</strong> if the above path is a path to a file available on local disk. If this argument is not provided the file will be looked up in the <code>configuration service</code> using the same path.</li>
+  <li><strong>standalone</strong> if the configuration file describes a component to be run in standalone mode. If this argument is not provided the application expects a configuration file describing a container component and will use it to start a container with all the components as described in the file.</li>
+</ul>
 <dl>
-  <dt>Starting a standalone component from a local configuration file</dt>
+  <dt>Scala</dt>
   <dd>
-  <pre><code>SampleAssempbyCmdApp standalone local /tmp/config/assembly.conf
-</code></pre></dd>
-  <dt>Starting a container component from a configuration file available in configuration service</dt>
+  <pre class="prettyprint"><code class="language-scala">object TromboneContainerCmdApp extends App {
+  ContainerCmd.start(&quot;Trombone-Container-Cmd-App&quot;, args)
+}</code></pre></dd>
+  <dt>Java</dt>
   <dd>
-  <pre><code>SampleContainerCmdApp /sample/config/assembly.conf
-</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">public class JTromboneContainerCmdApp {
+
+    public static void main(String args[]) {
+        JContainerCmd.start(&quot;JTrombone-Container-Cmd-App&quot;, args, Optional.empty());
+    }
+}</code></pre></dd>
 </dl>
+<p>Starting a <strong>standalone</strong> component from a <strong>local</strong> configuration file</p>
+<pre><code>```
+SampleAssempbyCmdApp standalone local /tmp/config/assembly.conf
+```
+</code></pre>
+<p>Starting a <strong>container</strong> component from a configuration file available in <strong>configuration service</strong></p>
+<pre><code>```
+SampleContainerCmdApp /sample/config/assembly.conf
+```
+</code></pre>
 <h3><a href="#container-for-deployment" name="container-for-deployment" class="anchor"><span class="anchor-link"></span></a>Container for deployment</h3>
 <p>A container is a component which starts one or more Components and keeps track of the components within a single JVM process. When started, the container also registers itself with the Location Service. The components to be hosted by the container is defined using a <code>ContainerInfo</code> model which has a set of ComponentInfo objects. It is usually described as a configuration file but can also be created programmatically.</p>
 <dl>
@@ -244,6 +265,19 @@ Previous
 </span>
 Handling Exceptions
 </span>
+</div>
+</a>
+<a href="../command.html" title="Communication using Commands" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
+Communication using Commands
+</span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
 </div>
 </a>
 </nav>
