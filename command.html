@@ -177,8 +177,8 @@ TMT Common Software (CSW)
 <h2><a href="#command-based-communication-between-components" name="command-based-communication-between-components" class="anchor"><span class="anchor-link"></span></a>Command based communication between components</h2>
 <p>A component can send <a href="services/messages/commands.html">Commands</a> to other components. The commands can be sent as following two types of messages: </p>
 <ul>
-  <li><strong>Submit</strong> - A command is sent as Submit when a result of completion is desired.</li>
-  <li><strong>Oneway</strong> - A command is sent as Oneway when a result of completion is not desired.</li>
+  <li><strong>Submit</strong> - A command is sent as Submit when the result of completion is desired.</li>
+  <li><strong>Oneway</strong> - A command is sent as Oneway when the result of completion is not desired.</li>
 </ul>
 <p>Following responses could be received as a <code>CommandResponse</code> after sending a command :</p>
 <ul>
@@ -195,15 +195,79 @@ TMT Common Software (CSW)
 <p>A command sent as <code>Submit</code> or <code>Oneway</code> is validated by the receiving component before actual execution. If the validation is successful, the actual execution can happen in two ways :</p>
 <ul>
   <li><strong>Immediate</strong> - The component receiving the command can determine if the command can be executed immediately and thus provide the final execution response directly without sending a response for validation.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">val eventualResponse: Future[CommandResponse] = async {
+  await(assemblyComponent.submit(Setup(prefix, immediateCmd, obsId))) match {
+    case response: Completed ⇒
+      //do something with completed result
+      response
+    case otherResponse ⇒
+      // do something with other response which is not expected
+      otherResponse
+  }
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; eventualCommandResponse =
+        hcdComponent
+                .submit(imdInvalidCommand, timeout, hcdActorSystem.scheduler())
+                .thenApply(
+                        response -&gt; {
+                            if (response instanceof Completed) {
+                                //do something with completed result
+                            }
+                            return response;
+                        }
+                );</code></pre></dd>
+</dl>
+<ul>
   <li><strong>Long running</strong> - The component receiving the command can determine if the command can not be executed immediately. In this case, the component provides a <code>Accepted</code> response as an acknowledgement and maintains the state of the command. The sender can query the state of a particular command or subscribe to get the final response when the execution is completed.</li>
 </ul>
 <p>The sender component can send following commands to the receiver component with the command id (RunId) of the command being sent originally to get the completion status and/or result of the command</p>
 <ul>
-  <li>
-  <p><strong>Query</strong> - Query the current state of the command</p></li>
-  <li>
-  <p><strong>Subscribe</strong> - Subscribe for getting the final state of the command asynchronously</p></li>
+  <li><strong>Query</strong> - Query the current state of the command</li>
 </ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">assemblyComponent.submit(setup)
+
+// do some work before querying for the result of above command as needed
+
+val eventualResponse: Future[CommandResponse] = assemblyComponent.query(setup.runId)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">hcdComponent.submit(controlCommand, timeout, hcdActorSystem.scheduler());
+
+// do some work before querying for the result of above command as needed
+
+CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(controlCommand.runId(), timeout, hcdActorSystem.scheduler());</code></pre></dd>
+</dl>
+<ul>
+  <li><strong>Subscribe</strong> - Subscribe for getting the final state of the command asynchronously</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyComponent.submit(setup).flatMap {
+  case _: Accepted ⇒ assemblyComponent.subscribe(setup.runId)
+  case _           ⇒ Future(CommandResponse.Error(setup.runId, &quot;&quot;))
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; testCommandResponse =
+        hcdComponent
+                .submit(controlCommand, timeout, hcdActorSystem.scheduler())
+                .thenCompose(commandResponse -&gt; {
+                    if (commandResponse instanceof CommandResponse.Accepted)
+                        return hcdComponent.subscribe(commandResponse.runId(), timeout, hcdActorSystem.scheduler());
+                    else
+                        return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;test error&quot;));
+                });</code></pre></dd>
+</dl>
 <h2><a href="#componentref" name="componentref" class="anchor"><span class="anchor-link"></span></a>ComponentRef</h2>
 <p>When a component uses location service to discover another component, it is provided a <code>ComponentRef</code> model which not only wraps the actor reference of the component discovered, but also provides methods for communicating with the component using commands. The API can be exercised as follows for different scenarios of command based communication:</p>
 <h3><a href="#submit" name="submit" class="anchor"><span class="anchor-link"></span></a>submit</h3>
