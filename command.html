@@ -271,173 +271,22 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
 <h2><a href="#componentref" name="componentref" class="anchor"><span class="anchor-link"></span></a>ComponentRef</h2>
 <p>When a component uses location service to discover another component, it is provided a <code>ComponentRef</code> model which not only wraps the actor reference of the component discovered, but also provides methods for communicating with the component using commands. The API can be exercised as follows for different scenarios of command based communication:</p>
 <h3><a href="#submit" name="submit" class="anchor"><span class="anchor-link"></span></a>submit</h3>
-<p>Submit a command and get a <code>CommandResponse</code> as a Future. The CommandResponse can be a response of validation (Accepted, Invalid) or a final Response.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val eventualResponse: Future[CommandResponse] = async {
-  await(assemblyComponent.submit(Setup(prefix, immediateCmd, obsId))) match {
-    case response: Completed ⇒
-      //do something with completed result
-      response
-    case otherResponse ⇒
-      // do something with other response which is not expected
-      otherResponse
-  }
-}</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; eventualCommandResponse =
-        hcdComponent
-                .submit(imdInvalidCommand, timeout, hcdActorSystem.scheduler())
-                .thenApply(
-                        response -&gt; {
-                            if (response instanceof Completed) {
-                                //do something with completed result
-                            }
-                            return response;
-                        }
-                );</code></pre></dd>
-</dl>
-<h3><a href="#oneway" name="oneway" class="anchor"><span class="anchor-link"></span></a>oneway</h3>
-<p>Send a command as a Oneway and get a <code>CommandResponse</code> as a Future. The CommandResponse can be a response of validation (Accepted, Invalid) or a final Response.</p>
-<h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
-<p>Subscribe for the result of a long running command which was sent as Submit to get a <code>CommandResponse</code> as a Future.</p>
-<h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>query</h3>
-<p>Query for the result of a long running command which was sent as Submit to get a <code>CommandResponse</code> as a Future.</p>
-<h3><a href="#submitandsubscribe" name="submitandsubscribe" class="anchor"><span class="anchor-link"></span></a>submitAndSubscribe</h3>
-<p>Submit a command and Subscribe for the result if it was successfully validated as <code>Accepted</code> to get a final <code>CommandResponse</code> as a Future.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val response = assemblyComponent.submitAndSubscribe(setup)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">// ec is the ExecutionContext created with the help of actor system
-CompletableFuture&lt;CommandResponse&gt; testResponse = hcdComponent.submitAndSubscribe(controlCommand, timeout, hcdActorSystem.scheduler(), ec);</code></pre></dd>
-</dl>
-<h3><a href="#onewayandmatch" name="onewayandmatch" class="anchor"><span class="anchor-link"></span></a>onewayAndMatch</h3>
-<p>Send a command and match the published state from the component using a <code>StateMatcher</code>. If the match is successful a <code>Completed</code> response is provided as a future. In case of a failure or unmatched state, <code>Error</code> CommandResponse is provided as a Future.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val eventualResponse1: Future[CommandResponse] = assemblyComponent.onewayAndMatch(setupWithMatcher, demandMatcher)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>// create a DemandMatcher which specifies the desired state to be matched.
-StateMatcher stateMatcher = new DemandMatcher(new DemandState(prefix().prefix()).add(param), false, timeout);
-
-// create matcher instance
-Matcher matcher1 = new Matcher(hcdComponent.value().narrow(), demandMatcher, ec, mat);
-
-// start the matcher so that it is ready to receive state published by the source
-CompletableFuture&lt;MatcherResponse&gt; matcherResponse = matcher1.jStart();
-
-CompletableFuture&lt;CommandResponse&gt; matchedCommandResponse =
-        hcdComponent.onewayAndMatch(setup, stateMatcher, timeout, hcdActorSystem.scheduler(), ec, mat);
-</code></pre></dd>
-</dl>
+<h3><a href="#submitall" name="submitall" class="anchor"><span class="anchor-link"></span></a>submitAll</h3>
 <h3><a href="#submitallandgetresponse" name="submitallandgetresponse" class="anchor"><span class="anchor-link"></span></a>submitAllAndGetResponse</h3>
-<p>Submit multiple commands and get one CommandResponse as a Future of <code>CommandResponse</code> for all commands. If all the commands were successful, a CommandResponse as <code>Completed</code> will be returned. If any one of the command fails, an <code>Error</code> will be returned.</p>
+<h3><a href="#oneway" name="oneway" class="anchor"><span class="anchor-link"></span></a>oneway</h3>
+<h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
+<h3><a href="#submitandsubscribe" name="submitandsubscribe" class="anchor"><span class="anchor-link"></span></a>submitAndSubscribe</h3>
+<h3><a href="#submitandmatch" name="submitandmatch" class="anchor"><span class="anchor-link"></span></a>submitAndMatch</h3>
 <h3><a href="#submitallandsubscribe" name="submitallandsubscribe" class="anchor"><span class="anchor-link"></span></a>submitAllAndSubscribe</h3>
-<p>Submit multiple commands and get final CommandResponse for all as a stream of CommandResponse. For long running commands, it will subscribe for the result of those which were successfully validated as <code>Accepted</code> and get the final CommandResponse.</p>
 <h3><a href="#submitallandgetfinalresponse" name="submitallandgetfinalresponse" class="anchor"><span class="anchor-link"></span></a>submitAllAndGetFinalResponse</h3>
-<p>Submit multiple commands and get final CommandResponse for all as one CommandResponse. If all the commands were successful, a CommandResponse as <code>Completed</code> will be returned. If any one of the command fails, an <code>Error</code> will be returned. For long running commands, it will subscribe for the result of those which were successfully validated as <code>Accepted</code> and get the final CommandResponse.</p>
 <h2><a href="#matching-state-for-command-completion" name="matching-state-for-command-completion" class="anchor"><span class="anchor-link"></span></a>Matching state for command completion</h2>
-<p>A <code>Matcher</code> is provided for matching state against a desired state. The matcher is created with a source of state identified by its ActorRef and an instance of <code>StateMatcher</code> which defines the state and criteria for matching. Several instances of <code>StateMatcher</code> are available for common use. These are <code>DemandMatcherAll</code> for matching the entire <code>DemandState</code> against the current state, <code>DemandMatcher</code> for matching state with or without units against the current state and <code>PresenceMatcher</code> which checks if a matching state is found with a provided prefix. </p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala"><br/>// create a DemandMatcher which specifies the desired state to be matched.
-val demandMatcher = DemandMatcher(DemandState(prefix, Set(param)), withUnits = false, timeout)
-
-// create matcher instance
-val matcher = new Matcher(assemblyComponent.value, demandMatcher)
-
-// start the matcher so that it is ready to receive state published by the source
-val matcherResponseF: Future[MatcherResponse] = matcher.start
-
-// submit command and if the command is successfully validated, check for matching of demand state against current state
-val eventualCommandResponse: Future[CommandResponse] = async {
-  val initialResponse = await(assemblyComponent.oneway(setupWithMatcher))
-  initialResponse match {
-    case _: Accepted ⇒
-      val matcherResponse = await(matcherResponseF)
-      // create appropriate response if demand state was matched from among the published state or otherwise
-      matcherResponse match {
-        case MatchCompleted  ⇒ Completed(setupWithMatcher.runId)
-        case MatchFailed(ex) ⇒ Error(setupWithMatcher.runId, ex.getMessage)
-      }
-    case invalid: Invalid ⇒
-      matcher.stop()
-      invalid
-    case x ⇒ x
-  }
-}
-
-val commandResponse = Await.result(eventualCommandResponse, timeout.duration)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>// create a DemandMatcher which specifies the desired state to be matched.
-DemandMatcher demandMatcher = new DemandMatcher(new DemandState(prefix().prefix()).add(param), false, timeout);
-
-// create matcher instance
-Matcher matcher = new Matcher(hcdComponent.value().narrow(), demandMatcher, ec, mat);
-
-// start the matcher so that it is ready to receive state published by the source
-CompletableFuture&lt;MatcherResponse&gt; matcherResponseFuture = matcher.jStart();
-
-// submit command and if the command is successfully validated, check for matching of demand state against current state
-CompletableFuture&lt;CommandResponse&gt; commandResponseToBeMatched = hcdComponent
-        .oneway(setup, timeout, hcdActorSystem.scheduler())
-        .thenCompose(initialCommandResponse -&gt; {
-            if (initialCommandResponse instanceof CommandResponse.Accepted) {
-                return matcherResponseFuture.thenApply(matcherResponse -&gt; {
-                    // create appropriate response if demand state was matched from among the published state or otherwise
-                    if (matcherResponse.getClass().isAssignableFrom(MatcherResponses.jMatchCompleted().getClass()))
-                        return new Completed(initialCommandResponse.runId());
-                    else
-                        return new CommandResponse.Error(initialCommandResponse.runId(), &quot;Match not completed&quot;);
-                });
-            } else {
-                matcher.stop();
-                return CompletableFuture.completedFuture(initialCommandResponse);
-            }
-        });
-
-CommandResponse actualResponse = commandResponseToBeMatched.get();
-</code></pre></dd>
-</dl>
+<p>A <code>Matcher</code> is provided for matching a <code>DemandState</code> against a state generated</p>
 <h2><a href="#distributing-commands" name="distributing-commands" class="anchor"><span class="anchor-link"></span></a>Distributing commands</h2>
 <p><code>CommandDistributor</code> is a utility for distributing commands to multiple components and get an aggregated response. </p>
-<h3><a href="#aggregated-validation-response" name="aggregated-validation-response" class="anchor"><span class="anchor-link"></span></a>aggregated validation response</h3>
+<h3><a href="#aggregated-validation" name="aggregated-validation" class="anchor"><span class="anchor-link"></span></a>aggregated validation</h3>
 <p>A component can send one or more commands to one or more components using a <code>Map[ComponentRef, Set[ControlCommand]</code>, and get an aggregated response of validation as <code>Accepted</code> if all the commands were successfully validated. An <code>Error</code> response is returned otherwise</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val aggregatedValidationResponse = CommandDistributor(
-  Map(assemblyComponent → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
-).aggregatedValidationResponse()</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; cmdValidationResponseF =
-        new JCommandDistributor(componentsToCommands).
-                aggregatedValidationResponse(timeout, hcdActorSystem.scheduler(), ec, mat);</code></pre></dd>
-</dl>
 <h3><a href="#aggregated-completion-response" name="aggregated-completion-response" class="anchor"><span class="anchor-link"></span></a>aggregated completion response</h3>
 <p>A component can send one or more commands to one or more components using a <code>Map[ComponentRef, Set[ControlCommand]</code>. The utility handles subscribing for final completion result for all the commands post successful validation and get an aggregated response of completion as <code>Completed</code> if all the commands were successfully completed. An <code>Error</code> response is returned otherwise.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val aggregatedResponse = CommandDistributor(
-  Map(assemblyComponent → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
-).aggregatedCompletionResponse()</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; cmdCompletionResponseF =
-        new JCommandDistributor(componentsToCommands).
-                aggregatedCompletionResponse(timeout, hcdActorSystem.scheduler(), ec, mat);</code></pre></dd>
-</dl>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/command.md" title="Edit this page" class="md-source-file md-edit">
