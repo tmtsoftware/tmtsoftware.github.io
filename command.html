@@ -346,10 +346,34 @@ CommandResponse actualResponse = commandResponseToBeMatched.get();
 </dl>
 <h2><a href="#distributing-commands" name="distributing-commands" class="anchor"><span class="anchor-link"></span></a>Distributing commands</h2>
 <p><code>CommandDistributor</code> is a utility for distributing commands to multiple components and get an aggregated response. </p>
-<h3><a href="#aggregated-validation" name="aggregated-validation" class="anchor"><span class="anchor-link"></span></a>aggregated validation</h3>
+<h3><a href="#aggregated-validation-response" name="aggregated-validation-response" class="anchor"><span class="anchor-link"></span></a>aggregated validation response</h3>
 <p>A component can send one or more commands to one or more components using a <code>Map[ComponentRef, Set[ControlCommand]</code>, and get an aggregated response of validation as <code>Accepted</code> if all the commands were successfully validated. An <code>Error</code> response is returned otherwise</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">val aggregatedValidationResponse = CommandDistributor(
+  Map(assemblyComponent → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
+).aggregatedValidationResponse()</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; cmdValidationResponseF =
+        new JCommandDistributor(componentsToCommands).
+                aggregatedValidationResponse(timeout, hcdActorSystem.scheduler(), ec, mat);</code></pre></dd>
+</dl>
 <h3><a href="#aggregated-completion-response" name="aggregated-completion-response" class="anchor"><span class="anchor-link"></span></a>aggregated completion response</h3>
 <p>A component can send one or more commands to one or more components using a <code>Map[ComponentRef, Set[ControlCommand]</code>. The utility handles subscribing for final completion result for all the commands post successful validation and get an aggregated response of completion as <code>Completed</code> if all the commands were successfully completed. An <code>Error</code> response is returned otherwise.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">val aggregatedResponse = CommandDistributor(
+  Map(assemblyComponent → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
+).aggregatedCompletionResponse()</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; cmdCompletionResponseF =
+        new JCommandDistributor(componentsToCommands).
+                aggregatedCompletionResponse(timeout, hcdActorSystem.scheduler(), ec, mat);</code></pre></dd>
+</dl>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/command.md" title="Edit this page" class="md-source-file md-edit">
