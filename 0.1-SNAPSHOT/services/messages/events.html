@@ -111,7 +111,6 @@ TMT Common Software (CSW)
   <li><a href="../../services/messages/events.html#events" class="header">Events</a>
   <ul>
     <li><a href="../../services/messages/events.html#eventtime" class="header">EventTime</a></li>
-    <li><a href="../../services/messages/events.html#eventinfo" class="header">EventInfo</a></li>
     <li><a href="../../services/messages/events.html#observe-event" class="header">Observe Event</a></li>
     <li><a href="../../services/messages/events.html#system-event" class="header">System Event</a></li>
     <li><a href="../../services/messages/events.html#json-serialization" class="header">JSON serialization</a></li>
@@ -139,7 +138,6 @@ TMT Common Software (CSW)
   <li><a href="../../services/messages/events.html#events" class="header">Events</a>
   <ul>
     <li><a href="../../services/messages/events.html#eventtime" class="header">EventTime</a></li>
-    <li><a href="../../services/messages/events.html#eventinfo" class="header">EventInfo</a></li>
     <li><a href="../../services/messages/events.html#observe-event" class="header">Observe Event</a></li>
     <li><a href="../../services/messages/events.html#system-event" class="header">System Event</a></li>
     <li><a href="../../services/messages/events.html#json-serialization" class="header">JSON serialization</a></li>
@@ -192,51 +190,6 @@ EventTime currentTime = EventTime.toCurrent();
 EventTime aDayAgo = EventTime.toEventTime(Instant.now().minusSeconds(86400));
 </code></pre></dd>
 </dl>
-<h3><a href="#eventinfo" name="eventinfo" class="anchor"><span class="anchor-link"></span></a>EventInfo</h3>
-<p>It captures all the relevant information about an event that occurred during observation. An event can be created by supplying following inputs:</p>
-<ul>
-  <li><strong>source</strong> which is a <a href="commands.html#Prefix">Prefix</a></li>
-  <li><strong>eventTime</strong> which is an <a href="events.html#EventTime">EventTime</a></li>
-  <li><strong>obsId</strong> which is an <a href="commands.html#ObsId">ObsId</a></li>
-  <li><strong>eventId</strong> which is a String representing unique identifier(UUID) which is generated automatically if not supplied.</li>
-</ul>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">//with only a subsystem, time will default to now
-val info1: EventInfo = EventInfo(&quot;wfos.blue.filter&quot;)
-
-//given subsystem and time is an hour ago
-val info2: EventInfo = EventInfo(&quot;wfos.blue.filter&quot;, EventTime(Instant.now().minusSeconds(3600)))
-
-//supply subsystem, time, ObsId
-val info3 = EventInfo(
-  &quot;wfos.blue.filter&quot;,
-  EventTime(),
-  ObsId(&quot;Obs001&quot;)
-)
-
-//with all values
-val info4 = EventInfo(
-  Prefix(&quot;wfos.prog.cloudcover&quot;),
-  Instant.now(),
-  Some(ObsId(&quot;Obs001&quot;)),
-  UUID.randomUUID().toString
-)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">//with only a subsystem, time will default to now
-EventInfo eventInfo1 = EventInfo.apply(&quot;wfos.blue.filter&quot;);
-
-//given subsystem and time is now
-EventInfo eventInfo2 = EventInfo.apply(&quot;wfos.blue.filter&quot;, EventTime.apply(Instant.now()));
-
-//supply subsystem, time, ObsId
-EventInfo eventInfo3 = EventInfo.apply(&quot;wfos.blue.filter&quot;, EventTime.apply(), ObsId.apply(&quot;Obs001&quot;));
-
-//with all values
-EventInfo eventInfo4 = EventInfo.apply(new Prefix(&quot;wfos.prog.cloudcover&quot;), EventTime.apply(), ObsId.apply(&quot;Obs001&quot;).asOption(), UUID.randomUUID().toString());</code></pre></dd>
-</dl>
 <h3><a href="#observe-event" name="observe-event" class="anchor"><span class="anchor-link"></span></a>Observe Event</h3>
 <p>ObserveEvent is used to describe an event within a standardized data acquisition process. Published only by Science Detector Assemblies, who emit ObserveEvents during their exposures to signal the occurrence of specific activities/actions during the acquisition of data. Observe Events are published by the detector system using the Event Service.</p>
 <dl>
@@ -250,9 +203,9 @@ val k4: Key[Int]    = KeyType.IntKey.make(&quot;notUsed&quot;)
 
 //prefixes
 val ck1   = Prefix(&quot;wfos.prog.cloudcover&quot;)
-val name1 = &quot;filter wheel&quot;
+val name1 = EventName(&quot;filter wheel&quot;)
 val ck3   = Prefix(&quot;wfos.red.detector&quot;)
-val name3 = &quot;iris&quot;
+val name3 = EventName(&quot;iris&quot;)
 
 //parameters
 val p1: Parameter[Int]    = k1.set(22)
@@ -291,9 +244,9 @@ Key&lt;Integer&gt; k4 = JKeyTypes.IntKey().make(&quot;notUsed&quot;);
 
 //prefixes
 Prefix prefix1 = new Prefix(&quot;wfos.prog.cloudcover&quot;);
-String name1 = &quot;filter wheel&quot;;
+EventName name1 = new EventName(&quot;filter wheel&quot;);
 Prefix prefix2 = new Prefix(&quot;wfos.red.detector&quot;);
-String name2 = &quot;iris&quot;;
+EventName name2 = new EventName(&quot;iris&quot;);
 
 //parameters
 Parameter&lt;Integer&gt; p1 = k1.set(22);
@@ -335,9 +288,9 @@ val k4: Key[Int]    = KeyType.IntKey.make(&quot;notUsed&quot;)
 
 //prefixes
 val ck1   = Prefix(&quot;wfos.prog.cloudcover&quot;)
-val name1 = &quot;filter wheel&quot;
+val name1 = EventName(&quot;filter wheel&quot;)
 val ck3   = Prefix(&quot;wfos.red.detector&quot;)
-val name3 = &quot;iris&quot;
+val name3 = EventName(&quot;iris&quot;)
 
 //parameters
 val p1: Parameter[Int]    = k1.set(22)
@@ -383,9 +336,9 @@ Key&lt;Integer&gt; k4 = JKeyTypes.IntKey().make(&quot;notUsed&quot;);
 
 //prefixes
 Prefix prefix1 = new Prefix(&quot;wfos.prog.cloudcover&quot;);
-String name1 = &quot;filter wheel&quot;;
+EventName name1 = new EventName(&quot;filter wheel&quot;);
 Prefix prefix2 = new Prefix(&quot;wfos.red.detector&quot;);
-String name2 = &quot;iris&quot;;
+EventName name2 = new EventName(&quot;iris&quot;);
 
 //parameters
 Parameter&lt;Integer&gt; p1 = k1.set(22);
@@ -412,7 +365,7 @@ List&lt;Integer&gt; v2 = se2.parameter(k2).jValues();
 Set&lt;String&gt; missingKeys = se3.jMissingKeys(k1, k2, k3, k4);
 
 //remove keys
-SystemEvent oc4 = se3.remove(k3);</code></pre></dd>
+SystemEvent se4 = se3.remove(k3);</code></pre></dd>
 </dl>
 <h3><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON serialization</h3>
 <p>Events can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize Status, Observe and System events.</p>
@@ -423,19 +376,21 @@ SystemEvent oc4 = se3.remove(k3);</code></pre></dd>
 
 //key
 val k1: Key[MatrixData[Double]] = DoubleMatrixKey.make(&quot;myMatrix&quot;)
+
+val name1  = EventName(&quot;filter wheel&quot;)
+val prefix = Prefix(&quot;wfos.blue.filter&quot;)
+
 //values
 val m1: MatrixData[Double] = MatrixData.fromArrays(
   Array(1.0, 2.0, 3.0),
   Array(4.1, 5.1, 6.1),
   Array(7.2, 8.2, 9.2)
 )
-
 //parameter
 val i1: Parameter[MatrixData[Double]] = k1.set(m1)
-
 //events
-val observeEvent: ObserveEvent = ObserveEvent(&quot;wfos.blue.filter&quot;, &quot;filter wheel&quot;).add(i1)
-val systemEvent: SystemEvent   = SystemEvent(&quot;wfos.blue.filter&quot;, &quot;filter wheel&quot;).add(i1)
+val observeEvent: ObserveEvent = ObserveEvent(prefix, name1).add(i1)
+val systemEvent: SystemEvent   = SystemEvent(prefix, name1).add(i1)
 
 //json support - write
 val observeJson: JsValue = JsonSupport.writeEvent(observeEvent)
@@ -457,7 +412,7 @@ Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyTypes.DoubleMatrixKey().make(&quot;
 
 //prefixes
 Prefix prefix1 = new Prefix(&quot;wfos.blue.filter&quot;);
-String name1 = &quot;filter wheel&quot;;
+EventName name1 = new EventName(&quot;filter wheel&quot;);
 
 //values
 Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
@@ -498,25 +453,24 @@ val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc.&quot;)
 
 //prefix
-val prefix = &quot;wfos.blue.filter&quot;
+val prefix = Prefix(&quot;wfos.blue.filter&quot;)
+
+val name1 = EventName(&quot;filter wheel&quot;)
 
 //params
 val encParam1 = encoderKey.set(1)
 val encParam2 = encoderKey.set(2)
-val encParam3 = encoderKey.set(3)
 
+val encParam3    = encoderKey.set(3)
 val filterParam1 = filterKey.set(1)
 val filterParam2 = filterKey.set(2)
+
 val filterParam3 = filterKey.set(3)
 
 val miscParam1 = miscKey.set(100)
-
 //StatusEvent with duplicate key via constructor
-val systemEvent = SystemEvent(
-  prefix,
-  &quot;filter wheel&quot;,
-  Set(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3)
-)
+val systemEvent =
+  SystemEvent(prefix, name1, Set(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3))
 //four duplicate keys are removed; now contains one Encoder and one Filter key
 val uniqueKeys1 = systemEvent.paramSet.toList.map(_.keyName)
 
@@ -544,7 +498,7 @@ Key&lt;Integer&gt; miscKey = JKeyTypes.IntKey().make(&quot;misc.&quot;);
 
 //prefix
 Prefix prefix1 = new Prefix(&quot;wfos.blue.filter&quot;);
-String name1 = &quot;filter wheel&quot;;
+EventName name1 = new EventName(&quot;filter wheel&quot;);
 
 //params
 Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);
@@ -597,11 +551,13 @@ val raDec2 = RaDec(100.20, 400.20)
 //parameters
 val param = raDecKey.set(raDec1, raDec2).withUnits(arcmin)
 
+val prefix = Prefix(&quot;wfos.blue.filter&quot;)
+val name   = EventName(&quot;filter wheel&quot;)
 //events
-val observeEvent: ObserveEvent = ObserveEvent(&quot;wfos.blue.filter&quot;, &quot;filter wheel&quot;).add(param)
-val systemEvent1: SystemEvent  = SystemEvent(&quot;wfos.blue.filter&quot;, &quot;filter wheel&quot;).add(param)
+val observeEvent: ObserveEvent = ObserveEvent(prefix, name).add(param)
+val systemEvent1: SystemEvent  = SystemEvent(prefix, name).add(param)
 val systemEvent2: SystemEvent =
-  SystemEvent(Id(), &quot;wfos.blue.filter&quot;, &quot;filter wheel&quot;, EventTime(Instant.now().minusSeconds(3600)), Set.empty).add(param)
+  SystemEvent(prefix, name).add(param)
 
 //convert events to protobuf bytestring
 val byteArray2: Array[Byte] = observeEvent.toPb
@@ -616,9 +572,9 @@ val pbSystemEvent2: SystemEvent  = SystemEvent.fromPb(byteArray4)</code></pre></
   <dd>
   <pre class="prettyprint"><code class="language-java"><br/>//prefixes
 Prefix prefix1 = new Prefix(&quot;wfos.blue.filter&quot;);
-String name1 = &quot;filter wheel&quot;;
+EventName name1 = new EventName(&quot;filter wheel&quot;);
 Prefix prefix2 = new Prefix(&quot;wfos.prog.cloudcover&quot;);
-String name2 = &quot;iris&quot;;
+EventName name2 = new EventName(&quot;iris&quot;);
 
 //Key
 Key&lt;RaDec&gt; raDecKey = JKeyTypes.RaDecKey().make(&quot;raDecKey&quot;);
