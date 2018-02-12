@@ -176,7 +176,7 @@ TMT Common Software (CSW)
     case hcdConnection @ Some(hcd) ⇒
       locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
         case Some(akkaLocation) ⇒
-          runningHcds = runningHcds.updated(hcdConnection.get, Some(akkaLocation.component))
+          runningHcds = runningHcds.updated(hcdConnection.get, Some(new ComponentRef(akkaLocation)))
           diagPublisher = ctx.spawnAnonymous(DiagPublisher.make(ac, runningHcds(maybeConnection.get), Some(eventPublisher)))
           commandHandler =
             ctx.spawnAnonymous(new TromboneAssemblyCommandBehaviorFactory().make(ac, runningHcds, Some(eventPublisher)))
@@ -213,9 +213,11 @@ public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
         return eventualEventPublisher.thenAcceptBoth(eventualHcdLocation, (eventPublisher, hcdLocation) -&gt; {
             if(!hcdLocation.isPresent())
                 throw new HcdNotFoundException();
-            else
-                runningHcds.put(connection, Optional.of(hcdLocation.get().jComponent()));
-                diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(hcdLocation.get().component()), Optional.of(eventPublisher)));
+            else {
+                JComponentRef jComponentRef = new JComponentRef(hcdLocation.get(), akka.typed.ActorSystem.wrap(actorSystem));
+                runningHcds.put(connection, Optional.of(jComponentRef));
+                diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(jComponentRef), Optional.of(eventPublisher)));
+            }
             });
         });
 
@@ -228,7 +230,7 @@ public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
   axisConfig = await(getAxisConfig)
 
   // create a worker actor which is used by this hcd
-  tromboneAxis = ctx.spawnAnonymous(AxisSimulator.behavior(axisConfig, ctx.self))
+  tromboneAxis = ctx.spawnAnonymous(AxisSimulator.behavior(axisConfig))
 
   // initialise some state by using the worker actor created above
   current = await(tromboneAxis ? InitialState)
@@ -243,7 +245,7 @@ public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
             .thenAccept(config -&gt; {
                 axisConfig = config;
                 // create a worker actor which is used by this hcd
-                tromboneAxis = ctx.spawnAnonymous(AxisSimulator.behavior(axisConfig, ctx.getSelf().narrow()));
+                tromboneAxis = ctx.spawnAnonymous(AxisSimulator.behavior(axisConfig));
             });
 
     // initialise some state by using the worker actor created above

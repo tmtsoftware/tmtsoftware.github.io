@@ -128,7 +128,7 @@ TMT Common Software (CSW)
 </nav>
 
 <div class="md-nav__title--site md-version" title="Version">
-<i class="md-icon">label_outline</i> 0.3*
+<i class="md-icon">label_outline</i> 0.1*
 </div>
 </nav>
 
@@ -172,21 +172,21 @@ TMT Common Software (CSW)
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-logging&quot; % &quot;0.3-SNAPSHOT&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-logging&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
   <dt>maven</dt>
   <dd>
   <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
  &lt;groupId&gt;org.tmt&lt;/groupId&gt;
  &lt;artifactId&gt;csw-logging_2.12&lt;/artifactId&gt;
- &lt;version&gt;0.3-SNAPSHOT&lt;/version&gt;
+ &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
  &lt;type&gt;pom&lt;/type&gt;
 &lt;/dependency&gt;
 </code></pre></dd>
   <dt>gradle</dt>
   <dd>
   <pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: &quot;org.tmt&quot;, name: &quot;csw-logging_2.12&quot;, version: &quot;0.3-SNAPSHOT&quot;
+  compile group: &quot;org.tmt&quot;, name: &quot;csw-logging_2.12&quot;, version: &quot;0.1-SNAPSHOT&quot;
 }
 </code></pre></dd>
 </dl>
@@ -198,63 +198,63 @@ TMT Common Software (CSW)
   <dd>
   <pre class="prettyprint"><code class="language-conf">csw-logging {
 
-    // Default appender and is recommended only for dev setup.
-    // To use multiple appenders give comma seperated list of appenders.
+    # Default appender and is recommended only for dev setup.
+    # To use multiple appenders give comma seperated list of appenders.
     appenders = [&quot;csw.services.logging.appenders.StdOutAppender$&quot;]
 
-    // Recommended for production setup - Uncomment below line and comment above to enable FileAppender
-    //appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;]
+    # Recommended for production setup - Uncomment below line and comment above to enable FileAppender
+    #appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;]
 
     component-log-levels {
-      // By default each compoent will use log level specified by `csw-logging.logLevel`. If required, this block allows
-      // overriding log level configuration for one/more components.
-      // -- Example --
-      // TromboneHcd = debug
-      // TromboneAssembly = error
+      # By default each compoent will use log level specified by `csw-logging.logLevel`. If required, this block allows
+      # overriding log level configuration for one/more components.
+      # -- Example --
+      # TromboneHcd = debug
+      # TromboneAssembly = error
     }
 
     appender-config {
       file {
-        // Include standard headers
+        # Include standard headers
         fullHeaders = true
-        // Sort the fields in Json objects
+        # Sort the fields in Json objects
         sorted = true
-        // Directory to hold log files.
+        # Directory to hold log files.
         logPath = &quot;/tmp/&quot;
-        // Common log messages below this level are removed, none removed when set to trace
+        # Common log messages below this level are removed, none removed when set to trace
         logLevelLimit = trace
-        // Flag to turn file rotation ON or OFF. Currently log file is rotated daily at 12:00 pm UTC time. By turning this flag off
-        // file rotation will not happen.
+        # Flag to turn file rotation ON or OFF. Currently log file is rotated daily at 12:00 pm UTC time. By turning this flag off
+        # file rotation will not happen.
         rotate = true
       }
       stdout {
-        // Include standard headers
+        # Include standard headers
         fullHeaders = false
-        // Use colors for log levels
+        # Use colors for log levels
         color = true
-        // The maximum number of character that should be on a line
-        // This is only a goal; in practice some may contain more characters.
+        # The maximum number of character that should be on a line
+        # This is only a goal; in practice some may contain more characters.
         width = 80
-        // Print summary counts when logger is closed
+        # Print summary counts when logger is closed
         summary = true
-        // pretty output - multiple line json
+        # pretty output - multiple line json
         pretty = false
-        // Messages below this level are removed, none removed when set to trace
+        # Messages below this level are removed, none removed when set to trace
         logLevelLimit = trace
-        // false Json output; true simple one line text output
+        # false Json output; true simple one line text output
         oneLine = false
       }
     }
-    // If component does not specify their log level in component-log-levels block,
-    // Then this will be considered as default log level for that component.
+    # If component does not specify their log level in component-log-levels block,
+    # Then this will be considered as default log level for that component.
     logLevel = info
-    // Log level for slf4j messages
+    # Log level for slf4j messages
     slf4jLogLevel = info
-    // Log level for Akka messages
+    # Log level for Akka messages
     akkaLogLevel = warn
-    // Enable timing logging
+    # Enable timing logging
     time = false
-    //Enable garbage collection logging
+    # Enable garbage collection logging
     gc = false
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">IMPORTANT !!!</div>
@@ -389,7 +389,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala Typed Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class SampleTypedActor(loggerFactory: LoggerFactory, ctx: ActorContext[TopLevelActorDomainMessage]) {
+  <pre class="prettyprint"><code class="language-scala">class SampleTypedActor(loggerFactory: LoggerFactory, ctx: ActorContext[ComponentMessage]) {
 
   val log: Logger = loggerFactory.getLogger(ctx)
 }</code></pre></dd>
@@ -397,7 +397,7 @@ TMT Common Software (CSW)
   <dd>
   <pre class="prettyprint"><code class="language-java">class JSampleTypedActor {
 
-    public JSampleTypedActor(JLoggerFactory loggerFactory, ActorContext&lt;TopLevelActorDomainMessage&gt; ctx) {
+    public JSampleTypedActor(JLoggerFactory loggerFactory, ActorContext&lt;ComponentMessage&gt; ctx) {
         ILogger log = loggerFactory.getLogger(ctx, getClass());
     }
 }</code></pre></dd>
@@ -445,7 +445,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala Typed Actor</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class GenericTypedActor(ctx: ActorContext[TopLevelActorDomainMessage]) {
+  <pre class="prettyprint"><code class="language-scala">class GenericTypedActor(ctx: ActorContext[ComponentMessage]) {
 
   val log: Logger = GenericLoggerFactory.getLogger(ctx)
 }</code></pre></dd>
@@ -453,18 +453,12 @@ TMT Common Software (CSW)
   <dd>
   <pre class="prettyprint"><code class="language-java">class JGenericTypedActor {
 
-    public JGenericTypedActor(ActorContext&lt;TopLevelActorDomainMessage&gt; ctx) {
+    public JGenericTypedActor(ActorContext&lt;ComponentMessage&gt; ctx) {
         ILogger log = JGenericLoggerFactory.getLogger(ctx, getClass());
     }
 }</code></pre></dd>
 </dl>
-<p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p><div class="callout note "><div class="callout-title">The `ComponentDomainMessage` shown in above examples is defiined as follows</div>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">sealed trait TopLevelActorDomainMessage        extends DomainMessage
-case class TopLevelActorStatistics(value: Int) extends TopLevelActorDomainMessage</code></pre></dd>
-</dl></div>
+<p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p>
 <h2><a href="#log-statements" name="log-statements" class="anchor"><span class="anchor-link"></span></a>Log statements</h2>
 <p>Logging statements are used very much like existing logging services such as log4j. For Java, there is an additional way of writing log messages using Supplier methods (lambdas). The use of lambdas is more efficient since the computations in a message (e.g. string concatenation) are not performed unless the message is actually being logged. Therefore, these supplier methods should be used in cases where high performance is required (see <a href="#java-logging-string-vs-supplier-api-performance">performance results below</a>).</p>
 <p>A basic info statement can be written as follows:</p>
@@ -722,7 +716,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.3*
+0.1*
 </span>
 </div>
 </article>

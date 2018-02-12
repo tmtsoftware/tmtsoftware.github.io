@@ -286,7 +286,7 @@ val assemblyRegResult: RegistrationResult = Await.result(locationService.registe
 akka.typed.ActorRef&lt;LogControlMessages&gt; logAdminActorRef = LogAdminActorFactory.make(context().system());
 
 // dummy http connection
-HttpConnection httpConnection   = new HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
+HttpConnection httpConnection = new HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
 HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;, logAdminActorRef);
 httpRegResult = locationService.register(httpRegistration).get();
 
@@ -427,14 +427,14 @@ if (resolveResult.isPresent()) {
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// If the component type is HCD or Assembly, use this to get the correct ActorRef
-val typedComponentRef: ActorRef[ComponentMessage] = akkaLocation.component.value
+val typedComponentRef: ActorRef[ComponentMessage] = akkaLocation.componentRef
 
 // If the component type is Container, use this to get the correct ActorRef
 val typedContainerRef: ActorRef[ContainerExternalMessage] = akkaLocation.containerRef</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// If the component type is HCD or Assembly, use this to get the correct ActorRef
-akka.typed.ActorRef&lt;ComponentMessage&gt; typedComponentRef = akkaLocation.jComponent().value();
+akka.typed.ActorRef&lt;ComponentMessage&gt; typedComponentRef = akkaLocation.componentRef();
 
 // If the component type is Container, use this to get the correct ActorRef
 akka.typed.ActorRef&lt;ContainerExternalMessage&gt; typedContainerRef = akkaLocation.containerRef();</code></pre></dd>
@@ -453,7 +453,7 @@ connectionList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&qu
   <pre class="prettyprint"><code class="language-java">// list connections in location service
 List&lt;Location&gt; connectionList = locationService.list().get();
 log.info(&quot;All Registered Connections:&quot;);
-for (Location loc: connectionList) {
+for (Location loc : connectionList) {
     log.info(&quot;--- &quot; + connectionInfo(loc.connection()));
 }</code></pre></dd>
 </dl>
@@ -479,7 +479,7 @@ componentList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quo
   <pre class="prettyprint"><code class="language-java">// filter connections based on component type
 List&lt;Location&gt; componentList = locationService.list(JComponentType.Assembly).get();
 log.info(&quot;Registered Assemblies:&quot;);
-for (Location loc: componentList) {
+for (Location loc : componentList) {
     log.info(&quot;--- &quot; + connectionInfo(loc.connection()));
 }</code></pre></dd>
 </dl>
@@ -590,9 +590,9 @@ locationService.track(exampleConnection).toMat(Sink.actorRef(getSelf(), AllDone.
 //in this case track a connection for 5 seconds, after that schedule switching off the stream
 Pair pair = locationService.track(exampleConnection).toMat(Sink.ignore(), Keep.both()).run(mat);
 context().system().scheduler().scheduleOnce(
-    Duration.create(5, TimeUnit.SECONDS),
-    () -&gt; ((KillSwitch)pair.first()).shutdown(),
-    context().system().dispatcher());
+        Duration.create(5, TimeUnit.SECONDS),
+        () -&gt; ((KillSwitch) pair.first()).shutdown(),
+        context().system().dispatcher());
 
 // subscribe to LocationServiceExampleComponent events
 log.info(&quot;Starting a subscription to &quot; + exampleConnection);

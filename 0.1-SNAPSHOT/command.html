@@ -213,7 +213,7 @@ TMT Common Software (CSW)
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; eventualCommandResponse =
         hcdComponent
-                .submit(imdInvalidCommand, timeout, hcdActorSystem.scheduler())
+                .submit(imdInvalidCommand, timeout)
                 .thenApply(
                         response -&gt; {
                             if (response instanceof Completed) {
@@ -241,11 +241,11 @@ assemblyComponent.submit(setupForQuery)
 val eventualResponse: Future[CommandResponse] = assemblyComponent.query(setupForQuery.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">hcdComponent.submit(controlCommand, timeout, hcdActorSystem.scheduler());
+  <pre class="prettyprint"><code class="language-java">hcdComponent.submit(controlCommand, timeout);
 
 // do some work before querying for the result of above command as needed
 
-CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(controlCommand.runId(), timeout, hcdActorSystem.scheduler());</code></pre></dd>
+CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(controlCommand.runId(), timeout);</code></pre></dd>
 </dl>
 <ul>
   <li><strong>Subscribe</strong> - Subscribe for getting the final state of the command asynchronously</li>
@@ -261,10 +261,10 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; testCommandResponse =
         hcdComponent
-                .submit(controlCommand, timeout, hcdActorSystem.scheduler())
+                .submit(controlCommand, timeout)
                 .thenCompose(commandResponse -&gt; {
                     if (commandResponse instanceof CommandResponse.Accepted)
-                        return hcdComponent.subscribe(commandResponse.runId(), timeout, hcdActorSystem.scheduler());
+                        return hcdComponent.subscribe(commandResponse.runId(), timeout);
                     else
                         return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;test error&quot;));
                 });</code></pre></dd>
@@ -290,7 +290,7 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; eventualCommandResponse =
         hcdComponent
-                .submit(imdInvalidCommand, timeout, hcdActorSystem.scheduler())
+                .submit(imdInvalidCommand, timeout)
                 .thenApply(
                         response -&gt; {
                             if (response instanceof Completed) {
@@ -319,7 +319,7 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture onewayCommandResponseF = hcdComponent
-        .oneway(setup, timeout, hcdActorSystem.scheduler())
+        .oneway(setup, timeout)
         .thenAccept(initialCommandResponse -&gt; {
             if (initialCommandResponse instanceof CommandResponse.Accepted) {
                 //do something
@@ -342,10 +342,10 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; testCommandResponse =
         hcdComponent
-                .submit(controlCommand, timeout, hcdActorSystem.scheduler())
+                .submit(controlCommand, timeout)
                 .thenCompose(commandResponse -&gt; {
                     if (commandResponse instanceof CommandResponse.Accepted)
-                        return hcdComponent.subscribe(commandResponse.runId(), timeout, hcdActorSystem.scheduler());
+                        return hcdComponent.subscribe(commandResponse.runId(), timeout);
                     else
                         return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;test error&quot;));
                 });</code></pre></dd>
@@ -363,11 +363,11 @@ assemblyComponent.submit(setupForQuery)
 val eventualResponse: Future[CommandResponse] = assemblyComponent.query(setupForQuery.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">hcdComponent.submit(controlCommand, timeout, hcdActorSystem.scheduler());
+  <pre class="prettyprint"><code class="language-java">hcdComponent.submit(controlCommand, timeout);
 
 // do some work before querying for the result of above command as needed
 
-CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(controlCommand.runId(), timeout, hcdActorSystem.scheduler());</code></pre></dd>
+CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(controlCommand.runId(), timeout);</code></pre></dd>
 </dl>
 <h3><a href="#submitandsubscribe" name="submitandsubscribe" class="anchor"><span class="anchor-link"></span></a>submitAndSubscribe</h3>
 <p>Submit a command and Subscribe for the result if it was successfully validated as <code>Accepted</code> to get a final <code>CommandResponse</code> as a Future.</p>
@@ -378,7 +378,7 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
 val response          = assemblyComponent.submitAndSubscribe(setupForSubscribe)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; finalResponseCompletableFuture = hcdComponent.submitAndSubscribe(failureResCommand1, timeout, hcdActorSystem.scheduler(), typedSystem.executionContext());
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; finalResponseCompletableFuture = hcdComponent.submitAndSubscribe(failureResCommand1, timeout);
 CommandResponse actualValidationResponse = finalResponseCompletableFuture.get();</code></pre></dd>
 </dl>
 <h3><a href="#onewayandmatch" name="onewayandmatch" class="anchor"><span class="anchor-link"></span></a>onewayAndMatch</h3>
@@ -393,13 +393,13 @@ CommandResponse actualValidationResponse = finalResponseCompletableFuture.get();
 StateMatcher stateMatcher = new DemandMatcher(new DemandState(prefix().prefix()).add(param), false, timeout);
 
 // create matcher instance
-Matcher matcher1 = new Matcher(hcdComponent.value().narrow(), demandMatcher, ec, mat);
+Matcher matcher1 = new Matcher(hcdLocation.componentRef().narrow(), demandMatcher, ec, mat);
 
 // start the matcher so that it is ready to receive state published by the source
 CompletableFuture&lt;MatcherResponse&gt; matcherResponse = matcher1.jStart();
 
 CompletableFuture&lt;CommandResponse&gt; matchedCommandResponse =
-        hcdComponent.onewayAndMatch(setup, stateMatcher, timeout, hcdActorSystem.scheduler(), ec, mat);
+        hcdComponent.onewayAndMatch(setup, stateMatcher, timeout);
 </code></pre></dd>
 </dl>
 <h3><a href="#submitallandgetresponse" name="submitallandgetresponse" class="anchor"><span class="anchor-link"></span></a>submitAllAndGetResponse</h3>
@@ -423,10 +423,7 @@ HashMap&lt;JComponentRef, Set&lt;ControlCommand&gt;&gt; componentsToCommands = n
 CompletableFuture&lt;CommandResponse&gt; commandResponse = hcdComponent
         .submitAllAndGetResponse(
                 new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)),
-                timeout,
-                hcdActorSystem.scheduler(),
-                hcdActorSystem.dispatcher(),
-                ActorMaterializer.create(hcdActorSystem)
+                timeout
         );</code></pre></dd>
 </dl>
 <h3><a href="#submitallandgetfinalresponse" name="submitallandgetfinalresponse" class="anchor"><span class="anchor-link"></span></a>submitAllAndGetFinalResponse</h3>
@@ -450,10 +447,7 @@ HashMap&lt;JComponentRef, Set&lt;ControlCommand&gt;&gt; componentsToCommands = n
 CompletableFuture&lt;CommandResponse&gt; finalCommandResponse = hcdComponent
         .submitAllAndGetFinalResponse(
                 new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)),
-                timeout,
-                hcdActorSystem.scheduler(),
-                hcdActorSystem.dispatcher(),
-                ActorMaterializer.create(hcdActorSystem)
+                timeout
         );</code></pre></dd>
 </dl>
 <h2><a href="#matching-state-for-command-completion" name="matching-state-for-command-completion" class="anchor"><span class="anchor-link"></span></a>Matching state for command completion</h2>
@@ -465,7 +459,7 @@ CompletableFuture&lt;CommandResponse&gt; finalCommandResponse = hcdComponent
 val demandMatcher = DemandMatcher(DemandState(prefix, Set(param)), withUnits = false, timeout)
 
 // create matcher instance
-val matcher = new Matcher(assemblyComponent.value, demandMatcher)
+val matcher = new Matcher(assemblyLocation.componentRef, demandMatcher)
 
 // start the matcher so that it is ready to receive state published by the source
 val matcherResponseF: Future[MatcherResponse] = matcher.start
@@ -495,14 +489,14 @@ val commandResponse = Await.result(eventualCommandResponse, timeout.duration)</c
 DemandMatcher demandMatcher = new DemandMatcher(new DemandState(prefix().prefix()).add(param), false, timeout);
 
 // create matcher instance
-Matcher matcher = new Matcher(hcdComponent.value().narrow(), demandMatcher, ec, mat);
+Matcher matcher = new Matcher(hcdLocation.componentRef().narrow(), demandMatcher, ec, mat);
 
 // start the matcher so that it is ready to receive state published by the source
 CompletableFuture&lt;MatcherResponse&gt; matcherResponseFuture = matcher.jStart();
 
 // submit command and if the command is successfully validated, check for matching of demand state against current state
 CompletableFuture&lt;CommandResponse&gt; commandResponseToBeMatched = hcdComponent
-        .oneway(setup, timeout, hcdActorSystem.scheduler())
+        .oneway(setup, timeout)
         .thenCompose(initialCommandResponse -&gt; {
             if (initialCommandResponse instanceof CommandResponse.Accepted) {
                 return matcherResponseFuture.thenApply(matcherResponse -&gt; {
