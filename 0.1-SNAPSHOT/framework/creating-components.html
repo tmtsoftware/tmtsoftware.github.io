@@ -124,7 +124,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class TromboneAssemblyHandlers(
+  <pre class="prettyprint"><code class="language-scala">class AssemblyComponentHandlers(
     ctx: ActorContext[TopLevelActorMessage],
     componentInfo: ComponentInfo,
     commandResponseManager: ActorRef[CommandResponseManagerMessage],
@@ -137,26 +137,21 @@ TMT Common Software (CSW)
       commandResponseManager,
       pubSubRef,
       locationService,
-      loggerFactory
-    ) {</code></pre></dd>
+      loggerFactory: LoggerFactory
+    )</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JTromboneAssemblyHandlers extends JComponentHandlers {
+  <pre class="prettyprint"><code class="language-java">public class JAssemblyComponentHandlers extends JComponentHandlers {
 
-    // private state of this component
-    private AssemblyContext ac;
-    private ComponentInfo componentInfo;
-    private ActorContext&lt;TopLevelActorMessage&gt; ctx;
-    private ILocationService locationService;
-    private Map&lt;Connection, Optional&lt;JComponentRef&gt;&gt; runningHcds;
-    private ActorRef&lt;DiagPublisherMessages&gt; diagPublisher;
-    private ActorRef&lt;AssemblyCommandHandlerMsgs&gt; commandHandler;
-    private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
+    private final ActorContext&lt;TopLevelActorMessage&gt; ctx;
+    private final ComponentInfo componentInfo;
+    private final ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager;
+    private final ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef;
+    private final ILocationService locationService;
+    private ILogger log;
     private IConfigClientService configClient;
-    private ActorSystem actorSystem;
-    private Materializer mat;
 
-    public JTromboneAssemblyHandlers(
+    public JAssemblyComponentHandlers(
             akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
             ComponentInfo componentInfo,
             ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
@@ -166,19 +161,17 @@ TMT Common Software (CSW)
 
     ) {
         super(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
-        this.componentInfo = componentInfo;
         this.ctx = ctx;
+        this.componentInfo = componentInfo;
+        this.commandResponseManager = commandResponseManager;
+        this.pubSubRef = pubSubRef;
         this.locationService = locationService;
-        runningHcds = new HashMap&lt;&gt;();
-        commandResponseAdapter = new TestProbe&lt;CommandResponse&gt;(ctx.getSystem(), TestKitSettings.apply(ctx.getSystem())).ref();
-        actorSystem = Adapter.toUntyped(ctx.getSystem());
-        mat = ActorMaterializer.create(actorSystem);
-        configClient = JConfigClientFactory.clientApi(actorSystem, locationService);
-    }
-</code></pre></dd>
+        log = loggerFactory.getLogger(this.getClass());
+        configClient = JConfigClientFactory.clientApi(Adapter.toUntyped(ctx.getSystem()), locationService);
+    }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class TromboneHcdHandlers(
+  <pre class="prettyprint"><code class="language-scala">class HcdComponentHandlers(
     ctx: ActorContext[TopLevelActorMessage],
     componentInfo: ComponentInfo,
     commandResponseManager: ActorRef[CommandResponseManagerMessage],
@@ -191,31 +184,35 @@ TMT Common Software (CSW)
       commandResponseManager,
       pubSubRef,
       locationService,
-      loggerFactory
-    ) {</code></pre></dd>
+      loggerFactory: LoggerFactory
+    )</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JTromboneHcdHandlers extends JComponentHandlers {
+  <pre class="prettyprint"><code class="language-java">public class JHcdComponentHandlers extends JComponentHandlers {
 
-    // private state of this component
+    private final ActorContext&lt;TopLevelActorMessage&gt; ctx;
+    private final ComponentInfo componentInfo;
+    private final ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager;
+    private final ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef;
+    private final ILocationService locationService;
     private ILogger log;
-    private AxisResponse.AxisUpdate current;
-    private AxisResponse.AxisStatistics stats;
-    private ActorRef&lt;AxisRequest&gt; tromboneAxis;
-    private AxisConfig axisConfig;
-    private ActorContext&lt;TopLevelActorMessage&gt; ctx;
 
-    public JTromboneHcdHandlers(
-            ActorContext&lt;TopLevelActorMessage&gt; ctx,
+    public JHcdComponentHandlers(
+            akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
             ComponentInfo componentInfo,
             ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
             ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
             ILocationService locationService,
             JLoggerFactory loggerFactory
+
     ) {
         super(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
         this.ctx = ctx;
-        this.log = loggerFactory.getLogger(getClass());
+        this.componentInfo = componentInfo;
+        this.commandResponseManager = commandResponseManager;
+        this.pubSubRef = pubSubRef;
+        this.locationService = locationService;
+        log = loggerFactory.getLogger(this.getClass());
     }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><strong>converting typed actor system to untyped actor system</strong> </p>
@@ -225,20 +222,20 @@ TMT Common Software (CSW)
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class TromboneAssemblyBehaviorFactory extends ComponentBehaviorFactory {
+  <pre class="prettyprint"><code class="language-scala">class AssemblyComponentBehaviorFactory extends ComponentBehaviorFactory {
   override def handlers(
       ctx: ActorContext[TopLevelActorMessage],
       componentInfo: ComponentInfo,
       commandResponseManager: ActorRef[CommandResponseManagerMessage],
-      pubSubRef: ActorRef[PublisherMessage[CurrentState]],
+      pubSubRef: ActorRef[PubSub.PublisherMessage[CurrentState]],
       locationService: LocationService,
       loggerFactory: LoggerFactory
   ): ComponentHandlers =
-    new TromboneAssemblyHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory)
+    new AssemblyComponentHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory)
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JTromboneAssemblyBehaviorFactory extends JComponentBehaviorFactory {
+  <pre class="prettyprint"><code class="language-java">public class JAssemblyComponentBehaviourFactory extends JComponentBehaviorFactory {
 
     @Override
     public JComponentHandlers jHandlers(
@@ -249,25 +246,25 @@ TMT Common Software (CSW)
             ILocationService locationService,
             JLoggerFactory loggerFactory
     ) {
-        return new JTromboneAssemblyHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
+        return new JAssemblyComponentHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
     }
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class TromboneHcdBehaviorFactory extends ComponentBehaviorFactory {
+  <pre class="prettyprint"><code class="language-scala">class HcdComponentBehaviorFactory extends ComponentBehaviorFactory {
   override def handlers(
       ctx: ActorContext[TopLevelActorMessage],
       componentInfo: ComponentInfo,
       commandResponseManager: ActorRef[CommandResponseManagerMessage],
-      pubSubRef: ActorRef[PublisherMessage[CurrentState]],
+      pubSubRef: ActorRef[PubSub.PublisherMessage[CurrentState]],
       locationService: LocationService,
       loggerFactory: LoggerFactory
   ): ComponentHandlers =
-    new TromboneHcdHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory)
+    new HcdComponentHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory)
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public class JTromboneHcdBehaviorFactory extends JComponentBehaviorFactory {
+  <pre class="prettyprint"><code class="language-java">public class JHcdComponentBehaviourFactory extends JComponentBehaviorFactory {
 
     @Override
     public JComponentHandlers jHandlers(
@@ -278,7 +275,7 @@ TMT Common Software (CSW)
             ILocationService locationService,
             JLoggerFactory loggerFactory
     ) {
-        return null;
+        return new JHcdComponentHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
     }
 }</code></pre></dd>
 </dl>

@@ -149,16 +149,9 @@ TMT Common Software (CSW)
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
-  trackingEvent match {
-    case LocationUpdated(location) =&gt;
-      runningHcds = runningHcds + (location.connection → Some(
-        new ComponentRef(location.asInstanceOf[AkkaLocation])
-      ))
-    case LocationRemoved(connection) =&gt;
-      runningHcds = runningHcds + (connection → None)
-  }
-  commandHandler ! UpdateHcdLocations(runningHcds)
+  <pre class="prettyprint"><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = trackingEvent match {
+  case LocationUpdated(location)   ⇒ // do something for the tracked location when it is updated
+  case LocationRemoved(connection) ⇒ // do something for the tracked location when it is no longer available
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
@@ -173,8 +166,8 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
   <dt>Hcd/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = trackingEvent match {
-  case LocationUpdated(location)   =&gt; // do something for the tracked location when it is updated
-  case LocationRemoved(connection) =&gt; // do something for the tracked location when it is no longer available
+  case LocationUpdated(location)   ⇒ // do something for the tracked location when it is updated
+  case LocationRemoved(connection) ⇒ // do something for the tracked location when it is no longer available
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
@@ -182,8 +175,7 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
     if (trackingEvent instanceof LocationUpdated) {
         // do something for the tracked location when it is updated
-    }
-    else if (trackingEvent instanceof LocationRemoved) {
+    } else if (trackingEvent instanceof LocationRemoved) {
         // do something for the tracked location when it is no longer available
     }
 }</code></pre></dd>
