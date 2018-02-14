@@ -127,28 +127,47 @@ TMT Common Software (CSW)
     <dl>
       <dt>Scala</dt>
       <dd>
-      <pre class="prettyprint"><code class="language-scala">locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
-  case Some(akkaLocation) ⇒
-    runningHcds = runningHcds.updated(hcdConnection.get, Some(new ComponentRef(akkaLocation)))
-    diagPublisher = ctx.spawnAnonymous(DiagPublisher.make(ac, runningHcds(maybeConnection.get), Some(eventPublisher)))
-    commandHandler =
-      ctx.spawnAnonymous(new TromboneAssemblyCommandBehaviorFactory().make(ac, runningHcds, Some(eventPublisher)))
-  case None ⇒
-    // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
-    // for the Hcd to be available
-    throw HcdNotFoundException()</code></pre></dd>
+      <pre class="prettyprint"><code class="language-scala">case class HcdNotFoundException() extends FailureRestart(&quot;Could not resolve hcd location. Initialization failure.&quot;)
+
+private def resolveHcd() = {
+  val maybeConnection = componentInfo.connections.find(connection ⇒ connection.componentId.componentType == ComponentType.HCD)
+  maybeConnection match {
+    case hcdConnection @ Some(hcd) ⇒
+      locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
+        case Some(akkaLocation) ⇒
+        case None               ⇒
+          // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
+          // for the Hcd to be available
+          throw HcdNotFoundException()
+      }
+    case None ⇒ Future.successful(Unit)
+  }
+}</code></pre></dd>
       <dt>Java</dt>
       <dd>
-      <pre class="prettyprint"><code class="language-java">return eventualEventPublisher.thenAcceptBoth(eventualHcdLocation, (eventPublisher, hcdLocation) -&gt; {
-    if(!hcdLocation.isPresent())
-        throw new HcdNotFoundException();
-    else {
-        JComponentRef jComponentRef = new JComponentRef(hcdLocation.get(), akka.typed.ActorSystem.wrap(actorSystem));
-        runningHcds.put(connection, Optional.of(jComponentRef));
-        diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(jComponentRef), Optional.of(eventPublisher)));
+      <pre class="prettyprint"><code class="language-java">class HcdNotFoundException extends FailureRestart {
+    HcdNotFoundException() {
+        super(&quot;Could not resolve hcd location. Initialization failure.&quot;);
     }
+}
+
+private void resolveHcd() {
+    // find a Hcd connection from the connections provided in componentInfo
+    Optional&lt;Connection&gt; mayBeConnection = componentInfo.getConnections().stream()
+            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD)
+            .findFirst();
+
+    // If an Hcd is found as a connection, resolve its location from location service and create other
+    // required worker actors required by this assembly
+    mayBeConnection.ifPresent(connection -&gt; {
+        CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; eventualHcdLocation = locationService.resolve(connection.&lt;AkkaLocation&gt;of(), FiniteDuration.apply(5, TimeUnit.SECONDS));
+        try {
+            AkkaLocation hcdLocation = eventualHcdLocation.get().orElseThrow(HcdNotFoundException::new);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     });
-});</code></pre></dd>
+}</code></pre></dd>
     </dl>
   </li>
   <li>
@@ -156,25 +175,31 @@ TMT Common Software (CSW)
     <dl>
       <dt>Scala</dt>
       <dd>
-      <pre class="prettyprint"><code class="language-scala">private def getAssemblyConfigs: Future[(TromboneCalculationConfig, TromboneControlConfig)] = {
+      <pre class="prettyprint"><code class="language-scala">case class ConfigNotAvailableException() extends FailureStop(&quot;Configuration not available. Initialization failure.&quot;)
+
+private def getAssemblyConfigs() = {
+
   configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).flatMap {
-    case Some(config) ⇒ config.toConfigObject.map(x ⇒ (TromboneCalculationConfig(x), TromboneControlConfig(x)))
+    case Some(config) ⇒ ??? // do work
     case None         ⇒
       // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
-      // cofiguration service and started again
+      // configuration service and started again
       throw ConfigNotAvailableException()
   }
 }</code></pre></dd>
       <dt>Java</dt>
       <dd>
-      <pre class="prettyprint"><code class="language-java">private CompletableFuture&lt;TromboneCalculationConfig&gt; getAssemblyCalculationConfig() {
-    return configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).thenCompose((mayBeConfig) -&gt; {
-        if(mayBeConfig.isPresent())
-            return (mayBeConfig.get().toJConfigObject(mat).thenApply(TromboneCalculationConfig::apply));
-        else
-            // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
-            // cofiguration service and started again
-            throw new ConfigNotAvailableException();
+      <pre class="prettyprint"><code class="language-java">class ConfigNotAvailableException extends FailureStop {
+    ConfigNotAvailableException() {
+        super(&quot;Configuration not available. Initialization failure.&quot;);
+    }
+}
+
+private CompletableFuture&lt;ConfigData&gt; getAssemblyConfigs() {
+    // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
+    // configuration service and started again
+    return configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).thenApply((maybeConfigData) -&gt; {
+        return maybeConfigData.orElseThrow(ConfigNotAvailableException::new);
     });
 }</code></pre></dd>
     </dl>

@@ -158,113 +158,57 @@ TMT Common Software (CSW)
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">def initialize(): Future[Unit] = async {
-  // fetch config (preferably from configuration service)
-  val (calculationConfig, controlConfig) = await(getAssemblyConfigsLocal)
-  ac = AssemblyContext(componentInfo, calculationConfig, controlConfig)
+  <pre class="prettyprint"><code class="language-scala">override def initialize(): Future[Unit] = async {
 
-  // create a worker actor which is used by this assembly
-  val eventPublisher = ctx.spawnAnonymous(TrombonePublisher.make(ac))
+  /*
+ * Initialization could include following steps :
+ * 1. fetch config (preferably from configuration service)
+ * 2. create a worker actor which is used by this assembly
+ * 3. find a Hcd connection from the connections provided in componentInfo
+ * 4. If an Hcd is found as a connection, resolve its location from location service and create other
+ *    required worker actors required by this assembly
+ * */
 
-  // find a Hcd connection from the connections provided in componentInfo
-  val maybeConnection =
-    componentInfo.connections.find(connection ⇒ connection.componentId.componentType == ComponentType.HCD)
-
-  // If an Hcd is found as a connection, resolve its location from location service and create other
-  // required worker actors required by this assembly
-  maybeConnection match {
-    case hcdConnection @ Some(hcd) ⇒
-      locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
-        case Some(akkaLocation) ⇒
-          runningHcds = runningHcds.updated(hcdConnection.get, Some(new ComponentRef(akkaLocation)))
-          diagPublisher = ctx.spawnAnonymous(DiagPublisher.make(ac, runningHcds(maybeConnection.get), Some(eventPublisher)))
-          commandHandler =
-            ctx.spawnAnonymous(new TromboneAssemblyCommandBehaviorFactory().make(ac, runningHcds, Some(eventPublisher)))
-        case None ⇒
-          // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
-          // for the Hcd to be available
-          throw HcdNotFoundException()
-      }
-    case None ⇒ Future.successful(Unit)
-  }
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
-public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
-    // fetch config (preferably from configuration service)
-    CompletableFuture&lt;AssemblyContext&gt; assemblyContextCompletableFuture = getAssemblyLocalCalculationConfig()
-            .thenCombine(getAssemblyLocalControlConfig(),
-                    (calculationConf, controlConf) -&gt; ac = new AssemblyContext(componentInfo, calculationConf, controlConf));
+public CompletableFuture&lt;Void&gt; jInitialize() {
+    /*
+     * Initialization could include following steps :
+     * 1. fetch config (preferably from configuration service)
+     * 2. create a worker actor which is used by this assembly
+     * 3. find a Hcd connection from the connections provided in componentInfo
+     * 4. If an Hcd is found as a connection, resolve its location from location service and create other
+     *    required worker actors required by this assembly
+     * */
 
-    // create a worker actor which is used by this assembly
-    CompletableFuture&lt;ActorRef&lt;TrombonePublisherMsg&gt;&gt; eventualEventPublisher =
-            assemblyContextCompletableFuture.thenApply(ac -&gt; ctx.spawnAnonymous(TrombonePublisher.make(ac)));
-
-    // find a Hcd connection from the connections provided in componentInfo
-    Optional&lt;Connection&gt; mayBeConnection = componentInfo.getConnections().stream()
-            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD)
-            .findFirst();
-
-    // If an Hcd is found as a connection, resolve its location from location service and create other
-    // required worker actors required by this assembly
-    Optional&lt;CompletableFuture&lt;Void&gt;&gt; voidCompletableFuture = mayBeConnection.map(connection -&gt; {
-        CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; eventualHcdLocation = locationService.resolve(connection.&lt;AkkaLocation&gt;of(), FiniteDuration.apply(5, TimeUnit.SECONDS));
-        return eventualEventPublisher.thenAcceptBoth(eventualHcdLocation, (eventPublisher, hcdLocation) -&gt; {
-            if(!hcdLocation.isPresent())
-                throw new HcdNotFoundException();
-            else {
-                JComponentRef jComponentRef = new JComponentRef(hcdLocation.get(), akka.typed.ActorSystem.wrap(actorSystem));
-                runningHcds.put(connection, Optional.of(jComponentRef));
-                diagPublisher = ctx.spawnAnonymous(DiagPublisher.jMake(ac, Optional.of(jComponentRef), Optional.of(eventPublisher)));
-            }
-            });
-        });
-
-    return voidCompletableFuture.get().thenApply(x -&gt; BoxedUnit.UNIT);
+    return new CompletableFuture&lt;&gt;();
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">override def initialize(): Future[Unit] = async {
-  // fetch config (preferably from configuration service)
-  axisConfig = await(getAxisConfig)
 
-  // create a worker actor which is used by this hcd
-  tromboneAxis = ctx.spawnAnonymous(AxisSimulator.behavior(axisConfig))
+  /*
+ * Initialization could include following steps :
+ * 1. fetch config (preferably from configuration service)
+ * 2. create a worker actor which is used by this hcd
+ * 3. initialise some state by using the worker actor created above
+ * */
 
-  // initialise some state by using the worker actor created above
-  current = await(tromboneAxis ? InitialState)
-  stats = await(tromboneAxis ? GetStatistics)
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
-public CompletableFuture&lt;BoxedUnit&gt; jInitialize() {
-    // fetch config (preferably from configuration service)
-    CompletableFuture&lt;Void&gt; configInitialisation = getAxisConfig()
-            .thenAccept(config -&gt; {
-                axisConfig = config;
-                // create a worker actor which is used by this hcd
-                tromboneAxis = ctx.spawnAnonymous(AxisSimulator.behavior(axisConfig));
-            });
-
-    // initialise some state by using the worker actor created above
-    CompletableFuture&lt;Void&gt; initialAxisState = AskPattern.ask(
-            tromboneAxis,
-            AxisRequests.InitialState::new,
-            new Timeout(5, TimeUnit.SECONDS),
-            ctx.getSystem().scheduler()
-    ).thenAccept(axisUpdate -&gt; current = axisUpdate).toCompletableFuture();
-
-    // initialise some state by using the worker actor created above
-    CompletableFuture&lt;Void&gt; initialAxisStats = AskPattern.ask(
-            tromboneAxis,
-            AxisRequests.GetStatistics::new,
-            new Timeout(5, TimeUnit.SECONDS),
-            ctx.getSystem().scheduler()
-    ).thenAccept(axisStatistics -&gt; stats = axisStatistics).toCompletableFuture();
-
-    return CompletableFuture.allOf(configInitialisation, initialAxisStats, initialAxisState).thenApply(x -&gt; BoxedUnit.UNIT);
+public CompletableFuture&lt;Void&gt; jInitialize() {
+    return CompletableFuture.runAsync(() -&gt; {
+        /*
+         * Initialization could include following steps :
+         * 1. fetch config (preferably from configuration service)
+         * 2. create a worker actor which is used by this hcd
+         * 3. initialise some state by using the worker actor created above
+         * */
+    });
 }</code></pre></dd>
 </dl>
 <h3><a href="#onshutdown" name="onshutdown" class="anchor"><span class="anchor-link"></span></a>onShutdown</h3>
@@ -330,37 +274,41 @@ public void onGoOnline() {
   <dt>Assembly/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): CommandResponse = controlCommand match {
-  case _: Setup   ⇒ validateOneSetup(controlCommand.asInstanceOf[Setup])
-  case _: Observe ⇒ Accepted(controlCommand.runId)
-  case x          ⇒ Invalid(controlCommand.runId, UnsupportedCommandIssue(s&quot;command $x is not supported by this component.&quot;))
+  case _: Setup   ⇒ Accepted(controlCommand.runId) // validation for setup goes here
+  case _: Observe ⇒ Accepted(controlCommand.runId) // validation for observe goes here
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public CommandResponse validateCommand(ControlCommand controlCommand) {
     if (controlCommand instanceof Setup) {
-        return new CommandResponse.Completed(controlCommand.runId());
+        // validation for setup goes here
+        return new CommandResponse.Accepted(controlCommand.runId());
     } else if (controlCommand instanceof Observe) {
-        return new CommandResponse.Completed(controlCommand.runId());
+        // validation for observe goes here
+        return new CommandResponse.Accepted(controlCommand.runId());
     } else {
-        return new CommandResponse.Invalid(controlCommand.runId(), new CommandIssue.UnsupportedCommandIssue(&quot;command&quot; + controlCommand + &quot;is not supported by this component.&quot;));
+        return new CommandResponse.Invalid(controlCommand.runId(), new CommandIssue.AssemblyBusyIssue(&quot;Command not supported&quot;));
     }
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): CommandResponse = controlCommand match {
-  case setup: Setup     ⇒ ParamValidation.validateSetup(setup)
-  case observe: Observe ⇒ ParamValidation.validateObserve(observe)
-  case x                ⇒ Invalid(controlCommand.runId, UnsupportedCommandIssue(s&quot;command $x is not supported by this component.&quot;))
+  case _: Setup   ⇒ Accepted(controlCommand.runId) // validation for setup goes here
+  case _: Observe ⇒ Accepted(controlCommand.runId) // validation for observe goes here
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public CommandResponse validateCommand(ControlCommand controlCommand) {
-    if (controlCommand instanceof Setup || controlCommand instanceof Observe) {
-        return new CommandResponse.Completed(controlCommand.runId());
+    if (controlCommand instanceof Setup) {
+        // validation for setup goes here
+        return new CommandResponse.Accepted(controlCommand.runId());
+    } else if (controlCommand instanceof Observe) {
+        // validation for observe goes here
+        return new CommandResponse.Accepted(controlCommand.runId());
     } else {
-        return new CommandResponse.Invalid(controlCommand.runId(), new CommandIssue.UnsupportedCommandIssue(&quot;command&quot; + controlCommand + &quot;is not supported by this component.&quot;));
+        return new CommandResponse.CommandNotAvailable(controlCommand.runId());
     }
 }</code></pre></dd>
 </dl>
@@ -370,29 +318,33 @@ public CommandResponse validateCommand(ControlCommand controlCommand) {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = {
-  // commandHandler is a worker actor created for this component to process commands
-  commandHandler ! CommandMessageE(Submit(controlCommand, commandResponseAdapter))
+  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = controlCommand match {
+  case setup: Setup     ⇒ submitSetup(setup) // includes logic to handle Submit with Setup config command
+  case observe: Observe ⇒ submitObserve(observe) // includes logic to handle Submit with Observe config command
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public void onSubmit(ControlCommand controlCommand) {
-    // commandHandler is a worker actor created for this component to process commands
-    commandHandler.tell(new CommandMessageE(new Submit(controlCommand, commandResponseAdapter)));
+    if (controlCommand instanceof Setup)
+        submitSetup((Setup) controlCommand); // includes logic to handle Submit with Setup config command
+    else if (controlCommand instanceof Observe)
+        submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = {
-  // process command
-  onSetup(controlCommand.asInstanceOf[Setup])
+  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = controlCommand match {
+  case setup: Setup     ⇒ submitSetup(setup) // includes logic to handle Submit with Setup config command
+  case observe: Observe ⇒ submitObserve(observe) // includes logic to handle Submit with Observe config command
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public void onSubmit(ControlCommand controlCommand) {
-    // process command
-    onSetup((Setup)controlCommand);
+    if (controlCommand instanceof Setup)
+        submitSetup((Setup) controlCommand); // includes logic to handle Submit with Setup config command
+    else if (controlCommand instanceof Observe)
+        submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command
 }</code></pre></dd>
 </dl>
 <h4><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h4>
@@ -400,29 +352,33 @@ public void onSubmit(ControlCommand controlCommand) {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = {
-  // commandHandler is a worker actor created for this component to process commands
-  commandHandler ! CommandMessageE(Oneway(controlCommand, commandResponseAdapter))
+  <pre class="prettyprint"><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = controlCommand match {
+  case setup: Setup     ⇒ onewaySetup(setup) // includes logic to handle Oneway with Setup config command
+  case observe: Observe ⇒ onewayObserve(observe) // includes logic to handle Oneway with Observe config command
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public void onOneway(ControlCommand controlCommand) {
-    // commandHandler is a worker actor created for this component to process commands
-    commandHandler.tell(new CommandMessageE(new Submit(controlCommand, commandResponseAdapter)));
+    if (controlCommand instanceof Setup)
+        onewaySetup((Setup) controlCommand); // includes logic to handle Oneway with Setup config command
+    else if (controlCommand instanceof Observe)
+        onewayObserve((Observe) controlCommand); // includes logic to handle Oneway with Observe config command
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = {
-  // process command
-  onSetup(controlCommand.asInstanceOf[Setup])
+  <pre class="prettyprint"><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = controlCommand match {
+  case setup: Setup     ⇒ onewaySetup(setup) // includes logic to handle Oneway with Setup config command
+  case observe: Observe ⇒ onewayObserve(observe) // includes logic to handle Oneway with Setup config command
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public void onOneway(ControlCommand controlCommand) {
-    // process command
-    onSetup((Setup)controlCommand);
+    if (controlCommand instanceof Setup)
+        onewaySetup((Setup) controlCommand); // includes logic to handle Oneway with Setup config command
+    else if (controlCommand instanceof Observe)
+        onewayObserve((Observe) controlCommand); // includes logic to handle Oneway with Observe config command
 }</code></pre></dd>
 </dl>
 </div>
