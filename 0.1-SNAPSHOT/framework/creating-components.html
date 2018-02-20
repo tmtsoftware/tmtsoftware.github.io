@@ -127,15 +127,15 @@ TMT Common Software (CSW)
   <pre class="prettyprint"><code class="language-scala">class AssemblyComponentHandlers(
     ctx: ActorContext[TopLevelActorMessage],
     componentInfo: ComponentInfo,
-    commandResponseManager: ActorRef[CommandResponseManagerMessage],
-    pubSubRef: ActorRef[PublisherMessage[CurrentState]],
+    commandResponseManager: CommandResponseManager,
+    currentStatePublisher: CurrentStatePublisher,
     locationService: LocationService,
     loggerFactory: LoggerFactory
 ) extends ComponentHandlers(
       ctx,
       componentInfo,
       commandResponseManager,
-      pubSubRef,
+      currentStatePublisher,
       locationService,
       loggerFactory: LoggerFactory
     )</code></pre></dd>
@@ -145,8 +145,8 @@ TMT Common Software (CSW)
 
     private final ActorContext&lt;TopLevelActorMessage&gt; ctx;
     private final ComponentInfo componentInfo;
-    private final ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager;
-    private final ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef;
+    private final CommandResponseManager commandResponseManager;
+    private final CurrentStatePublisher currentStatePublisher;
     private final ILocationService locationService;
     private ILogger log;
     private IConfigClientService configClient;
@@ -154,17 +154,17 @@ TMT Common Software (CSW)
     public JAssemblyComponentHandlers(
             akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
             ComponentInfo componentInfo,
-            ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
-            ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
+            CommandResponseManager commandResponseManager,
+            CurrentStatePublisher currentStatePublisher,
             ILocationService locationService,
             JLoggerFactory loggerFactory
 
     ) {
-        super(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
+        super(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, loggerFactory);
         this.ctx = ctx;
         this.componentInfo = componentInfo;
         this.commandResponseManager = commandResponseManager;
-        this.pubSubRef = pubSubRef;
+        this.currentStatePublisher = currentStatePublisher;
         this.locationService = locationService;
         log = loggerFactory.getLogger(this.getClass());
         configClient = JConfigClientFactory.clientApi(Adapter.toUntyped(ctx.getSystem()), locationService);
@@ -174,15 +174,15 @@ TMT Common Software (CSW)
   <pre class="prettyprint"><code class="language-scala">class HcdComponentHandlers(
     ctx: ActorContext[TopLevelActorMessage],
     componentInfo: ComponentInfo,
-    commandResponseManager: ActorRef[CommandResponseManagerMessage],
-    pubSubRef: ActorRef[PublisherMessage[CurrentState]],
+    commandResponseManager: CommandResponseManager,
+    currentStatePublisher: CurrentStatePublisher,
     locationService: LocationService,
     loggerFactory: LoggerFactory
 ) extends ComponentHandlers(
       ctx,
       componentInfo,
       commandResponseManager,
-      pubSubRef,
+      currentStatePublisher,
       locationService,
       loggerFactory: LoggerFactory
     )</code></pre></dd>
@@ -192,25 +192,25 @@ TMT Common Software (CSW)
 
     private final ActorContext&lt;TopLevelActorMessage&gt; ctx;
     private final ComponentInfo componentInfo;
-    private final ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager;
-    private final ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef;
+    private final CommandResponseManager commandResponseManager;
+    private final CurrentStatePublisher currentStatePublisher;
     private final ILocationService locationService;
     private ILogger log;
 
     public JHcdComponentHandlers(
             akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
             ComponentInfo componentInfo,
-            ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
-            ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
+            CommandResponseManager commandResponseManager,
+            CurrentStatePublisher currentStatePublisher,
             ILocationService locationService,
             JLoggerFactory loggerFactory
 
     ) {
-        super(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
+        super(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, loggerFactory);
         this.ctx = ctx;
         this.componentInfo = componentInfo;
         this.commandResponseManager = commandResponseManager;
-        this.pubSubRef = pubSubRef;
+        this.currentStatePublisher = currentStatePublisher;
         this.locationService = locationService;
         log = loggerFactory.getLogger(this.getClass());
     }</code></pre></dd>
@@ -223,15 +223,22 @@ TMT Common Software (CSW)
   <dt>Assembly/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">class AssemblyComponentBehaviorFactory extends ComponentBehaviorFactory {
-  override def handlers(
+  protected override def handlers(
       ctx: ActorContext[TopLevelActorMessage],
       componentInfo: ComponentInfo,
-      commandResponseManager: ActorRef[CommandResponseManagerMessage],
-      pubSubRef: ActorRef[PubSub.PublisherMessage[CurrentState]],
+      commandResponseManager: CommandResponseManager,
+      currentStatePublisher: CurrentStatePublisher,
       locationService: LocationService,
       loggerFactory: LoggerFactory
   ): ComponentHandlers =
-    new AssemblyComponentHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory)
+    new AssemblyComponentHandlers(
+      ctx,
+      componentInfo,
+      commandResponseManager,
+      currentStatePublisher,
+      locationService,
+      loggerFactory
+    )
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
@@ -241,26 +248,26 @@ TMT Common Software (CSW)
     public JComponentHandlers jHandlers(
             ActorContext&lt;TopLevelActorMessage&gt; ctx,
             ComponentInfo componentInfo,
-            ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
-            ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
+            CommandResponseManager commandResponseManager,
+            CurrentStatePublisher currentStatePublisher,
             ILocationService locationService,
             JLoggerFactory loggerFactory
     ) {
-        return new JAssemblyComponentHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
+        return new JAssemblyComponentHandlers(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, loggerFactory);
     }
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">class HcdComponentBehaviorFactory extends ComponentBehaviorFactory {
-  override def handlers(
+  protected override def handlers(
       ctx: ActorContext[TopLevelActorMessage],
       componentInfo: ComponentInfo,
-      commandResponseManager: ActorRef[CommandResponseManagerMessage],
-      pubSubRef: ActorRef[PubSub.PublisherMessage[CurrentState]],
+      commandResponseManager: CommandResponseManager,
+      currentStatePublisher: CurrentStatePublisher,
       locationService: LocationService,
       loggerFactory: LoggerFactory
   ): ComponentHandlers =
-    new HcdComponentHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory)
+    new HcdComponentHandlers(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, loggerFactory)
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
@@ -270,12 +277,12 @@ TMT Common Software (CSW)
     public JComponentHandlers jHandlers(
             ActorContext&lt;TopLevelActorMessage&gt; ctx,
             ComponentInfo componentInfo,
-            ActorRef&lt;CommandResponseManagerMessage&gt; commandResponseManager,
-            ActorRef&lt;PubSub.PublisherMessage&lt;CurrentState&gt;&gt; pubSubRef,
+            CommandResponseManager commandResponseManager,
+            CurrentStatePublisher currentStatePublisher,
             ILocationService locationService,
             JLoggerFactory loggerFactory
     ) {
-        return new JHcdComponentHandlers(ctx, componentInfo, commandResponseManager, pubSubRef, locationService, loggerFactory);
+        return new JHcdComponentHandlers(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, loggerFactory);
     }
 }</code></pre></dd>
 </dl>

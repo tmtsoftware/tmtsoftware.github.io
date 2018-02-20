@@ -414,7 +414,7 @@ CompletableFuture&lt;CommandResponse&gt; matchedCommandResponse =
   <pre class="prettyprint"><code class="language-java">Setup setupHcd1 = new Setup(prefix(), shortRunning(), Optional.empty()).add(encoderParam);
 Setup setupHcd2 = new Setup(prefix(), mediumRunning(), Optional.empty()).add(encoderParam);
 
-HashMap&lt;JComponentRef, Set&lt;ControlCommand&gt;&gt; componentsToCommands = new HashMap&lt;JComponentRef, Set&lt;ControlCommand&gt;&gt;() {
+HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt; componentsToCommands = new HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt;() {
     {
         put(hcdComponent, new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)));
     }
@@ -438,7 +438,7 @@ CompletableFuture&lt;CommandResponse&gt; commandResponse = hcdComponent
   <pre class="prettyprint"><code class="language-java">Setup setupHcd1 = new Setup(prefix(), shortRunning(), Optional.empty()).add(encoderParam);
 Setup setupHcd2 = new Setup(prefix(), mediumRunning(), Optional.empty()).add(encoderParam);
 
-HashMap&lt;JComponentRef, Set&lt;ControlCommand&gt;&gt; componentsToCommands = new HashMap&lt;JComponentRef, Set&lt;ControlCommand&gt;&gt;() {
+HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt; componentsToCommands = new HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt;() {
     {
         put(hcdComponent, new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)));
     }
@@ -529,7 +529,7 @@ CommandResponse actualResponse = commandResponseToBeMatched.get();
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; cmdValidationResponseF =
         new JCommandDistributor(componentsToCommands).
-                aggregatedValidationResponse(timeout, hcdActorSystem.scheduler(), ec, mat);</code></pre></dd>
+                aggregatedValidationResponse(timeout, ec, mat);</code></pre></dd>
 </dl>
 <h3><a href="#aggregated-completion-response" name="aggregated-completion-response" class="anchor"><span class="anchor-link"></span></a>aggregated completion response</h3>
 <p>A component can send one or more commands to one or more components using a <code>Map[ComponentRef, Set[ControlCommand]</code>. The utility handles subscribing for final completion result for all the commands post successful validation and get an aggregated response of completion as <code>Completed</code> if all the commands were successfully completed. An <code>Error</code> response is returned otherwise.</p>
@@ -543,7 +543,7 @@ CommandResponse actualResponse = commandResponseToBeMatched.get();
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; cmdCompletionResponseF =
         new JCommandDistributor(componentsToCommands).
-                aggregatedCompletionResponse(timeout, hcdActorSystem.scheduler(), ec, mat);</code></pre></dd>
+                aggregatedCompletionResponse(timeout, ec, mat);</code></pre></dd>
 </dl>
 </div>
 <div>
