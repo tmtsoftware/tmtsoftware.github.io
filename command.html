@@ -113,7 +113,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="command.html#artifacts" class="header">Artifacts</a></li>
     <li><a href="command.html#command-based-communication-between-components" class="header">Command based communication between components</a></li>
-    <li><a href="command.html#componentref" class="header">ComponentRef</a></li>
+    <li><a href="command.html#commandservice" class="header">CommandService</a></li>
     <li><a href="command.html#matching-state-for-command-completion" class="header">Matching state for command completion</a></li>
     <li><a href="command.html#distributing-commands" class="header">Distributing commands</a></li>
   </ul></li>
@@ -138,7 +138,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="command.html#artifacts" class="header">Artifacts</a></li>
     <li><a href="command.html#command-based-communication-between-components" class="header">Command based communication between components</a></li>
-    <li><a href="command.html#componentref" class="header">ComponentRef</a></li>
+    <li><a href="command.html#commandservice" class="header">CommandService</a></li>
     <li><a href="command.html#matching-state-for-command-completion" class="header">Matching state for command completion</a></li>
     <li><a href="command.html#distributing-commands" class="header">Distributing commands</a></li>
   </ul></li>
@@ -213,7 +213,7 @@ TMT Common Software (CSW)
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; eventualCommandResponse =
-        hcdComponent
+        hcdCmdService
                 .submit(imdInvalidCommand, timeout)
                 .thenApply(
                         response -&gt; {
@@ -235,18 +235,18 @@ TMT Common Software (CSW)
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val setupForQuery = Setup(prefix, longRunning, Some(obsId))
-assemblyComponent.submit(setupForQuery)
+assemblyCommandService.submit(setupForQuery)
 
 //do some work before querying for the result of above command as needed
 
-val eventualResponse: Future[CommandResponse] = assemblyComponent.query(setupForQuery.runId)</code></pre></dd>
+val eventualResponse: Future[CommandResponse] = assemblyCommandService.query(setupForQuery.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">hcdComponent.submit(controlCommand, timeout);
+  <pre class="prettyprint"><code class="language-java">hcdCmdService.submit(controlCommand, timeout);
 
 // do some work before querying for the result of above command as needed
 
-CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(controlCommand.runId(), timeout);</code></pre></dd>
+CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdCmdService.query(controlCommand.runId(), timeout);</code></pre></dd>
 </dl>
 <ul>
   <li><strong>Subscribe</strong> - Subscribe for getting the final state of the command asynchronously</li>
@@ -254,24 +254,24 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyComponent.submit(setup).flatMap {
-  case _: Accepted ⇒ assemblyComponent.subscribe(setup.runId)
+  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyCommandService.submit(setup).flatMap {
+  case _: Accepted ⇒ assemblyCommandService.subscribe(setup.runId)
   case _           ⇒ Future(CommandResponse.Error(setup.runId, &quot;&quot;))
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; testCommandResponse =
-        hcdComponent
+        hcdCmdService
                 .submit(controlCommand, timeout)
                 .thenCompose(commandResponse -&gt; {
                     if (commandResponse instanceof CommandResponse.Accepted)
-                        return hcdComponent.subscribe(commandResponse.runId(), timeout);
+                        return hcdCmdService.subscribe(commandResponse.runId(), timeout);
                     else
                         return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;test error&quot;));
                 });</code></pre></dd>
 </dl>
-<h2><a href="#componentref" name="componentref" class="anchor"><span class="anchor-link"></span></a>ComponentRef</h2>
-<p>When a component uses location service to discover another component, it is provided a <code>ComponentRef</code> model which not only wraps the actor reference of the component discovered, but also provides methods for communicating with the component using commands. The API can be exercised as follows for different scenarios of command based communication:</p>
+<h2><a href="#commandservice" name="commandservice" class="anchor"><span class="anchor-link"></span></a>CommandService</h2>
+<p>The command service for a component can be obtained by creating an instance of <code>CommandService</code> using the <code>AkkaLocation</code> of the component discovered using location service. This command service instance will have methods for communicating with the component using commands. The API can be exercised as follows for different scenarios of command based communication:</p>
 <h3><a href="#submit" name="submit" class="anchor"><span class="anchor-link"></span></a>submit</h3>
 <p>Submit a command and get a <code>CommandResponse</code> as a Future. The CommandResponse can be a response of validation (Accepted, Invalid) or a final Response.</p>
 <dl>
@@ -290,7 +290,7 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; eventualCommandResponse =
-        hcdComponent
+        hcdCmdService
                 .submit(imdInvalidCommand, timeout)
                 .thenApply(
                         response -&gt; {
@@ -319,7 +319,7 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture onewayCommandResponseF = hcdComponent
+  <pre class="prettyprint"><code class="language-java">CompletableFuture onewayCommandResponseF = hcdCmdService
         .oneway(setup, timeout)
         .thenAccept(initialCommandResponse -&gt; {
             if (initialCommandResponse instanceof CommandResponse.Accepted) {
@@ -335,18 +335,18 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyComponent.submit(setup).flatMap {
-  case _: Accepted ⇒ assemblyComponent.subscribe(setup.runId)
+  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyCommandService.submit(setup).flatMap {
+  case _: Accepted ⇒ assemblyCommandService.subscribe(setup.runId)
   case _           ⇒ Future(CommandResponse.Error(setup.runId, &quot;&quot;))
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; testCommandResponse =
-        hcdComponent
+        hcdCmdService
                 .submit(controlCommand, timeout)
                 .thenCompose(commandResponse -&gt; {
                     if (commandResponse instanceof CommandResponse.Accepted)
-                        return hcdComponent.subscribe(commandResponse.runId(), timeout);
+                        return hcdCmdService.subscribe(commandResponse.runId(), timeout);
                     else
                         return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;test error&quot;));
                 });</code></pre></dd>
@@ -357,18 +357,18 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val setupForQuery = Setup(prefix, longRunning, Some(obsId))
-assemblyComponent.submit(setupForQuery)
+assemblyCommandService.submit(setupForQuery)
 
 //do some work before querying for the result of above command as needed
 
-val eventualResponse: Future[CommandResponse] = assemblyComponent.query(setupForQuery.runId)</code></pre></dd>
+val eventualResponse: Future[CommandResponse] = assemblyCommandService.query(setupForQuery.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">hcdComponent.submit(controlCommand, timeout);
+  <pre class="prettyprint"><code class="language-java">hcdCmdService.submit(controlCommand, timeout);
 
 // do some work before querying for the result of above command as needed
 
-CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(controlCommand.runId(), timeout);</code></pre></dd>
+CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdCmdService.query(controlCommand.runId(), timeout);</code></pre></dd>
 </dl>
 <h3><a href="#submitandsubscribe" name="submitandsubscribe" class="anchor"><span class="anchor-link"></span></a>submitAndSubscribe</h3>
 <p>Submit a command and Subscribe for the result if it was successfully validated as <code>Accepted</code> to get a final <code>CommandResponse</code> as a Future.</p>
@@ -376,10 +376,10 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdComponent.query(cont
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val setupForSubscribe = Setup(prefix, longRunning, Some(obsId))
-val response          = assemblyComponent.submitAndSubscribe(setupForSubscribe)</code></pre></dd>
+val response          = assemblyCommandService.submitAndSubscribe(setupForSubscribe)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; finalResponseCompletableFuture = hcdComponent.submitAndSubscribe(failureResCommand1, timeout);
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; finalResponseCompletableFuture = hcdCmdService.submitAndSubscribe(failureResCommand1, timeout);
 CommandResponse actualValidationResponse = finalResponseCompletableFuture.get();</code></pre></dd>
 </dl>
 <h3><a href="#onewayandmatch" name="onewayandmatch" class="anchor"><span class="anchor-link"></span></a>onewayAndMatch</h3>
@@ -400,7 +400,7 @@ Matcher matcher1 = new Matcher(hcdLocation.componentRef().narrow(), demandMatche
 CompletableFuture&lt;MatcherResponse&gt; matcherResponse = matcher1.jStart();
 
 CompletableFuture&lt;CommandResponse&gt; matchedCommandResponse =
-        hcdComponent.onewayAndMatch(setup, stateMatcher, timeout);
+        hcdCmdService.onewayAndMatch(setup, stateMatcher, timeout);
 </code></pre></dd>
 </dl>
 <h3><a href="#submitallandgetresponse" name="submitallandgetresponse" class="anchor"><span class="anchor-link"></span></a>submitAllAndGetResponse</h3>
@@ -417,11 +417,11 @@ Setup setupHcd2 = new Setup(prefix(), mediumRunning(), Optional.empty()).add(enc
 
 HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt; componentsToCommands = new HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt;() {
     {
-        put(hcdComponent, new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)));
+        put(hcdCmdService, new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)));
     }
 };
 
-CompletableFuture&lt;CommandResponse&gt; commandResponse = hcdComponent
+CompletableFuture&lt;CommandResponse&gt; commandResponse = hcdCmdService
         .submitAllAndGetResponse(
                 new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)),
                 timeout
@@ -441,15 +441,29 @@ Setup setupHcd2 = new Setup(prefix(), mediumRunning(), Optional.empty()).add(enc
 
 HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt; componentsToCommands = new HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt;() {
     {
-        put(hcdComponent, new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)));
+        put(hcdCmdService, new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)));
     }
 };
 
-CompletableFuture&lt;CommandResponse&gt; finalCommandResponse = hcdComponent
+CompletableFuture&lt;CommandResponse&gt; finalCommandResponse = hcdCmdService
         .submitAllAndGetFinalResponse(
                 new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)),
                 timeout
         );</code></pre></dd>
+</dl>
+<h3><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>subscribeCurrentState</h3>
+<p>This method can be used to subscribe to the <a href="services/messages/states.html">CurrentState</a> of the component by providing a callback. Subscribing results into a handle of <code>CurrentStateSubscription</code> which can be used to unsubscribe the subscription.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">// subscribe to the current state of an assembly component and use a callback which forwards each received
+// element to a test probe actor
+assemblyCommandService.subscribeCurrentState(probe.ref ! _)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">// subscribe to the current state of an assembly component and use a callback which forwards each received
+// element to a test probe actor
+CurrentStateSubscription subscription = hcdCmdService.subscribeCurrentState(currentState -&gt; probe.ref().tell(currentState));</code></pre></dd>
 </dl>
 <h2><a href="#matching-state-for-command-completion" name="matching-state-for-command-completion" class="anchor"><span class="anchor-link"></span></a>Matching state for command completion</h2>
 <p>A <code>Matcher</code> is provided for matching state against a desired state. The matcher is created with a source of state identified by its ActorRef and an instance of <code>StateMatcher</code> which defines the state and criteria for matching. Several instances of <code>StateMatcher</code> are available for common use. These are <code>DemandMatcherAll</code> for matching the entire <code>DemandState</code> against the current state, <code>DemandMatcher</code> for matching state with or without units against the current state and <code>PresenceMatcher</code> which checks if a matching state is found with a provided prefix. </p>
@@ -496,7 +510,7 @@ Matcher matcher = new Matcher(hcdLocation.componentRef().narrow(), demandMatcher
 CompletableFuture&lt;MatcherResponse&gt; matcherResponseFuture = matcher.jStart();
 
 // submit command and if the command is successfully validated, check for matching of demand state against current state
-CompletableFuture&lt;CommandResponse&gt; commandResponseToBeMatched = hcdComponent
+CompletableFuture&lt;CommandResponse&gt; commandResponseToBeMatched = hcdCmdService
         .oneway(setup, timeout)
         .thenCompose(initialCommandResponse -&gt; {
             if (initialCommandResponse instanceof CommandResponse.Accepted) {
@@ -524,7 +538,7 @@ CommandResponse actualResponse = commandResponseToBeMatched.get();
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val aggregatedValidationResponse = CommandDistributor(
-  Map(assemblyComponent → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
+  Map(assemblyCommandService → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
 ).aggregatedValidationResponse()</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -538,7 +552,7 @@ CommandResponse actualResponse = commandResponseToBeMatched.get();
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val aggregatedResponse = CommandDistributor(
-  Map(assemblyComponent → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
+  Map(assemblyCommandService → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
 ).aggregatedCompletionResponse()</code></pre></dd>
   <dt>Java</dt>
   <dd>
