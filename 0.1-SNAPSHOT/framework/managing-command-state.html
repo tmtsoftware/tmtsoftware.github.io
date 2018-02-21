@@ -115,6 +115,7 @@ TMT Common Software (CSW)
     <li><a href="../framework/managing-command-state.html#addsubcommand" class="header">addSubCommand</a></li>
     <li><a href="../framework/managing-command-state.html#updatesubcommand" class="header">updateSubCommand</a></li>
     <li><a href="../framework/managing-command-state.html#query" class="header">query</a></li>
+    <li><a href="../framework/managing-command-state.html#subscribe" class="header">subscribe</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -139,6 +140,7 @@ TMT Common Software (CSW)
     <li><a href="../framework/managing-command-state.html#addsubcommand" class="header">addSubCommand</a></li>
     <li><a href="../framework/managing-command-state.html#updatesubcommand" class="header">updateSubCommand</a></li>
     <li><a href="../framework/managing-command-state.html#query" class="header">query</a></li>
+    <li><a href="../framework/managing-command-state.html#subscribe" class="header">subscribe</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -178,19 +180,44 @@ hcdComponent.subscribe(controlCommand.runId).map {
   case _: Completed ⇒
     controlCommand.runId match {
       case id if id == shortSetup.runId ⇒
-        commandResponseManager.updateSubCommand(id, Completed(id))
         currentStatePublisher.publish(CurrentState(shortSetup.source, Set(choiceKey.set(shortCmdCompleted))))
+        commandResponseManager.updateSubCommand(id, Completed(id))
       case id if id == mediumSetup.runId ⇒
-        commandResponseManager.updateSubCommand(id, Completed(id))
         currentStatePublisher.publish(CurrentState(mediumSetup.source, Set(choiceKey.set(mediumCmdCompleted))))
-      case id if id == longSetup.runId ⇒
         commandResponseManager.updateSubCommand(id, Completed(id))
+      case id if id == longSetup.runId ⇒
         currentStatePublisher.publish(CurrentState(longSetup.source, Set(choiceKey.set(longCmdCompleted))))
+        commandResponseManager.updateSubCommand(id, Completed(id))
     }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>It may be the case that the component wants to avoid automatic inference of a command based on the result of the sub-commands. It should refrain from updating the status of the sub-commands in this case and update the status of the parent command directly as required.</p></div>
 <h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>query</h3>
 <p>Query for the result of a command that is already present in the component&rsquo;s CommandResponseManager.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">// publish the current status of the component based on the current status of a command
+commandResponseManager
+  .query(controlCommand.runId)
+  .map(
+    _ ⇒ currentStatePublisher.publish(CurrentState(controlCommand.source, Set(choiceKey.set(longRunningCurrentStatus))))
+  )</code></pre></dd>
+</dl>
+<h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
+<p>Subscribe for the result of a command that is already present in the component&rsquo;s CommandResponseManager and perform action on the change in status.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">// subscribe to the status of original command received and publish the state when its status changes to
+// Completed
+commandResponseManager.subscribe(
+  controlCommand.runId, {
+    case Completed(_) ⇒
+      currentStatePublisher.publish(CurrentState(controlCommand.source, Set(choiceKey.set(longRunningCmdCompleted))))
+    case _ ⇒
+  }
+)</code></pre></dd>
+</dl>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/framework/managing-command-state.md" title="Edit this page" class="md-source-file md-edit">
