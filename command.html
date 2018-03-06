@@ -273,9 +273,10 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdCmdService.query(con
 <h2><a href="#commandservice" name="commandservice" class="anchor"><span class="anchor-link"></span></a>CommandService</h2>
 <p>The command service for a component can be obtained by creating an instance of <code>CommandService</code> using the <code>AkkaLocation</code> of the component discovered using location service. This command service instance will have methods for communicating with the component using commands. The API can be exercised as follows for different scenarios of command based communication:</p>
 <h3><a href="#submit" name="submit" class="anchor"><span class="anchor-link"></span></a>submit</h3>
-<p>Submit a command and get a <code>CommandResponse</code> as a Future. The CommandResponse can be a response of validation (Accepted, Invalid) or a final Response.</p>
+<p>Submit a command and get a <code>CommandResponse</code> as a Future. The CommandResponse can be a response of validation (Accepted, Invalid) or a final Response in case of immediate completion.</p>
 <dl>
-  <dt>Scala</dt>
+  <dt>Scala/immediate-response
+  </dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val eventualResponse: Future[CommandResponse] = async {
   await(assemblyComponent.submit(Setup(prefix, immediateCmd, obsId))) match {
@@ -287,7 +288,8 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdCmdService.query(con
       otherResponse
   }
 }</code></pre></dd>
-  <dt>Java</dt>
+  <dt>Java/immediate-response
+  </dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse&gt; eventualCommandResponse =
         hcdCmdService
@@ -300,16 +302,49 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdCmdService.query(con
                             return response;
                         }
                 );</code></pre></dd>
+  <dt>Scala/validation-response
+  </dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">// `setupWithTimeoutMatcher` is a sample setup payload intended to be used when command response is not determined
+// using matcher
+val submitCommandResponseF: Future[Unit] = async {
+  val initialResponse: CommandResponse = await(assemblyComponent.submit(setupWithTimeoutMatcher))
+  initialResponse match {
+    case accepted: Accepted ⇒
+    // do Something
+    case invalid: Invalid ⇒
+    // do Something
+    case x ⇒
+    // do Something
+  }
+}</code></pre></dd>
+  <dt>Java/validation-response
+  </dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">CompletableFuture submitCommandResponseF = hcdCmdService
+        .oneway(setup, timeout)
+        .thenAccept(initialCommandResponse -&gt; {
+            if (initialCommandResponse instanceof CommandResponse.Accepted) {
+                //do something
+            } else if (initialCommandResponse instanceof CommandResponse.Invalid) {
+                //do something
+            } else {
+                //do something
+            }
+        });
+</code></pre></dd>
 </dl>
 <h3><a href="#oneway" name="oneway" class="anchor"><span class="anchor-link"></span></a>oneway</h3>
 <p>Send a command as a Oneway and get a <code>CommandResponse</code> as a Future. The CommandResponse can be a response of validation (Accepted, Invalid) or a final Response.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val onewayCommandResponseF: Future[Unit] = async {
-  val initialResponse = await(assemblyComponent.oneway(setupWithTimeoutMatcher))
+  <pre class="prettyprint"><code class="language-scala">// `setupWithTimeoutMatcher` is a sample setup payload intended to be used when command response is not determined
+// using matcher
+val onewayCommandResponseF: Future[Unit] = async {
+  val initialResponse: CommandResponse = await(assemblyComponent.oneway(setupWithTimeoutMatcher))
   initialResponse match {
-    case _: Accepted ⇒
+    case accepted: Accepted ⇒
     // do Something
     case invalid: Invalid ⇒
     // do Something
@@ -323,6 +358,8 @@ CompletableFuture&lt;CommandResponse&gt; queryResponse = hcdCmdService.query(con
         .oneway(setup, timeout)
         .thenAccept(initialCommandResponse -&gt; {
             if (initialCommandResponse instanceof CommandResponse.Accepted) {
+                //do something
+            } else if (initialCommandResponse instanceof CommandResponse.Invalid) {
                 //do something
             } else {
                 //do something
