@@ -159,8 +159,7 @@ TMT Common Software (CSW)
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// after validation of the controlCommand, update its status of successful validation as Accepted
-commandResponseManager.addOrUpdateCommand(controlCommand.runId, Accepted(controlCommand.runId))</code></pre></dd>
-  <dt>Java</dt>
+commandResponseManager.addOrUpdateCommand(controlCommand.runId, Accepted(controlCommand.runId))</code></pre>Java</dd>
   <dd>
   <pre class="prettyprint"><code class="language-java">// after validation of the controlCommand, update its status of successful validation as Accepted
 Accepted accepted = new Accepted(controlCommand.runId());
@@ -201,11 +200,11 @@ hcdComponent.subscribe(controlCommand.runId).map {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">// publish the current status of the component based on the current status of a command
+  <pre class="prettyprint"><code class="language-scala">// query CommandResponseManager to get the current status of Command, for example: Accepted/Completed/Invalid etc.
 commandResponseManager
   .query(controlCommand.runId)
   .map(
-    _ ⇒ currentStatePublisher.publish(CurrentState(controlCommand.source, Set(choiceKey.set(longRunningCurrentStatus))))
+    _ ⇒ () // may choose to publish current state to subscribers or do other operations
   )</code></pre></dd>
 </dl>
 <h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
