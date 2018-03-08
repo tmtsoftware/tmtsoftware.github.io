@@ -111,6 +111,7 @@ TMT Common Software (CSW)
 <ul>
   <li><a href="../framework/deploying-components.html#deploying-components" class="header">Deploying Components</a>
   <ul>
+    <li><a href="../framework/deploying-components.html#containercmd" class="header">ContainerCmd</a></li>
     <li><a href="../framework/deploying-components.html#container-for-deployment" class="header">Container for deployment</a></li>
     <li><a href="../framework/deploying-components.html#standalone-components" class="header">Standalone components</a></li>
   </ul></li>
@@ -133,6 +134,7 @@ TMT Common Software (CSW)
 <ul>
   <li><a href="../framework/deploying-components.html#deploying-components" class="header">Deploying Components</a>
   <ul>
+    <li><a href="../framework/deploying-components.html#containercmd" class="header">ContainerCmd</a></li>
     <li><a href="../framework/deploying-components.html#container-for-deployment" class="header">Container for deployment</a></li>
     <li><a href="../framework/deploying-components.html#standalone-components" class="header">Standalone components</a></li>
   </ul></li>
@@ -146,7 +148,9 @@ TMT Common Software (CSW)
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h2><a href="#deploying-components" name="deploying-components" class="anchor"><span class="anchor-link"></span></a>Deploying Components</h2>
-<p>A main application needs to be created which uses framework provided utility <code>csw.apps.containercmd.ContainerCmd</code> to start a container or standalone component. The utility supports following parameters which can be provided as arguments to the application :</p>
+<h3><a href="#containercmd" name="containercmd" class="anchor"><span class="anchor-link"></span></a>ContainerCmd</h3>
+<p><code>ContainerCmd</code> is a helper utility provided as a part of framework. This helps component writers to start their components inside container. This support running single component in standa</p>
+<p>A main application needs to be created which uses framework provided utility <code>csw.framework.deploy.containercmd.ContainerCmd</code> to start a container or standalone component. The utility supports following parameters which can be provided as arguments to the application :</p>
 <ul>
   <li>fully qualified path of the configuration file</li>
   <li><strong>local</strong> if the above path is a path to a file available on local disk. If this argument is not provided the file will be looked up in the <code>configuration service</code> using the same path.</li>
@@ -169,16 +173,13 @@ TMT Common Software (CSW)
     }
 
 }</code></pre></dd>
-</dl>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>It is not necessary to have name of the application as ContainerCmdApp/JContainerCmdApp, user can choose any name.</p></div>
 <p>Starting a <strong>standalone</strong> component from a <strong>local</strong> configuration file</p>
-<pre><code>```
-SampleAssempbyCmdApp standalone local /tmp/config/assembly.conf
-```
+<pre><code>`./container-cmd-app standalone local /assembly/config/assembly.conf`
 </code></pre>
 <p>Starting a <strong>container</strong> component from a configuration file available in <strong>configuration service</strong></p>
-<pre><code>```
-SampleContainerCmdApp /sample/config/assembly.conf
-```
+<pre><code>`./container-cmd-app /assembly/config/assembly.conf`
 </code></pre>
 <h3><a href="#container-for-deployment" name="container-for-deployment" class="anchor"><span class="anchor-link"></span></a>Container for deployment</h3>
 <p>A container is a component which starts one or more Components and keeps track of the components within a single JVM process. When started, the container also registers itself with the Location Service. The components to be hosted by the container is defined using a <code>ContainerInfo</code> model which has a set of ComponentInfo objects. It is usually described as a configuration file but can also be created programmatically.</p>

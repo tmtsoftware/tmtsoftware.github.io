@@ -117,10 +117,17 @@
       </span>
       
       <p class="shortcomment cmt">The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data).</p><div class="fullcomment"><div class="comment cmt"><h4> Location Service </h4><p>The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data).
-The Location Service helps you to find out the hostname and port number for a service,
-as well as other information for determining the correct URI to use, such as path,
-actor system name etc.</p><p>Location Service supports three types of services as follows: Akka, Tcp and HTTP based services.</p><p>Before calling LocationServiceFactory.make() to get an handle of LocationService,
-it is recommended to have below environment variables set to System global environments or system properties:</p><ul><li>interfaceName (The network interface where cluster is formed.) Ex. interfaceName=eth0 if not set, first interface by priority will be picked</li><li>clusterSeeds (The host address of the seedNode of the cluster) Ex. clusterSeeds=&quot;192.168.121.10:3552, 192.168.121.11:3552&quot;</li><li>clusterPort (Specify port on which to start this service) Ex. clusterPort=3552 if this property is not set, service will start on random port</li></ul><p>To use location service, first you have to get an instance of location service using below code:</p><pre><span class="kw">val</span> locationService: LocationService = LocationServiceFactory.make()</pre><p>To register an Akka actor based service, you can use code like this:</p><pre>locationService.register(AkkaRegistration(AkkaConnection(componentId), self))</pre><p>Where self is a reference to the services own actorRef.</p><p>To register an HTTP based service, you can make a call like this:</p><pre>locationService.register(HttpRegistration(HttpConnection(componentId), Port, Path))</pre><p>Here you specify port and path like &quot;/hcd/trombone&quot;, hostname for the local host is automatically determined.</p><p>To register an Tcp based service, you can make a call like this:</p><pre>locationService.register(TcpRegistration(TcpConnection(componentId), Port))</pre><p>Here you specify port and hostname for the local host is automatically determined.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
+The Location Service helps you resolve the hostname and port number for a services which can be used for further communication,
+In case of Akka connection, It helps you to resolve component reference with which you can send messages
+as well as other information for example, logAdminActorRef which is used to dynamically change the log level of component.</p><p>Location Service supports three types of services as follows: Akka, Tcp and HTTP based services.</p><p>Before calling LocationServiceFactory.make() to get an handle of LocationService,
+it is recommended to have below environment variables set to System global environments or system properties:</p><ul><li>interfaceName (The network interface where akka cluster is formed.) Ex. interfaceName=eth0 if not set, first inet4 interface by priority will be picked</li><li>clusterSeeds (The host address and port of the seedNodes of the cluster) Ex. clusterSeeds=&quot;192.168.121.10:3552, 192.168.121.11:3552&quot;</li><li>clusterPort (Specify port on which to start this service) Ex. clusterPort=3552 if this property is not set, service will start on random port.</li></ul><p>To use location service, first you have to get an instance of location service using below code:</p><pre><span class="kw">val</span> locationService: LocationService = LocationServiceFactory.make()</pre><h5> Register API </h5><p>To register an Akka actor based service, you can use code like this:</p><pre>locationService.register(AkkaRegistration(AkkaConnection(componentId), self))</pre><p>Where self is a reference to the services own actorRef.</p><p>To register an HTTP based service, you can make a call like this:</p><pre>locationService.register(HttpRegistration(HttpConnection(componentId), Port, Path))</pre><p>Here you specify port and path like &quot;/hcd/trombone&quot;, hostname for the local host is automatically determined.</p><p>To register an Tcp based service, you can make a call like this:</p><pre>locationService.register(TcpRegistration(TcpConnection(componentId), Port))</pre><p>Here you specify port and hostname for the local host is automatically determined.</p><h5> Resolve/Find API </h5><p>If you are unsure of whether service/component entry exists in location service or not and fine to wait for its availability for some duration,
+then you can use below API to resolve Akka connection:</p><pre>locationService.resolve(TcpConnection(componentId), <span class="num">2.</span>seconds))</pre><p>If you are sure that service/component entry exists in location service,
+then you can use below API to find Akka connection from local replicated database:</p><pre>locationService.find(TcpConnection(componentId))</pre><h5> Resolve and Communicate with Component </h5><p>If you want to resolve some component and then want to send messages to that component,
+then you should use resolve/find API which gives Location.
+Using this Location, you can create command service like</p><pre><span class="kw">new</span> CommandService(akkaLocation)}}
+
+then using <span class="kw">this</span> instance of command service, you can send messages to component.
+For more details, visit command service documentation.</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
     </li><li name="csw.services.location.commons" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="commons"></a><a id="commons:commons"></a>
       <span class="permalink">
@@ -195,12 +202,12 @@ it is recommended to have below environment variables set to System global envir
                         <a href="IRegistrationResult.html" title="IRegistrationResult represents successful registration of a location">IRegistrationResult</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="JComponentType.html" title="Java API for component types."></a>
-                        <a href="JComponentType.html" title="Java API for component types.">JComponentType</a>
+                        <a class="class" href="JComponentType.html" title="Helper class for Java to get the handle of ComponentType which is fundamental to LocationService library"></a>
+                        <a href="JComponentType.html" title="Helper class for Java to get the handle of ComponentType which is fundamental to LocationService library">JComponentType</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="JConnectionType.html" title="Java API for connection type."></a>
-                        <a href="JConnectionType.html" title="Java API for connection type.">JConnectionType</a>
+                        <a class="class" href="JConnectionType.html" title="Helper class for Java to get the handle of ConnectionType which is fundamental to LocationService library"></a>
+                        <a href="JConnectionType.html" title="Helper class for Java to get the handle of ConnectionType which is fundamental to LocationService library">JConnectionType</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="JLocationServiceFactory$.html" title="The factory is used to create ILocationService instance."></a>
@@ -334,7 +341,7 @@ it is recommended to have below environment variables set to System global envir
       
       <p class="shortcomment cmt">IRegistrationResult represents successful registration of a location
 </p>
-    </li><li name="csw.services.location.javadsl.JComponentType" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="csw.services.location.javadsl.JComponentType" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="JComponentTypeextendsObject"></a><a id="JComponentType:JComponentType"></a>
       <span class="permalink">
       <a href="../../../../csw/services/location/javadsl/index.html#JComponentTypeextendsObject" title="Permalink">
@@ -346,12 +353,12 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Java API for component types." href="JComponentType.html"><span class="name">JComponentType</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+        <a title="Helper class for Java to get the handle of ComponentType which is fundamental to LocationService library" href="JComponentType.html"><span class="name">JComponentType</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
       </span>
       
-      <p class="shortcomment cmt">Java API for component types.</p><div class="fullcomment"><div class="comment cmt"><p>Java API for component types. It encapsulates <code>ComponentType</code> which is fundamental to LocationService library.
-</p></div></div>
-    </li><li name="csw.services.location.javadsl.JConnectionType" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <p class="shortcomment cmt">Helper class for Java to get the handle of <code>ComponentType</code> which is fundamental to LocationService library
+</p>
+    </li><li name="csw.services.location.javadsl.JConnectionType" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="JConnectionTypeextendsObject"></a><a id="JConnectionType:JConnectionType"></a>
       <span class="permalink">
       <a href="../../../../csw/services/location/javadsl/index.html#JConnectionTypeextendsObject" title="Permalink">
@@ -363,11 +370,11 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Java API for connection type." href="JConnectionType.html"><span class="name">JConnectionType</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+        <a title="Helper class for Java to get the handle of ConnectionType which is fundamental to LocationService library" href="JConnectionType.html"><span class="name">JConnectionType</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
       </span>
       
-      <p class="shortcomment cmt">Java API for connection type.</p><div class="fullcomment"><div class="comment cmt"><p>Java API for connection type. It encapsulates <code>ConnectionType</code> which is fundamental to LocationService library.
-</p></div></div>
+      <p class="shortcomment cmt">Helper class for Java to get the handle of <code>ConnectionType</code> which is fundamental to LocationService library
+</p>
     </li></ol>
             </div>
 
