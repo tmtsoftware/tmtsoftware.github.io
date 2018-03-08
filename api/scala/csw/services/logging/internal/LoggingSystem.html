@@ -140,8 +140,8 @@
                         <a href="GetComponentLogMetadata.html" title="">GetComponentLogMetadata</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="JLogger.html" title=""></a>
-                        <a href="JLogger.html" title="">JLogger</a>
+                        <a class="class" href="JLoggerImpl.html" title=""></a>
+                        <a href="JLoggerImpl.html" title="">JLoggerImpl</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="LastAkkaMessage$.html" title=""></a>
@@ -154,10 +154,6 @@
                         <span class="separator"></span>
                         <a class="trait" href="LogActorMessages.html" title=""></a>
                         <a href="LogActorMessages.html" title="">LogActorMessages</a>
-                      </li><li class="current-entities indented4">
-                        <span class="separator"></span>
-                        <a class="object" href="LogAdminActor$.html" title=""></a>
-                        <a href="LogAdminActor$.html" title="">LogAdminActor</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="LogAkka.html" title=""></a>
@@ -176,16 +172,12 @@
                         <a href="LogSlf4j.html" title="">LogSlf4j</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="object" href="LoggingLevels$.html" title=""></a>
-                        <a href="LoggingLevels$.html" title="">LoggingLevels</a>
+                        <a class="class" href="LoggerImpl.html" title=""></a>
+                        <a href="LoggerImpl.html" title="">LoggerImpl</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="" title="This class is responsible for programmatic interaction with the configuration of the logging system."></a>
                         <a href="" title="This class is responsible for programmatic interaction with the configuration of the logging system.">LoggingSystem</a>
-                      </li><li class="current-entities indented4">
-                        <span class="separator"></span>
-                        <a class="object" href="MessageHandler$.html" title="Acts as a single point of entry for messages from various loggers and redirects them to the log actor"></a>
-                        <a href="MessageHandler$.html" title="Acts as a single point of entry for messages from various loggers and redirects them to the log actor">MessageHandler</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="SetAkkaLevel.html" title=""></a>
@@ -212,8 +204,8 @@
                         <a href="StopLogging$.html" title="">StopLogging</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="trait" href="Timing.html" title="Include this trait in classes you want to time."></a>
-                        <a href="Timing.html" title="Include this trait in classes you want to time.">Timing</a>
+                        <a class="class" href="TimeActor.html" title="Actor responsible for writing logs which time a functional block"></a>
+                        <a href="TimeActor.html" title="Actor responsible for writing logs which time a functional block">TimeActor</a>
                       </li>
               </ul>
             </div>
@@ -243,7 +235,10 @@
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>This class is responsible for programmatic interaction with the configuration of the logging system. It initializes
-the appenders, starts the log actor and manages clean up of logging system.</p></div><div class="toggleContainer block">
+appenders, starts the log actor and manages clean up of logging system. Until and unless this class is instantiated
+all(akka, slf4j and tmt) the logs are enqueued in local queue. Once it is instantiated, the queue is emptied and all
+the logs are forwarded to configured appenders.
+</p></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -291,26 +286,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="csw.services.logging.internal.LoggingSystem#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(name:String,version:String,host:String,system:akka.actor.ActorSystem):csw.services.logging.internal.LoggingSystem"></a><a id="&lt;init&gt;:LoggingSystem"></a>
-      <span class="permalink">
-      <a href="../../../../csw/services/logging/internal/LoggingSystem.html#&lt;init&gt;(name:String,version:String,host:String,system:akka.actor.ActorSystem):csw.services.logging.internal.LoggingSystem" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LoggingSystem</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="version">version: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="host">host: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="system">system: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.8/akka-actor_2.12-2.5.8-javadoc.jar/!/akka/actor/ActorSystem.html#akka.actor.ActorSystem" class="extype" name="akka.actor.ActorSystem">ActorSystem</a></span>)</span>
-      </span>
-      
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>name of the service (to log).</p></dd><dt class="param">version</dt><dd class="cmt"><p>version of the service (to log).</p></dd><dt class="param">host</dt><dd class="cmt"><p>host name (to log).</p></dd><dt class="param">system</dt><dd class="cmt"><p>actor system which will be used to create log actors</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
 
         
 
@@ -417,8 +393,6 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
-              
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
@@ -457,6 +431,28 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <span class="permalink">
+      <a href="../../../../csw/services/logging/internal/LoggingSystem.html#finalize():Unit" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
     </li><li name="csw.services.logging.internal.LoggingSystem#getAkkaLevel" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getAkkaLevel:csw.services.logging.internal.LoggingLevels.Levels"></a><a id="getAkkaLevel:Levels"></a>
       <span class="permalink">
@@ -469,7 +465,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getAkkaLevel</span><span class="result">: <a href="LoggingLevels$$Levels.html" class="extype" name="csw.services.logging.internal.LoggingLevels.Levels">Levels</a></span>
+        <span class="name">getAkkaLevel</span><span class="result">: <span class="extype" name="csw.services.logging.internal.LoggingLevels.Levels">Levels</span></span>
       </span>
       
       <p class="shortcomment cmt">Get Akka logging levels</p><div class="fullcomment"><div class="comment cmt"><p>Get Akka logging levels</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the current and default Akka logging levels.</p></dd></dl></div>
@@ -507,8 +503,6 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
-              
         </dd></dl></div>
     </li><li name="csw.services.logging.internal.LoggingSystem#getDefaultLogLevel" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getDefaultLogLevel:csw.services.logging.internal.LoggingLevels.Levels"></a><a id="getDefaultLogLevel:Levels"></a>
@@ -522,7 +516,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getDefaultLogLevel</span><span class="result">: <a href="LoggingLevels$$Levels.html" class="extype" name="csw.services.logging.internal.LoggingLevels.Levels">Levels</a></span>
+        <span class="name">getDefaultLogLevel</span><span class="result">: <span class="extype" name="csw.services.logging.internal.LoggingLevels.Levels">Levels</span></span>
       </span>
       
       <p class="shortcomment cmt">Get logging levels.</p><div class="fullcomment"><div class="comment cmt"><p>Get logging levels.</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the current and default logging levels.</p></dd></dl></div>
@@ -554,7 +548,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getSlf4jLevel</span><span class="result">: <a href="LoggingLevels$$Levels.html" class="extype" name="csw.services.logging.internal.LoggingLevels.Levels">Levels</a></span>
+        <span class="name">getSlf4jLevel</span><span class="result">: <span class="extype" name="csw.services.logging.internal.LoggingLevels.Levels">Levels</span></span>
       </span>
       
       <p class="shortcomment cmt">Get the Slf4j logging levels.</p><div class="fullcomment"><div class="comment cmt"><p>Get the Slf4j logging levels.</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the current and default Slf4j logging levels.</p></dd></dl></div>
@@ -575,8 +569,6 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
-              
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
               
         </dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -607,7 +599,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">javaStop</span><span class="params">()</span><span class="result">: <span class="extype" name="java.util.concurrent.CompletableFuture">CompletableFuture</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.8/akka-actor_2.12-2.5.8-javadoc.jar/!/akka/Done.html#akka.Done" class="extype" name="akka.Done">Done</a>]</span>
+        <span class="name">javaStop</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#java.util.concurrent.CompletableFuture" class="extype" name="java.util.concurrent.CompletableFuture">CompletableFuture</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.8/akka-actor_2.12-2.5.8-javadoc.jar/!/akka/Done.html#akka.Done" class="extype" name="akka.Done">Done</a>]</span>
       </span>
       
       
@@ -645,8 +637,6 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
-              
         </dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -666,8 +656,6 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
-              
         </dd></dl></div>
     </li><li name="csw.services.logging.internal.LoggingSystem#setAkkaLevel" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="setAkkaLevel(level:csw.services.logging.internal.LoggingLevels.Level):Unit"></a><a id="setAkkaLevel(Level):Unit"></a>
@@ -681,7 +669,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">setAkkaLevel</span><span class="params">(<span name="level">level: <a href="LoggingLevels$$Level.html" class="extype" name="csw.services.logging.internal.LoggingLevels.Level">Level</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">setAkkaLevel</span><span class="params">(<span name="level">level: <span class="extype" name="csw.services.logging.internal.LoggingLevels.Level">Level</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <p class="shortcomment cmt">Changes the Akka logger logging level.</p><div class="fullcomment"><div class="comment cmt"><p>Changes the Akka logger logging level.</p></div><dl class="paramcmts block"><dt class="param">level</dt><dd class="cmt"><p>the new logging level for the Akka logger.</p></dd></dl></div>
@@ -713,7 +701,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">setComponentLogLevel</span><span class="params">(<span name="componentName">componentName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="level">level: <a href="LoggingLevels$$Level.html" class="extype" name="csw.services.logging.internal.LoggingLevels.Level">Level</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">setComponentLogLevel</span><span class="params">(<span name="componentName">componentName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="level">level: <span class="extype" name="csw.services.logging.internal.LoggingLevels.Level">Level</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       
@@ -729,7 +717,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">setDefaultLogLevel</span><span class="params">(<span name="level">level: <a href="LoggingLevels$$Level.html" class="extype" name="csw.services.logging.internal.LoggingLevels.Level">Level</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">setDefaultLogLevel</span><span class="params">(<span name="level">level: <span class="extype" name="csw.services.logging.internal.LoggingLevels.Level">Level</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <p class="shortcomment cmt">Changes the logger API logging level.</p><div class="fullcomment"><div class="comment cmt"><p>Changes the logger API logging level.</p></div><dl class="paramcmts block"><dt class="param">level</dt><dd class="cmt"><p>the new logging level for the logger API.</p></dd></dl></div>
@@ -745,7 +733,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">setSlf4jLevel</span><span class="params">(<span name="level">level: <a href="LoggingLevels$$Level.html" class="extype" name="csw.services.logging.internal.LoggingLevels.Level">Level</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">setSlf4jLevel</span><span class="params">(<span name="level">level: <span class="extype" name="csw.services.logging.internal.LoggingLevels.Level">Level</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <p class="shortcomment cmt">Changes the slf4j logging level.</p><div class="fullcomment"><div class="comment cmt"><p>Changes the slf4j logging level.</p></div><dl class="paramcmts block"><dt class="param">level</dt><dd class="cmt"><p>the new logging level for slf4j.</p></dd></dl></div>
@@ -825,7 +813,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#java.lang.String" class="extype" name="java.lang.String">String</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -903,36 +891,7 @@ the appenders, starts the log actor and manages clean up of logging system.</p><
 
         
 
-        <div class="values members">
-              <h3>Deprecated Value Members</h3>
-              <ol><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="finalize():Unit"></a>
-      <span class="permalink">
-      <a href="../../../../csw/services/logging/internal/LoggingSystem.html#finalize():Unit" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version ) see corresponding Javadoc for more information.">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
-                <span class="name">@Deprecated</span>
-              
-                <span class="name">@deprecated</span>
-              
-                <span class="name">@throws</span><span class="args">(<span>
-      
-      <span class="symbol">classOf[java.lang.Throwable]</span>
-    </span>)</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version )</i> see corresponding Javadoc for more information.</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
         </div>
 
         <div id="inheritedMembers">

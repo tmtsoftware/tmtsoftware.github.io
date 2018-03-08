@@ -117,10 +117,17 @@
       </span>
       
       <p class="shortcomment cmt">The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data).</p><div class="fullcomment"><div class="comment cmt"><h4> Location Service </h4><p>The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data).
-The Location Service helps you to find out the hostname and port number for a service,
-as well as other information for determining the correct URI to use, such as path,
-actor system name etc.</p><p>Location Service supports three types of services as follows: Akka, Tcp and HTTP based services.</p><p>Before calling LocationServiceFactory.make() to get an handle of LocationService,
-it is recommended to have below environment variables set to System global environments or system properties:</p><ul><li>interfaceName (The network interface where cluster is formed.) Ex. interfaceName=eth0 if not set, first interface by priority will be picked</li><li>clusterSeeds (The host address of the seedNode of the cluster) Ex. clusterSeeds=&quot;192.168.121.10:3552, 192.168.121.11:3552&quot;</li><li>clusterPort (Specify port on which to start this service) Ex. clusterPort=3552 if this property is not set, service will start on random port</li></ul><p>To use location service, first you have to get an instance of location service using below code:</p><pre><span class="kw">val</span> locationService: LocationService = LocationServiceFactory.make()</pre><p>To register an Akka actor based service, you can use code like this:</p><pre>locationService.register(AkkaRegistration(AkkaConnection(componentId), self))</pre><p>Where self is a reference to the services own actorRef.</p><p>To register an HTTP based service, you can make a call like this:</p><pre>locationService.register(HttpRegistration(HttpConnection(componentId), Port, Path))</pre><p>Here you specify port and path like &quot;/hcd/trombone&quot;, hostname for the local host is automatically determined.</p><p>To register an Tcp based service, you can make a call like this:</p><pre>locationService.register(TcpRegistration(TcpConnection(componentId), Port))</pre><p>Here you specify port and hostname for the local host is automatically determined.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
+The Location Service helps you resolve the hostname and port number for a services which can be used for further communication,
+In case of Akka connection, It helps you to resolve component reference with which you can send messages
+as well as other information for example, logAdminActorRef which is used to dynamically change the log level of component.</p><p>Location Service supports three types of services as follows: Akka, Tcp and HTTP based services.</p><p>Before calling LocationServiceFactory.make() to get an handle of LocationService,
+it is recommended to have below environment variables set to System global environments or system properties:</p><ul><li>interfaceName (The network interface where akka cluster is formed.) Ex. interfaceName=eth0 if not set, first inet4 interface by priority will be picked</li><li>clusterSeeds (The host address and port of the seedNodes of the cluster) Ex. clusterSeeds=&quot;192.168.121.10:3552, 192.168.121.11:3552&quot;</li><li>clusterPort (Specify port on which to start this service) Ex. clusterPort=3552 if this property is not set, service will start on random port.</li></ul><p>To use location service, first you have to get an instance of location service using below code:</p><pre><span class="kw">val</span> locationService: LocationService = LocationServiceFactory.make()</pre><h5> Register API </h5><p>To register an Akka actor based service, you can use code like this:</p><pre>locationService.register(AkkaRegistration(AkkaConnection(componentId), self))</pre><p>Where self is a reference to the services own actorRef.</p><p>To register an HTTP based service, you can make a call like this:</p><pre>locationService.register(HttpRegistration(HttpConnection(componentId), Port, Path))</pre><p>Here you specify port and path like &quot;/hcd/trombone&quot;, hostname for the local host is automatically determined.</p><p>To register an Tcp based service, you can make a call like this:</p><pre>locationService.register(TcpRegistration(TcpConnection(componentId), Port))</pre><p>Here you specify port and hostname for the local host is automatically determined.</p><h5> Resolve/Find API </h5><p>If you are unsure of whether service/component entry exists in location service or not and fine to wait for its availability for some duration,
+then you can use below API to resolve Akka connection:</p><pre>locationService.resolve(TcpConnection(componentId), <span class="num">2.</span>seconds))</pre><p>If you are sure that service/component entry exists in location service,
+then you can use below API to find Akka connection from local replicated database:</p><pre>locationService.find(TcpConnection(componentId))</pre><h5> Resolve and Communicate with Component </h5><p>If you want to resolve some component and then want to send messages to that component,
+then you should use resolve/find API which gives Location.
+Using this Location, you can create command service like</p><pre><span class="kw">new</span> CommandService(akkaLocation)}}
+
+then using <span class="kw">this</span> instance of command service, you can send messages to component.
+For more details, visit command service documentation.</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
     </li><li name="csw.services.location.exceptions" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="exceptions"></a><a id="exceptions:exceptions"></a>
       <span class="permalink">
@@ -190,7 +197,7 @@ it is recommended to have below environment variables set to System global envir
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a>, <span class="extype" name="java.lang.RuntimeException">RuntimeException</span>, <span class="extype" name="java.lang.Exception">Exception</span>, <span class="extype" name="java.lang.Throwable">Throwable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/RuntimeException.html#java.lang.RuntimeException" class="extype" name="java.lang.RuntimeException">RuntimeException</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html#java.lang.Exception" class="extype" name="java.lang.Exception">Exception</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#java.lang.Throwable" class="extype" name="java.lang.Throwable">Throwable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html#java.io.Serializable" class="extype" name="java.io.Serializable">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></div>
         </div></div>
         
 
@@ -322,7 +329,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">addSuppressed</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="java.lang.Throwable">Throwable</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">addSuppressed</span><span class="params">(<span name="arg0">arg0: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#java.lang.Throwable" class="extype" name="java.lang.Throwable">Throwable</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -359,8 +366,6 @@ it is recommended to have below environment variables set to System global envir
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
-              
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
               
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -412,10 +417,32 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">fillInStackTrace</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Throwable">Throwable</span></span>
+        <span class="name">fillInStackTrace</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#java.lang.Throwable" class="extype" name="java.lang.Throwable">Throwable</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <span class="permalink">
+      <a href="../../../../csw/services/location/exceptions/UnregistrationFailed.html#finalize():Unit" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
     </li><li name="java.lang.Throwable#getCause" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getCause():Throwable"></a>
       <span class="permalink">
@@ -428,7 +455,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getCause</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Throwable">Throwable</span></span>
+        <span class="name">getCause</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#java.lang.Throwable" class="extype" name="java.lang.Throwable">Throwable</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -450,8 +477,6 @@ it is recommended to have below environment variables set to System global envir
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
-              
         </dd></dl></div>
     </li><li name="java.lang.Throwable#getLocalizedMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getLocalizedMessage():String"></a>
@@ -465,7 +490,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getLocalizedMessage</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">getLocalizedMessage</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#java.lang.String" class="extype" name="java.lang.String">String</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -481,7 +506,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getMessage</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">getMessage</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#java.lang.String" class="extype" name="java.lang.String">String</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -497,7 +522,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getStackTrace</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="java.lang.StackTraceElement">StackTraceElement</span>]</span>
+        <span class="name">getStackTrace</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StackTraceElement.html#java.lang.StackTraceElement" class="extype" name="java.lang.StackTraceElement">StackTraceElement</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -513,7 +538,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getSuppressed</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="java.lang.Throwable">Throwable</span>]</span>
+        <span class="name">getSuppressed</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#java.lang.Throwable" class="extype" name="java.lang.Throwable">Throwable</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -529,7 +554,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initCause</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="java.lang.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="java.lang.Throwable">Throwable</span></span>
+        <span class="name">initCause</span><span class="params">(<span name="arg0">arg0: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#java.lang.Throwable" class="extype" name="java.lang.Throwable">Throwable</a></span>)</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#java.lang.Throwable" class="extype" name="java.lang.Throwable">Throwable</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -583,8 +608,6 @@ it is recommended to have below environment variables set to System global envir
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
-              
         </dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -604,8 +627,6 @@ it is recommended to have below environment variables set to System global envir
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
-                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
-              
         </dd></dl></div>
     </li><li name="java.lang.Throwable#printStackTrace" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="printStackTrace(x$1:java.io.PrintWriter):Unit"></a><a id="printStackTrace(PrintWriter):Unit"></a>
@@ -619,7 +640,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">printStackTrace</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="java.io.PrintWriter">PrintWriter</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">printStackTrace</span><span class="params">(<span name="arg0">arg0: <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html#java.io.PrintWriter" class="extype" name="java.io.PrintWriter">PrintWriter</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -635,7 +656,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">printStackTrace</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="java.io.PrintStream">PrintStream</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">printStackTrace</span><span class="params">(<span name="arg0">arg0: <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html#java.io.PrintStream" class="extype" name="java.io.PrintStream">PrintStream</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -667,7 +688,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">setStackTrace</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="java.lang.StackTraceElement">StackTraceElement</span>]</span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">setStackTrace</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Array">Array</span>[<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StackTraceElement.html#java.lang.StackTraceElement" class="extype" name="java.lang.StackTraceElement">StackTraceElement</a>]</span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
@@ -699,7 +720,7 @@ it is recommended to have below environment variables set to System global envir
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#java.lang.String" class="extype" name="java.lang.String">String</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable → AnyRef → Any</dd></dl></div>
@@ -777,36 +798,7 @@ it is recommended to have below environment variables set to System global envir
 
         
 
-        <div class="values members">
-              <h3>Deprecated Value Members</h3>
-              <ol><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="finalize():Unit"></a>
-      <span class="permalink">
-      <a href="../../../../csw/services/location/exceptions/UnregistrationFailed.html#finalize():Unit" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version ) see corresponding Javadoc for more information.">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
-                <span class="name">@Deprecated</span>
-              
-                <span class="name">@deprecated</span>
-              
-                <span class="name">@throws</span><span class="args">(<span>
-      
-      <span class="symbol">classOf[java.lang.Throwable]</span>
-    </span>)</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version )</i> see corresponding Javadoc for more information.</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
         </div>
 
         <div id="inheritedMembers">
@@ -817,13 +809,13 @@ it is recommended to have below environment variables set to System global envir
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a></h3>
             </div><div class="parent" name="java.lang.RuntimeException">
-              <h3>Inherited from <span class="extype" name="java.lang.RuntimeException">RuntimeException</span></h3>
+              <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/RuntimeException.html#java.lang.RuntimeException" class="extype" name="java.lang.RuntimeException">RuntimeException</a></h3>
             </div><div class="parent" name="java.lang.Exception">
-              <h3>Inherited from <span class="extype" name="java.lang.Exception">Exception</span></h3>
+              <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html#java.lang.Exception" class="extype" name="java.lang.Exception">Exception</a></h3>
             </div><div class="parent" name="java.lang.Throwable">
-              <h3>Inherited from <span class="extype" name="java.lang.Throwable">Throwable</span></h3>
+              <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#java.lang.Throwable" class="extype" name="java.lang.Throwable">Throwable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+              <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html#java.io.Serializable" class="extype" name="java.io.Serializable">Serializable</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
