@@ -161,64 +161,30 @@ TMT Common Software (CSW)
   <dd>
   <pre class="prettyprint"><code class="language-scala">override def initialize(): Future[Unit] = async {
 
-  // Initialization could include following steps :
-
-  // 1. fetch config (preferably from configuration service)
-  val calculationConfig = await(getAssemblyConfig)
-
-  // 2. create a worker actor which is used by this assembly
-  val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.make(calculationConfig))
-
-  // 3. find a Hcd connection from the connections provided in componentInfo
-  val maybeConnection =
-    componentInfo.connections.find(connection ⇒ connection.componentId.componentType == ComponentType.HCD)
-
-  // 4. If an Hcd is found as a connection, resolve its location from location service and create other
-  // required worker actors required by this assembly
-  maybeConnection match {
-    case hcdConnection @ Some(hcd) ⇒
-      locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
-        case Some(akkaLocation) ⇒
-          runningHcds = runningHcds.updated(hcdConnection.get, Some(akkaLocation.componentRef))
-          diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.make(runningHcds(maybeConnection.get), Some(worker)))
-          commandHandler = ctx.spawnAnonymous(CommandHandler.make(calculationConfig, runningHcds(maybeConnection.get)))
-        case None ⇒ throw new RuntimeException(&quot;Could not resolve hcd location, Initialization failure.&quot;)
-      }
-    case None ⇒ Future.successful(Unit)
-  }
+  /*
+ * Initialization could include following steps :
+ * 1. fetch config (preferably from configuration service)
+ * 2. create a worker actor which is used by this assembly
+ * 3. find a Hcd connection from the connections provided in componentInfo
+ * 4. If an Hcd is found as a connection, resolve its location from location service and create other
+ *    required worker actors required by this assembly
+ * */
 
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
+    /*
+     * Initialization could include following steps :
+     * 1. fetch config (preferably from configuration service)
+     * 2. create a worker actor which is used by this assembly
+     * 3. find a Hcd connection from the connections provided in componentInfo
+     * 4. If an Hcd is found as a connection, resolve its location from location service and create other
+     *    required worker actors required by this assembly
+     * */
 
-    // fetch config (preferably from configuration service)
-    CompletableFuture&lt;ConfigData&gt; configDataCompletableFuture = getAssemblyConfig();
-
-    // create a worker actor which is used by this assembly
-    CompletableFuture&lt;ActorRef&lt;WorkerActorMsg&gt;&gt; worker =
-            configDataCompletableFuture.thenApply(config -&gt; ctx.spawnAnonymous(WorkerActor.make(config)));
-
-    // find a Hcd connection from the connections provided in componentInfo
-    Optional&lt;Connection&gt; mayBeConnection = componentInfo.getConnections().stream()
-            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD)
-            .findFirst();
-
-    // If an Hcd is found as a connection, resolve its location from location service and create other
-    // required worker actors required by this assembly
-    Optional&lt;CompletableFuture&lt;Void&gt;&gt; voidCompletableFuture = mayBeConnection.map(connection -&gt; {
-        CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; eventualHcdLocation = locationService.resolve(connection.&lt;AkkaLocation&gt;of(), FiniteDuration.apply(5, TimeUnit.SECONDS));
-        return worker.thenAcceptBoth(eventualHcdLocation, (workerActor, hcdLocation) -&gt; {
-            if(!hcdLocation.isPresent())
-                throw new HcdNotFoundException();
-            else
-                runningHcds.put(connection, Optional.of(hcdLocation.get().componentRef()));
-            diagPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.jMake(Optional.of(hcdLocation.get().componentRef()), Optional.of(workerActor)));
-        });
-    });
-
-    return voidCompletableFuture.get().thenApply(x -&gt; null);
+    return new CompletableFuture&lt;&gt;();
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
