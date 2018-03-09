@@ -151,6 +151,9 @@ TMT Common Software (CSW)
     private final ILocationService locationService;
     private ILogger log;
     private IConfigClientService configClient;
+    private Map&lt;Connection, Optional&lt;ActorRef&lt;ComponentMessage&gt;&gt;&gt; runningHcds;
+    private ActorRef&lt;DiagnosticPublisherMessages&gt; diagnosticPublisher;
+    private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
 
     public JAssemblyComponentHandlers(
             akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
@@ -169,6 +172,9 @@ TMT Common Software (CSW)
         this.locationService = locationService;
         log = loggerFactory.getLogger(this.getClass());
         configClient = JConfigClientFactory.clientApi(Adapter.toUntyped(ctx.getSystem()), locationService);
+
+        runningHcds = new HashMap&lt;&gt;();
+        commandResponseAdapter = new TestProbe&lt;CommandResponse&gt;(ctx.getSystem(), TestKitSettings.apply(ctx.getSystem())).ref();
     }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
@@ -197,6 +203,11 @@ TMT Common Software (CSW)
     private final CurrentStatePublisher currentStatePublisher;
     private final ILocationService locationService;
     private ILogger log;
+    private IConfigClientService configClient;
+    private ConfigData hcdConfig;
+    private ActorRef&lt;WorkerActorMsg&gt; worker;
+    private int current;
+    private int stats;
 
     public JHcdComponentHandlers(
             akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,

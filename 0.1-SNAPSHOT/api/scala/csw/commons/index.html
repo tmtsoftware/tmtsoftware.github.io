@@ -132,93 +132,38 @@
         <a title="This project contains the framework for creating components, such as HCDs and Assemblies." href="../framework/index.html"><span class="name">framework</span></a>
       </span>
       
-      <p class="shortcomment cmt">This project contains the framework for creating components, such as HCDs and Assemblies.</p><div class="fullcomment"><div class="comment cmt"><h4> Framework </h4><p>This project contains the framework for creating components, such as HCDs and Assemblies.</p><p>A component is implemented by extending the <a href="../framework/scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">csw.framework.scaladsl.ComponentHandlers</a> base class.
-These handlers are executed under an Supervisor Actor: <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>
-and TLA Actor (Top Level Actor): <a href="../framework/internal/component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a>
-defined in the framework which handles the lifecycle and supervision of this component.</p><p>Components are controlled by a <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a> actor
-that intercepts common messages (ex. Shutdown, Restart) or lifecycle messages (ex. GoOffline or GoOnline)
-sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../messages/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state, do not receive <a href="../messages/scaladsl/CommandMessage.html" class="extype" name="csw.messages.scaladsl.CommandMessage">csw.messages.scaladsl.CommandMessage</a>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
-LocationService only when Component moves to <a href="../messages/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state.
-That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <a href="../messages/scaladsl/CommandMessage.html" class="extype" name="csw.messages.scaladsl.CommandMessage">csw.messages.scaladsl.CommandMessage</a></p><h5> Important Actors in Framework </h5><p>- <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>
-Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../framework/exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../framework/exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a> based on the messages it receives.
-Decision to handle external messages or not is taken by the supervisor based on its current <a href="../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>.
-For complete list of supported messages per <a href="../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <a href="../framework/internal/component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a>
-Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
-And it also maintains its own state <a href="../framework/internal/component/ComponentLifecycleState.html" class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</a> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
-This is where framework code meets Component specific code.</p><p>- <a href="../framework/internal/pubsub/PubSubBehavior.html" class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</a>
-This actor is created by framework which is wrapped into <a href="../framework/scaladsl/CurrentStatePublisher.html" class="extype" name="csw.framework.scaladsl.CurrentStatePublisher">csw.framework.scaladsl.CurrentStatePublisher</a> for easy interaction with this actor
-and then passed to component handlers so that component can publish their <a href="../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> published by other component (ex. HCD)
-then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> to all subscribers.</p><p>- <a href="../framework/internal/container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a>
-When multiple components needs to be started in container, then this actor is created.
-Job of this actor is just to logically group multiple components and support <a href="../messages/scaladsl/SupervisorContainerCommonMessages$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages">csw.messages.scaladsl.SupervisorContainerCommonMessages</a>.
-It receives <a href="../messages/scaladsl/SupervisorContainerCommonMessages$$Shutdown$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown">csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown</a> or <a href="../messages/scaladsl/SupervisorContainerCommonMessages$$Restart$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart">csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart</a> message
-and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <a href="../framework/deploy/containercmd/ContainerCmd.html" class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</a>
-ContainerCmd is a helper utility provided by framework to start multiple components in container mode
-or single component in Standalone mode.</p><h5> Example of Container Config File </h5><p>Here is an example of a config file for creating a container with the name <i>IRIS_Container</i> that
-contains one assembly (named <i>Filter</i>) and depends on the services of two HCDs (<i>Instrument_Filter</i> and <i>Disperser</i>).
-Factory class for assembly is <code>csw.common.components.framework.SampleComponentBehaviorFactory</code>.
+      <p class="shortcomment cmt">This project contains the framework for creating components, such as HCDs and Assemblies.</p><div class="fullcomment"><div class="comment cmt"><p>This project contains the framework for creating components, such as HCDs and Assemblies.</p><p>A Component is composed of an actor instance of <a href="../framework/internal/component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a> and an
+implementation of <a href="../framework/scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">csw.framework.scaladsl.ComponentHandlers</a> which defines a given component.
+Each component is created by an actor instance of <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>.</p><p>Components are either created by an actor instance of <a href="../framework/internal/container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a> or as a
+Standalone actor instance of <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a> from a configuration file.</p><h5> Container Config Files </h5><p>Here is an example of a config file for creating a container with the name <i>Container-1</i> that
+contains one assembly (named <i>Assembly-1</i>) and depends on the services of two HCDs (<i>HCD-2A</i> and <i>HCD-2B</i>).
+The assembly is implemented by the given class (<code>csw.services.pkg.TestAssembly</code>).
 A <code>Supervisor</code> actor will be created to manage the assembly, which includes registering it with the
 location service, using the given name and prefix. The prefix can be used to distribute parts of the
 configurations to different HCDs. HCDs register themselves with the Location Service and specify a unique
-prefix that can be used for this purpose.</p><pre>name = <span class="lit">"IRIS_Container"</span>
-components: [
-  {
-    name = <span class="lit">"Filter"</span>
-    componentType = assembly
-    behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix = tcs.mobie.blue.filter
-    locationServiceUsage = RegisterOnly
+prefix that can be used for this purpose.</p><pre>container {
+name = Container-<span class="num">1</span>
+components {
+  Assembly-<span class="num">1</span> {
+    <span class="kw">type</span> = Assembly
+    <span class="kw">class</span> = csw.pkgDemo.assembly1.Assembly1
+    prefix = tcs.base.assembly1
+    connectionType: [akka]
     connections = [
       {
-        name: Instrument_Filter
-        componentType: hcd
-        connectionType: akka
-      },
+        name: HCD-<span class="num">2</span>A
+        <span class="kw">type</span>: HCD
+        connectionType: [akka]
+      }
       {
-        name: Disperser
-        componentType: hcd
-        connectionType: akka
+        name: HCD-<span class="num">2</span>B
+        <span class="kw">type</span>: HCD
+        connectionType: [akka]
       }
     ]
-  },
-  {
-    name = <span class="lit">"Instrument_Filter"</span>
-    componentType = hcd
-    behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix = tcs.mobie.blue.filter
-    locationServiceUsage = RegisterOnly
-  },
-  {
-    name = <span class="lit">"Disperser"</span>
-    componentType: hcd
-    behaviorFactoryClassName: csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix: tcs.mobie.blue.disperser
-    locationServiceUsage = RegisterOnly
   }
-]</pre><h5> Example of Standalone Config File </h5><pre>name = <span class="lit">"IFS_Detector"</span>
-componentType = hcd
-behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-prefix = iris.ifs
-locationServiceUsage = RegisterOnly
-connections = []</pre><p>- <a href="../framework/deploy/hostconfig/HostConfig.html" class="extype" name="csw.framework.deploy.hostconfig.HostConfig">csw.framework.deploy.hostconfig.HostConfig</a>
-This is just a helper to create host configuration application.
-This support starting multiple containers on a given host machine and each container will have single/multiple components.</p><h5> Example of Host Config file </h5><pre># This is a host configuration file which contains list of containers to be spawned by host configuration app
-containers: [
-    {
-      # mode can be one of Container or Standalone
-      mode: <span class="lit">"Container"</span>
-      # path of individual container configuration file
-      configFilePath: <span class="lit">"/resources/assemblyContainer.conf"</span>
-      # provide <span class="lit">'Remote'</span> <span class="kw">if</span> file needs to fetched from config service <span class="kw">else</span>
-      # provide <span class="lit">'Local'</span> to fetch file from local machine
-      configFileLocation: <span class="lit">"Local"</span>
-    },
-    {
-      mode: <span class="lit">"Standalone"</span>
-      configFilePath: <span class="lit">"/resources/hcdStandalone.conf"</span>
-      configFileLocation: <span class="lit">"Local"</span>
-    }
-]</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+ }
+}</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages" visbl="pub" class="indented2 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="messages"></a><a id="messages:messages"></a>
       <span class="permalink">
@@ -231,54 +176,10 @@ containers: [
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="This project is intended to hold reusable models and messages used throughout the csw source code." href="../messages/index.html"><span class="name">messages</span></a>
+        <a title="" href="../messages/index.html"><span class="name">messages</span></a>
       </span>
       
-      <p class="shortcomment cmt">This project is intended to hold reusable models and messages used throughout the csw source code.</p><div class="fullcomment"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
-Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
-These are all based on type-safe keys and items (a set of values with optional units).
-Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="../messages/commands/Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="../messages/commands/SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="../messages/commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="../messages/commands/Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="../messages/commands/Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="../messages/commands/Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../messages/events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../messages/events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../messages/events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="../messages/commands/matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
-One of the use case for using matcher is when Assembly sends <a href="../messages/scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
-and in response to this command HCD keeps publishing its current state.
-Then Assembly can use Matcher with the matching definition as provided by <a href="../messages/commands/matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
-match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../messages/params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="../messages/params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
-new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
-that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
-of the given type.</p><p>Following <a href="../messages/params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
-        |  Primitive   |      Scala KeyType      |       Java KeyType        |
-        +--------------+-------------------------+---------------------------+
-        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
-        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
-        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
-        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
-        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
-        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
-        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
-        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
-        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
-        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
-        | ----------   | ----------              | ----------                |
-        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
-        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
-        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
-        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
-        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
-        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
-        | ----------   | ----------              | ----------                |
-        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
-        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
-        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
-        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
-        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
-        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
-        | ----------   | ----------              | ----------                |
-        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
-        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
-        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
-        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.services" visbl="pub" class="indented2 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="services"></a><a id="services:services"></a>
       <span class="permalink">

@@ -116,93 +116,38 @@
         <a title="This project contains the framework for creating components, such as HCDs and Assemblies." href="../framework/index.html"><span class="name">framework</span></a>
       </span>
       
-      <p class="shortcomment cmt">This project contains the framework for creating components, such as HCDs and Assemblies.</p><div class="fullcomment"><div class="comment cmt"><h4> Framework </h4><p>This project contains the framework for creating components, such as HCDs and Assemblies.</p><p>A component is implemented by extending the <a href="../framework/scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">csw.framework.scaladsl.ComponentHandlers</a> base class.
-These handlers are executed under an Supervisor Actor: <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>
-and TLA Actor (Top Level Actor): <a href="../framework/internal/component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a>
-defined in the framework which handles the lifecycle and supervision of this component.</p><p>Components are controlled by a <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a> actor
-that intercepts common messages (ex. Shutdown, Restart) or lifecycle messages (ex. GoOffline or GoOnline)
-sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state, do not receive <a href="scaladsl/CommandMessage.html" class="extype" name="csw.messages.scaladsl.CommandMessage">csw.messages.scaladsl.CommandMessage</a>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
-LocationService only when Component moves to <a href="framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state.
-That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <a href="scaladsl/CommandMessage.html" class="extype" name="csw.messages.scaladsl.CommandMessage">csw.messages.scaladsl.CommandMessage</a></p><h5> Important Actors in Framework </h5><p>- <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>
-Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../framework/exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../framework/exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a> based on the messages it receives.
-Decision to handle external messages or not is taken by the supervisor based on its current <a href="framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>.
-For complete list of supported messages per <a href="framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <a href="../framework/internal/component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a>
-Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
-And it also maintains its own state <a href="../framework/internal/component/ComponentLifecycleState.html" class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</a> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
-This is where framework code meets Component specific code.</p><p>- <a href="../framework/internal/pubsub/PubSubBehavior.html" class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</a>
-This actor is created by framework which is wrapped into <a href="../framework/scaladsl/CurrentStatePublisher.html" class="extype" name="csw.framework.scaladsl.CurrentStatePublisher">csw.framework.scaladsl.CurrentStatePublisher</a> for easy interaction with this actor
-and then passed to component handlers so that component can publish their <a href="params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> published by other component (ex. HCD)
-then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> to all subscribers.</p><p>- <a href="../framework/internal/container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a>
-When multiple components needs to be started in container, then this actor is created.
-Job of this actor is just to logically group multiple components and support <a href="scaladsl/SupervisorContainerCommonMessages$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages">csw.messages.scaladsl.SupervisorContainerCommonMessages</a>.
-It receives <a href="scaladsl/SupervisorContainerCommonMessages$$Shutdown$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown">csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown</a> or <a href="scaladsl/SupervisorContainerCommonMessages$$Restart$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart">csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart</a> message
-and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <a href="../framework/deploy/containercmd/ContainerCmd.html" class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</a>
-ContainerCmd is a helper utility provided by framework to start multiple components in container mode
-or single component in Standalone mode.</p><h5> Example of Container Config File </h5><p>Here is an example of a config file for creating a container with the name <i>IRIS_Container</i> that
-contains one assembly (named <i>Filter</i>) and depends on the services of two HCDs (<i>Instrument_Filter</i> and <i>Disperser</i>).
-Factory class for assembly is <code>csw.common.components.framework.SampleComponentBehaviorFactory</code>.
+      <p class="shortcomment cmt">This project contains the framework for creating components, such as HCDs and Assemblies.</p><div class="fullcomment"><div class="comment cmt"><p>This project contains the framework for creating components, such as HCDs and Assemblies.</p><p>A Component is composed of an actor instance of <a href="../framework/internal/component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a> and an
+implementation of <a href="../framework/scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">csw.framework.scaladsl.ComponentHandlers</a> which defines a given component.
+Each component is created by an actor instance of <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>.</p><p>Components are either created by an actor instance of <a href="../framework/internal/container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a> or as a
+Standalone actor instance of <a href="../framework/internal/supervisor/SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a> from a configuration file.</p><h5> Container Config Files </h5><p>Here is an example of a config file for creating a container with the name <i>Container-1</i> that
+contains one assembly (named <i>Assembly-1</i>) and depends on the services of two HCDs (<i>HCD-2A</i> and <i>HCD-2B</i>).
+The assembly is implemented by the given class (<code>csw.services.pkg.TestAssembly</code>).
 A <code>Supervisor</code> actor will be created to manage the assembly, which includes registering it with the
 location service, using the given name and prefix. The prefix can be used to distribute parts of the
 configurations to different HCDs. HCDs register themselves with the Location Service and specify a unique
-prefix that can be used for this purpose.</p><pre>name = <span class="lit">"IRIS_Container"</span>
-components: [
-  {
-    name = <span class="lit">"Filter"</span>
-    componentType = assembly
-    behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix = tcs.mobie.blue.filter
-    locationServiceUsage = RegisterOnly
+prefix that can be used for this purpose.</p><pre>container {
+name = Container-<span class="num">1</span>
+components {
+  Assembly-<span class="num">1</span> {
+    <span class="kw">type</span> = Assembly
+    <span class="kw">class</span> = csw.pkgDemo.assembly1.Assembly1
+    prefix = tcs.base.assembly1
+    connectionType: [akka]
     connections = [
       {
-        name: Instrument_Filter
-        componentType: hcd
-        connectionType: akka
-      },
+        name: HCD-<span class="num">2</span>A
+        <span class="kw">type</span>: HCD
+        connectionType: [akka]
+      }
       {
-        name: Disperser
-        componentType: hcd
-        connectionType: akka
+        name: HCD-<span class="num">2</span>B
+        <span class="kw">type</span>: HCD
+        connectionType: [akka]
       }
     ]
-  },
-  {
-    name = <span class="lit">"Instrument_Filter"</span>
-    componentType = hcd
-    behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix = tcs.mobie.blue.filter
-    locationServiceUsage = RegisterOnly
-  },
-  {
-    name = <span class="lit">"Disperser"</span>
-    componentType: hcd
-    behaviorFactoryClassName: csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix: tcs.mobie.blue.disperser
-    locationServiceUsage = RegisterOnly
   }
-]</pre><h5> Example of Standalone Config File </h5><pre>name = <span class="lit">"IFS_Detector"</span>
-componentType = hcd
-behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-prefix = iris.ifs
-locationServiceUsage = RegisterOnly
-connections = []</pre><p>- <a href="../framework/deploy/hostconfig/HostConfig.html" class="extype" name="csw.framework.deploy.hostconfig.HostConfig">csw.framework.deploy.hostconfig.HostConfig</a>
-This is just a helper to create host configuration application.
-This support starting multiple containers on a given host machine and each container will have single/multiple components.</p><h5> Example of Host Config file </h5><pre># This is a host configuration file which contains list of containers to be spawned by host configuration app
-containers: [
-    {
-      # mode can be one of Container or Standalone
-      mode: <span class="lit">"Container"</span>
-      # path of individual container configuration file
-      configFilePath: <span class="lit">"/resources/assemblyContainer.conf"</span>
-      # provide <span class="lit">'Remote'</span> <span class="kw">if</span> file needs to fetched from config service <span class="kw">else</span>
-      # provide <span class="lit">'Local'</span> to fetch file from local machine
-      configFileLocation: <span class="lit">"Local"</span>
-    },
-    {
-      mode: <span class="lit">"Standalone"</span>
-      configFilePath: <span class="lit">"/resources/hcdStandalone.conf"</span>
-      configFileLocation: <span class="lit">"Local"</span>
-    }
-]</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+ }
+}</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages" visbl="pub" class="indented2 current" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="messages"></a><a id="messages:messages"></a>
       <span class="permalink">
@@ -218,51 +163,7 @@ containers: [
         <span class="name">messages</span>
       </span>
       
-      <p class="shortcomment cmt">This project is intended to hold reusable models and messages used throughout the csw source code.</p><div class="fullcomment"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
-Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
-These are all based on type-safe keys and items (a set of values with optional units).
-Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="commands/Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="commands/SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="commands/Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="commands/Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="commands/Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="commands/matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
-One of the use case for using matcher is when Assembly sends <a href="scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
-and in response to this command HCD keeps publishing its current state.
-Then Assembly can use Matcher with the matching definition as provided by <a href="commands/matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
-match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
-new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
-that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
-of the given type.</p><p>Following <a href="params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
-        |  Primitive   |      Scala KeyType      |       Java KeyType        |
-        +--------------+-------------------------+---------------------------+
-        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
-        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
-        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
-        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
-        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
-        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
-        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
-        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
-        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
-        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
-        | ----------   | ----------              | ----------                |
-        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
-        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
-        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
-        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
-        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
-        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
-        | ----------   | ----------              | ----------                |
-        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
-        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
-        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
-        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
-        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
-        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
-        | ----------   | ----------              | ----------                |
-        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
-        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
-        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
-        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages.commands" visbl="pub" class="indented3 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="commands"></a><a id="commands:commands"></a>
       <span class="permalink">
@@ -276,22 +177,6 @@ of the given type.</p><p>Following <a href="params/generics/KeyType.html" class=
       </span>
       <span class="symbol">
         <a title="" href="commands/index.html"><span class="name">commands</span></a>
-      </span>
-      
-      
-    </li><li name="csw.messages.commons" visbl="pub" class="indented3 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="commons"></a><a id="commons:commons"></a>
-      <span class="permalink">
-      <a href="../../csw/messages/index.html#commons" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">package</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="commons/index.html"><span class="name">commons</span></a>
       </span>
       
       
@@ -359,6 +244,22 @@ of the given type.</p><p>Following <a href="params/generics/KeyType.html" class=
       </span>
       
       
+    </li><li name="csw.messages.models" visbl="pub" class="indented3 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="models"></a><a id="models:models"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#models" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="models/index.html"><span class="name">models</span></a>
+      </span>
+      
+      
     </li><li name="csw.messages.params" visbl="pub" class="indented3 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="params"></a><a id="params:params"></a>
       <span class="permalink">
@@ -375,26 +276,106 @@ of the given type.</p><p>Following <a href="params/generics/KeyType.html" class=
       </span>
       
       
-    </li><li name="csw.messages.scaladsl" visbl="pub" class="indented3 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="scaladsl"></a><a id="scaladsl:scaladsl"></a>
-      <span class="permalink">
-      <a href="../../csw/messages/index.html#scaladsl" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">package</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="scaladsl/index.html"><span class="name">scaladsl</span></a>
-      </span>
-      
-      
     </li><li class="current-entities indented2">
+                        <a class="object" href="CommandMessage$.html" title=""></a>
+                        <a class="trait" href="CommandMessage.html" title=""></a>
+                        <a href="CommandMessage.html" title="">CommandMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="CommandResponseManagerMessage$.html" title=""></a>
+                        <a class="trait" href="CommandResponseManagerMessage.html" title=""></a>
+                        <a href="CommandResponseManagerMessage.html" title="">CommandResponseManagerMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="CommonMessage.html" title=""></a>
+                        <a href="CommonMessage.html" title="">CommonMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="ComponentCommonMessage$.html" title=""></a>
+                        <a class="trait" href="ComponentCommonMessage.html" title=""></a>
+                        <a href="ComponentCommonMessage.html" title="">ComponentCommonMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="ComponentMessage.html" title=""></a>
+                        <a href="ComponentMessage.html" title="">ComponentMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="ContainerCommonMessage$.html" title=""></a>
+                        <a class="trait" href="ContainerCommonMessage.html" title=""></a>
+                        <a href="ContainerCommonMessage.html" title="">ContainerCommonMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="ContainerExternalMessage.html" title=""></a>
+                        <a href="ContainerExternalMessage.html" title="">ContainerExternalMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="ContainerIdleMessage$.html" title=""></a>
+                        <a class="trait" href="ContainerIdleMessage.html" title=""></a>
+                        <a href="ContainerIdleMessage.html" title="">ContainerIdleMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="ContainerMessage.html" title=""></a>
+                        <a href="ContainerMessage.html" title="">ContainerMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="FromComponentLifecycleMessage$.html" title=""></a>
+                        <a class="trait" href="FromComponentLifecycleMessage.html" title=""></a>
+                        <a href="FromComponentLifecycleMessage.html" title="">FromComponentLifecycleMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="FromSupervisorMessage$.html" title=""></a>
+                        <a class="trait" href="FromSupervisorMessage.html" title=""></a>
+                        <a href="FromSupervisorMessage.html" title="">FromSupervisorMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="class" href="LockAboutToTimeout.html" title=""></a>
+                        <a href="LockAboutToTimeout.html" title="">LockAboutToTimeout</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="class" href="LockTimedout.html" title=""></a>
+                        <a href="LockTimedout.html" title="">LockTimedout</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="RunningMessage$.html" title=""></a>
+                        <a class="trait" href="RunningMessage.html" title=""></a>
+                        <a href="RunningMessage.html" title="">RunningMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="object" href="SupervisorContainerCommonMessages$.html" title=""></a>
+                        <a href="SupervisorContainerCommonMessages$.html" title="">SupervisorContainerCommonMessages</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="SupervisorIdleMessage$.html" title=""></a>
+                        <a class="trait" href="SupervisorIdleMessage.html" title=""></a>
+                        <a href="SupervisorIdleMessage.html" title="">SupervisorIdleMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="SupervisorInternalRunningMessage$.html" title=""></a>
+                        <a class="trait" href="SupervisorInternalRunningMessage.html" title=""></a>
+                        <a href="SupervisorInternalRunningMessage.html" title="">SupervisorInternalRunningMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="SupervisorLockMessage$.html" title=""></a>
+                        <a class="trait" href="SupervisorLockMessage.html" title=""></a>
+                        <a href="SupervisorLockMessage.html" title="">SupervisorLockMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="SupervisorMessage.html" title=""></a>
+                        <a href="SupervisorMessage.html" title="">SupervisorMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="SupervisorRestartMessage$.html" title=""></a>
+                        <a class="trait" href="SupervisorRestartMessage.html" title=""></a>
+                        <a href="SupervisorRestartMessage.html" title="">SupervisorRestartMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="SupervisorRunningMessage.html" title=""></a>
+                        <a href="SupervisorRunningMessage.html" title="">SupervisorRunningMessage</a>
+                      </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="trait" href="TMTSerializable.html" title="Marker trait for serializing domain models over the wire."></a>
                         <a href="TMTSerializable.html" title="Marker trait for serializing domain models over the wire.">TMTSerializable</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="TopLevelActorCommonMessage$.html" title=""></a>
+                        <a class="trait" href="TopLevelActorCommonMessage.html" title=""></a>
+                        <a href="TopLevelActorCommonMessage.html" title="">TopLevelActorCommonMessage</a>
+                      </li><li class="current-entities indented2">
+                        <a class="object" href="TopLevelActorIdleMessage$.html" title=""></a>
+                        <a class="trait" href="TopLevelActorIdleMessage.html" title=""></a>
+                        <a href="TopLevelActorIdleMessage.html" title="">TopLevelActorIdleMessage</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="TopLevelActorMessage.html" title=""></a>
+                        <a href="TopLevelActorMessage.html" title="">TopLevelActorMessage</a>
                       </li><li name="csw.services" visbl="pub" class="indented2 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="services"></a><a id="services:services"></a>
       <span class="permalink">
@@ -439,59 +420,34 @@ of the given type.</p><p>Following <a href="params/generics/KeyType.html" class=
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
-Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
-These are all based on type-safe keys and items (a set of values with optional units).
-Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="commands/Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="commands/SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="commands/Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="commands/Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="commands/Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="commands/matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
-One of the use case for using matcher is when Assembly sends <a href="scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
-and in response to this command HCD keeps publishing its current state.
-Then Assembly can use Matcher with the matching definition as provided by <a href="commands/matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
-match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
-new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
-that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
-of the given type.</p><p>Following <a href="params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
-        |  Primitive   |      Scala KeyType      |       Java KeyType        |
-        +--------------+-------------------------+---------------------------+
-        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
-        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
-        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
-        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
-        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
-        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
-        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
-        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
-        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
-        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
-        | ----------   | ----------              | ----------                |
-        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
-        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
-        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
-        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
-        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
-        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
-        | ----------   | ----------              | ----------                |
-        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
-        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
-        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
-        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
-        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
-        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
-        | ----------   | ----------              | ----------                |
-        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
-        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
-        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
-        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><div class="toggleContainer block">
-          <span class="toggle">
-            Linear Supertypes
-          </span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></div>
-        </div></div>
+          <div id="comment" class="fullcommenttop"></div>
         
 
-      
+      <div id="mbrsel">
+        <div class="toggle"></div>
+        <div id="memberfilter">
+          <i class="material-icons arrow"></i>
+          <span class="input">
+            <input id="mbrsel-input" placeholder="Filter all members" type="text" accesskey="/" />
+          </span>
+          <i class="clear material-icons"></i>
+        </div>
+        <div id="filterby">
+          <div id="order">
+            <span class="filtertype">Ordering</span>
+            <ol>
+              
+              <li class="alpha in"><span>Alphabetic</span></li>
+              
+            </ol>
+          </div>
+          
+          <div id="visbl">
+              <span class="filtertype">Visibility</span>
+              <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+            </div>
+        </div>
+      </div>
 
       <div id="template">
         <div id="allMembers">
@@ -499,7 +455,327 @@ of the given type.</p><p>Following <a href="params/generics/KeyType.html" class=
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="csw.messages.TMTSerializable" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+              <ol><li name="csw.messages.CommandMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CommandMessageextendsRunningMessagewithSupervisorLockMessage"></a><a id="CommandMessage:CommandMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#CommandMessageextendsRunningMessagewithSupervisorLockMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandMessage.html"><span class="name">CommandMessage</span></a><span class="result"> extends <a href="RunningMessage.html" class="extype" name="csw.messages.RunningMessage">RunningMessage</a> with <a href="SupervisorLockMessage.html" class="extype" name="csw.messages.SupervisorLockMessage">SupervisorLockMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.CommandResponseManagerMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CommandResponseManagerMessageextendsAnyRef"></a><a id="CommandResponseManagerMessage:CommandResponseManagerMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#CommandResponseManagerMessageextendsAnyRef" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage.html"><span class="name">CommandResponseManagerMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.CommonMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CommonMessageextendsComponentCommonMessagewithContainerCommonMessage"></a><a id="CommonMessage:CommonMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#CommonMessageextendsComponentCommonMessagewithContainerCommonMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommonMessage.html"><span class="name">CommonMessage</span></a><span class="result"> extends <a href="ComponentCommonMessage.html" class="extype" name="csw.messages.ComponentCommonMessage">ComponentCommonMessage</a> with <a href="ContainerCommonMessage.html" class="extype" name="csw.messages.ContainerCommonMessage">ContainerCommonMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.ComponentCommonMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ComponentCommonMessageextendsComponentMessage"></a><a id="ComponentCommonMessage:ComponentCommonMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ComponentCommonMessageextendsComponentMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ComponentCommonMessage.html"><span class="name">ComponentCommonMessage</span></a><span class="result"> extends <a href="ComponentMessage.html" class="extype" name="csw.messages.ComponentMessage">ComponentMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.ComponentMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ComponentMessageextendsSupervisorMessagewithTMTSerializable"></a><a id="ComponentMessage:ComponentMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ComponentMessageextendsSupervisorMessagewithTMTSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ComponentMessage.html"><span class="name">ComponentMessage</span></a><span class="result"> extends <a href="SupervisorMessage.html" class="extype" name="csw.messages.SupervisorMessage">SupervisorMessage</a> with <a href="TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">TMTSerializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.ContainerCommonMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ContainerCommonMessageextendsContainerExternalMessage"></a><a id="ContainerCommonMessage:ContainerCommonMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ContainerCommonMessageextendsContainerExternalMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ContainerCommonMessage.html"><span class="name">ContainerCommonMessage</span></a><span class="result"> extends <a href="ContainerExternalMessage.html" class="extype" name="csw.messages.ContainerExternalMessage">ContainerExternalMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.ContainerExternalMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ContainerExternalMessageextendsContainerMessagewithTMTSerializable"></a><a id="ContainerExternalMessage:ContainerExternalMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ContainerExternalMessageextendsContainerMessagewithTMTSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ContainerExternalMessage.html"><span class="name">ContainerExternalMessage</span></a><span class="result"> extends <a href="ContainerMessage.html" class="extype" name="csw.messages.ContainerMessage">ContainerMessage</a> with <a href="TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">TMTSerializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.ContainerIdleMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ContainerIdleMessageextendsContainerMessage"></a><a id="ContainerIdleMessage:ContainerIdleMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ContainerIdleMessageextendsContainerMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ContainerIdleMessage.html"><span class="name">ContainerIdleMessage</span></a><span class="result"> extends <a href="ContainerMessage.html" class="extype" name="csw.messages.ContainerMessage">ContainerMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.ContainerMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ContainerMessageextendsAnyRef"></a><a id="ContainerMessage:ContainerMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ContainerMessageextendsAnyRef" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ContainerMessage.html"><span class="name">ContainerMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.FromComponentLifecycleMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FromComponentLifecycleMessageextendsSupervisorIdleMessagewithSupervisorRunningMessage"></a><a id="FromComponentLifecycleMessage:FromComponentLifecycleMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#FromComponentLifecycleMessageextendsSupervisorIdleMessagewithSupervisorRunningMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="FromComponentLifecycleMessage.html"><span class="name">FromComponentLifecycleMessage</span></a><span class="result"> extends <a href="SupervisorIdleMessage.html" class="extype" name="csw.messages.SupervisorIdleMessage">SupervisorIdleMessage</a> with <a href="SupervisorRunningMessage.html" class="extype" name="csw.messages.SupervisorRunningMessage">SupervisorRunningMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.FromSupervisorMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FromSupervisorMessageextendsContainerIdleMessage"></a><a id="FromSupervisorMessage:FromSupervisorMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#FromSupervisorMessageextendsContainerIdleMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="FromSupervisorMessage.html"><span class="name">FromSupervisorMessage</span></a><span class="result"> extends <a href="ContainerIdleMessage.html" class="extype" name="csw.messages.ContainerIdleMessage">ContainerIdleMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.LockAboutToTimeout" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LockAboutToTimeoutextendsSupervisorMessagewithProductwithSerializable"></a><a id="LockAboutToTimeout:LockAboutToTimeout"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#LockAboutToTimeoutextendsSupervisorMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="LockAboutToTimeout.html"><span class="name">LockAboutToTimeout</span></a><span class="params">(<span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-typed_2.12/2.5.8/akka-typed_2.12-2.5.8-javadoc.jar/!/akka/typed/ActorRef.html#akka.typed.ActorRef" class="extype" name="akka.typed.ActorRef">ActorRef</a>[<a href="models/LockingResponse.html" class="extype" name="csw.messages.models.LockingResponse">LockingResponse</a>]</span>)</span><span class="result"> extends <a href="SupervisorMessage.html" class="extype" name="csw.messages.SupervisorMessage">SupervisorMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.LockTimedout" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LockTimedoutextendsSupervisorMessagewithProductwithSerializable"></a><a id="LockTimedout:LockTimedout"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#LockTimedoutextendsSupervisorMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="LockTimedout.html"><span class="name">LockTimedout</span></a><span class="params">(<span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-typed_2.12/2.5.8/akka-typed_2.12-2.5.8-javadoc.jar/!/akka/typed/ActorRef.html#akka.typed.ActorRef" class="extype" name="akka.typed.ActorRef">ActorRef</a>[<a href="models/LockingResponse.html" class="extype" name="csw.messages.models.LockingResponse">LockingResponse</a>]</span>)</span><span class="result"> extends <a href="SupervisorMessage.html" class="extype" name="csw.messages.SupervisorMessage">SupervisorMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.RunningMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="RunningMessageextendsTopLevelActorMessagewithSupervisorRunningMessage"></a><a id="RunningMessage:RunningMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#RunningMessageextendsTopLevelActorMessagewithSupervisorRunningMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="RunningMessage.html"><span class="name">RunningMessage</span></a><span class="result"> extends <a href="TopLevelActorMessage.html" class="extype" name="csw.messages.TopLevelActorMessage">TopLevelActorMessage</a> with <a href="SupervisorRunningMessage.html" class="extype" name="csw.messages.SupervisorRunningMessage">SupervisorRunningMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorIdleMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SupervisorIdleMessageextendsSupervisorMessage"></a><a id="SupervisorIdleMessage:SupervisorIdleMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorIdleMessageextendsSupervisorMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorIdleMessage.html"><span class="name">SupervisorIdleMessage</span></a><span class="result"> extends <a href="SupervisorMessage.html" class="extype" name="csw.messages.SupervisorMessage">SupervisorMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorInternalRunningMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SupervisorInternalRunningMessageextendsSupervisorMessage"></a><a id="SupervisorInternalRunningMessage:SupervisorInternalRunningMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorInternalRunningMessageextendsSupervisorMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorInternalRunningMessage.html"><span class="name">SupervisorInternalRunningMessage</span></a><span class="result"> extends <a href="SupervisorMessage.html" class="extype" name="csw.messages.SupervisorMessage">SupervisorMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorLockMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SupervisorLockMessageextendsSupervisorRunningMessage"></a><a id="SupervisorLockMessage:SupervisorLockMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorLockMessageextendsSupervisorRunningMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorLockMessage.html"><span class="name">SupervisorLockMessage</span></a><span class="result"> extends <a href="SupervisorRunningMessage.html" class="extype" name="csw.messages.SupervisorRunningMessage">SupervisorRunningMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SupervisorMessageextendsAnyRef"></a><a id="SupervisorMessage:SupervisorMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorMessageextendsAnyRef" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorMessage.html"><span class="name">SupervisorMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorRestartMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SupervisorRestartMessageextendsSupervisorMessage"></a><a id="SupervisorRestartMessage:SupervisorRestartMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorRestartMessageextendsSupervisorMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorRestartMessage.html"><span class="name">SupervisorRestartMessage</span></a><span class="result"> extends <a href="SupervisorMessage.html" class="extype" name="csw.messages.SupervisorMessage">SupervisorMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorRunningMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SupervisorRunningMessageextendsComponentMessage"></a><a id="SupervisorRunningMessage:SupervisorRunningMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorRunningMessageextendsComponentMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorRunningMessage.html"><span class="name">SupervisorRunningMessage</span></a><span class="result"> extends <a href="ComponentMessage.html" class="extype" name="csw.messages.ComponentMessage">ComponentMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.TMTSerializable" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="TMTSerializableextendsSerializable"></a><a id="TMTSerializable:TMTSerializable"></a>
       <span class="permalink">
       <a href="../../csw/messages/index.html#TMTSerializableextendsSerializable" title="Permalink">
@@ -517,12 +793,305 @@ of the given type.</p><p>Following <a href="params/generics/KeyType.html" class=
       <p class="shortcomment cmt">Marker trait for serializing domain models over the wire.</p><div class="fullcomment"><div class="comment cmt"><p>Marker trait for serializing domain models over the wire.
 This marker is configured to be serialized using Kryo.
 </p></div></div>
+    </li><li name="csw.messages.TopLevelActorCommonMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TopLevelActorCommonMessageextendsTopLevelActorMessage"></a><a id="TopLevelActorCommonMessage:TopLevelActorCommonMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#TopLevelActorCommonMessageextendsTopLevelActorMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TopLevelActorCommonMessage.html"><span class="name">TopLevelActorCommonMessage</span></a><span class="result"> extends <a href="TopLevelActorMessage.html" class="extype" name="csw.messages.TopLevelActorMessage">TopLevelActorMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.TopLevelActorIdleMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TopLevelActorIdleMessageextendsTopLevelActorMessage"></a><a id="TopLevelActorIdleMessage:TopLevelActorIdleMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#TopLevelActorIdleMessageextendsTopLevelActorMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TopLevelActorIdleMessage.html"><span class="name">TopLevelActorIdleMessage</span></a><span class="result"> extends <a href="TopLevelActorMessage.html" class="extype" name="csw.messages.TopLevelActorMessage">TopLevelActorMessage</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.TopLevelActorMessage" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TopLevelActorMessageextendsAnyRef"></a><a id="TopLevelActorMessage:TopLevelActorMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#TopLevelActorMessageextendsAnyRef" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TopLevelActorMessage.html"><span class="name">TopLevelActorMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+      </span>
+      
+      
     </li></ol>
             </div>
 
         
 
-        
+        <div class="values members">
+              <h3>Value Members</h3>
+              <ol>
+                <li name="csw.messages.CommandMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CommandMessage"></a><a id="CommandMessage:CommandMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#CommandMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandMessage$.html"><span class="name">CommandMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.CommandResponseManagerMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CommandResponseManagerMessage"></a><a id="CommandResponseManagerMessage:CommandResponseManagerMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#CommandResponseManagerMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage$.html"><span class="name">CommandResponseManagerMessage</span></a>
+      </span>
+      
+      
+    </li><li name="csw.messages.ComponentCommonMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ComponentCommonMessage"></a><a id="ComponentCommonMessage:ComponentCommonMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ComponentCommonMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ComponentCommonMessage$.html"><span class="name">ComponentCommonMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.ContainerCommonMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ContainerCommonMessage"></a><a id="ContainerCommonMessage:ContainerCommonMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ContainerCommonMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ContainerCommonMessage$.html"><span class="name">ContainerCommonMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.ContainerIdleMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ContainerIdleMessage"></a><a id="ContainerIdleMessage:ContainerIdleMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#ContainerIdleMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ContainerIdleMessage$.html"><span class="name">ContainerIdleMessage</span></a>
+      </span>
+      
+      
+    </li><li name="csw.messages.FromComponentLifecycleMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FromComponentLifecycleMessage"></a><a id="FromComponentLifecycleMessage:FromComponentLifecycleMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#FromComponentLifecycleMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="FromComponentLifecycleMessage$.html"><span class="name">FromComponentLifecycleMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.FromSupervisorMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FromSupervisorMessage"></a><a id="FromSupervisorMessage:FromSupervisorMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#FromSupervisorMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="FromSupervisorMessage$.html"><span class="name">FromSupervisorMessage</span></a>
+      </span>
+      
+      
+    </li><li name="csw.messages.RunningMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RunningMessage"></a><a id="RunningMessage:RunningMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#RunningMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="RunningMessage$.html"><span class="name">RunningMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorContainerCommonMessages" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SupervisorContainerCommonMessages"></a><a id="SupervisorContainerCommonMessages:SupervisorContainerCommonMessages"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorContainerCommonMessages" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorContainerCommonMessages$.html"><span class="name">SupervisorContainerCommonMessages</span></a>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorIdleMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SupervisorIdleMessage"></a><a id="SupervisorIdleMessage:SupervisorIdleMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorIdleMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorIdleMessage$.html"><span class="name">SupervisorIdleMessage</span></a>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorInternalRunningMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SupervisorInternalRunningMessage"></a><a id="SupervisorInternalRunningMessage:SupervisorInternalRunningMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorInternalRunningMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorInternalRunningMessage$.html"><span class="name">SupervisorInternalRunningMessage</span></a>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorLockMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SupervisorLockMessage"></a><a id="SupervisorLockMessage:SupervisorLockMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorLockMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorLockMessage$.html"><span class="name">SupervisorLockMessage</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.SupervisorRestartMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SupervisorRestartMessage"></a><a id="SupervisorRestartMessage:SupervisorRestartMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#SupervisorRestartMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SupervisorRestartMessage$.html"><span class="name">SupervisorRestartMessage</span></a>
+      </span>
+      
+      
+    </li><li name="csw.messages.TopLevelActorCommonMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TopLevelActorCommonMessage"></a><a id="TopLevelActorCommonMessage:TopLevelActorCommonMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#TopLevelActorCommonMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TopLevelActorCommonMessage$.html"><span class="name">TopLevelActorCommonMessage</span></a>
+      </span>
+      
+      
+    </li><li name="csw.messages.TopLevelActorIdleMessage" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TopLevelActorIdleMessage"></a><a id="TopLevelActorIdleMessage:TopLevelActorIdleMessage"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#TopLevelActorIdleMessage" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TopLevelActorIdleMessage$.html"><span class="name">TopLevelActorIdleMessage</span></a>
+      </span>
+      
+      
+    </li>
+              </ol>
+            </div>
 
         
 
@@ -530,11 +1099,7 @@ This marker is configured to be serialized using Kryo.
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></h3>
-            </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></h3>
-            </div>
+        
         
         </div>
 
