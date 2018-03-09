@@ -113,10 +113,22 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="The package for the logging API." href="../index.html"><span class="name">logging</span></a>
+        <a title="This is a Actor based logging library which supports writing logs to File and StdOut Console." href="../index.html"><span class="name">logging</span></a>
       </span>
       
-      <p class="shortcomment cmt">The package for the logging API.</p><div class="fullcomment"><div class="comment cmt"><p>The package for the logging API.
+      <p class="shortcomment cmt">This is a Actor based logging library which supports writing logs to File and StdOut Console.</p><div class="fullcomment"><div class="comment cmt"><h4> Logging Service </h4><p>This is a Actor based logging library which supports writing logs to File and StdOut Console.</p><h5> Features </h5><ul><li>Supports component specific log levels, ex. HCD1 can choose to log at <code>info</code> level and HCD2 can choose to log at <code>debug</code> level</li><li>Supports dynamically changing component log levels</li><li>Asynchronous thread safe logging</li><li>Structured logging</li><li>Supports overriding default logging properties per component viz</li><li>Intercepting logs from akka/slf4j</li><li>Supports JSON logging</li></ul><h5> LogActor </h5><p><code>LogActor</code> is the heart of logging library. It receives messages from following classes:</p><ul><li>Slf4jAppender: Intercepts Slf4j logs and forwards it to LogActor via MessageHandler</li><li>AkkaLogger: Intercepts Akka logs and forwards it to LogActor via MessageHandler.</li><li>LoggerImpl: Provides csw logging API for component writer to log messages which gets forwarded to LogActor via MessageHandler</li></ul><h5> Logging Appenders </h5><p>This library supports two types of <a href="LogAppender.html" class="extype" name="csw.services.logging.appenders.LogAppender">csw.services.logging.appenders.LogAppender</a>:</p><ul><li><a href="FileAppender.html" class="extype" name="csw.services.logging.appenders.FileAppender">csw.services.logging.appenders.FileAppender</a>:
+  Common log messages are written in Pretty Json form.
+  This appender is useful during development. It is recommended to disable it in production.</li><li><a href="" class="extype" name="csw.services.logging.appenders.StdOutAppender">csw.services.logging.appenders.StdOutAppender</a>:
+ Log messages are written as Json, one per line.
+ Ordinary log messages are written to the common log files. Each log file includes a day as part of its name. Each day a new file is created.</li></ul><p>You can specify the appender in application.conf file as shown below:</p><pre>csw-logging {
+   appenders = [<span class="lit">"csw.services.logging.appenders.StdOutAppender$"</span>, <span class="lit">"csw.services.logging.appenders.FileAppender$"</span>]
+ }</pre><h5> Component Specific Log Levels </h5><p>For each component, <code>ComponentLoggingState</code> instance gets created which maintains log levels
+which are enabled and disabled for this particular component.
+Every time message gets logged by component, LoggerImpl checks in corresponding componentLoggingState whether current log level enabled or not.
+If enabled, then only log message gets forwarded to LogActor via MessageHandler.</p><p>You can specify the component specific log levels in application.conf file as shown below:</p><pre>component-log-levels {
+   tromboneHcd = debug
+   tromboneAssembly = error
+}</pre><p>̄
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
     </li><li name="csw.services.logging.appenders" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="appenders"></a><a id="appenders:appenders"></a>
@@ -247,7 +259,7 @@ oneLine will print only the message of the log statement in single line and pret
         <span class="name">StdOutAppender</span><span class="params">(<span name="factory">factory: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.8/akka-actor_2.12-2.5.8-javadoc.jar/!/akka/actor/ActorRefFactory.html#akka.actor.ActorRefFactory" class="extype" name="akka.actor.ActorRefFactory">ActorRefFactory</a></span>, <span name="stdHeaders">stdHeaders: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../index.html#RichMsg=Any" class="extmbr" name="csw.services.logging.RichMsg">RichMsg</a>]</span>, <span name="logPrinter">logPrinter: (<a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a>) ⇒ <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">factory</dt><dd class="cmt"><p>An Akka factory</p></dd><dt class="param">stdHeaders</dt><dd class="cmt"><p>The headers that are fixes for this service</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">factory</dt><dd class="cmt"><p>an Akka factory</p></dd><dt class="param">stdHeaders</dt><dd class="cmt"><p>the headers that are fixes for this service</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -323,7 +335,7 @@ oneLine will print only the message of the log statement in single line and pret
       
       <p class="shortcomment cmt">Writes a log message to stdout
 </p><div class="fullcomment"><div class="comment cmt"><p>Writes a log message to stdout
-</p></div><dl class="paramcmts block"><dt class="param">baseMsg</dt><dd class="cmt"><p>The message to be logged</p></dd><dt class="param">category</dt><dd class="cmt"><p>The kinds of log (for example, &quot;common&quot;)</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.logging.appenders.StdOutAppender">StdOutAppender</a> → <a href="LogAppender.html" class="extype" name="csw.services.logging.appenders.LogAppender">LogAppender</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">baseMsg</dt><dd class="cmt"><p>the message to be logged</p></dd><dt class="param">category</dt><dd class="cmt"><p>the kinds of log (for example, &quot;common&quot;)</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.logging.appenders.StdOutAppender">StdOutAppender</a> → <a href="LogAppender.html" class="extype" name="csw.services.logging.appenders.LogAppender">LogAppender</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
@@ -435,7 +447,7 @@ oneLine will print only the message of the log statement in single line and pret
       
       <p class="shortcomment cmt">Called just before the logger shuts down
 </p><div class="fullcomment"><div class="comment cmt"><p>Called just before the logger shuts down
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A future that is completed when finished</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.logging.appenders.StdOutAppender">StdOutAppender</a> → <a href="LogAppender.html" class="extype" name="csw.services.logging.appenders.LogAppender">LogAppender</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a future that is completed when finished</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.logging.appenders.StdOutAppender">StdOutAppender</a> → <a href="LogAppender.html" class="extype" name="csw.services.logging.appenders.LogAppender">LogAppender</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
@@ -561,7 +573,7 @@ oneLine will print only the message of the log statement in single line and pret
       
       <p class="shortcomment cmt">Closes the stdout appender
 </p><div class="fullcomment"><div class="comment cmt"><p>Closes the stdout appender
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A future that is completed when the close is complete</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.logging.appenders.StdOutAppender">StdOutAppender</a> → <a href="LogAppender.html" class="extype" name="csw.services.logging.appenders.LogAppender">LogAppender</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a future that is completed when the close is complete</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.services.logging.appenders.StdOutAppender">StdOutAppender</a> → <a href="LogAppender.html" class="extype" name="csw.services.logging.appenders.LogAppender">LogAppender</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">

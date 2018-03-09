@@ -113,10 +113,22 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="The package for the logging API." href="../index.html"><span class="name">logging</span></a>
+        <a title="This is a Actor based logging library which supports writing logs to File and StdOut Console." href="../index.html"><span class="name">logging</span></a>
       </span>
       
-      <p class="shortcomment cmt">The package for the logging API.</p><div class="fullcomment"><div class="comment cmt"><p>The package for the logging API.
+      <p class="shortcomment cmt">This is a Actor based logging library which supports writing logs to File and StdOut Console.</p><div class="fullcomment"><div class="comment cmt"><h4> Logging Service </h4><p>This is a Actor based logging library which supports writing logs to File and StdOut Console.</p><h5> Features </h5><ul><li>Supports component specific log levels, ex. HCD1 can choose to log at <code>info</code> level and HCD2 can choose to log at <code>debug</code> level</li><li>Supports dynamically changing component log levels</li><li>Asynchronous thread safe logging</li><li>Structured logging</li><li>Supports overriding default logging properties per component viz</li><li>Intercepting logs from akka/slf4j</li><li>Supports JSON logging</li></ul><h5> LogActor </h5><p><code>LogActor</code> is the heart of logging library. It receives messages from following classes:</p><ul><li>Slf4jAppender: Intercepts Slf4j logs and forwards it to LogActor via MessageHandler</li><li>AkkaLogger: Intercepts Akka logs and forwards it to LogActor via MessageHandler.</li><li>LoggerImpl: Provides csw logging API for component writer to log messages which gets forwarded to LogActor via MessageHandler</li></ul><h5> Logging Appenders </h5><p>This library supports two types of <a href="../appenders/LogAppender.html" class="extype" name="csw.services.logging.appenders.LogAppender">csw.services.logging.appenders.LogAppender</a>:</p><ul><li><a href="../appenders/FileAppender.html" class="extype" name="csw.services.logging.appenders.FileAppender">csw.services.logging.appenders.FileAppender</a>:
+  Common log messages are written in Pretty Json form.
+  This appender is useful during development. It is recommended to disable it in production.</li><li><a href="../appenders/StdOutAppender.html" class="extype" name="csw.services.logging.appenders.StdOutAppender">csw.services.logging.appenders.StdOutAppender</a>:
+ Log messages are written as Json, one per line.
+ Ordinary log messages are written to the common log files. Each log file includes a day as part of its name. Each day a new file is created.</li></ul><p>You can specify the appender in application.conf file as shown below:</p><pre>csw-logging {
+   appenders = [<span class="lit">"csw.services.logging.appenders.StdOutAppender$"</span>, <span class="lit">"csw.services.logging.appenders.FileAppender$"</span>]
+ }</pre><h5> Component Specific Log Levels </h5><p>For each component, <code>ComponentLoggingState</code> instance gets created which maintains log levels
+which are enabled and disabled for this particular component.
+Every time message gets logged by component, LoggerImpl checks in corresponding componentLoggingState whether current log level enabled or not.
+If enabled, then only log message gets forwarded to LogActor via MessageHandler.</p><p>You can specify the component specific log levels in application.conf file as shown below:</p><pre>component-log-levels {
+   tromboneHcd = debug
+   tromboneAssembly = error
+}</pre><p>̄
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
     </li><li name="csw.services.logging.javadsl" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="javadsl"></a><a id="javadsl:javadsl"></a>
@@ -140,12 +152,16 @@
                         <a href="ILogger.html" title="">ILogger</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
+                        <a class="class" href="JBaseLoggerFactory.html" title=""></a>
+                        <a href="JBaseLoggerFactory.html" title="">JBaseLoggerFactory</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
                         <a class="object" href="JGenericLoggerFactory$.html" title="When using the JGenericLoggerFactory, log statements will not have @componentName tag"></a>
                         <a href="JGenericLoggerFactory$.html" title="When using the JGenericLoggerFactory, log statements will not have @componentName tag">JGenericLoggerFactory</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="JKeys.html" title=""></a>
-                        <a href="JKeys.html" title="">JKeys</a>
+                        <a class="class" href="JKeys.html" title="Helper class for Java to get the handle of predefined keys while calling Logger api methods"></a>
+                        <a href="JKeys.html" title="Helper class for Java to get the handle of predefined keys while calling Logger api methods">JKeys</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="" title="Helper class for Java to get the handle of csw provided appenders"></a>
@@ -160,8 +176,8 @@
                         <a href="JLoggingSystemFactory$.html" title="">JLoggingSystemFactory</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="object" href="JRequestId$.html" title=""></a>
-                        <a href="JRequestId$.html" title="">JRequestId</a>
+                        <a class="object" href="JRequestId$.html" title="Helper class for Java to get the handle of RequestId"></a>
+                        <a href="JRequestId$.html" title="Helper class for Java to get the handle of RequestId">JRequestId</a>
                       </li>
               </ul>
             </div>
