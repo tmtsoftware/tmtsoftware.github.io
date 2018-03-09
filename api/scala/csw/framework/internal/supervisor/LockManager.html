@@ -100,93 +100,38 @@
         <a title="This project contains the framework for creating components, such as HCDs and Assemblies." href="../../index.html"><span class="name">framework</span></a>
       </span>
       
-      <p class="shortcomment cmt">This project contains the framework for creating components, such as HCDs and Assemblies.</p><div class="fullcomment"><div class="comment cmt"><h4> Framework </h4><p>This project contains the framework for creating components, such as HCDs and Assemblies.</p><p>A component is implemented by extending the <a href="../../scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">csw.framework.scaladsl.ComponentHandlers</a> base class.
-These handlers are executed under an Supervisor Actor: <a href="SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>
-and TLA Actor (Top Level Actor): <a href="../component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a>
-defined in the framework which handles the lifecycle and supervision of this component.</p><p>Components are controlled by a <a href="SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a> actor
-that intercepts common messages (ex. Shutdown, Restart) or lifecycle messages (ex. GoOffline or GoOnline)
-sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../../../messages/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state, do not receive <a href="../../../messages/scaladsl/CommandMessage.html" class="extype" name="csw.messages.scaladsl.CommandMessage">csw.messages.scaladsl.CommandMessage</a>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
-LocationService only when Component moves to <a href="../../../messages/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state.
-That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <a href="../../../messages/scaladsl/CommandMessage.html" class="extype" name="csw.messages.scaladsl.CommandMessage">csw.messages.scaladsl.CommandMessage</a></p><h5> Important Actors in Framework </h5><p>- <a href="SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>
-Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../../exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../../exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a> based on the messages it receives.
-Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>.
-For complete list of supported messages per <a href="../../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <a href="../component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a>
-Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
-And it also maintains its own state <a href="../component/ComponentLifecycleState.html" class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</a> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
-This is where framework code meets Component specific code.</p><p>- <a href="../pubsub/PubSubBehavior.html" class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</a>
-This actor is created by framework which is wrapped into <a href="../../scaladsl/CurrentStatePublisher.html" class="extype" name="csw.framework.scaladsl.CurrentStatePublisher">csw.framework.scaladsl.CurrentStatePublisher</a> for easy interaction with this actor
-and then passed to component handlers so that component can publish their <a href="../../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="../../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> published by other component (ex. HCD)
-then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="../../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> to all subscribers.</p><p>- <a href="../container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a>
-When multiple components needs to be started in container, then this actor is created.
-Job of this actor is just to logically group multiple components and support <a href="../../../messages/scaladsl/SupervisorContainerCommonMessages$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages">csw.messages.scaladsl.SupervisorContainerCommonMessages</a>.
-It receives <a href="../../../messages/scaladsl/SupervisorContainerCommonMessages$$Shutdown$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown">csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown</a> or <a href="../../../messages/scaladsl/SupervisorContainerCommonMessages$$Restart$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart">csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart</a> message
-and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <a href="../../deploy/containercmd/ContainerCmd.html" class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</a>
-ContainerCmd is a helper utility provided by framework to start multiple components in container mode
-or single component in Standalone mode.</p><h5> Example of Container Config File </h5><p>Here is an example of a config file for creating a container with the name <i>IRIS_Container</i> that
-contains one assembly (named <i>Filter</i>) and depends on the services of two HCDs (<i>Instrument_Filter</i> and <i>Disperser</i>).
-Factory class for assembly is <code>csw.common.components.framework.SampleComponentBehaviorFactory</code>.
+      <p class="shortcomment cmt">This project contains the framework for creating components, such as HCDs and Assemblies.</p><div class="fullcomment"><div class="comment cmt"><p>This project contains the framework for creating components, such as HCDs and Assemblies.</p><p>A Component is composed of an actor instance of <a href="../component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a> and an
+implementation of <a href="../../scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">csw.framework.scaladsl.ComponentHandlers</a> which defines a given component.
+Each component is created by an actor instance of <a href="SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a>.</p><p>Components are either created by an actor instance of <a href="../container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a> or as a
+Standalone actor instance of <a href="SupervisorBehavior.html" class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</a> from a configuration file.</p><h5> Container Config Files </h5><p>Here is an example of a config file for creating a container with the name <i>Container-1</i> that
+contains one assembly (named <i>Assembly-1</i>) and depends on the services of two HCDs (<i>HCD-2A</i> and <i>HCD-2B</i>).
+The assembly is implemented by the given class (<code>csw.services.pkg.TestAssembly</code>).
 A <code>Supervisor</code> actor will be created to manage the assembly, which includes registering it with the
 location service, using the given name and prefix. The prefix can be used to distribute parts of the
 configurations to different HCDs. HCDs register themselves with the Location Service and specify a unique
-prefix that can be used for this purpose.</p><pre>name = <span class="lit">"IRIS_Container"</span>
-components: [
-  {
-    name = <span class="lit">"Filter"</span>
-    componentType = assembly
-    behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix = tcs.mobie.blue.filter
-    locationServiceUsage = RegisterOnly
+prefix that can be used for this purpose.</p><pre>container {
+name = Container-<span class="num">1</span>
+components {
+  Assembly-<span class="num">1</span> {
+    <span class="kw">type</span> = Assembly
+    <span class="kw">class</span> = csw.pkgDemo.assembly1.Assembly1
+    prefix = tcs.base.assembly1
+    connectionType: [akka]
     connections = [
       {
-        name: Instrument_Filter
-        componentType: hcd
-        connectionType: akka
-      },
+        name: HCD-<span class="num">2</span>A
+        <span class="kw">type</span>: HCD
+        connectionType: [akka]
+      }
       {
-        name: Disperser
-        componentType: hcd
-        connectionType: akka
+        name: HCD-<span class="num">2</span>B
+        <span class="kw">type</span>: HCD
+        connectionType: [akka]
       }
     ]
-  },
-  {
-    name = <span class="lit">"Instrument_Filter"</span>
-    componentType = hcd
-    behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix = tcs.mobie.blue.filter
-    locationServiceUsage = RegisterOnly
-  },
-  {
-    name = <span class="lit">"Disperser"</span>
-    componentType: hcd
-    behaviorFactoryClassName: csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix: tcs.mobie.blue.disperser
-    locationServiceUsage = RegisterOnly
   }
-]</pre><h5> Example of Standalone Config File </h5><pre>name = <span class="lit">"IFS_Detector"</span>
-componentType = hcd
-behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-prefix = iris.ifs
-locationServiceUsage = RegisterOnly
-connections = []</pre><p>- <a href="../../deploy/hostconfig/HostConfig.html" class="extype" name="csw.framework.deploy.hostconfig.HostConfig">csw.framework.deploy.hostconfig.HostConfig</a>
-This is just a helper to create host configuration application.
-This support starting multiple containers on a given host machine and each container will have single/multiple components.</p><h5> Example of Host Config file </h5><pre># This is a host configuration file which contains list of containers to be spawned by host configuration app
-containers: [
-    {
-      # mode can be one of Container or Standalone
-      mode: <span class="lit">"Container"</span>
-      # path of individual container configuration file
-      configFilePath: <span class="lit">"/resources/assemblyContainer.conf"</span>
-      # provide <span class="lit">'Remote'</span> <span class="kw">if</span> file needs to fetched from config service <span class="kw">else</span>
-      # provide <span class="lit">'Local'</span> to fetch file from local machine
-      configFileLocation: <span class="lit">"Local"</span>
-    },
-    {
-      mode: <span class="lit">"Standalone"</span>
-      configFilePath: <span class="lit">"/resources/hcdStandalone.conf"</span>
-      configFileLocation: <span class="lit">"Local"</span>
-    }
-]</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+ }
+}</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.framework.internal" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="internal"></a><a id="internal:internal"></a>
       <span class="permalink">
@@ -365,9 +310,9 @@ containers: [
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="csw.framework.internal.supervisor.LockManager#allowCommand" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="allowCommand(msg:csw.messages.scaladsl.CommandMessage):Boolean"></a><a id="allowCommand(CommandMessage):Boolean"></a>
+      <a id="allowCommand(msg:csw.messages.CommandMessage):Boolean"></a><a id="allowCommand(CommandMessage):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../csw/framework/internal/supervisor/LockManager.html#allowCommand(msg:csw.messages.scaladsl.CommandMessage):Boolean" title="Permalink">
+      <a href="../../../../csw/framework/internal/supervisor/LockManager.html#allowCommand(msg:csw.messages.CommandMessage):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -376,7 +321,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">allowCommand</span><span class="params">(<span name="msg">msg: <a href="../../../messages/scaladsl/CommandMessage.html" class="extype" name="csw.messages.scaladsl.CommandMessage">CommandMessage</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">allowCommand</span><span class="params">(<span name="msg">msg: <a href="../../../messages/CommandMessage.html" class="extype" name="csw.messages.CommandMessage">CommandMessage</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       
@@ -561,9 +506,9 @@ containers: [
       
       
     </li><li name="csw.framework.internal.supervisor.LockManager#lockComponent" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="lockComponent(source:csw.messages.params.models.Prefix,replyTo:akka.typed.ActorRef[csw.messages.framework.LockingResponse])(startTimer:=&gt;Unit):csw.framework.internal.supervisor.LockManager"></a><a id="lockComponent(Prefix,ActorRef[LockingResponse])(⇒Unit):LockManager"></a>
+      <a id="lockComponent(source:csw.messages.params.models.Prefix,replyTo:akka.typed.ActorRef[csw.messages.models.LockingResponse])(startTimer:=&gt;Unit):csw.framework.internal.supervisor.LockManager"></a><a id="lockComponent(Prefix,ActorRef[LockingResponse])(⇒Unit):LockManager"></a>
       <span class="permalink">
-      <a href="../../../../csw/framework/internal/supervisor/LockManager.html#lockComponent(source:csw.messages.params.models.Prefix,replyTo:akka.typed.ActorRef[csw.messages.framework.LockingResponse])(startTimer:=&gt;Unit):csw.framework.internal.supervisor.LockManager" title="Permalink">
+      <a href="../../../../csw/framework/internal/supervisor/LockManager.html#lockComponent(source:csw.messages.params.models.Prefix,replyTo:akka.typed.ActorRef[csw.messages.models.LockingResponse])(startTimer:=&gt;Unit):csw.framework.internal.supervisor.LockManager" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -572,7 +517,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">lockComponent</span><span class="params">(<span name="source">source: <a href="../../../messages/params/models/Prefix.html" class="extype" name="csw.messages.params.models.Prefix">Prefix</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-typed_2.12/2.5.8/akka-typed_2.12-2.5.8-javadoc.jar/!/akka/typed/ActorRef.html#akka.typed.ActorRef" class="extype" name="akka.typed.ActorRef">ActorRef</a>[<a href="../../../messages/framework/LockingResponse.html" class="extype" name="csw.messages.framework.LockingResponse">LockingResponse</a>]</span>)</span><span class="params">(<span name="startTimer">startTimer: ⇒ <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>)</span><span class="result">: <a href="" class="extype" name="csw.framework.internal.supervisor.LockManager">LockManager</a></span>
+        <span class="name">lockComponent</span><span class="params">(<span name="source">source: <a href="../../../messages/params/models/Prefix.html" class="extype" name="csw.messages.params.models.Prefix">Prefix</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-typed_2.12/2.5.8/akka-typed_2.12-2.5.8-javadoc.jar/!/akka/typed/ActorRef.html#akka.typed.ActorRef" class="extype" name="akka.typed.ActorRef">ActorRef</a>[<a href="../../../messages/models/LockingResponse.html" class="extype" name="csw.messages.models.LockingResponse">LockingResponse</a>]</span>)</span><span class="params">(<span name="startTimer">startTimer: ⇒ <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>)</span><span class="result">: <a href="" class="extype" name="csw.framework.internal.supervisor.LockManager">LockManager</a></span>
       </span>
       
       
@@ -695,9 +640,9 @@ containers: [
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="csw.framework.internal.supervisor.LockManager#unlockComponent" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="unlockComponent(source:csw.messages.params.models.Prefix,replyTo:akka.typed.ActorRef[csw.messages.framework.LockingResponse])(stopTimer:=&gt;Unit):csw.framework.internal.supervisor.LockManager"></a><a id="unlockComponent(Prefix,ActorRef[LockingResponse])(⇒Unit):LockManager"></a>
+      <a id="unlockComponent(source:csw.messages.params.models.Prefix,replyTo:akka.typed.ActorRef[csw.messages.models.LockingResponse])(stopTimer:=&gt;Unit):csw.framework.internal.supervisor.LockManager"></a><a id="unlockComponent(Prefix,ActorRef[LockingResponse])(⇒Unit):LockManager"></a>
       <span class="permalink">
-      <a href="../../../../csw/framework/internal/supervisor/LockManager.html#unlockComponent(source:csw.messages.params.models.Prefix,replyTo:akka.typed.ActorRef[csw.messages.framework.LockingResponse])(stopTimer:=&gt;Unit):csw.framework.internal.supervisor.LockManager" title="Permalink">
+      <a href="../../../../csw/framework/internal/supervisor/LockManager.html#unlockComponent(source:csw.messages.params.models.Prefix,replyTo:akka.typed.ActorRef[csw.messages.models.LockingResponse])(stopTimer:=&gt;Unit):csw.framework.internal.supervisor.LockManager" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -706,7 +651,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">unlockComponent</span><span class="params">(<span name="source">source: <a href="../../../messages/params/models/Prefix.html" class="extype" name="csw.messages.params.models.Prefix">Prefix</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-typed_2.12/2.5.8/akka-typed_2.12-2.5.8-javadoc.jar/!/akka/typed/ActorRef.html#akka.typed.ActorRef" class="extype" name="akka.typed.ActorRef">ActorRef</a>[<a href="../../../messages/framework/LockingResponse.html" class="extype" name="csw.messages.framework.LockingResponse">LockingResponse</a>]</span>)</span><span class="params">(<span name="stopTimer">stopTimer: ⇒ <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>)</span><span class="result">: <a href="" class="extype" name="csw.framework.internal.supervisor.LockManager">LockManager</a></span>
+        <span class="name">unlockComponent</span><span class="params">(<span name="source">source: <a href="../../../messages/params/models/Prefix.html" class="extype" name="csw.messages.params.models.Prefix">Prefix</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-typed_2.12/2.5.8/akka-typed_2.12-2.5.8-javadoc.jar/!/akka/typed/ActorRef.html#akka.typed.ActorRef" class="extype" name="akka.typed.ActorRef">ActorRef</a>[<a href="../../../messages/models/LockingResponse.html" class="extype" name="csw.messages.models.LockingResponse">LockingResponse</a>]</span>)</span><span class="params">(<span name="stopTimer">stopTimer: ⇒ <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>)</span><span class="result">: <a href="" class="extype" name="csw.framework.internal.supervisor.LockManager">LockManager</a></span>
       </span>
       
       

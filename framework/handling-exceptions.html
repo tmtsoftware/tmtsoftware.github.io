@@ -146,7 +146,15 @@ private def resolveHcd() = {
 }</code></pre></dd>
       <dt>Java</dt>
       <dd>
-      <pre class="prettyprint"><code class="language-java">class HcdNotFoundException extends FailureRestart {
+      <pre class="prettyprint"><code class="language-java">        return worker.thenAcceptBoth(eventualHcdLocation, (workerActor, hcdLocation) -&gt; {
+            if(!hcdLocation.isPresent())
+                throw new HcdNotFoundException();
+            else
+                runningHcds.put(connection, Optional.of(hcdLocation.get().componentRef()));
+            diagnosticPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.jMake(Optional.of(hcdLocation.get().componentRef()), Optional.of(workerActor)));
+        });
+    });
+class HcdNotFoundException extends FailureRestart {
     HcdNotFoundException() {
         super(&quot;Could not resolve hcd location. Initialization failure.&quot;);
     }
@@ -178,10 +186,10 @@ private void resolveHcd() {
       <dd>
       <pre class="prettyprint"><code class="language-scala">case class ConfigNotAvailableException() extends FailureStop(&quot;Configuration not available. Initialization failure.&quot;)
 
-private def getAssemblyConfigs() = {
+private def getAssemblyConfig: Future[ConfigData] = {
 
   configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).flatMap {
-    case Some(config) ⇒ ??? // do work
+    case Some(config) ⇒ Future.successful(config) // do work
     case None         ⇒
       // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
       // configuration service and started again
@@ -196,12 +204,11 @@ private def getAssemblyConfigs() = {
     }
 }
 
-private CompletableFuture&lt;ConfigData&gt; getAssemblyConfigs() {
+private CompletableFuture&lt;ConfigData&gt; getAssemblyConfig() throws ConfigNotAvailableException {
     // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
     // configuration service and started again
-    return configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).thenApply((maybeConfigData) -&gt; {
-        return maybeConfigData.orElseThrow(ConfigNotAvailableException::new);
-    });
+    return configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;))
+            .thenApply((maybeConfigData) -&gt; maybeConfigData.&lt;ConfigNotAvailableException&gt;orElseThrow(ConfigNotAvailableException::new));
 }</code></pre></dd>
     </dl>
   </li>
