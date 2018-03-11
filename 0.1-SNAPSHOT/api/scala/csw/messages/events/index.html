@@ -97,10 +97,54 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../index.html"><span class="name">messages</span></a>
+        <a title="This project is intended to hold reusable models and messages used throughout the csw source code." href="../index.html"><span class="name">messages</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <p class="shortcomment cmt">This project is intended to hold reusable models and messages used throughout the csw source code.</p><div class="fullcomment"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
+Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
+These are all based on type-safe keys and items (a set of values with optional units).
+Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="../commands/Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="../commands/SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="../commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="../commands/Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="../commands/Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="../commands/Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="../commands/matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
+One of the use case for using matcher is when Assembly sends <a href="../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+and in response to this command HCD keeps publishing its current state.
+Then Assembly can use Matcher with the matching definition as provided by <a href="../commands/matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
+match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="../params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
+that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
+of the given type.</p><p>Following <a href="../params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
+        |  Primitive   |      Scala KeyType      |       Java KeyType        |
+        +--------------+-------------------------+---------------------------+
+        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
+        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
+        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
+        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
+        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
+        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
+        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
+        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
+        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
+        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
+        | ----------   | ----------              | ----------                |
+        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
+        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
+        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
+        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
+        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
+        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
+        | ----------   | ----------              | ----------                |
+        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
+        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
+        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
+        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
+        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
+        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
+        | ----------   | ----------              | ----------                |
+        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
+        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
+        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
+        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages.commands" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="commands"></a><a id="commands:commands"></a>
       <span class="permalink">
@@ -114,6 +158,22 @@
       </span>
       <span class="symbol">
         <a title="" href="../commands/index.html"><span class="name">commands</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.messages">messages</a></dd></dl></div>
+    </li><li name="csw.messages.commons" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="commons"></a><a id="commons:commons"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#commons" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../commons/index.html"><span class="name">commons</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.messages">messages</a></dd></dl></div>
@@ -135,28 +195,28 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.messages">messages</a></dd></dl></div>
     </li><li class="current-entities indented3">
                         <a class="object" href="Event$.html" title=""></a>
-                        <a class="trait" href="Event.html" title=""></a>
-                        <a href="Event.html" title="">Event</a>
+                        <a class="trait" href="Event.html" title="Common trait representing events in TMT like SystemEvent and ObserveEvent"></a>
+                        <a href="Event.html" title="Common trait representing events in TMT like SystemEvent and ObserveEvent">Event</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="EventKey$.html" title=""></a>
-                        <a class="class" href="EventKey.html" title=""></a>
-                        <a href="EventKey.html" title="">EventKey</a>
+                        <a class="class" href="EventKey.html" title="A wrapper class representing the key for an event"></a>
+                        <a href="EventKey.html" title="A wrapper class representing the key for an event">EventKey</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="EventName$.html" title=""></a>
-                        <a class="class" href="EventName.html" title="Model representing the name of an Event"></a>
-                        <a href="EventName.html" title="Model representing the name of an Event">EventName</a>
+                        <a class="class" href="EventName.html" title="A wrapper class representing the name of an Event"></a>
+                        <a href="EventName.html" title="A wrapper class representing the name of an Event">EventName</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="EventTime$.html" title=""></a>
-                        <a class="class" href="EventTime.html" title=""></a>
-                        <a href="EventTime.html" title="">EventTime</a>
+                        <a class="class" href="EventTime.html" title="A wrapper class representing the time of event creation"></a>
+                        <a href="EventTime.html" title="A wrapper class representing the time of event creation">EventTime</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="ObserveEvent$.html" title=""></a>
-                        <a class="class" href="ObserveEvent.html" title="Defines an observe event"></a>
-                        <a href="ObserveEvent.html" title="Defines an observe event">ObserveEvent</a>
+                        <a class="class" href="ObserveEvent.html" title="Defines an observe event."></a>
+                        <a href="ObserveEvent.html" title="Defines an observe event.">ObserveEvent</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="SystemEvent$.html" title=""></a>
-                        <a class="class" href="SystemEvent.html" title="Defines a system event"></a>
-                        <a href="SystemEvent.html" title="Defines a system event">SystemEvent</a>
+                        <a class="class" href="SystemEvent.html" title="Defines a system event."></a>
+                        <a href="SystemEvent.html" title="Defines a system event.">SystemEvent</a>
                       </li><li name="csw.messages.framework" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="framework"></a><a id="framework:framework"></a>
       <span class="permalink">
@@ -205,22 +265,6 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.messages">messages</a></dd></dl></div>
-    </li><li name="csw.messages.models" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="models"></a><a id="models:models"></a>
-      <span class="permalink">
-      <a href="../../csw/messages/index.html#models" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">package</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="../models/index.html"><span class="name">models</span></a>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.messages">messages</a></dd></dl></div>
     </li><li name="csw.messages.params" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="params"></a><a id="params:params"></a>
       <span class="permalink">
@@ -234,6 +278,22 @@
       </span>
       <span class="symbol">
         <a title="" href="../params/index.html"><span class="name">params</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.messages">messages</a></dd></dl></div>
+    </li><li name="csw.messages.scaladsl" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="scaladsl"></a><a id="scaladsl:scaladsl"></a>
+      <span class="permalink">
+      <a href="../../csw/messages/index.html#scaladsl" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../scaladsl/index.html"><span class="name">scaladsl</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.messages">messages</a></dd></dl></div>
@@ -312,11 +372,12 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="" href="Event.html"><span class="name">Event</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+        <a title="Common trait representing events in TMT like SystemEvent and ObserveEvent" href="Event.html"><span class="name">Event</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.events.EventKey" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Common trait representing events in TMT like SystemEvent and ObserveEvent
+</p>
+    </li><li name="csw.messages.events.EventKey" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="EventKeyextendsProductwithSerializable"></a><a id="EventKey:EventKey"></a>
       <span class="permalink">
       <a href="../../../csw/messages/events/index.html#EventKeyextendsProductwithSerializable" title="Permalink">
@@ -328,10 +389,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="EventKey.html"><span class="name">EventKey</span></a><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A wrapper class representing the key for an event" href="EventKey.html"><span class="name">EventKey</span></a><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
+      <p class="shortcomment cmt">A wrapper class representing the key for an event
+</p><div class="fullcomment"><div class="comment cmt"><p>A wrapper class representing the key for an event
+</p></div><dl class="paramcmts block"><dt class="param">key</dt><dd class="cmt"><p>is the combination of prefix and eventName</p></dd></dl></div>
     </li><li name="csw.messages.events.EventName" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="EventNameextendsProductwithSerializable"></a><a id="EventName:EventName"></a>
       <span class="permalink">
@@ -344,12 +407,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Model representing the name of an Event" href="EventName.html"><span class="name">EventName</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A wrapper class representing the name of an Event" href="EventName.html"><span class="name">EventName</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Model representing the name of an Event
+      <p class="shortcomment cmt">A wrapper class representing the name of an Event
 </p>
-    </li><li name="csw.messages.events.EventTime" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="csw.messages.events.EventTime" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="EventTimeextendsProductwithSerializable"></a><a id="EventTime:EventTime"></a>
       <span class="permalink">
       <a href="../../../csw/messages/events/index.html#EventTimeextendsProductwithSerializable" title="Permalink">
@@ -361,11 +424,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="EventTime.html"><span class="name">EventTime</span></a><span class="params">(<span name="time">time: <a href="https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html#java.time.Instant" class="extype" name="java.time.Instant">Instant</a></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A wrapper class representing the time of event creation" href="EventTime.html"><span class="name">EventTime</span></a><span class="params">(<span name="time">time: <a href="https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html#java.time.Instant" class="extype" name="java.time.Instant">Instant</a></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.events.ObserveEvent" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">A wrapper class representing the time of event creation
+</p><div class="fullcomment"><div class="comment cmt"><p>A wrapper class representing the time of event creation
+</p></div><dl class="paramcmts block"><dt class="param">time</dt><dd class="cmt"><p>the instant stating the event creation</p></dd></dl></div>
+    </li><li name="csw.messages.events.ObserveEvent" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ObserveEventextendsParameterSetType[csw.messages.events.ObserveEvent]withEventwithProductwithSerializable"></a><a id="ObserveEvent:ObserveEvent"></a>
       <span class="permalink">
       <a href="../../../csw/messages/events/index.html#ObserveEventextendsParameterSetType[csw.messages.events.ObserveEvent]withEventwithProductwithSerializable" title="Permalink">
@@ -377,12 +442,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Defines an observe event" href="ObserveEvent.html"><span class="name">ObserveEvent</span></a><span class="result"> extends <a href="../params/generics/ParameterSetType.html" class="extype" name="csw.messages.params.generics.ParameterSetType">ParameterSetType</a>[<a href="ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">ObserveEvent</a>] with <a href="Event.html" class="extype" name="csw.messages.events.Event">Event</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Defines an observe event." href="ObserveEvent.html"><span class="name">ObserveEvent</span></a><span class="result"> extends <a href="../params/generics/ParameterSetType.html" class="extype" name="csw.messages.params.generics.ParameterSetType">ParameterSetType</a>[<a href="ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">ObserveEvent</a>] with <a href="Event.html" class="extype" name="csw.messages.events.Event">Event</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Defines an observe event
-</p>
-    </li><li name="csw.messages.events.SystemEvent" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Defines an observe event.</p><div class="fullcomment"><div class="comment cmt"><p>Defines an observe event. Constructor is private to ensure eventId is created internally to guarantee unique value.
+</p></div></div>
+    </li><li name="csw.messages.events.SystemEvent" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="SystemEventextendsParameterSetType[csw.messages.events.SystemEvent]withEventwithProductwithSerializable"></a><a id="SystemEvent:SystemEvent"></a>
       <span class="permalink">
       <a href="../../../csw/messages/events/index.html#SystemEventextendsParameterSetType[csw.messages.events.SystemEvent]withEventwithProductwithSerializable" title="Permalink">
@@ -394,11 +459,11 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Defines a system event" href="SystemEvent.html"><span class="name">SystemEvent</span></a><span class="result"> extends <a href="../params/generics/ParameterSetType.html" class="extype" name="csw.messages.params.generics.ParameterSetType">ParameterSetType</a>[<a href="SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">SystemEvent</a>] with <a href="Event.html" class="extype" name="csw.messages.events.Event">Event</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Defines a system event." href="SystemEvent.html"><span class="name">SystemEvent</span></a><span class="result"> extends <a href="../params/generics/ParameterSetType.html" class="extype" name="csw.messages.params.generics.ParameterSetType">ParameterSetType</a>[<a href="SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">SystemEvent</a>] with <a href="Event.html" class="extype" name="csw.messages.events.Event">Event</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Defines a system event
-</p>
+      <p class="shortcomment cmt">Defines a system event.</p><div class="fullcomment"><div class="comment cmt"><p>Defines a system event. Constructor is private to ensure eventId is created internally to guarantee unique value.
+</p></div></div>
     </li></ol>
             </div>
 

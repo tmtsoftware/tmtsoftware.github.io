@@ -97,10 +97,54 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../index.html"><span class="name">messages</span></a>
+        <a title="This project is intended to hold reusable models and messages used throughout the csw source code." href="../index.html"><span class="name">messages</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <p class="shortcomment cmt">This project is intended to hold reusable models and messages used throughout the csw source code.</p><div class="fullcomment"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
+Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
+These are all based on type-safe keys and items (a set of values with optional units).
+Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
+One of the use case for using matcher is when Assembly sends <a href="../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+and in response to this command HCD keeps publishing its current state.
+Then Assembly can use Matcher with the matching definition as provided by <a href="matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
+match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="../params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
+that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
+of the given type.</p><p>Following <a href="../params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
+        |  Primitive   |      Scala KeyType      |       Java KeyType        |
+        +--------------+-------------------------+---------------------------+
+        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
+        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
+        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
+        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
+        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
+        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
+        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
+        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
+        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
+        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
+        | ----------   | ----------              | ----------                |
+        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
+        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
+        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
+        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
+        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
+        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
+        | ----------   | ----------              | ----------                |
+        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
+        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
+        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
+        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
+        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
+        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
+        | ----------   | ----------              | ----------                |
+        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
+        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
+        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
+        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages.commands" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="commands"></a><a id="commands:commands"></a>
       <span class="permalink">
@@ -135,72 +179,72 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="csw.messages.commands">commands</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$AssemblyBusyIssue.html" title=""></a>
-                        <a href="CommandIssue$$AssemblyBusyIssue.html" title="">AssemblyBusyIssue</a>
+                        <a class="class" href="CommandIssue$$AssemblyBusyIssue.html" title="Returned when an Assembly receives a command and one is already executing"></a>
+                        <a href="CommandIssue$$AssemblyBusyIssue.html" title="Returned when an Assembly receives a command and one is already executing">AssemblyBusyIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$ComponentLockedIssue.html" title=""></a>
-                        <a href="CommandIssue$$ComponentLockedIssue.html" title="">ComponentLockedIssue</a>
+                        <a class="class" href="CommandIssue$$ComponentLockedIssue.html" title="Returned when command received by one component when it is locked by other component"></a>
+                        <a href="CommandIssue$$ComponentLockedIssue.html" title="Returned when command received by one component when it is locked by other component">ComponentLockedIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$MissingKeyIssue.html" title=""></a>
-                        <a href="CommandIssue$$MissingKeyIssue.html" title="">MissingKeyIssue</a>
+                        <a class="class" href="CommandIssue$$MissingKeyIssue.html" title="Returned when a command is missing a required key/parameter"></a>
+                        <a href="CommandIssue$$MissingKeyIssue.html" title="Returned when a command is missing a required key/parameter">MissingKeyIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$OtherIssue.html" title=""></a>
-                        <a href="CommandIssue$$OtherIssue.html" title="">OtherIssue</a>
+                        <a class="class" href="CommandIssue$$OtherIssue.html" title="Returned when some other issue occurred apart from those already defined"></a>
+                        <a href="CommandIssue$$OtherIssue.html" title="Returned when some other issue occurred apart from those already defined">OtherIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="" title=""></a>
-                        <a href="" title="">ParameterValueOutOfRangeIssue</a>
+                        <a class="class" href="" title="Parameter of a command is out of range"></a>
+                        <a href="" title="Parameter of a command is out of range">ParameterValueOutOfRangeIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$RequiredAssemblyUnavailableIssue.html" title=""></a>
-                        <a href="CommandIssue$$RequiredAssemblyUnavailableIssue.html" title="">RequiredAssemblyUnavailableIssue</a>
+                        <a class="class" href="CommandIssue$$RequiredAssemblyUnavailableIssue.html" title="A required Assembly is not available"></a>
+                        <a href="CommandIssue$$RequiredAssemblyUnavailableIssue.html" title="A required Assembly is not available">RequiredAssemblyUnavailableIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$RequiredHCDUnavailableIssue.html" title=""></a>
-                        <a href="CommandIssue$$RequiredHCDUnavailableIssue.html" title="">RequiredHCDUnavailableIssue</a>
+                        <a class="class" href="CommandIssue$$RequiredHCDUnavailableIssue.html" title="sA required HCD is not available"></a>
+                        <a href="CommandIssue$$RequiredHCDUnavailableIssue.html" title="sA required HCD is not available">RequiredHCDUnavailableIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$RequiredSequencerUnavailableIssue.html" title=""></a>
-                        <a href="CommandIssue$$RequiredSequencerUnavailableIssue.html" title="">RequiredSequencerUnavailableIssue</a>
+                        <a class="class" href="CommandIssue$$RequiredSequencerUnavailableIssue.html" title="A required Sequencer is not available"></a>
+                        <a href="CommandIssue$$RequiredSequencerUnavailableIssue.html" title="A required Sequencer is not available">RequiredSequencerUnavailableIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$RequiredServiceUnavailableIssue.html" title=""></a>
-                        <a href="CommandIssue$$RequiredServiceUnavailableIssue.html" title="">RequiredServiceUnavailableIssue</a>
+                        <a class="class" href="CommandIssue$$RequiredServiceUnavailableIssue.html" title="A required service is not available"></a>
+                        <a href="CommandIssue$$RequiredServiceUnavailableIssue.html" title="A required service is not available">RequiredServiceUnavailableIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$UnresolvedLocationsIssue.html" title=""></a>
-                        <a href="CommandIssue$$UnresolvedLocationsIssue.html" title="">UnresolvedLocationsIssue</a>
+                        <a class="class" href="CommandIssue$$UnresolvedLocationsIssue.html" title="Returned when some required location is not available"></a>
+                        <a href="CommandIssue$$UnresolvedLocationsIssue.html" title="Returned when some required location is not available">UnresolvedLocationsIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$UnsupportedCommandInStateIssue.html" title=""></a>
-                        <a href="CommandIssue$$UnsupportedCommandInStateIssue.html" title="">UnsupportedCommandInStateIssue</a>
+                        <a class="class" href="CommandIssue$$UnsupportedCommandInStateIssue.html" title="A command is unsupported in the current state"></a>
+                        <a href="CommandIssue$$UnsupportedCommandInStateIssue.html" title="A command is unsupported in the current state">UnsupportedCommandInStateIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$UnsupportedCommandIssue.html" title=""></a>
-                        <a href="CommandIssue$$UnsupportedCommandIssue.html" title="">UnsupportedCommandIssue</a>
+                        <a class="class" href="CommandIssue$$UnsupportedCommandIssue.html" title="A command is unsupported by component"></a>
+                        <a href="CommandIssue$$UnsupportedCommandIssue.html" title="A command is unsupported by component">UnsupportedCommandIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$WrongInternalStateIssue.html" title=""></a>
-                        <a href="CommandIssue$$WrongInternalStateIssue.html" title="">WrongInternalStateIssue</a>
+                        <a class="class" href="CommandIssue$$WrongInternalStateIssue.html" title="The component is in the wrong internal state to handle a command"></a>
+                        <a href="CommandIssue$$WrongInternalStateIssue.html" title="The component is in the wrong internal state to handle a command">WrongInternalStateIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$WrongNumberOfParametersIssue.html" title=""></a>
-                        <a href="CommandIssue$$WrongNumberOfParametersIssue.html" title="">WrongNumberOfParametersIssue</a>
+                        <a class="class" href="CommandIssue$$WrongNumberOfParametersIssue.html" title="Returned when a command does not have the correct number of parameters"></a>
+                        <a href="CommandIssue$$WrongNumberOfParametersIssue.html" title="Returned when a command does not have the correct number of parameters">WrongNumberOfParametersIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$WrongParameterTypeIssue.html" title=""></a>
-                        <a href="CommandIssue$$WrongParameterTypeIssue.html" title="">WrongParameterTypeIssue</a>
+                        <a class="class" href="CommandIssue$$WrongParameterTypeIssue.html" title="Returned when the parameter for a key is not the correct type (i.e."></a>
+                        <a href="CommandIssue$$WrongParameterTypeIssue.html" title="Returned when the parameter for a key is not the correct type (i.e.">WrongParameterTypeIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$WrongPrefixIssue.html" title=""></a>
-                        <a href="CommandIssue$$WrongPrefixIssue.html" title="">WrongPrefixIssue</a>
+                        <a class="class" href="CommandIssue$$WrongPrefixIssue.html" title="Returned when an Assembly receives a configuration with a Prefix that it doesn't support"></a>
+                        <a href="CommandIssue$$WrongPrefixIssue.html" title="Returned when an Assembly receives a configuration with a Prefix that it doesn't support">WrongPrefixIssue</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CommandIssue$$WrongUnitsIssue.html" title=""></a>
-                        <a href="CommandIssue$$WrongUnitsIssue.html" title="">WrongUnitsIssue</a>
+                        <a class="class" href="CommandIssue$$WrongUnitsIssue.html" title="Returned when a parameter value does not have the correct units"></a>
+                        <a href="CommandIssue$$WrongUnitsIssue.html" title="Returned when a parameter value does not have the correct units">WrongUnitsIssue</a>
                       </li>
               </ul>
             </div>
@@ -229,7 +273,8 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p> Parameter of a command is out of range
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -279,7 +324,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(reason:String):csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue"></a><a id="&lt;init&gt;:ParameterValueOutOfRangeIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$$ParameterValueOutOfRangeIssue.html#&lt;init&gt;(reason:String):csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue" title="Permalink">
@@ -294,7 +339,7 @@
         <span class="name">ParameterValueOutOfRangeIssue</span><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span>
       </span>
       
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
     </li></ol>
             </div>
 

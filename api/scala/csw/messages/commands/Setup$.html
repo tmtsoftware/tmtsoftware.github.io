@@ -97,10 +97,54 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../index.html"><span class="name">messages</span></a>
+        <a title="This project is intended to hold reusable models and messages used throughout the csw source code." href="../index.html"><span class="name">messages</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <p class="shortcomment cmt">This project is intended to hold reusable models and messages used throughout the csw source code.</p><div class="fullcomment"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
+Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
+These are all based on type-safe keys and items (a set of values with optional units).
+Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
+One of the use case for using matcher is when Assembly sends <a href="../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+and in response to this command HCD keeps publishing its current state.
+Then Assembly can use Matcher with the matching definition as provided by <a href="matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
+match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="../params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
+that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
+of the given type.</p><p>Following <a href="../params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
+        |  Primitive   |      Scala KeyType      |       Java KeyType        |
+        +--------------+-------------------------+---------------------------+
+        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
+        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
+        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
+        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
+        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
+        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
+        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
+        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
+        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
+        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
+        | ----------   | ----------              | ----------                |
+        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
+        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
+        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
+        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
+        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
+        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
+        | ----------   | ----------              | ----------                |
+        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
+        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
+        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
+        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
+        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
+        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
+        | ----------   | ----------              | ----------                |
+        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
+        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
+        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
+        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages.commands" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="commands"></a><a id="commands:commands"></a>
       <span class="permalink">
@@ -135,12 +179,12 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="csw.messages.commands">commands</a></dd></dl></div>
     </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="Command.html" title="Common trait for Setup, Observe and Wait commands"></a>
-                        <a href="Command.html" title="Common trait for Setup, Observe and Wait commands">Command</a>
+                        <a class="trait" href="Command.html" title="Common trait representing commands in TMT like Setup, Observe and Wait"></a>
+                        <a href="Command.html" title="Common trait representing commands in TMT like Setup, Observe and Wait">Command</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="CommandIssue$.html" title=""></a>
-                        <a class="trait" href="CommandIssue.html" title="Describes the reason for a setup validation failure"></a>
-                        <a href="CommandIssue.html" title="Describes the reason for a setup validation failure">CommandIssue</a>
+                        <a class="trait" href="CommandIssue.html" title="Describes a command issue with appropriate reason for validation failure"></a>
+                        <a href="CommandIssue.html" title="Describes a command issue with appropriate reason for validation failure">CommandIssue</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="CommandList.html" title="Contains a list of commands that can be sent to a sequencer"></a>
@@ -159,24 +203,24 @@
                         <a href="CommandResultType.html" title="The nature of CommandResponse as an intermediate response of command execution or a final response which could be positive or negative">CommandResultType</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="ControlCommand.html" title="Marker trait for control parameter sets"></a>
-                        <a href="ControlCommand.html" title="Marker trait for control parameter sets">ControlCommand</a>
+                        <a class="trait" href="ControlCommand.html" title="Marker trait for control parameter sets which i applicable to Assembly and HCD type of components"></a>
+                        <a href="ControlCommand.html" title="Marker trait for control parameter sets which i applicable to Assembly and HCD type of components">ControlCommand</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="Keys$.html" title=""></a>
-                        <a href="Keys$.html" title="">Keys</a>
+                        <a class="object" href="Keys$.html" title="A helper class providing predefined parameter Keys"></a>
+                        <a href="Keys$.html" title="A helper class providing predefined parameter Keys">Keys</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Observe$.html" title=""></a>
                         <a class="class" href="Observe.html" title="A parameter set for setting telescope and instrument parameters."></a>
                         <a href="Observe.html" title="A parameter set for setting telescope and instrument parameters.">Observe</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Result$.html" title=""></a>
-                        <a class="class" href="Result.html" title="A parameters set for returning results"></a>
-                        <a href="Result.html" title="A parameters set for returning results">Result</a>
+                        <a class="class" href="Result.html" title="A result containing parameters for command response"></a>
+                        <a href="Result.html" title="A result containing parameters for command response">Result</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="SequenceCommand.html" title="Trait for sequence parameter sets"></a>
-                        <a href="SequenceCommand.html" title="Trait for sequence parameter sets">SequenceCommand</a>
+                        <a class="trait" href="SequenceCommand.html" title="Marker trait for sequence parameter sets which is applicable to Sequencer type of components"></a>
+                        <a href="SequenceCommand.html" title="Marker trait for sequence parameter sets which is applicable to Sequencer type of components">SequenceCommand</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="" title=""></a>
                         <a class="class" href="Setup.html" title="A parameter set for setting telescope and instrument parameters."></a>
@@ -320,7 +364,7 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="csw.messages.commands.Setup#apply" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="csw.messages.commands.Setup#apply" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(source:csw.messages.params.models.Prefix,commandName:csw.messages.commands.CommandName,maybeObsId:Option[csw.messages.params.models.ObsId],paramSet:Set[csw.messages.params.generics.Parameter[_]]):csw.messages.commands.Setup"></a><a id="apply(Prefix,CommandName,Option[ObsId],Set[Parameter[_]]):Setup"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/Setup$.html#apply(source:csw.messages.params.models.Prefix,commandName:csw.messages.commands.CommandName,maybeObsId:Option[csw.messages.params.models.ObsId],paramSet:Set[csw.messages.params.generics.Parameter[_]]):csw.messages.commands.Setup" title="Permalink">
@@ -335,8 +379,9 @@
         <span class="name">apply</span><span class="params">(<span name="source">source: <a href="../params/models/Prefix.html" class="extype" name="csw.messages.params.models.Prefix">Prefix</a></span>, <span name="commandName">commandName: <a href="CommandName.html" class="extype" name="csw.messages.commands.CommandName">CommandName</a></span>, <span name="maybeObsId">maybeObsId: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="../params/models/ObsId.html" class="extype" name="csw.messages.params.models.ObsId">ObsId</a>]</span>, <span name="paramSet">paramSet: <span class="extype" name="scala.Predef.Set">Set</span>[<a href="../params/generics/Parameter.html" class="extype" name="csw.messages.params.generics.Parameter">Parameter</a>[_]]</span>)</span><span class="result">: <a href="Setup.html" class="extype" name="csw.messages.commands.Setup">Setup</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.Setup#apply" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">The apply method is used to create Setup command by end-user.</p><div class="fullcomment"><div class="comment cmt"><p>The apply method is used to create Setup command by end-user. runId is not accepted and will be created internally to guarantee unique value.
+</p></div><dl class="paramcmts block"><dt class="param">source</dt><dd class="cmt"><p>prefix representing source of the command</p></dd><dt class="param">commandName</dt><dd class="cmt"><p>the name of the command</p></dd><dt class="param">maybeObsId</dt><dd class="cmt"><p>an optional obsId for command</p></dd><dt class="param">paramSet</dt><dd class="cmt"><p>an initial set of parameters (keys with values)</p></dd><dt>returns</dt><dd class="cmt"><p>a new instance of Setup with auto-generated runId</p></dd></dl></div>
+    </li><li name="csw.messages.commands.Setup#apply" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(source:csw.messages.params.models.Prefix,commandName:csw.messages.commands.CommandName,maybeObsId:Option[csw.messages.params.models.ObsId]):csw.messages.commands.Setup"></a><a id="apply(Prefix,CommandName,Option[ObsId]):Setup"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/Setup$.html#apply(source:csw.messages.params.models.Prefix,commandName:csw.messages.commands.CommandName,maybeObsId:Option[csw.messages.params.models.ObsId]):csw.messages.commands.Setup" title="Permalink">
@@ -351,7 +396,8 @@
         <span class="name">apply</span><span class="params">(<span name="source">source: <a href="../params/models/Prefix.html" class="extype" name="csw.messages.params.models.Prefix">Prefix</a></span>, <span name="commandName">commandName: <a href="CommandName.html" class="extype" name="csw.messages.commands.CommandName">CommandName</a></span>, <span name="maybeObsId">maybeObsId: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="../params/models/ObsId.html" class="extype" name="csw.messages.params.models.ObsId">ObsId</a>]</span>)</span><span class="result">: <a href="Setup.html" class="extype" name="csw.messages.commands.Setup">Setup</a></span>
       </span>
       
-      
+      <p class="shortcomment cmt">The apply method is used to create Setup command by end-user.</p><div class="fullcomment"><div class="comment cmt"><p>The apply method is used to create Setup command by end-user. runId is not accepted and will be created internally to guarantee unique value.
+</p></div><dl class="paramcmts block"><dt class="param">source</dt><dd class="cmt"><p>prefix representing source of the command</p></dd><dt class="param">commandName</dt><dd class="cmt"><p>the name of the command</p></dd><dt class="param">maybeObsId</dt><dd class="cmt"><p>an optional obsId for command</p></dd><dt>returns</dt><dd class="cmt"><p>a new instance of Setup with auto-generated runId and empty paramSet</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
