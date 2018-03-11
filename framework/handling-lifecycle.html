@@ -208,16 +208,15 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 
     // If an Hcd is found as a connection, resolve its location from location service and create other
     // required worker actors required by this assembly
-    Optional&lt;CompletableFuture&lt;Void&gt;&gt; voidCompletableFuture = mayBeConnection.map(connection -&gt;
+    return mayBeConnection.map(connection -&gt;
             worker.thenAcceptBoth(resolveHcd(), (workerActor, hcdLocation) -&gt; {
                 if(!hcdLocation.isPresent())
                     throw new HcdNotFoundException();
                 else
                     runningHcds.put(connection, Optional.of(hcdLocation.get().componentRef()));
                 diagnosticPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.jMake(Optional.of(hcdLocation.get().componentRef()), Optional.of(workerActor)));
-            }));
+            })).get();
 
-    return voidCompletableFuture.get().thenApply(x -&gt; null);
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
