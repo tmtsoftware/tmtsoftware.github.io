@@ -97,10 +97,54 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../index.html"><span class="name">messages</span></a>
+        <a title="This project is intended to hold reusable models and messages used throughout the csw source code." href="../index.html"><span class="name">messages</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <p class="shortcomment cmt">This project is intended to hold reusable models and messages used throughout the csw source code.</p><div class="fullcomment"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
+Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
+These are all based on type-safe keys and items (a set of values with optional units).
+Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
+One of the use case for using matcher is when Assembly sends <a href="../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+and in response to this command HCD keeps publishing its current state.
+Then Assembly can use Matcher with the matching definition as provided by <a href="matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
+match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="../params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
+that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
+of the given type.</p><p>Following <a href="../params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
+        |  Primitive   |      Scala KeyType      |       Java KeyType        |
+        +--------------+-------------------------+---------------------------+
+        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
+        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
+        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
+        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
+        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
+        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
+        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
+        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
+        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
+        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
+        | ----------   | ----------              | ----------                |
+        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
+        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
+        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
+        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
+        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
+        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
+        | ----------   | ----------              | ----------                |
+        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
+        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
+        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
+        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
+        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
+        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
+        | ----------   | ----------              | ----------                |
+        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
+        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
+        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
+        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages.commands" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="commands"></a><a id="commands:commands"></a>
       <span class="permalink">
@@ -135,12 +179,12 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="csw.messages.commands">commands</a></dd></dl></div>
     </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="Command.html" title="Common trait for Setup, Observe and Wait commands"></a>
-                        <a href="Command.html" title="Common trait for Setup, Observe and Wait commands">Command</a>
+                        <a class="trait" href="Command.html" title="Common trait representing commands in TMT like Setup, Observe and Wait"></a>
+                        <a href="Command.html" title="Common trait representing commands in TMT like Setup, Observe and Wait">Command</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="" title=""></a>
-                        <a class="trait" href="CommandIssue.html" title="Describes the reason for a setup validation failure"></a>
-                        <a href="CommandIssue.html" title="Describes the reason for a setup validation failure">CommandIssue</a>
+                        <a class="trait" href="CommandIssue.html" title="Describes a command issue with appropriate reason for validation failure"></a>
+                        <a href="CommandIssue.html" title="Describes a command issue with appropriate reason for validation failure">CommandIssue</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="CommandList.html" title="Contains a list of commands that can be sent to a sequencer"></a>
@@ -159,24 +203,24 @@
                         <a href="CommandResultType.html" title="The nature of CommandResponse as an intermediate response of command execution or a final response which could be positive or negative">CommandResultType</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="ControlCommand.html" title="Marker trait for control parameter sets"></a>
-                        <a href="ControlCommand.html" title="Marker trait for control parameter sets">ControlCommand</a>
+                        <a class="trait" href="ControlCommand.html" title="Marker trait for control parameter sets which i applicable to Assembly and HCD type of components"></a>
+                        <a href="ControlCommand.html" title="Marker trait for control parameter sets which i applicable to Assembly and HCD type of components">ControlCommand</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="Keys$.html" title=""></a>
-                        <a href="Keys$.html" title="">Keys</a>
+                        <a class="object" href="Keys$.html" title="A helper class providing predefined parameter Keys"></a>
+                        <a href="Keys$.html" title="A helper class providing predefined parameter Keys">Keys</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Observe$.html" title=""></a>
                         <a class="class" href="Observe.html" title="A parameter set for setting telescope and instrument parameters."></a>
                         <a href="Observe.html" title="A parameter set for setting telescope and instrument parameters.">Observe</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Result$.html" title=""></a>
-                        <a class="class" href="Result.html" title="A parameters set for returning results"></a>
-                        <a href="Result.html" title="A parameters set for returning results">Result</a>
+                        <a class="class" href="Result.html" title="A result containing parameters for command response"></a>
+                        <a href="Result.html" title="A result containing parameters for command response">Result</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="SequenceCommand.html" title="Trait for sequence parameter sets"></a>
-                        <a href="SequenceCommand.html" title="Trait for sequence parameter sets">SequenceCommand</a>
+                        <a class="trait" href="SequenceCommand.html" title="Marker trait for sequence parameter sets which is applicable to Sequencer type of components"></a>
+                        <a href="SequenceCommand.html" title="Marker trait for sequence parameter sets which is applicable to Sequencer type of components">SequenceCommand</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Setup$.html" title=""></a>
                         <a class="class" href="Setup.html" title="A parameter set for setting telescope and instrument parameters."></a>
@@ -267,7 +311,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="csw.messages.commands.CommandIssue.AssemblyBusyIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="csw.messages.commands.CommandIssue.AssemblyBusyIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="AssemblyBusyIssueextendsCommandIssuewithProductwithSerializable"></a><a id="AssemblyBusyIssue:AssemblyBusyIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#AssemblyBusyIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -279,11 +323,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$AssemblyBusyIssue.html"><span class="name">AssemblyBusyIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when an Assembly receives a command and one is already executing" href="CommandIssue$$AssemblyBusyIssue.html"><span class="name">AssemblyBusyIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.ComponentLockedIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Returned when an Assembly receives a command and one is already executing
+</p><div class="fullcomment"><div class="comment cmt"><p>Returned when an Assembly receives a command and one is already executing
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.ComponentLockedIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ComponentLockedIssueextendsCommandIssuewithProductwithSerializable"></a><a id="ComponentLockedIssue:ComponentLockedIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#ComponentLockedIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -295,11 +341,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$ComponentLockedIssue.html"><span class="name">ComponentLockedIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when command received by one component when it is locked by other component" href="CommandIssue$$ComponentLockedIssue.html"><span class="name">ComponentLockedIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.MissingKeyIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Returned when command received by one component when it is locked by other component
+</p><div class="fullcomment"><div class="comment cmt"><p>Returned when command received by one component when it is locked by other component
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.MissingKeyIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MissingKeyIssueextendsCommandIssuewithProductwithSerializable"></a><a id="MissingKeyIssue:MissingKeyIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#MissingKeyIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -311,11 +359,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$MissingKeyIssue.html"><span class="name">MissingKeyIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when a command is missing a required key/parameter" href="CommandIssue$$MissingKeyIssue.html"><span class="name">MissingKeyIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.OtherIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Returned when a command is missing a required key/parameter
+</p><div class="fullcomment"><div class="comment cmt"><p>Returned when a command is missing a required key/parameter
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.OtherIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="OtherIssueextendsCommandIssuewithProductwithSerializable"></a><a id="OtherIssue:OtherIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#OtherIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -327,11 +377,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$OtherIssue.html"><span class="name">OtherIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when some other issue occurred apart from those already defined" href="CommandIssue$$OtherIssue.html"><span class="name">OtherIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Returned when some other issue occurred apart from those already defined
+</p><div class="fullcomment"><div class="comment cmt"><p>Returned when some other issue occurred apart from those already defined
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ParameterValueOutOfRangeIssueextendsCommandIssuewithProductwithSerializable"></a><a id="ParameterValueOutOfRangeIssue:ParameterValueOutOfRangeIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#ParameterValueOutOfRangeIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -343,11 +395,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$ParameterValueOutOfRangeIssue.html"><span class="name">ParameterValueOutOfRangeIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Parameter of a command is out of range" href="CommandIssue$$ParameterValueOutOfRangeIssue.html"><span class="name">ParameterValueOutOfRangeIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.RequiredAssemblyUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt"> Parameter of a command is out of range
+</p><div class="fullcomment"><div class="comment cmt"><p> Parameter of a command is out of range
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.RequiredAssemblyUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="RequiredAssemblyUnavailableIssueextendsCommandIssuewithProductwithSerializable"></a><a id="RequiredAssemblyUnavailableIssue:RequiredAssemblyUnavailableIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#RequiredAssemblyUnavailableIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -359,11 +413,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$RequiredAssemblyUnavailableIssue.html"><span class="name">RequiredAssemblyUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A required Assembly is not available" href="CommandIssue$$RequiredAssemblyUnavailableIssue.html"><span class="name">RequiredAssemblyUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.RequiredHCDUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">A required Assembly is not available
+</p><div class="fullcomment"><div class="comment cmt"><p>A required Assembly is not available
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.RequiredHCDUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="RequiredHCDUnavailableIssueextendsCommandIssuewithProductwithSerializable"></a><a id="RequiredHCDUnavailableIssue:RequiredHCDUnavailableIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#RequiredHCDUnavailableIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -375,11 +431,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$RequiredHCDUnavailableIssue.html"><span class="name">RequiredHCDUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="sA required HCD is not available" href="CommandIssue$$RequiredHCDUnavailableIssue.html"><span class="name">RequiredHCDUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.RequiredSequencerUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt"> sA required HCD is not available
+</p><div class="fullcomment"><div class="comment cmt"><p> sA required HCD is not available
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.RequiredSequencerUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="RequiredSequencerUnavailableIssueextendsCommandIssuewithProductwithSerializable"></a><a id="RequiredSequencerUnavailableIssue:RequiredSequencerUnavailableIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#RequiredSequencerUnavailableIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -391,11 +449,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$RequiredSequencerUnavailableIssue.html"><span class="name">RequiredSequencerUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A required Sequencer is not available" href="CommandIssue$$RequiredSequencerUnavailableIssue.html"><span class="name">RequiredSequencerUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.RequiredServiceUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">A required Sequencer is not available
+</p><div class="fullcomment"><div class="comment cmt"><p>A required Sequencer is not available
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.RequiredServiceUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="RequiredServiceUnavailableIssueextendsCommandIssuewithProductwithSerializable"></a><a id="RequiredServiceUnavailableIssue:RequiredServiceUnavailableIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#RequiredServiceUnavailableIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -407,11 +467,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$RequiredServiceUnavailableIssue.html"><span class="name">RequiredServiceUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A required service is not available" href="CommandIssue$$RequiredServiceUnavailableIssue.html"><span class="name">RequiredServiceUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.UnresolvedLocationsIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">A required service is not available
+</p><div class="fullcomment"><div class="comment cmt"><p>A required service is not available
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.UnresolvedLocationsIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="UnresolvedLocationsIssueextendsCommandIssuewithProductwithSerializable"></a><a id="UnresolvedLocationsIssue:UnresolvedLocationsIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#UnresolvedLocationsIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -423,11 +485,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$UnresolvedLocationsIssue.html"><span class="name">UnresolvedLocationsIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when some required location is not available" href="CommandIssue$$UnresolvedLocationsIssue.html"><span class="name">UnresolvedLocationsIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.UnsupportedCommandInStateIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Returned when some required location is not available
+</p><div class="fullcomment"><div class="comment cmt"><p>Returned when some required location is not available
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.UnsupportedCommandInStateIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="UnsupportedCommandInStateIssueextendsCommandIssuewithProductwithSerializable"></a><a id="UnsupportedCommandInStateIssue:UnsupportedCommandInStateIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#UnsupportedCommandInStateIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -439,11 +503,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$UnsupportedCommandInStateIssue.html"><span class="name">UnsupportedCommandInStateIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A command is unsupported in the current state" href="CommandIssue$$UnsupportedCommandInStateIssue.html"><span class="name">UnsupportedCommandInStateIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.UnsupportedCommandIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">A command is unsupported in the current state
+</p><div class="fullcomment"><div class="comment cmt"><p>A command is unsupported in the current state
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.UnsupportedCommandIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="UnsupportedCommandIssueextendsCommandIssuewithProductwithSerializable"></a><a id="UnsupportedCommandIssue:UnsupportedCommandIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#UnsupportedCommandIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -455,11 +521,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$UnsupportedCommandIssue.html"><span class="name">UnsupportedCommandIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A command is unsupported by component" href="CommandIssue$$UnsupportedCommandIssue.html"><span class="name">UnsupportedCommandIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.WrongInternalStateIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">A command is unsupported by component
+</p><div class="fullcomment"><div class="comment cmt"><p>A command is unsupported by component
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.WrongInternalStateIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="WrongInternalStateIssueextendsCommandIssuewithProductwithSerializable"></a><a id="WrongInternalStateIssue:WrongInternalStateIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#WrongInternalStateIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -471,11 +539,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$WrongInternalStateIssue.html"><span class="name">WrongInternalStateIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="The component is in the wrong internal state to handle a command" href="CommandIssue$$WrongInternalStateIssue.html"><span class="name">WrongInternalStateIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.WrongNumberOfParametersIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">The component is in the wrong internal state to handle a command
+</p><div class="fullcomment"><div class="comment cmt"><p>The component is in the wrong internal state to handle a command
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.WrongNumberOfParametersIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="WrongNumberOfParametersIssueextendsCommandIssuewithProductwithSerializable"></a><a id="WrongNumberOfParametersIssue:WrongNumberOfParametersIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#WrongNumberOfParametersIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -487,11 +557,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$WrongNumberOfParametersIssue.html"><span class="name">WrongNumberOfParametersIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when a command does not have the correct number of parameters" href="CommandIssue$$WrongNumberOfParametersIssue.html"><span class="name">WrongNumberOfParametersIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.WrongParameterTypeIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Returned when a command does not have the correct number of parameters
+</p><div class="fullcomment"><div class="comment cmt"><p>Returned when a command does not have the correct number of parameters
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.WrongParameterTypeIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="WrongParameterTypeIssueextendsCommandIssuewithProductwithSerializable"></a><a id="WrongParameterTypeIssue:WrongParameterTypeIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#WrongParameterTypeIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -503,11 +575,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$WrongParameterTypeIssue.html"><span class="name">WrongParameterTypeIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when the parameter for a key is not the correct type (i.e." href="CommandIssue$$WrongParameterTypeIssue.html"><span class="name">WrongParameterTypeIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.WrongPrefixIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Returned when the parameter for a key is not the correct type (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Returned when the parameter for a key is not the correct type (i.e. int vs double, etc.)
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.WrongPrefixIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="WrongPrefixIssueextendsCommandIssuewithProductwithSerializable"></a><a id="WrongPrefixIssue:WrongPrefixIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#WrongPrefixIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -519,11 +592,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$WrongPrefixIssue.html"><span class="name">WrongPrefixIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when an Assembly receives a configuration with a Prefix that it doesn't support" href="CommandIssue$$WrongPrefixIssue.html"><span class="name">WrongPrefixIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandIssue.WrongUnitsIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Returned when an Assembly receives a configuration with a Prefix that it doesn't support
+</p><div class="fullcomment"><div class="comment cmt"><p>Returned when an Assembly receives a configuration with a Prefix that it doesn't support
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue.WrongUnitsIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="WrongUnitsIssueextendsCommandIssuewithProductwithSerializable"></a><a id="WrongUnitsIssue:WrongUnitsIssue"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandIssue$.html#WrongUnitsIssueextendsCommandIssuewithProductwithSerializable" title="Permalink">
@@ -535,10 +610,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandIssue$$WrongUnitsIssue.html"><span class="name">WrongUnitsIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when a parameter value does not have the correct units" href="CommandIssue$$WrongUnitsIssue.html"><span class="name">WrongUnitsIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
+      <p class="shortcomment cmt">Returned when a parameter value does not have the correct units
+</p><div class="fullcomment"><div class="comment cmt"><p>Returned when a parameter value does not have the correct units
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"><p>describing the cause of this issue</p></dd></dl></div>
     </li></ol>
             </div>
 

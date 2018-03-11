@@ -97,10 +97,54 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../index.html"><span class="name">messages</span></a>
+        <a title="This project is intended to hold reusable models and messages used throughout the csw source code." href="../index.html"><span class="name">messages</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <p class="shortcomment cmt">This project is intended to hold reusable models and messages used throughout the csw source code.</p><div class="fullcomment"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
+Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
+These are all based on type-safe keys and items (a set of values with optional units).
+Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
+One of the use case for using matcher is when Assembly sends <a href="../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+and in response to this command HCD keeps publishing its current state.
+Then Assembly can use Matcher with the matching definition as provided by <a href="matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
+match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="../params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
+that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
+of the given type.</p><p>Following <a href="../params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
+        |  Primitive   |      Scala KeyType      |       Java KeyType        |
+        +--------------+-------------------------+---------------------------+
+        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
+        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
+        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
+        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
+        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
+        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
+        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
+        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
+        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
+        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
+        | ----------   | ----------              | ----------                |
+        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
+        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
+        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
+        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
+        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
+        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
+        | ----------   | ----------              | ----------                |
+        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
+        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
+        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
+        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
+        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
+        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
+        | ----------   | ----------              | ----------                |
+        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
+        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
+        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
+        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages.commands" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="commands"></a><a id="commands:commands"></a>
       <span class="permalink">
@@ -135,12 +179,12 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="csw.messages.commands">commands</a></dd></dl></div>
     </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="Command.html" title="Common trait for Setup, Observe and Wait commands"></a>
-                        <a href="Command.html" title="Common trait for Setup, Observe and Wait commands">Command</a>
+                        <a class="trait" href="Command.html" title="Common trait representing commands in TMT like Setup, Observe and Wait"></a>
+                        <a href="Command.html" title="Common trait representing commands in TMT like Setup, Observe and Wait">Command</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="CommandIssue$.html" title=""></a>
-                        <a class="trait" href="CommandIssue.html" title="Describes the reason for a setup validation failure"></a>
-                        <a href="CommandIssue.html" title="Describes the reason for a setup validation failure">CommandIssue</a>
+                        <a class="trait" href="CommandIssue.html" title="Describes a command issue with appropriate reason for validation failure"></a>
+                        <a href="CommandIssue.html" title="Describes a command issue with appropriate reason for validation failure">CommandIssue</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="CommandList.html" title="Contains a list of commands that can be sent to a sequencer"></a>
@@ -159,24 +203,24 @@
                         <a href="CommandResultType.html" title="The nature of CommandResponse as an intermediate response of command execution or a final response which could be positive or negative">CommandResultType</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="ControlCommand.html" title="Marker trait for control parameter sets"></a>
-                        <a href="ControlCommand.html" title="Marker trait for control parameter sets">ControlCommand</a>
+                        <a class="trait" href="ControlCommand.html" title="Marker trait for control parameter sets which i applicable to Assembly and HCD type of components"></a>
+                        <a href="ControlCommand.html" title="Marker trait for control parameter sets which i applicable to Assembly and HCD type of components">ControlCommand</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="Keys$.html" title=""></a>
-                        <a href="Keys$.html" title="">Keys</a>
+                        <a class="object" href="Keys$.html" title="A helper class providing predefined parameter Keys"></a>
+                        <a href="Keys$.html" title="A helper class providing predefined parameter Keys">Keys</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Observe$.html" title=""></a>
                         <a class="class" href="Observe.html" title="A parameter set for setting telescope and instrument parameters."></a>
                         <a href="Observe.html" title="A parameter set for setting telescope and instrument parameters.">Observe</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Result$.html" title=""></a>
-                        <a class="class" href="Result.html" title="A parameters set for returning results"></a>
-                        <a href="Result.html" title="A parameters set for returning results">Result</a>
+                        <a class="class" href="Result.html" title="A result containing parameters for command response"></a>
+                        <a href="Result.html" title="A result containing parameters for command response">Result</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="SequenceCommand.html" title="Trait for sequence parameter sets"></a>
-                        <a href="SequenceCommand.html" title="Trait for sequence parameter sets">SequenceCommand</a>
+                        <a class="trait" href="SequenceCommand.html" title="Marker trait for sequence parameter sets which is applicable to Sequencer type of components"></a>
+                        <a href="SequenceCommand.html" title="Marker trait for sequence parameter sets which is applicable to Sequencer type of components">SequenceCommand</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Setup$.html" title=""></a>
                         <a class="class" href="Setup.html" title="A parameter set for setting telescope and instrument parameters."></a>
@@ -267,7 +311,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="csw.messages.commands.CommandResponse.Accepted" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="csw.messages.commands.CommandResponse.Accepted" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="AcceptedextendsCommandResponsewithProductwithSerializable"></a><a id="Accepted:Accepted"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#AcceptedextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -279,11 +323,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$Accepted.html"><span class="name">Accepted</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents an intermediate response stating acceptance of a command received" href="CommandResponse$$Accepted.html"><span class="name">Accepted</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandResponse.Cancelled" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents an intermediate response stating acceptance of a command received
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents an intermediate response stating acceptance of a command received
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>the runId of command for which this response is created</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandResponse.Cancelled" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="CancelledextendsCommandResponsewithProductwithSerializable"></a><a id="Cancelled:Cancelled"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#CancelledextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -295,11 +341,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$Cancelled.html"><span class="name">Cancelled</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a negative response that describes the cancellation of command" href="CommandResponse$$Cancelled.html"><span class="name">Cancelled</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandResponse.CommandNotAvailable" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents a negative response that describes the cancellation of command
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents a negative response that describes the cancellation of command
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>of command for which this response is created</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandResponse.CommandNotAvailable" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="CommandNotAvailableextendsCommandResponsewithProductwithSerializable"></a><a id="CommandNotAvailable:CommandNotAvailable"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#CommandNotAvailableextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -311,11 +359,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$CommandNotAvailable.html"><span class="name">CommandNotAvailable</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a negative response stating that a command is not available" href="CommandResponse$$CommandNotAvailable.html"><span class="name">CommandNotAvailable</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandResponse.Completed" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents a negative response stating that a command is not available
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents a negative response stating that a command is not available
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>of command for which this response is created</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandResponse.Completed" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="CompletedextendsCommandResponsewithProductwithSerializable"></a><a id="Completed:Completed"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#CompletedextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -327,11 +377,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$Completed.html"><span class="name">Completed</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a positive response stating completion of command" href="CommandResponse$$Completed.html"><span class="name">Completed</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandResponse.CompletedWithResult" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents a positive response stating completion of command
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents a positive response stating completion of command
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>of command for which this response is created</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandResponse.CompletedWithResult" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="CompletedWithResultextendsCommandResponsewithProductwithSerializable"></a><a id="CompletedWithResult:CompletedWithResult"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#CompletedWithResultextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -343,11 +395,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$CompletedWithResult.html"><span class="name">CompletedWithResult</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="result">result: <a href="Result.html" class="extype" name="csw.messages.commands.Result">Result</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a positive response stating completion of command" href="CommandResponse$$CompletedWithResult.html"><span class="name">CompletedWithResult</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="result">result: <a href="Result.html" class="extype" name="csw.messages.commands.Result">Result</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandResponse.Error" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents a positive response stating completion of command
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents a positive response stating completion of command
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>of command for which this response is created</p></dd><dt class="param">result</dt><dd class="cmt"><p>describing the result of completion</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandResponse.Error" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ErrorextendsCommandResponsewithProductwithSerializable"></a><a id="Error:Error"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#ErrorextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -359,11 +413,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$Error.html"><span class="name">Error</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="message">message: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a negative response that describes an error in executing the command" href="CommandResponse$$Error.html"><span class="name">Error</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="message">message: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandResponse.Invalid" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents a negative response that describes an error in executing the command
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents a negative response that describes an error in executing the command
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>of command for which this response is created</p></dd><dt class="param">message</dt><dd class="cmt"><p>describing the reason or cause or action item of the error encountered while executing the command</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandResponse.Invalid" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="InvalidextendsCommandResponsewithProductwithSerializable"></a><a id="Invalid:Invalid"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#InvalidextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -375,11 +431,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$Invalid.html"><span class="name">Invalid</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="issue">issue: <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a negative response invalidating a command received" href="CommandResponse$$Invalid.html"><span class="name">Invalid</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="issue">issue: <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandResponse.NoLongerValid" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents a negative response invalidating a command received
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents a negative response invalidating a command received
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>of command for which this response is created</p></dd><dt class="param">issue</dt><dd class="cmt"><p>describing the cause of invalidation</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandResponse.NoLongerValid" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="NoLongerValidextendsCommandResponsewithProductwithSerializable"></a><a id="NoLongerValid:NoLongerValid"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#NoLongerValidextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -391,11 +449,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$NoLongerValid.html"><span class="name">NoLongerValid</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="issue">issue: <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a negative response that states that a command is no longer valid" href="CommandResponse$$NoLongerValid.html"><span class="name">NoLongerValid</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="issue">issue: <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
-    </li><li name="csw.messages.commands.CommandResponse.NotAllowed" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents a negative response that states that a command is no longer valid
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents a negative response that states that a command is no longer valid
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>of command for which this response is created</p></dd><dt class="param">issue</dt><dd class="cmt"><p>describing the cause of invalidation</p></dd></dl></div>
+    </li><li name="csw.messages.commands.CommandResponse.NotAllowed" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="NotAllowedextendsCommandResponsewithProductwithSerializable"></a><a id="NotAllowed:NotAllowed"></a>
       <span class="permalink">
       <a href="../../../csw/messages/commands/CommandResponse$.html#NotAllowedextendsCommandResponsewithProductwithSerializable" title="Permalink">
@@ -407,10 +467,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="CommandResponse$$NotAllowed.html"><span class="name">NotAllowed</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="issue">issue: <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a negative response stating that a command is not allowed" href="CommandResponse$$NotAllowed.html"><span class="name">NotAllowed</span></a><span class="params">(<span name="runId">runId: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="issue">issue: <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a></span>)</span><span class="result"> extends <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      
+      <p class="shortcomment cmt">Represents a negative response stating that a command is not allowed
+</p><div class="fullcomment"><div class="comment cmt"><p>Represents a negative response stating that a command is not allowed
+</p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>of command for which this response is created</p></dd><dt class="param">issue</dt><dd class="cmt"><p>describing the cause of invalidation</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -482,7 +544,9 @@
         <span class="name">aggregateResponse</span><span class="params">(<span name="commandResponses">commandResponses: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-stream_2.12/2.5.8/akka-stream_2.12-2.5.8-javadoc.jar/!/akka/stream/scaladsl/Source.html#akka.stream.scaladsl.Source" class="extype" name="akka.stream.scaladsl.Source">Source</a>[<a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.8/akka-actor_2.12-2.5.8-javadoc.jar/!/akka/NotUsed.html#akka.NotUsed" class="extype" name="akka.NotUsed">NotUsed</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/concurrent/ExecutionContext.html#scala.concurrent.ExecutionContext" class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</a></span>, <span name="mat">mat: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-stream_2.12/2.5.8/akka-stream_2.12-2.5.8-javadoc.jar/!/akka/stream/Materializer.html#akka.stream.Materializer" class="extype" name="akka.stream.Materializer">Materializer</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/concurrent/Future.html#scala.concurrent.Future" class="extype" name="scala.concurrent.Future">Future</a>[<a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a>]</span>
       </span>
       
-      <p class="shortcomment cmt">Creates an aggregate response from a stream of CommandResponse.</p><div class="fullcomment"><div class="comment cmt"><p>Creates an aggregate response from a stream of CommandResponse.</p></div><dl class="paramcmts block"><dt class="param">commandResponses</dt><dd class="cmt"><p>a source of stream of CommandResponse</p></dd></dl></div>
+      <p class="shortcomment cmt">Creates an aggregated response from a collection of CommandResponses received from other components.</p><div class="fullcomment"><div class="comment cmt"><p>Creates an aggregated response from a collection of CommandResponses received from other components. If one of the
+CommandResponses fail, the aggregated response fails and further processing of any more CommandResponse is terminated.
+</p></div><dl class="paramcmts block"><dt class="param">commandResponses</dt><dd class="cmt"><p>a stream of CommandResponses</p></dd><dt>returns</dt><dd class="cmt"><p>a future of aggregated response</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
@@ -800,7 +864,9 @@
         <span class="name">withRunId</span><span class="params">(<span name="id">id: <a href="../params/models/Id.html" class="extype" name="csw.messages.params.models.Id">Id</a></span>, <span name="commandResponse">commandResponse: <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a></span>)</span><span class="result">: <a href="CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a></span>
       </span>
       
-      <p class="shortcomment cmt">Transform a given CommandResponse to a response with the provided RunId</p><div class="fullcomment"><div class="comment cmt"><p>Transform a given CommandResponse to a response with the provided RunId</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>the RunId for the new CommandResponse</p></dd><dt class="param">commandResponse</dt><dd class="cmt"><p>the CommandResponse to be transformed</p></dd></dl></div>
+      <p class="shortcomment cmt">Transform a given CommandResponse to a response with the provided Id
+</p><div class="fullcomment"><div class="comment cmt"><p>Transform a given CommandResponse to a response with the provided Id
+</p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>the RunId for the new CommandResponse</p></dd><dt class="param">commandResponse</dt><dd class="cmt"><p>the CommandResponse to be transformed</p></dd><dt>returns</dt><dd class="cmt"><p>a CommandResponse that has runId as provided id</p></dd></dl></div>
     </li>
               </ol>
             </div>

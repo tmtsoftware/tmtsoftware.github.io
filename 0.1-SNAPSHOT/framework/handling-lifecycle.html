@@ -175,14 +175,15 @@ TMT Common Software (CSW)
 
   // 4. If an Hcd is found as a connection, resolve its location from location service and create other
   // required worker actors required by this assembly
+
   maybeConnection match {
-    case hcdConnection @ Some(hcd) ⇒
-      locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
-        case Some(akkaLocation) ⇒
-          runningHcds = runningHcds.updated(hcdConnection.get, Some(akkaLocation.componentRef))
+    case Some(_) ⇒
+      resolveHcd().map {
+        case Some(hcd) ⇒
+          runningHcds = runningHcds.updated(maybeConnection.get, Some(hcd.componentRef))
           diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.make(runningHcds(maybeConnection.get), Some(worker)))
           commandHandler = ctx.spawnAnonymous(CommandHandler.make(calculationConfig, runningHcds(maybeConnection.get)))
-        case None ⇒ throw new RuntimeException(&quot;Could not resolve hcd location, Initialization failure.&quot;)
+        case None ⇒ // do something
       }
     case None ⇒ Future.successful(Unit)
   }
@@ -207,16 +208,14 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 
     // If an Hcd is found as a connection, resolve its location from location service and create other
     // required worker actors required by this assembly
-    Optional&lt;CompletableFuture&lt;Void&gt;&gt; voidCompletableFuture = mayBeConnection.map(connection -&gt; {
-        CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; eventualHcdLocation = locationService.resolve(connection.&lt;AkkaLocation&gt;of(), FiniteDuration.apply(5, TimeUnit.SECONDS));
-        return worker.thenAcceptBoth(eventualHcdLocation, (workerActor, hcdLocation) -&gt; {
-            if(!hcdLocation.isPresent())
-                throw new HcdNotFoundException();
-            else
-                runningHcds.put(connection, Optional.of(hcdLocation.get().componentRef()));
-            diagnosticPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.jMake(Optional.of(hcdLocation.get().componentRef()), Optional.of(workerActor)));
-        });
-    });
+    Optional&lt;CompletableFuture&lt;Void&gt;&gt; voidCompletableFuture = mayBeConnection.map(connection -&gt;
+            worker.thenAcceptBoth(resolveHcd(), (workerActor, hcdLocation) -&gt; {
+                if(!hcdLocation.isPresent())
+                    throw new HcdNotFoundException();
+                else
+                    runningHcds.put(connection, Optional.of(hcdLocation.get().componentRef()));
+                diagnosticPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.jMake(Optional.of(hcdLocation.get().componentRef()), Optional.of(workerActor)));
+            }));
 
     return voidCompletableFuture.get().thenApply(x -&gt; null);
 }</code></pre></dd>

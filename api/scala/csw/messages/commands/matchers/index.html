@@ -97,10 +97,54 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../../index.html"><span class="name">messages</span></a>
+        <a title="This project is intended to hold reusable models and messages used throughout the csw source code." href="../../index.html"><span class="name">messages</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <p class="shortcomment cmt">This project is intended to hold reusable models and messages used throughout the csw source code.</p><div class="fullcomment"><div class="comment cmt"><h4> Messages </h4><p>This project is intended to hold reusable models and messages used throughout the csw source code.</p><p>This also provides out of the box support to cater to the diverse communication requirements.
+Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> commands and events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
+These are all based on type-safe keys and items (a set of values with optional units).
+Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="../Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="../SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="../ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="../Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="../Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="../Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../../events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../../events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../../events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
+One of the use case for using matcher is when Assembly sends <a href="../../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+and in response to this command HCD keeps publishing its current state.
+Then Assembly can use Matcher with the matching definition as provided by <a href="StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
+match against the current states published by HCD.</p><h5> location and framework </h5><p>This packages contains reusable classes, traits and models.</p><h5> params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../../params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <a href="../../params/generics/ParamSetSerializer$.html" class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</a></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
+that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
+of the given type.</p><p>Following <a href="../../params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><p>        +--------------+-------------------------+---------------------------+
+        |  Primitive   |      Scala KeyType      |       Java KeyType        |
+        +--------------+-------------------------+---------------------------+
+        | Boolean      | KeyType.BooleanKey      | JKeyTypes.BooleanKey      |
+        | Character    | KeyType.CharKey         | JKeyTypes.JCharKey        |
+        | Byte         | KeyType.ByteKey         | JKeyTypes.ByteKey         |
+        | Short        | KeyType.ShortKey        | JKeyTypes.ShortKey        |
+        | Long         | KeyType.LongKey         | JKeyTypes.LongKey         |
+        | Int          | KeyType.IntKey          | JKeyTypes.IntKey          |
+        | Float        | KeyType.FloatKey        | JKeyTypes.FloatKey        |
+        | Double       | KeyType.DoubleKey       | JKeyTypes.DoubleKey       |
+        | String       | KeyType.StringKey       | JKeyTypes.StringKey       |
+        | Timestamp    | KeyType.TimestampKey    | JKeyTypes.TimestampKey    |
+        | ----------   | ----------              | ----------                |
+        | ByteArray    | KeyType.ByteArrayKey    | JKeyTypes.ByteArrayKey    |
+        | ShortArray   | KeyType.ShortArrayKey   | JKeyTypes.ShortArrayKey   |
+        | LongArray    | KeyType.LongArrayKey    | JKeyTypes.LongArrayKey    |
+        | IntArray     | KeyType.IntArrayKey     | JKeyTypes.IntArrayKey     |
+        | FloatArray   | KeyType.FloatArrayKey   | JKeyTypes.FloatArrayKey   |
+        | DoubleArray  | KeyType.DoubleArrayKey  | JKeyTypes.DoubleArrayKey  |
+        | ----------   | ----------              | ----------                |
+        | ByteMatrix   | KeyType.ByteMatrixKey   | JKeyTypes.ByteMatrixKey   |
+        | ShortMatrix  | KeyType.ShortMatrixKey  | JKeyTypes.ShortMatrixKey  |
+        | LongMatrix   | KeyType.LongMatrixKey   | JKeyTypes.LongMatrixKey   |
+        | IntMatrix    | KeyType.IntMatrixKey    | JKeyTypes.IntMatrixKey    |
+        | FloatMatrix  | KeyType.FloatMatrixKey  | JKeyTypes.FloatMatrixKey  |
+        | DoubleMatrix | KeyType.DoubleMatrixKey | JKeyTypes.DoubleMatrixKey |
+        | ----------   | ----------              | ----------                |
+        | Choice       | KeyType.ChoiceKey       | JKeyTypes.ChoiceKey       |
+        | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
+        | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
+        +--------------+-------------------------+---------------------------+</p><p>Detailed information about creating Keys and Parameters can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
+ https://tmtsoftware.github.io/csw-prod/services/messages/events.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.messages.commands" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="commands"></a><a id="commands:commands"></a>
       <span class="permalink">
@@ -151,16 +195,16 @@
                         <a href="Matcher.html" title="The matcher uses the matching definition as provided by csw.messages.commands.matchers.StateMatcher to match against the state generated by subscribing a source of that state">Matcher</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="trait" href="MatcherResponse.html" title="Response generated by csw.messages.commands.matchers.Matcher"></a>
-                        <a href="MatcherResponse.html" title="Response generated by csw.messages.commands.matchers.Matcher">MatcherResponse</a>
+                        <a class="trait" href="MatcherResponse.html" title="Response generated by csw.messages.commands.matchers.Matcher."></a>
+                        <a href="MatcherResponse.html" title="Response generated by csw.messages.commands.matchers.Matcher.">MatcherResponse</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="MatcherResponses$.html" title=""></a>
                         <a href="MatcherResponses$.html" title="">MatcherResponses</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="PresenceMatcher.html" title="PresenceMatcher only checks for the existence of a CurrentState with a given prefix."></a>
-                        <a href="PresenceMatcher.html" title="PresenceMatcher only checks for the existence of a CurrentState with a given prefix.">PresenceMatcher</a>
+                        <a class="class" href="PresenceMatcher.html" title="PresenceMatcher only checks for the existence of a CurrentState with a given prefix"></a>
+                        <a href="PresenceMatcher.html" title="PresenceMatcher only checks for the existence of a CurrentState with a given prefix">PresenceMatcher</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="StateMatcher.html" title="The base trait to build Matchers to match given state against a predicate"></a>
@@ -247,7 +291,8 @@
 This version tests for equality so it may not work the best with floating point values.
 Note: If the withUnits flag is set, the equality check with also compare units. False is the default
 so normally units are ignored for this purpose.
-</p></div><dl class="paramcmts block"><dt class="param">demand</dt><dd class="cmt"><p>a DemandState that will provide the items for determining completion with the CurrentState</p></dd><dt class="param">withUnits</dt><dd class="cmt"><p>when True, units are compared. When false, units are not compared. Default is false.</p></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">demand</dt><dd class="cmt"><p>a DemandState that will provide the items for determining completion with the CurrentState</p></dd><dt class="param">withUnits</dt><dd class="cmt"><p>when True, units are compared. When false, units are not compared. Default is false.</p></dd><dt class="param">timeout</dt><dd class="cmt"><p>a timeout for which the matching should be executed. Once the timeout occurs, complete the match with
+               MatchFailed response and appropriate failure exception.</p></dd></dl></div>
     </li><li name="csw.messages.commands.matchers.DemandMatcherAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DemandMatcherAllextendsStateMatcherwithProductwithSerializable"></a><a id="DemandMatcherAll:DemandMatcherAll"></a>
       <span class="permalink">
@@ -263,7 +308,10 @@ so normally units are ignored for this purpose.
         <a title="A StateMatcher which matches the CurrentState against the DemandState" href="DemandMatcherAll.html"><span class="name">DemandMatcherAll</span></a><span class="params">(<span name="demand">demand: <a href="../../params/states/DemandState.html" class="extype" name="csw.messages.params.states.DemandState">DemandState</a></span>, <span name="timeout">timeout: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.8/akka-actor_2.12-2.5.8-javadoc.jar/!/akka/util/Timeout.html#akka.util.Timeout" class="extype" name="akka.util.Timeout">Timeout</a></span>)</span><span class="result"> extends <a href="StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">StateMatcher</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">A StateMatcher which matches the CurrentState against the DemandState</p><div class="fullcomment"><div class="comment cmt"><p>A StateMatcher which matches the CurrentState against the DemandState</p></div><dl class="paramcmts block"><dt class="param">demand</dt><dd class="cmt"><p>a DemandState that will provide the items for determining completion with the CurrentState</p></dd></dl></div>
+      <p class="shortcomment cmt">A StateMatcher which matches the CurrentState against the DemandState
+</p><div class="fullcomment"><div class="comment cmt"><p>A StateMatcher which matches the CurrentState against the DemandState
+</p></div><dl class="paramcmts block"><dt class="param">demand</dt><dd class="cmt"><p>a DemandState that will provide the items for determining completion with the CurrentState</p></dd><dt class="param">timeout</dt><dd class="cmt"><p>a timeout for which the matching should be executed. Once the timeout occurs, complete the match with
+               MatchFailed response and appropriate failure exception.</p></dd></dl></div>
     </li><li name="csw.messages.commands.matchers.MatchAborted" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MatchAbortedextendsRuntimeExceptionwithProductwithSerializable"></a><a id="MatchAborted:MatchAborted"></a>
       <span class="permalink">
@@ -279,7 +327,9 @@ so normally units are ignored for this purpose.
         <a title="An exception depicting a match was aborted" href="MatchAborted.html"><span class="name">MatchAborted</span></a><span class="params">(<span name="prefix">prefix: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.RuntimeException">RuntimeException</span> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">An exception depicting a match was aborted</p><div class="fullcomment"><div class="comment cmt"><p>An exception depicting a match was aborted</p></div><dl class="paramcmts block"><dt class="param">prefix</dt><dd class="cmt"><p>the subsystem identifier for which matching was in progress</p></dd></dl></div>
+      <p class="shortcomment cmt">An exception depicting a match was aborted
+</p><div class="fullcomment"><div class="comment cmt"><p>An exception depicting a match was aborted
+</p></div><dl class="paramcmts block"><dt class="param">prefix</dt><dd class="cmt"><p>the subsystem identifier for which matching was in progress</p></dd></dl></div>
     </li><li name="csw.messages.commands.matchers.Matcher" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="MatcherextendsAnyRef"></a><a id="Matcher:Matcher"></a>
       <span class="permalink">
@@ -298,7 +348,7 @@ so normally units are ignored for this purpose.
       <p class="shortcomment cmt">The matcher uses the matching definition as provided by <a href="StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
 match against the state generated by subscribing a source of that state
 </p>
-    </li><li name="csw.messages.commands.matchers.MatcherResponse" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+    </li><li name="csw.messages.commands.matchers.MatcherResponse" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="MatcherResponseextendsAnyRef"></a><a id="MatcherResponse:MatcherResponse"></a>
       <span class="permalink">
       <a href="../../../../csw/messages/commands/matchers/index.html#MatcherResponseextendsAnyRef" title="Permalink">
@@ -310,11 +360,13 @@ match against the state generated by subscribing a source of that state
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="Response generated by csw.messages.commands.matchers.Matcher" href="MatcherResponse.html"><span class="name">MatcherResponse</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+        <a title="Response generated by csw.messages.commands.matchers.Matcher." href="MatcherResponse.html"><span class="name">MatcherResponse</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
       </span>
       
-      <p class="shortcomment cmt">Response generated by <a href="Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
-</p>
+      <p class="shortcomment cmt">Response generated by <a href="Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Response generated by <a href="Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>. The response generated could be
+<a href="MatcherResponses$$MatchCompleted$.html" class="extype" name="csw.messages.commands.matchers.MatcherResponses.MatchCompleted">csw.messages.commands.matchers.MatcherResponses.MatchCompleted</a>
+or <a href="MatcherResponses$$MatchFailed.html" class="extype" name="csw.messages.commands.matchers.MatcherResponses.MatchFailed">csw.messages.commands.matchers.MatcherResponses.MatchFailed</a>
+</p></div></div>
     </li><li name="csw.messages.commands.matchers.PresenceMatcher" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="PresenceMatcherextendsStateMatcherwithProductwithSerializable"></a><a id="PresenceMatcher:PresenceMatcher"></a>
       <span class="permalink">
@@ -327,10 +379,13 @@ match against the state generated by subscribing a source of that state
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="PresenceMatcher only checks for the existence of a CurrentState with a given prefix." href="PresenceMatcher.html"><span class="name">PresenceMatcher</span></a><span class="params">(<span name="prefix">prefix: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="timeout">timeout: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.8/akka-actor_2.12-2.5.8-javadoc.jar/!/akka/util/Timeout.html#akka.util.Timeout" class="extype" name="akka.util.Timeout">Timeout</a></span>)</span><span class="result"> extends <a href="StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">StateMatcher</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="PresenceMatcher only checks for the existence of a CurrentState with a given prefix" href="PresenceMatcher.html"><span class="name">PresenceMatcher</span></a><span class="params">(<span name="prefix">prefix: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="timeout">timeout: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.8/akka-actor_2.12-2.5.8-javadoc.jar/!/akka/util/Timeout.html#akka.util.Timeout" class="extype" name="akka.util.Timeout">Timeout</a></span>)</span><span class="result"> extends <a href="StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">StateMatcher</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">PresenceMatcher only checks for the existence of a CurrentState with a given prefix.</p><div class="fullcomment"><div class="comment cmt"><p>PresenceMatcher only checks for the existence of a CurrentState with a given prefix.</p></div><dl class="paramcmts block"><dt class="param">prefix</dt><dd class="cmt"><p>the prefix to match against the CurrentState</p></dd></dl></div>
+      <p class="shortcomment cmt">PresenceMatcher only checks for the existence of a CurrentState with a given prefix
+</p><div class="fullcomment"><div class="comment cmt"><p>PresenceMatcher only checks for the existence of a CurrentState with a given prefix
+</p></div><dl class="paramcmts block"><dt class="param">prefix</dt><dd class="cmt"><p>the prefix to match against the CurrentState</p></dd><dt class="param">timeout</dt><dd class="cmt"><p>A timeout for which the matching should be executed. Once the timeout occurs, complete the match with
+               MatchFailed response and appropriate failure exception.</p></dd></dl></div>
     </li><li name="csw.messages.commands.matchers.StateMatcher" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="StateMatcherextendsAnyRef"></a><a id="StateMatcher:StateMatcher"></a>
       <span class="permalink">
