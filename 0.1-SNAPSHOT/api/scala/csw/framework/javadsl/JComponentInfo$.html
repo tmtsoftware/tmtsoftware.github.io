@@ -112,15 +112,15 @@ Each component created by this framework is supervised by this actor.</p><p>Defa
 Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>.
 For complete list of supported messages per <a href="../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <a href="../internal/component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a>
 Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
-And it also maintains its own state <a href="../internal/component/ComponentLifecycleState.html" class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</a> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
-This is where framework code meets Component specific code.</p><p>- <a href="../internal/pubsub/PubSubBehavior.html" class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</a>
+And it also maintains its own state <span class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</span> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
+This is where framework code meets Component specific code.</p><p>- <span class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</span>
 This actor is created by framework which is wrapped into <a href="../scaladsl/CurrentStatePublisher.html" class="extype" name="csw.framework.scaladsl.CurrentStatePublisher">csw.framework.scaladsl.CurrentStatePublisher</a> for easy interaction with this actor
 and then passed to component handlers so that component can publish their <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> published by other component (ex. HCD)
 then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> to all subscribers.</p><p>- <a href="../internal/container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a>
 When multiple components needs to be started in container, then this actor is created.
 Job of this actor is just to logically group multiple components and support <a href="../../messages/scaladsl/SupervisorContainerCommonMessages$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages">csw.messages.scaladsl.SupervisorContainerCommonMessages</a>.
 It receives <a href="../../messages/scaladsl/SupervisorContainerCommonMessages$$Shutdown$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown">csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown</a> or <a href="../../messages/scaladsl/SupervisorContainerCommonMessages$$Restart$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart">csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart</a> message
-and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <a href="../deploy/containercmd/ContainerCmd.html" class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</a>
+and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <span class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</span>
 ContainerCmd is a helper utility provided by framework to start multiple components in container mode
 or single component in Standalone mode.</p><h5> Example of Container Config File </h5><p>Here is an example of a config file for creating a container with the name <i>IRIS_Container</i> that
 contains one assembly (named <i>Filter</i>) and depends on the services of two HCDs (<i>Instrument_Filter</i> and <i>Disperser</i>).
@@ -168,7 +168,7 @@ componentType = hcd
 behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
 prefix = iris.ifs
 locationServiceUsage = RegisterOnly
-connections = []</pre><p>- <a href="../deploy/hostconfig/HostConfig.html" class="extype" name="csw.framework.deploy.hostconfig.HostConfig">csw.framework.deploy.hostconfig.HostConfig</a>
+connections = []</pre><p>- <span class="extype" name="csw.framework.deploy.hostconfig.HostConfig">csw.framework.deploy.hostconfig.HostConfig</span>
 This is just a helper to create host configuration application.
 This support starting multiple containers on a given host machine and each container will have single/multiple components.</p><h5> Example of Host Config file </h5><pre># This is a host configuration file which contains list of containers to be spawned by host configuration app
 containers: [
@@ -213,16 +213,16 @@ containers: [
                         <a href="JComponentHandlers.html" title="Base class for component handlers which will be used by the component actor">JComponentHandlers</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="" title="Java API for creating csw.messages.framework.ComponentInfo"></a>
-                        <a href="" title="Java API for creating csw.messages.framework.ComponentInfo">JComponentInfo</a>
+                        <a class="object" href="" title="Helper instance for Java to create csw.messages.framework.ComponentInfo"></a>
+                        <a href="" title="Helper instance for Java to create csw.messages.framework.ComponentInfo">JComponentInfo</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="JContainerCmd$.html" title=""></a>
-                        <a href="JContainerCmd$.html" title="">JContainerCmd</a>
+                        <a class="object" href="JContainerCmd$.html" title="Helper instance for Java to start csw.framework.deploy.containercmd.ContainerCmd app"></a>
+                        <a href="JContainerCmd$.html" title="Helper instance for Java to start csw.framework.deploy.containercmd.ContainerCmd app">JContainerCmd</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="JHostConfig$.html" title=""></a>
-                        <a href="JHostConfig$.html" title="">JHostConfig</a>
+                        <a class="object" href="JHostConfig$.html" title="Helper instance for Java to start csw.framework.deploy.hostconfig.HostConfig app"></a>
+                        <a href="JHostConfig$.html" title="Helper instance for Java to start csw.framework.deploy.hostconfig.HostConfig app">JHostConfig</a>
                       </li>
               </ul>
             </div>
@@ -251,7 +251,7 @@ containers: [
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Java API for creating <a href="../../messages/framework/ComponentInfo.html" class="extype" name="csw.messages.framework.ComponentInfo">csw.messages.framework.ComponentInfo</a>
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Helper instance for Java to create <a href="../../messages/framework/ComponentInfo.html" class="extype" name="csw.messages.framework.ComponentInfo">csw.messages.framework.ComponentInfo</a>
 </p></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
@@ -451,7 +451,7 @@ containers: [
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="csw.framework.javadsl.JComponentInfo#from" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="csw.framework.javadsl.JComponentInfo#from" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="from(name:String,componentType:csw.messages.location.ComponentType,prefix:String,className:String,locationServiceUsage:csw.messages.framework.LocationServiceUsage,connections:java.util.Set[csw.messages.location.Connection],initializeTimeout:scala.concurrent.duration.FiniteDuration):csw.messages.framework.ComponentInfo"></a><a id="from(String,ComponentType,String,String,LocationServiceUsage,Set[Connection],FiniteDuration):ComponentInfo"></a>
       <span class="permalink">
       <a href="../../../csw/framework/javadsl/JComponentInfo$.html#from(name:String,componentType:csw.messages.location.ComponentType,prefix:String,className:String,locationServiceUsage:csw.messages.framework.LocationServiceUsage,connections:java.util.Set[csw.messages.location.Connection],initializeTimeout:scala.concurrent.duration.FiniteDuration):csw.messages.framework.ComponentInfo" title="Permalink">
@@ -466,7 +466,8 @@ containers: [
         <span class="name">from</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="componentType">componentType: <a href="../../messages/location/ComponentType.html" class="extype" name="csw.messages.location.ComponentType">ComponentType</a></span>, <span name="prefix">prefix: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="className">className: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="locationServiceUsage">locationServiceUsage: <a href="../../messages/framework/LocationServiceUsage.html" class="extype" name="csw.messages.framework.LocationServiceUsage">LocationServiceUsage</a></span>, <span name="connections">connections: <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html#java.util.Set" class="extype" name="java.util.Set">Set</a>[<a href="../../messages/location/Connection.html" class="extype" name="csw.messages.location.Connection">Connection</a>]</span>, <span name="initializeTimeout">initializeTimeout: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/concurrent/duration/FiniteDuration.html#scala.concurrent.duration.FiniteDuration" class="extype" name="scala.concurrent.duration.FiniteDuration">FiniteDuration</a></span>)</span><span class="result">: <a href="../../messages/framework/ComponentInfo.html" class="extype" name="csw.messages.framework.ComponentInfo">ComponentInfo</a></span>
       </span>
       
-      
+      <p class="shortcomment cmt">The information needed to create a component.</p><div class="fullcomment"><div class="comment cmt"><p>The information needed to create a component. This class is created after de-serializing the config file for the component.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>the name of the component</p></dd><dt class="param">componentType</dt><dd class="cmt"><p>the type of the component as defined by <a href="../../messages/location/ComponentType.html" class="extype" name="csw.messages.location.ComponentType">csw.messages.location.ComponentType</a></p></dd><dt class="param">prefix</dt><dd class="cmt"><p>identifies the subsystem</p></dd><dt class="param">className</dt><dd class="cmt"><p>specifies the component to be created by name of the class of it's factory</p></dd><dt class="param">locationServiceUsage</dt><dd class="cmt"><p>specifies component's usage of location service</p></dd><dt class="param">connections</dt><dd class="cmt"><p>set of connections that will be used by this component for interaction</p></dd><dt class="param">initializeTimeout</dt><dd class="cmt"><p>the timeout value used while initializing a component</p></dd><dt>returns</dt><dd class="cmt"><p>an instance of ComponentInfo</p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">

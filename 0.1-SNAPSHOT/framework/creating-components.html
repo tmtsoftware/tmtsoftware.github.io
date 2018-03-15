@@ -156,7 +156,7 @@ TMT Common Software (CSW)
     private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
 
     public JAssemblyComponentHandlers(
-            akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
+            akka.actor.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
             ComponentInfo componentInfo,
             CommandResponseManager commandResponseManager,
             CurrentStatePublisher currentStatePublisher,
@@ -174,7 +174,7 @@ TMT Common Software (CSW)
         configClient = JConfigClientFactory.clientApi(Adapter.toUntyped(ctx.getSystem()), locationService);
 
         runningHcds = new HashMap&lt;&gt;();
-        commandResponseAdapter = new TestProbe&lt;CommandResponse&gt;(ctx.getSystem(), TestKitSettings.apply(ctx.getSystem())).ref();
+        commandResponseAdapter = TestProbe.&lt;CommandResponse&gt;create(ctx.getSystem()).ref();
     }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
@@ -210,7 +210,7 @@ TMT Common Software (CSW)
     private int stats;
 
     public JHcdComponentHandlers(
-            akka.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
+            akka.actor.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
             ComponentInfo componentInfo,
             CommandResponseManager commandResponseManager,
             CurrentStatePublisher currentStatePublisher,
@@ -228,8 +228,8 @@ TMT Common Software (CSW)
     }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><strong>converting typed actor system to untyped actor system</strong> </p>
-<p>The <code>ctx</code> available to the component is of type <code>akka.typed.scaladsl.ActorContext</code> in scala or <code>akka.typed.javadsl.ActorContext</code> in java. This context can be used to get resources such as actor system which is also typed. In order to get the untyped version of actor system or actor references, akka has provided some implicit extension methods in scala and static methods in java which can be used by adding the following import </p>
-<p><code>import akka.typed.scaladsl.adapter._</code> for scala and, <code>import akka.typed.javadsl.Adapter.*</code> for java</p></div>
+<p>The <code>ctx</code> available to the component is of type <code>akka.actor.typed.scaladsl.ActorContext</code> in scala or <code>akka.actor.typed.javadsl.ActorContext</code> in java. This context can be used to get resources such as actor system which is also typed. In order to get the untyped version of actor system or actor references, akka has provided some implicit extension methods in scala and static methods in java which can be used by adding the following import </p>
+<p><code>import akka.actor.typed.scaladsl.adapter._</code> for scala and, <code>import akka.actor.typed.javadsl.Adapter.*</code> for java</p></div>
 <p>A component can be created by a factory which extends <code>ComponentBehaviorFactory</code> base class and provides a definition of <code>handlers</code> method to return the appropriate implementation of <code>ComponentHandlers</code>.</p>
 <dl>
   <dt>Assembly/Scala</dt>

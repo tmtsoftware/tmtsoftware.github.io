@@ -112,15 +112,15 @@ Each component created by this framework is supervised by this actor.</p><p>Defa
 Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>.
 For complete list of supported messages per <a href="../../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <a href="../component/ComponentBehavior.html" class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</a>
 Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
-And it also maintains its own state <a href="../component/ComponentLifecycleState.html" class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</a> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
-This is where framework code meets Component specific code.</p><p>- <a href="../pubsub/PubSubBehavior.html" class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</a>
+And it also maintains its own state <span class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</span> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
+This is where framework code meets Component specific code.</p><p>- <span class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</span>
 This actor is created by framework which is wrapped into <a href="../../scaladsl/CurrentStatePublisher.html" class="extype" name="csw.framework.scaladsl.CurrentStatePublisher">csw.framework.scaladsl.CurrentStatePublisher</a> for easy interaction with this actor
 and then passed to component handlers so that component can publish their <a href="../../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="../../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> published by other component (ex. HCD)
 then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="../../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> to all subscribers.</p><p>- <a href="../container/ContainerBehavior.html" class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</a>
 When multiple components needs to be started in container, then this actor is created.
 Job of this actor is just to logically group multiple components and support <a href="../../../messages/scaladsl/SupervisorContainerCommonMessages$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages">csw.messages.scaladsl.SupervisorContainerCommonMessages</a>.
 It receives <a href="../../../messages/scaladsl/SupervisorContainerCommonMessages$$Shutdown$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown">csw.messages.scaladsl.SupervisorContainerCommonMessages.Shutdown</a> or <a href="../../../messages/scaladsl/SupervisorContainerCommonMessages$$Restart$.html" class="extype" name="csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart">csw.messages.scaladsl.SupervisorContainerCommonMessages.Restart</a> message
-and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <a href="../../deploy/containercmd/ContainerCmd.html" class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</a>
+and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <span class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</span>
 ContainerCmd is a helper utility provided by framework to start multiple components in container mode
 or single component in Standalone mode.</p><h5> Example of Container Config File </h5><p>Here is an example of a config file for creating a container with the name <i>IRIS_Container</i> that
 contains one assembly (named <i>Filter</i>) and depends on the services of two HCDs (<i>Instrument_Filter</i> and <i>Disperser</i>).
@@ -168,7 +168,7 @@ componentType = hcd
 behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
 prefix = iris.ifs
 locationServiceUsage = RegisterOnly
-connections = []</pre><p>- <a href="../../deploy/hostconfig/HostConfig.html" class="extype" name="csw.framework.deploy.hostconfig.HostConfig">csw.framework.deploy.hostconfig.HostConfig</a>
+connections = []</pre><p>- <span class="extype" name="csw.framework.deploy.hostconfig.HostConfig">csw.framework.deploy.hostconfig.HostConfig</span>
 This is just a helper to create host configuration application.
 This support starting multiple containers on a given host machine and each container will have single/multiple components.</p><h5> Example of Host Config file </h5><pre># This is a host configuration file which contains list of containers to be spawned by host configuration app
 containers: [
@@ -235,22 +235,6 @@ containers: [
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.framework.internal">internal</a></dd></dl></div>
-    </li><li name="csw.framework.internal.pubsub" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="pubsub"></a><a id="pubsub:pubsub"></a>
-      <span class="permalink">
-      <a href="../../../csw/framework/internal/index.html#pubsub" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">package</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="../pubsub/index.html"><span class="name">pubsub</span></a>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.framework.internal">internal</a></dd></dl></div>
     </li><li name="csw.framework.internal.supervisor" visbl="pub" class="indented4 current" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="supervisor"></a><a id="supervisor:supervisor"></a>
       <span class="permalink">
@@ -269,33 +253,9 @@ containers: [
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.framework.internal">internal</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="LockManager.html" title=""></a>
-                        <a href="LockManager.html" title="">LockManager</a>
-                      </li><li class="current-entities indented4">
-                        <span class="separator"></span>
-                        <a class="class" href="SupervisorBehavior.html" title="The Behavior of a Supervisor of a component actor, represented as a mutable behavior."></a>
-                        <a href="SupervisorBehavior.html" title="The Behavior of a Supervisor of a component actor, represented as a mutable behavior.">SupervisorBehavior</a>
-                      </li><li class="current-entities indented4">
-                        <span class="separator"></span>
-                        <a class="class" href="SupervisorInfoFactory.html" title="The factory for creating supervisor actors of a component specified by csw.messages.framework.ComponentInfo"></a>
-                        <a href="SupervisorInfoFactory.html" title="The factory for creating supervisor actors of a component specified by csw.messages.framework.ComponentInfo">SupervisorInfoFactory</a>
-                      </li><li name="csw.framework.internal.wiring" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="wiring"></a><a id="wiring:wiring"></a>
-      <span class="permalink">
-      <a href="../../../csw/framework/internal/index.html#wiring" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">package</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="../wiring/index.html"><span class="name">wiring</span></a>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.framework.internal">internal</a></dd></dl></div>
-    </li>
+                        <a class="class" href="SupervisorBehavior.html" title="The Behavior of a Supervisor of a component actor, represented as a mutable behavior"></a>
+                        <a href="SupervisorBehavior.html" title="The Behavior of a Supervisor of a component actor, represented as a mutable behavior">SupervisorBehavior</a>
+                      </li>
               </ul>
             </div>
           </div>
@@ -334,54 +294,22 @@ containers: [
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="csw.framework.internal.supervisor.LockManager" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LockManagerextendsAnyRef"></a><a id="LockManager:LockManager"></a>
+              <ol><li name="csw.framework.internal.supervisor.SupervisorBehavior" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SupervisorBehaviorextendsBehaviors.MutableBehavior[csw.messages.scaladsl.SupervisorMessage]"></a><a id="SupervisorBehavior:SupervisorBehavior"></a>
       <span class="permalink">
-      <a href="../../../../csw/framework/internal/supervisor/index.html#LockManagerextendsAnyRef" title="Permalink">
+      <a href="../../../../csw/framework/internal/supervisor/index.html#SupervisorBehaviorextendsBehaviors.MutableBehavior[csw.messages.scaladsl.SupervisorMessage]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
       <span class="modifier_kind">
-        <span class="modifier"></span>
+        <span class="modifier">final </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="" href="LockManager.html"><span class="name">LockManager</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+        <a title="The Behavior of a Supervisor of a component actor, represented as a mutable behavior" href="SupervisorBehavior.html"><span class="name">SupervisorBehavior</span></a><span class="result"> extends <span class="extype" name="akka.actor.typed.scaladsl.Behaviors.MutableBehavior">MutableBehavior</span>[<span class="extype" name="csw.messages.scaladsl.SupervisorMessage">SupervisorMessage</span>]</span>
       </span>
       
-      
-    </li><li name="csw.framework.internal.supervisor.SupervisorBehavior" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SupervisorBehaviorextendsActor.MutableBehavior[csw.messages.scaladsl.SupervisorMessage]"></a><a id="SupervisorBehavior:SupervisorBehavior"></a>
-      <span class="permalink">
-      <a href="../../../../csw/framework/internal/supervisor/index.html#SupervisorBehaviorextendsActor.MutableBehavior[csw.messages.scaladsl.SupervisorMessage]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a title="The Behavior of a Supervisor of a component actor, represented as a mutable behavior." href="SupervisorBehavior.html"><span class="name">SupervisorBehavior</span></a><span class="result"> extends <span class="extype" name="akka.typed.scaladsl.Actor.MutableBehavior">MutableBehavior</span>[<span class="extype" name="csw.messages.scaladsl.SupervisorMessage">SupervisorMessage</span>]</span>
-      </span>
-      
-      <p class="shortcomment cmt">The Behavior of a Supervisor of a component actor, represented as a mutable behavior.</p>
-    </li><li name="csw.framework.internal.supervisor.SupervisorInfoFactory" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SupervisorInfoFactoryextendsAnyRef"></a><a id="SupervisorInfoFactory:SupervisorInfoFactory"></a>
-      <span class="permalink">
-      <a href="../../../../csw/framework/internal/supervisor/index.html#SupervisorInfoFactoryextendsAnyRef" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a title="The factory for creating supervisor actors of a component specified by csw.messages.framework.ComponentInfo" href="SupervisorInfoFactory.html"><span class="name">SupervisorInfoFactory</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
-      </span>
-      
-      <p class="shortcomment cmt">The factory for creating supervisor actors of a component specified by <a href="../../../messages/framework/ComponentInfo.html" class="extype" name="csw.messages.framework.ComponentInfo">csw.messages.framework.ComponentInfo</a>
+      <p class="shortcomment cmt">The Behavior of a Supervisor of a component actor, represented as a mutable behavior
 </p>
     </li></ol>
             </div>
