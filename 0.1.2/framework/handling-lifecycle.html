@@ -180,8 +180,8 @@ TMT Common Software (CSW)
     case Some(_) ⇒
       resolveHcd().map {
         case Some(hcd) ⇒
-          runningHcds = runningHcds.updated(maybeConnection.get, Some(hcd.componentRef))
-          diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.make(runningHcds(maybeConnection.get), Some(worker)))
+          runningHcds = runningHcds.updated(maybeConnection.get, Some(new CommandService(hcd)(ctx.system)))
+          diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.make(runningHcds(maybeConnection.get).get, worker))
           commandHandler = ctx.spawnAnonymous(CommandHandler.make(calculationConfig, runningHcds(maybeConnection.get)))
         case None ⇒ // do something
       }
@@ -213,8 +213,8 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
                 if(!hcdLocation.isPresent())
                     throw new HcdNotFoundException();
                 else
-                    runningHcds.put(connection, Optional.of(hcdLocation.get().componentRef()));
-                diagnosticPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.jMake(Optional.of(hcdLocation.get().componentRef()), Optional.of(workerActor)));
+                    runningHcds.put(connection, Optional.of(new JCommandService(hcdLocation.get(), ctx.getSystem())));
+                diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisherFactory.make(new JCommandService(hcdLocation.get(), ctx.getSystem()), workerActor));
             })).get();
 
 }</code></pre></dd>
