@@ -249,7 +249,7 @@ val httpRegResult: RegistrationResult = Await.result(locationService.register(ht
 // ************************************************************************************************************
 
 // import scaladsl adapter to implicitly convert UnTyped ActorRefs to Typed ActorRef[Nothing]
-import akka.typed.scaladsl.adapter._
+import akka.actor.typed.scaladsl.adapter._
 
 // dummy HCD connection
 val hcdConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
@@ -269,8 +269,8 @@ val hcdRegResult: RegistrationResult = Await.result(locationService.register(hcd
 
 // ************************************************************************************************************
 
-def behavior(): Behavior[String] = Actor.deferred { ctx =&gt;
-  Actor.same
+def behavior(): Behavior[String] = Behaviors.setup { ctx =&gt;
+  Behaviors.same
 }
 val typedActorRef: ActorRef[String] = context.system.spawn(behavior(), &quot;typed-actor-ref&quot;)
 
@@ -284,7 +284,7 @@ val assemblyRegResult: RegistrationResult = Await.result(locationService.registe
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java"><br/>// logAdminActorRef handles dynamically setting/getting log level of the component
-akka.typed.ActorRef&lt;LogControlMessages&gt; logAdminActorRef = LogAdminActorFactory.make(context().system());
+akka.actor.typed.ActorRef&lt;LogControlMessages&gt; logAdminActorRef = LogAdminActorFactory.make(context().system());
 
 // dummy http connection
 HttpConnection httpConnection = new HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
@@ -313,10 +313,10 @@ hcdRegResult = locationService.register(hcdRegistration).get();
 
 // ************************************************************************************************************
 
-Behavior&lt;String&gt; behavior = Actor.deferred(ctx -&gt; {
-    return Actor.same();
+Behavior&lt;String&gt; behavior = Behaviors.setup(ctx -&gt; {
+    return Behaviors.same();
 });
-akka.typed.ActorRef&lt;String&gt; typedActorRef = Adapter.spawn(context(), behavior, &quot;typed-actor-ref&quot;);
+akka.actor.typed.ActorRef&lt;String&gt; typedActorRef = Adapter.spawn(context(), behavior, &quot;typed-actor-ref&quot;);
 
 AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(&quot;assembly1&quot;, JComponentType.Assembly));
 
@@ -431,14 +431,14 @@ if (resolveResult.isPresent()) {
 val typedComponentRef: ActorRef[ComponentMessage] = akkaLocation.componentRef
 
 // If the component type is Container, use this to get the correct ActorRef
-val typedContainerRef: ActorRef[ContainerExternalMessage] = akkaLocation.containerRef</code></pre></dd>
+val typedContainerRef: ActorRef[ContainerMessage] = akkaLocation.containerRef</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// If the component type is HCD or Assembly, use this to get the correct ActorRef
-akka.typed.ActorRef&lt;ComponentMessage&gt; typedComponentRef = akkaLocation.componentRef();
+akka.actor.typed.ActorRef&lt;ComponentMessage&gt; typedComponentRef = akkaLocation.componentRef();
 
 // If the component type is Container, use this to get the correct ActorRef
-akka.typed.ActorRef&lt;ContainerExternalMessage&gt; typedContainerRef = akkaLocation.containerRef();</code></pre></dd>
+akka.actor.typed.ActorRef&lt;ContainerMessage&gt; typedContainerRef = akkaLocation.containerRef();</code></pre></dd>
 </dl></div>
 <h2><a href="#filtering" name="filtering" class="anchor"><span class="anchor-link"></span></a>Filtering</h2>
 <p>The <code>list</code> API and its variants offer means to inquire about available connections with the LocationService. The <strong>parameter-less</strong> <code>list</code> returns all available connections</p>
