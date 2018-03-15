@@ -203,7 +203,9 @@ private CompletableFuture&lt;ConfigData&gt; getAssemblyConfig() throws ConfigNot
     // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
     // configuration service and started again
     return configClient.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;))
-            .thenApply((maybeConfigData) -&gt; maybeConfigData.&lt;ConfigNotAvailableException&gt;orElseThrow(ConfigNotAvailableException::new));
+            .thenApply((Optional&lt;ConfigData&gt; maybeConfigData) -&gt; {
+                return maybeConfigData.&lt;ConfigNotAvailableException&gt;orElseThrow(() -&gt; new ConfigNotAvailableException());
+            });
 }</code></pre></dd>
     </dl>
   </li>

@@ -179,18 +179,27 @@ TMT Common Software (CSW)
 
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>It is not necessary to have name of the application as HostConfigApp/JHostConfigApp, user can choose this name.</p></div>
+<p>It is not necessary to have a name of the application as HostConfigApp/JHostConfigApp, user can choose this name.</p></div>
 <h2><a href="#command-line-parameter-options" name="command-line-parameter-options" class="anchor"><span class="anchor-link"></span></a>Command line parameter options</h2>
 <ul>
   <li><strong><code>--local</code></strong> It&rsquo;s an optional parameter. When supplied, get the host configuration file from local machine located at hostConfigPath, else fetch it from config service</li>
   <li><strong><code>&lt;file&gt;</code></strong> It&rsquo;s mandatory parameter. It specifies Host configuration file path</li>
-  <li><strong><code>-s, --container-script &lt;script-path&gt;</code></strong> It specifies the path of generated shell script of container command app from task <code>universal:publish</code> (sbt-native-packager task)</li>
+  <li><strong><code>-s, --container-script &lt;script-path&gt;</code></strong> It specifies the path of generated shell script of container command app from task <code>universal:packageBin</code> (sbt-native-packager task)</li>
   <li><strong><code>--help</code></strong> Prints the help of the application.</li>
   <li><strong><code>--version</code></strong> Prints the version of the application.</li>
 </ul>
 <h2><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h2>
-<p><strong>Example:</strong> <code>./trombone-host-config-app hostConfig.conf -s ./trombone-container-cmd-app</code><br/><strong>Explanation:</strong> Fetch hostconfig.conf from configuration service which contains multiple container configuration, then invoke trombone-container-cmd-app script per container configuration which spawns container</p>
-<p><strong>Example:</strong> <code>./trombone-host-config-app --local hostConfig.conf -s ./trombone-container-cmd-app</code><br/><strong>Explanation:</strong> Fetch and parse hostconfig.conf from current directory which contains multiple container configuration, then invoke trombone-container-cmd-app script per container configuration which spawns container</p>
+<h3><a href="#pre-requisites" name="pre-requisites" class="anchor"><span class="anchor-link"></span></a>Pre-requisites</h3>
+<ul>
+  <li>Run <code>sbt project/universal:packageBin</code> command. Here project contains HostConfigApp and ContainerCmdApp and it depends on required components. Ex. Hcd&rsquo;s, Assembly&rsquo;s etc.</li>
+  <li>Navigate to <code>project/target/universal</code> directory</li>
+  <li>Unzip file created with projects name</li>
+  <li>Navigate to <code>bin</code> directory from unzipped content</li>
+</ul>
+<p>Sbt task: <code>sbt project/universal:packageBin</code> creates following four scripts in <code>bin</code> directory, * <code>trombone-host-config-app</code> : Responsible for starting multiple containers. It takes <code>hostconfig.conf</code> file as an argument which contains list of container specifications. * <code>trombone-container-cmd-app</code> : Responsible for starting single container or component in standalone mode. It takes <code>containerConfig.conf</code> file as an argument which contains single container specifications. * <code>trombone-host-config-app.bat</code> : For windows machine. * <code>trombone-container-cmd-app.bat</code> : For windows machine.</p>
+<p><strong>Example:</strong> <code>./trombone-host-config-app hostconfig.conf -s ./trombone-container-cmd-app</code><br/><strong>Explanation:</strong> Fetch <code>hostconfig.conf</code> from configuration service which contains multiple container configuration, then invoke trombone-container-cmd-app script per container configuration which spawns container</p>
+<p><strong>Example:</strong> <code>./trombone-host-config-app --local hostconfig.conf -s ./trombone-container-cmd-app</code><br/><strong>Explanation:</strong> Fetch and parse <code>hostconfig.conf</code> from current directory which contains multiple container configuration, then invoke trombone-container-cmd-app script per container configuration which spawns container</p><div class="callout note "><div class="callout-title">Note</div>
+<p>In above examples, we are passing this argument <code>-s ./trombone-container-cmd-app</code> to <code>./trombone-host-config-app</code>. <code>-s</code> stands for script and following to that is script name, in our case its <code>trombone-container-cmd-app</code>. Here <code>trombone-container-cmd-app</code> does not take container configuration. <code>hostconfig.conf</code> passed to <code>trombone-host-config-app</code> contains location of container configuration files. Host config app internally parses <code>hostconfig.conf</code> and passes container configuration location to <code>trombone-container-cmd-app</code>.</p></div>
 <h2><a href="#where-does-it-fit-in-overall-deployment-strategy-may-change-" name="where-does-it-fit-in-overall-deployment-strategy-may-change-" class="anchor"><span class="anchor-link"></span></a>Where does it fit in overall deployment strategy (may change)</h2>
 <p><img src="../images/hostconfig/tmt-deployment.png" alt="TMT_Deployment_Strategy" /></p>
 <h2><a href="#custom-host-configuration" name="custom-host-configuration" class="anchor"><span class="anchor-link"></span></a>Custom Host Configuration</h2>
