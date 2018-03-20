@@ -163,7 +163,7 @@ commandResponseManager.addOrUpdateCommand(controlCommand.runId, Accepted(control
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// after validation of the controlCommand, update its status of successful validation as Accepted
-Accepted accepted = new Accepted(controlCommand.runId());
+CommandResponse.Accepted accepted = new CommandResponse.Accepted(controlCommand.runId());
 commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);</code></pre></dd>
 </dl>
 <h3><a href="#addsubcommand" name="addsubcommand" class="anchor"><span class="anchor-link"></span></a>addSubCommand</h3>
@@ -173,19 +173,29 @@ commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);</co
   <dd>
   <pre class="prettyprint"><code class="language-scala">shortSetup = Setup(prefix, shortRunning, controlCommand.maybeObsId)
 commandResponseManager.addSubCommand(commandId, shortSetup.runId)</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">Prefix prefix = new Prefix(&quot;wfos.red.detector&quot;);
+Setup subCommand = new Setup(prefix, new CommandName(&quot;sub-command-1&quot;), sc.jMaybeObsId());
+commandResponseManager.addSubCommand(sc.runId(), subCommand.runId());
+
+Setup subCommand2 = new Setup(prefix, new CommandName(&quot;sub-command-2&quot;), sc.jMaybeObsId());
+commandResponseManager.addSubCommand(sc.runId(), subCommand2.runId());
+</code></pre></dd>
 </dl>
 <h3><a href="#updatesubcommand" name="updatesubcommand" class="anchor"><span class="anchor-link"></span></a>updateSubCommand</h3>
 <p>Update the status of the sub-command which would trigger the automatic derivation of the status of the original/parent command when status of all the sub-commands have been updated. A status indicating failure such as <code>Invalid</code> or <code>Error</code> in any one of the sub-commands would result in the error status of the parent command. Status of any other sub-commands wil not be considered in this case.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">// An original command is split into three sub-commands and sent to an hcdComponent.
-// As the commands get completed, the results are updated in the commandResponseManager
+  <pre class="prettyprint"><code class="language-scala">// An original command is split into sub-commands and sent to a component. The result of the command is
+// obtained by subscribing to the component with the sub command id.
 hcdComponent.subscribe(controlCommand.runId).map {
   case _: Completed ⇒
     controlCommand.runId match {
       case id if id == shortSetup.runId ⇒
         currentStatePublisher.publish(CurrentState(shortSetup.source, Set(choiceKey.set(shortCmdCompleted))))
+        // As the commands get completed, the results are updated in the commandResponseManager
         commandResponseManager.updateSubCommand(id, Completed(id))
       case id if id == mediumSetup.runId ⇒
         currentStatePublisher.publish(CurrentState(mediumSetup.source, Set(choiceKey.set(mediumCmdCompleted))))
@@ -194,6 +204,21 @@ hcdComponent.subscribe(controlCommand.runId).map {
         currentStatePublisher.publish(CurrentState(longSetup.source, Set(choiceKey.set(longCmdCompleted))))
         commandResponseManager.updateSubCommand(id, Completed(id))
     }</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">// An original command is split into sub-commands and sent to a component. The result of the command is
+// obtained by subscribing to the component with the sub command id.
+JCommandService componentCommandService = runningHcds.get(componentInfo.getConnections().get(0)).get();
+componentCommandService.subscribe(subCommand2.runId(), Timeout.durationToTimeout(FiniteDuration.apply(5, TimeUnit.SECONDS)))
+        .thenAccept(commandResponse -&gt; {
+            if(commandResponse.resultType() instanceof CommandResponse.Completed) {
+                // As the commands get completed, the results are updated in the commandResponseManager
+                commandResponseManager.updateSubCommand(subCommand2.runId(), commandResponse);
+            }
+            else {
+                // do something
+            }
+});</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>It may be the case that the component wants to avoid automatic inference of a command based on the result of the sub-commands. It should refrain from updating the status of the sub-commands in this case and update the status of the parent command directly as required.</p></div>
 <h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>query</h3>
@@ -207,6 +232,15 @@ commandResponseManager
   .map(
     _ ⇒ () // may choose to publish current state to subscribers or do other operations
   )</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">// query CommandResponseManager to get the current status of Command, for example: Accepted/Completed/Invalid etc.
+commandResponseManager
+        .jQuery(subCommand.runId(), Timeout.durationToTimeout(FiniteDuration.apply(5, &quot;seconds&quot;)))
+        .thenAccept(commandResponse -&gt; {
+            // may choose to publish current state to subscribers or do other operations
+        });
+</code></pre></dd>
 </dl>
 <h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
 <p>Subscribe for the result of a command that is already present in the component&rsquo;s CommandResponseManager and perform action on the change in status.</p>
@@ -222,6 +256,20 @@ commandResponseManager.subscribe(
     case _ ⇒
   }
 )</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">// subscribe to the status of original command received and publish the state when its status changes to
+// Completed
+commandResponseManager.jSubscribe(subCommand.runId(), commandResponse -&gt; {
+    if(commandResponse.resultType() instanceof CommandResponse.Completed) {
+        Key&lt;String&gt; stringKey = JKeyTypes.StringKey().make(&quot;sub-command-status&quot;);
+        CurrentState currentState = new CurrentState(sc.source().prefix());
+        currentStatePublisher.publish(currentState.madd(stringKey.set(&quot;complete&quot;)));
+    }
+    else {
+        // do something
+    }
+});</code></pre></dd>
 </dl>
 </div>
 <div>
