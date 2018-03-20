@@ -353,6 +353,9 @@ public void onGoOnline() {
 public CommandResponse validateCommand(ControlCommand controlCommand) {
     if (controlCommand instanceof Setup) {
         // validation for setup goes here
+        // after validation of the controlCommand, update its status of successful validation as Accepted
+        CommandResponse.Accepted accepted = new CommandResponse.Accepted(controlCommand.runId());
+        commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);
         return new CommandResponse.Accepted(controlCommand.runId());
     } else if (controlCommand instanceof Observe) {
         // validation for observe goes here
