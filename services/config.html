@@ -77,10 +77,20 @@ TMT Common Software (CSW)
 </a>
 </label>
 <ul>
-  <li><a href="../cswOverview.html" class="page">Using CSW</a></li>
-  <li><a href="../gettingStarted.html" class="page">Getting Started</a></li>
-  <li><a href="../createComponent.html" class="page">Creating a Component</a></li>
-  <li><a href="../multipleComponents.html" class="page">Multiple Components</a></li>
+  <li><a href="../csw-overview.html" class="page">Using CSW</a></li>
+  <li><a href="../getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="../create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../multiple-components.html" class="page">Multiple Components</a></li>
+  <li><a href="../services/messages.html" class="page">Messages</a>
+  <ul>
+    <li><a href="../services/messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
+    <li><a href="../services/messages/units.html" class="page">Units</a></li>
+    <li><a href="../services/messages/subsystem.html" class="page">Subsystem</a></li>
+    <li><a href="../services/messages/commands.html" class="page">Commands</a></li>
+    <li><a href="../services/messages/events.html" class="page">Events</a></li>
+    <li><a href="../services/messages/states.html" class="page">State variables</a></li>
+    <li><a href="../services/messages/result.html" class="page">Result</a></li>
+  </ul></li>
   <li><a href="../framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
@@ -94,13 +104,12 @@ TMT Common Software (CSW)
   </ul></li>
   <li><a href="../services.html" class="page">Services</a>
   <ul>
-    <li><a href="../services/location.html" class="page">Location Service</a></li>
+    <li><a href="../services/location.html" class="page">Location service</a></li>
     <li><a href="../services/config.html" class="active page">Configuration service</a></li>
     <li><a href="../services/logging.html" class="page">Logging service</a></li>
-    <li><a href="../services/messages.html" class="page">csw-messages</a></li>
   </ul></li>
   <li><a href="../command.html" class="page">Communication using Commands</a></li>
-  <li><a href="../creatingTests.html" class="page">Creating Tests</a></li>
+  <li><a href="../creating-tests.html" class="page">Creating Tests</a></li>
   <li><a href="../apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
@@ -116,7 +125,7 @@ TMT Common Software (CSW)
 <ul>
   <li><a href="../services/config.html#configuration-service" class="header">Configuration service</a>
   <ul>
-    <li><a href="../services/config.html#artifacts" class="header">Artifacts</a></li>
+    <li><a href="../services/config.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../services/config.html#rules-and-checks" class="header">Rules and checks</a></li>
     <li><a href="../services/config.html#model-classes" class="header">Model classes</a></li>
     <li><a href="../services/config.html#api-flavors" class="header">API flavors</a></li>
@@ -139,7 +148,7 @@ TMT Common Software (CSW)
 </nav>
 
 <div class="md-nav__title--site md-version" title="Version">
-<i class="md-icon">label_outline</i> 0.1.2
+<i class="md-icon">label_outline</i> 0.1*
 </div>
 </nav>
 
@@ -154,7 +163,7 @@ TMT Common Software (CSW)
 <ul>
   <li><a href="../services/config.html#configuration-service" class="header">Configuration service</a>
   <ul>
-    <li><a href="../services/config.html#artifacts" class="header">Artifacts</a></li>
+    <li><a href="../services/config.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../services/config.html#rules-and-checks" class="header">Rules and checks</a></li>
     <li><a href="../services/config.html#model-classes" class="header">Model classes</a></li>
     <li><a href="../services/config.html#api-flavors" class="header">API flavors</a></li>
@@ -186,26 +195,12 @@ TMT Common Software (CSW)
 <p>Configuration Service provides a centralized persistent store for any configuration file used in the TMT Software System. All versions of configuration files are retained, providing a historical record of each configuration file.</p>
 <p>Note that in order to use the APIs described here, the <a href="../services/location.html">location service</a> (<a href="../apps/cswclusterseed.html">csw-cluster-seed</a>) and <a href="../apps/cswonfigserverapp.html">config service server</a> need to be running somewhere in the local network and the necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s) for the location service seed nodes.</p>
 <p>This service will be part of the observatory cluster and exposes Rest endpoints that can be accessed over HTTP. Component developers can use the csw-config-client library in their code. The library wraps the low level communication with ConfigServer and exposes simple to use methods to access and manage configuration files.</p>
-<h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
+<h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
+<p>To use the Configuration service without using the framework, add this to your <code>build.sbt</code> file:</p>
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-config-client&quot; % &quot;0.1.2&quot;
-</code></pre></dd>
-  <dt>maven</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
- &lt;groupId&gt;org.tmt&lt;/groupId&gt;
- &lt;artifactId&gt;csw-config-client_2.12&lt;/artifactId&gt;
- &lt;version&gt;0.1.2&lt;/version&gt;
- &lt;type&gt;pom&lt;/type&gt;
-&lt;/dependency&gt;
-</code></pre></dd>
-  <dt>gradle</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: &quot;org.tmt&quot;, name: &quot;csw-config-client_2.12&quot;, version: &quot;0.1.2&quot;
-}
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-config-client&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
 </dl>
 <h2><a href="#rules-and-checks" name="rules-and-checks" class="anchor"><span class="anchor-link"></span></a>Rules and checks</h2>
@@ -805,7 +800,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.1.2
+0.1*
 </span>
 </div>
 </article>
@@ -815,7 +810,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../services/location.html" title="Location Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../services/location.html" title="Location service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -824,7 +819,7 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Location Service
+Location service
 </span>
 </div>
 </a>

@@ -18,7 +18,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>csw-messages · TMT Common Software (CSW)</title>
+<title>Messages · TMT Common Software (CSW)</title>
 <script src="../lib/modernizr/modernizr.min.js"></script>
 <link rel="stylesheet" href="../assets/stylesheets/application-0741cbeb94.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -51,7 +51,7 @@ data-md-color-accent="indigo">
 </div>
 <div class="md-flex__cell md-flex__cell--stretch">
 <span class="md-flex__ellipsis md-header-nav__title">
-csw-messages
+Messages
 </span>
 </div>
 <form name="search" style="display: none">
@@ -77,10 +77,20 @@ TMT Common Software (CSW)
 </a>
 </label>
 <ul>
-  <li><a href="../cswOverview.html" class="page">Using CSW</a></li>
-  <li><a href="../gettingStarted.html" class="page">Getting Started</a></li>
-  <li><a href="../createComponent.html" class="page">Creating a Component</a></li>
-  <li><a href="../multipleComponents.html" class="page">Multiple Components</a></li>
+  <li><a href="../csw-overview.html" class="page">Using CSW</a></li>
+  <li><a href="../getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="../create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../multiple-components.html" class="page">Multiple Components</a></li>
+  <li><a href="../services/messages.html" class="active page">Messages</a>
+  <ul>
+    <li><a href="../services/messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
+    <li><a href="../services/messages/units.html" class="page">Units</a></li>
+    <li><a href="../services/messages/subsystem.html" class="page">Subsystem</a></li>
+    <li><a href="../services/messages/commands.html" class="page">Commands</a></li>
+    <li><a href="../services/messages/events.html" class="page">Events</a></li>
+    <li><a href="../services/messages/states.html" class="page">State variables</a></li>
+    <li><a href="../services/messages/result.html" class="page">Result</a></li>
+  </ul></li>
   <li><a href="../framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
@@ -94,13 +104,12 @@ TMT Common Software (CSW)
   </ul></li>
   <li><a href="../services.html" class="page">Services</a>
   <ul>
-    <li><a href="../services/location.html" class="page">Location Service</a></li>
+    <li><a href="../services/location.html" class="page">Location service</a></li>
     <li><a href="../services/config.html" class="page">Configuration service</a></li>
     <li><a href="../services/logging.html" class="page">Logging service</a></li>
-    <li><a href="../services/messages.html" class="active page">csw-messages</a></li>
   </ul></li>
   <li><a href="../command.html" class="page">Communication using Commands</a></li>
-  <li><a href="../creatingTests.html" class="page">Creating Tests</a></li>
+  <li><a href="../creating-tests.html" class="page">Creating Tests</a></li>
   <li><a href="../apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
@@ -114,9 +123,9 @@ TMT Common Software (CSW)
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
 <ul>
-  <li><a href="../services/messages.html#csw-messages" class="header">csw-messages</a>
+  <li><a href="../services/messages.html#messages" class="header">Messages</a>
   <ul>
-    <li><a href="../services/messages.html#artifacts" class="header">Artifacts</a></li>
+    <li><a href="../services/messages.html#dependencies" class="header">Dependencies</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -135,9 +144,9 @@ TMT Common Software (CSW)
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
 <ul>
-  <li><a href="../services/messages.html#csw-messages" class="header">csw-messages</a>
+  <li><a href="../services/messages.html#messages" class="header">Messages</a>
   <ul>
-    <li><a href="../services/messages.html#artifacts" class="header">Artifacts</a></li>
+    <li><a href="../services/messages.html#dependencies" class="header">Dependencies</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -148,28 +157,13 @@ TMT Common Software (CSW)
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h2><a href="#csw-messages" name="csw-messages" class="anchor"><span class="anchor-link"></span></a>csw-messages</h2>
+<h2><a href="#messages" name="messages" class="anchor"><span class="anchor-link"></span></a>Messages</h2>
 <p>In the distributed environment of TMT observatory, <strong>Components</strong> communicate with each other by sending asynchrnous <strong>Messages</strong>. These messages have a <strong>Command</strong> payload, which flows down through the sequencer components to the Assemblies, HCDs and finally to the hardware. At each hop Commands are validated, interpreted and further propagated making their journey to it&rsquo;s destination. Commands provide flexible placeholders to store values to convey precise intent of the sender component.</p>
-<h3><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h3>
+<h3><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h3>
 <dl>
   <dt>sbt</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-messages&quot; % &quot;0.1-SNAPSHOT&quot;
-</code></pre></dd>
-  <dt>maven</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
- &lt;groupId&gt;org.tmt&lt;/groupId&gt;
- &lt;artifactId&gt;csw-messages_2.12&lt;/artifactId&gt;
- &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
- &lt;type&gt;pom&lt;/type&gt;
-&lt;/dependency&gt;
-</code></pre></dd>
-  <dt>gradle</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: &quot;org.tmt&quot;, name: &quot;csw-messages_2.12&quot;, version: &quot;0.1-SNAPSHOT&quot;
-}
 </code></pre></dd>
 </dl>
 <p><strong>csw-messages</strong> library provides out of the box support to cater to the diverse communication requirements. Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p>
@@ -255,7 +249,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../services/logging.html" title="Logging service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../multiple-components.html" title="Multiple Components" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -264,7 +258,7 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Logging service
+Multiple Components
 </span>
 </div>
 </a>
