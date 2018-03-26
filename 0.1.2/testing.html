@@ -18,7 +18,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="assets/tmt_favicon.ico">
-<title>Messages · TMT Common Software (CSW)</title>
+<title>Testing · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="assets/stylesheets/application.7a4cdee3.css">
 <link rel="stylesheet" href="lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="lib/prettify/prettify.css">
@@ -54,7 +54,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Common Software (CSW)
 </span>
 <span class="md-header-nav__topic">
-Messages
+Testing
 </span>
 </div>
 </div>
@@ -136,7 +136,7 @@ tmtsoftware/csw-prod
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="create-component.html" class="page">Creating a Component</a></li>
   <li><a href="multiple-components.html" class="page">Multiple Components</a></li>
-  <li><a href="messages.html" class="active page">Messages</a>
+  <li><a href="messages.html" class="page">Messages</a>
   <ul>
     <li><a href="messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
     <li><a href="messages/units.html" class="page">Units</a></li>
@@ -164,7 +164,7 @@ tmtsoftware/csw-prod
     <li><a href="services/logging.html" class="page">Logging service</a></li>
   </ul></li>
   <li><a href="command.html" class="page">Communication using Commands</a></li>
-  <li><a href="testing.html" class="page">Testing</a></li>
+  <li><a href="testing.html" class="active page">Testing</a></li>
   <li><a href="apps.html" class="page">Applications</a>
   <ul>
     <li><a href="apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
@@ -178,9 +178,12 @@ tmtsoftware/csw-prod
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
 <ul>
-  <li><a href="messages.html#messages" class="header">Messages</a>
+  <li><a href="testing.html#testing" class="header">Testing</a>
   <ul>
-    <li><a href="messages.html#dependencies" class="header">Dependencies</a></li>
+    <li><a href="testing.html#unit-tests" class="header">Unit Tests</a></li>
+    <li><a href="testing.html#acceptance-tests" class="header">Acceptance Tests</a></li>
+    <li><a href="testing.html#multi-jvm-tests" class="header">Multi-JVM Tests</a></li>
+    <li><a href="testing.html#mockito" class="header">Mockito</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -199,9 +202,12 @@ tmtsoftware/csw-prod
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
 <ul>
-  <li><a href="messages.html#messages" class="header">Messages</a>
+  <li><a href="testing.html#testing" class="header">Testing</a>
   <ul>
-    <li><a href="messages.html#dependencies" class="header">Dependencies</a></li>
+    <li><a href="testing.html#unit-tests" class="header">Unit Tests</a></li>
+    <li><a href="testing.html#acceptance-tests" class="header">Acceptance Tests</a></li>
+    <li><a href="testing.html#multi-jvm-tests" class="header">Multi-JVM Tests</a></li>
+    <li><a href="testing.html#mockito" class="header">Mockito</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -212,84 +218,63 @@ tmtsoftware/csw-prod
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h2><a href="#messages" name="messages" class="anchor"><span class="anchor-link"></span></a>Messages</h2>
-<p>In the distributed environment of TMT observatory, <strong>Components</strong> communicate with each other by sending asynchrnous <strong>Messages</strong>. These messages have a <strong>Command</strong> payload, which flows down through the sequencer components to the Assemblies, HCDs and finally to the hardware. At each hop Commands are validated, interpreted and further propagated making their journey to it&rsquo;s destination. Commands provide flexible placeholders to store values to convey precise intent of the sender component.</p>
-<h3><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h3>
-<dl>
-  <dt>sbt</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-messages&quot; % &quot;0.1.2&quot;
-</code></pre></dd>
-</dl>
-<p><strong>csw-messages</strong> library provides out of the box support to cater to the diverse communication requirements. Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p>
-<div class="toc ">
+<h1><a href="#testing" name="testing" class="anchor"><span class="anchor-link"></span></a>Testing</h1>
+<p>This page will help you getting started with testing your applications. </p>
+<h2><a href="#unit-tests" name="unit-tests" class="anchor"><span class="anchor-link"></span></a>Unit Tests</h2>
+<p>The goal of unit testing is to segregate smallest testable units of your application and test that it is working correctly. It is always good idea to write more number of unit test cases and relatively less component and integration tests. If you want to get an idea of how many tests you should have in different types of testing phases (Unit/Component/Integration), refer this <a href="https://martinfowler.com/articles/practical-test-pyramid.html">blog</a></p>
+<p>Unit testing simple scala/java classes or objects is straight forward. You can mock external dependencies using Mockito. Refer <a href="testing.html#mockito">Mockito</a> section for more details.</p>
+<p>Follow below guides for testing your application which uses different modules of akka:</p>
 <ul>
-  <li><a href="messages/keys-parameters.html" class="page">Keys and Parameters</a>
-  <ul>
-    <li><a href="messages/keys-parameters.html#how-to-create-a-parameter" class="header">How to create a Parameter</a></li>
-    <li><a href="messages/keys-parameters.html#primitive-datatypes" class="header">Primitive datatypes</a></li>
-    <li><a href="messages/keys-parameters.html#arrays" class="header">Arrays</a></li>
-    <li><a href="messages/keys-parameters.html#matrices" class="header">Matrices</a></li>
-    <li><a href="messages/keys-parameters.html#domain-specific-types" class="header">Domain Specific Types</a></li>
-    <li><a href="messages/keys-parameters.html#source-code-for-examples" class="header">Source code for examples</a></li>
-  </ul></li>
-  <li><a href="messages/units.html" class="page">Units</a>
-  <ul>
-    <li><a href="messages/units.html#default-units-for-keys" class="header">Default units for Keys</a></li>
-    <li><a href="messages/units.html#si-units" class="header">SI units</a></li>
-    <li><a href="messages/units.html#cgs-units" class="header">CGS units</a></li>
-    <li><a href="messages/units.html#astropyhsics-units" class="header">Astropyhsics units</a></li>
-    <li><a href="messages/units.html#imperial-units" class="header">Imperial units</a></li>
-    <li><a href="messages/units.html#others-engineering" class="header">Others - engineering</a></li>
-    <li><a href="messages/units.html#usage-examples" class="header">Usage examples</a></li>
-    <li><a href="messages/units.html#source-code-for-examples" class="header">Source code for examples</a></li>
-  </ul></li>
-  <li><a href="messages/subsystem.html" class="page">Subsystem</a>
-  <ul>
-    <li><a href="messages/subsystem.html#list-of-subsystems" class="header">List of Subsystems</a></li>
-    <li><a href="messages/subsystem.html#usage-examples" class="header">Usage examples</a></li>
-  </ul></li>
-  <li><a href="messages/commands.html" class="page">Commands</a>
-  <ul>
-    <li><a href="messages/commands.html#obsid" class="header">ObsId</a></li>
-    <li><a href="messages/commands.html#prefix" class="header">Prefix</a></li>
-    <li><a href="messages/commands.html#setup-command" class="header">Setup Command</a></li>
-    <li><a href="messages/commands.html#observe-command" class="header">Observe Command</a></li>
-    <li><a href="messages/commands.html#wait-command" class="header">Wait Command</a></li>
-    <li><a href="messages/commands.html#json-serialization" class="header">JSON serialization</a></li>
-    <li><a href="messages/commands.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
-    <li><a href="messages/commands.html#cloning-a-command" class="header">Cloning a command</a></li>
-    <li><a href="messages/commands.html#source-code-for-examples" class="header">Source code for examples</a></li>
-  </ul></li>
-  <li><a href="messages/events.html" class="page">Events</a>
-  <ul>
-    <li><a href="messages/events.html#eventtime" class="header">EventTime</a></li>
-    <li><a href="messages/events.html#observe-event" class="header">Observe Event</a></li>
-    <li><a href="messages/events.html#system-event" class="header">System Event</a></li>
-    <li><a href="messages/events.html#json-serialization" class="header">JSON serialization</a></li>
-    <li><a href="messages/events.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
-    <li><a href="messages/events.html#protobuf" class="header">Protobuf</a></li>
-    <li><a href="messages/events.html#source-code-for-examples" class="header">Source code for examples</a></li>
-  </ul></li>
-  <li><a href="messages/states.html" class="page">State variables</a>
-  <ul>
-    <li><a href="messages/states.html#demandstate" class="header">DemandState</a></li>
-    <li><a href="messages/states.html#currentstate" class="header">CurrentState</a></li>
-    <li><a href="messages/states.html#json-serialization" class="header">JSON serialization</a></li>
-    <li><a href="messages/states.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
-    <li><a href="messages/states.html#source-code-for-examples" class="header">Source code for examples</a></li>
-  </ul></li>
-  <li><a href="messages/result.html" class="page">Result</a>
-  <ul>
-    <li><a href="messages/result.html#json-serialization" class="header">JSON serialization</a></li>
-    <li><a href="messages/result.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
-    <li><a href="messages/result.html#source-code-for-examples" class="header">Source code for examples</a></li>
-  </ul></li>
+  <li><a href="https://doc.akka.io/docs/akka/2.5/testing.html">Akka Untyped Actors</a></li>
+  <li><a href="https://doc.akka.io/docs/akka/2.5/typed/testing.html">Akka Typed Actors</a></li>
+  <li><a href="https://doc.akka.io/docs/akka/2.5.3/scala/stream/stream-testkit.html">Akka Streams</a></li>
 </ul>
-</div>
+<h2><a href="#acceptance-tests" name="acceptance-tests" class="anchor"><span class="anchor-link"></span></a>Acceptance Tests</h2>
+<p>This section explains how and where csw-prod maintains and execute acceptance tests. If you are a component writer and want to maintain acceptance tests, you can create a repo similar to <a href="https://github.com/tmtsoftware/csw-acceptance">csw-acceptance</a>.<br/>and update dependencies, projects as per your need. </p>
+<p>As part of acceptance tests, we run all the existing java and scala tests from <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> repo on published bintray binaries rather than directly on source code.</p>
+<p>More information can be found <a href="https://github.com/tmtsoftware/csw-acceptance/blob/master/README.md">here</a>.</p>
+<p>Below are the two separate jenkins pipelines to run <code>csw-prod</code> acceptance tests:</p>
+<ul>
+  <li>
+    <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev-nightly-build/">acceptance-dev-nightly-build</a></p>
+    <ul>
+      <li>Auto triggered every night to get fast feedback and intended for developer&rsquo;s visibility.</li>
+    </ul>
+  </li>
+  <li>
+    <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">acceptance-release</a></p>
+    <ul>
+      <li>Auto triggered on completion of <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline.</li>
+      <li>Admin needs to manually trigger <code>csw-prod-release</code> pipeline.</li>
+    </ul>
+  </li>
+</ul><div class="callout note "><div class="callout-title">Note</div>
+<p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline is responsible for following tasks:</p>
+<ul>
+  <li>build <code>csw-prod</code></li>
+  <li>run tests</li>
+  <li>publish binaries to bintray</li>
+  <li>publish paradox documentation</li>
+  <li>publish apps and release notes to github releases</li>
+  <li>trigger <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">acceptance-release</a> pipeline</li>
+</ul></div>
+<h2><a href="#multi-jvm-tests" name="multi-jvm-tests" class="anchor"><span class="anchor-link"></span></a>Multi-JVM Tests</h2>
+<p>Testing asynchronous distributed systems requires special tooling/framework support. Sbt has a plugin called <a href="https://github.com/sbt/sbt-multi-jvm">sbt-multi-jvm</a> which helps to test systems across multiple JVMs or machines. This is especially useful for integration testing where multiple systems communicate with each other.</p>
+<p>You can find more details on multi jvm tests <a href="https://doc.akka.io/docs/akka/2.5/multi-jvm-testing.html">here</a>.</p>
+<p>You can also refer <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> for writing your own multi JVM tests.</p>
+<p>For example: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> </p>
+<p>In case you want to run your Multi-JVM tests across machines, you need to add below dependency in <code>build.sbt</code>:</p>
+<p><code>libraryDependencies    += &quot;com.typesafe.akka&quot; %% &quot;akka-multi-node-testkit&quot; % &quot;2.5.11&quot; % Test</code></p>
+<p>Then you can simply run following command to execute tests across machines:</p>
+<p><code>sbt &lt;project&gt;/multiNodeTest</code></p>
+<p>One of the pre-requisite before running above command is that, you should have a file named <code>multi-node-test.hosts</code> at root level which contains a sequence of hosts to use for running the test, on the form <code>user@host:java</code> where host is the only required part. Also make sure, you are able to <code>ssh</code> to these machines without password (password less ssh should be enabled).</p>
+<p>Refer multi node testing guide for more details <a href="https://doc.akka.io/docs/akka/2.5/multi-node-testing.html">here</a>. </p>
+<h2><a href="#mockito" name="mockito" class="anchor"><span class="anchor-link"></span></a>Mockito</h2>
+<p><a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> uses <a href="http://site.mockito.org/">Mockito</a> for writing unit tests. ScalaTest comes with <a href="http://www.scalatest.org/user_guide/testing_with_mock_objects#mockito">MockitoSugar</a> trait which provides some basic syntax sugar for Mockito.</p>
+<p>For example: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/test/scala/csw/framework/internal/container/ContainerBehaviorTest.scala">ContainerBehaviorTest.scala</a></p>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/messages.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/testing.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -305,7 +290,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="multiple-components.html" title="Multiple Components" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="command.html" title="Communication using Commands" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -314,17 +299,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Multiple Components
+Communication using Commands
 </span>
 </div>
 </a>
-<a href="messages/keys-parameters.html" title="Keys and Parameters" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="apps.html" title="Applications" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Keys and Parameters
+Applications
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
