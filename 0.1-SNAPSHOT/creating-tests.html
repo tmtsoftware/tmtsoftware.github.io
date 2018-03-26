@@ -219,34 +219,21 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#creating-tests" name="creating-tests" class="anchor"><span class="anchor-link"></span></a>Creating Tests</h1>
+<p>This page will help you getting started with testing your applications. </p>
 <h2><a href="#unit-tests" name="unit-tests" class="anchor"><span class="anchor-link"></span></a>Unit Tests</h2>
+<p>The goal of unit testing is to segregate smallest testable units of your application and test that it is working correctly. It is always good idea to write more number of unit test cases and relatively less component and integration tests. If you want to get an idea of how many tests you should have in different types of testing phases (Unit/Component/Integration), refer this <a href="https://martinfowler.com/articles/practical-test-pyramid.html">blog</a></p>
+<p>Unit testing simple scala/java classes or objects is straight forward. You can mock external dependencies using Mockito. Refer <a href="creating-tests.html#mockito">Mockito</a> section for more details.</p>
+<p>Follow below guides for testing your application which uses different modules of akka:</p>
 <ul>
-  <li>Unit testing simple scala/java classes or objects is straight forward. You can mock external dependencies using Mockito. Refer <a href="creating-tests.html#mockito">Mockito</a> section for more details.</li>
-  <li>Testing akka actors, please refer akka actor testing guide <a href="https://doc.akka.io/docs/akka/2.5/testing.html">here</a>.</li>
-  <li>Testing akka typed actors, please refer akka typed actor testing guide <a href="https://doc.akka.io/docs/akka/2.5/typed/testing.html">here</a>.</li>
+  <li><a href="https://doc.akka.io/docs/akka/2.5/testing.html">Akka Untyped Actors</a></li>
+  <li><a href="https://doc.akka.io/docs/akka/2.5/typed/testing.html">Akka Typed Actors</a></li>
+  <li><a href="https://doc.akka.io/docs/akka/2.5.3/scala/stream/stream-testkit.html">Akka Streams</a></li>
 </ul>
-<p>These guides explain testing actors synchronously and asynchronously.</p>
-<p>Akka provides testkit for every akka module independently.</p>
-<ul>
-  <li>Testing akka untyped actors, add below testkit dependency in your <code>build.sbt</code>:</li>
-</ul>
-<p><code>libraryDependencies    += &quot;com.typesafe.akka&quot; %% &quot;akka-testkit&quot; % &quot;2.5.11&quot; % Test</code></p>
-<ul>
-  <li>Testing akka typed actors, add below testkit dependency in your <code>build.sbt</code>:</li>
-</ul>
-<p><code>libraryDependencies    += &quot;com.typesafe.akka&quot; %% &quot;akka-testkit-typed&quot; % &quot;2.5.11&quot; % Test</code></p>
-<ul>
-  <li>Testing akka streams, add below testkit dependency in your <code>build.sbt</code>:</li>
-</ul>
-<p><code>libraryDependencies    += &quot;com.typesafe.akka&quot; %% &quot;akka-stream-testkit&quot; % &quot;2.5.11&quot; % Test</code></p>
-<ul>
-  <li>Testing akka http routes, add below testkit dependency in your <code>build.sbt</code>:</li>
-</ul>
-<p><code>libraryDependencies    += &quot;com.typesafe.akka&quot; %% &quot;akka-http-testkit&quot; % &quot;10.1.0&quot; % Test</code></p>
 <h2><a href="#acceptance-tests" name="acceptance-tests" class="anchor"><span class="anchor-link"></span></a>Acceptance Tests</h2>
-<p>We maintain a separate repository for running Acceptance Tests <a href="https://github.com/tmtsoftware/csw-acceptance">here</a>. As a part of acceptance tests, we run all the existing java and scala tests from <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> repo on published bintray binaries rather than directly on source code.</p>
+<p>This section explains how and where csw-prod maintains and execute acceptance tests. If you are a component writer and want to maintain acceptance tests, you can create a repo similar to <a href="https://github.com/tmtsoftware/csw-acceptance">csw-acceptance</a>.<br/>and update dependencies, projects as per your need. </p>
+<p>As part of acceptance tests, we run all the existing java and scala tests from <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> repo on published bintray binaries rather than directly on source code.</p>
 <p>More information can be found <a href="https://github.com/tmtsoftware/csw-acceptance/blob/master/README.md">here</a>.</p>
-<p>We maintain below two separate jenkins pipeline to run these tests:</p>
+<p>Below are the two separate jenkins pipelines to run <code>csw-prod</code> acceptance tests:</p>
 <ul>
   <li>
     <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev-nightly-build/">acceptance-dev-nightly-build</a></p>
@@ -257,23 +244,34 @@ tmtsoftware/csw-prod
   <li>
     <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">acceptance-release</a></p>
     <ul>
-      <li>This pipeline automatically gets triggered on completion of <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline.</li>
+      <li>Auto triggered on completion of <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline.</li>
       <li>Admin needs to manually trigger <code>csw-prod-release</code> pipeline.</li>
     </ul>
   </li>
-</ul>
+</ul><div class="callout note "><div class="callout-title">Note</div>
+<p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline is responsible for following tasks:</p>
+<ul>
+  <li>build <code>csw-prod</code></li>
+  <li>run tests</li>
+  <li>publish binaries to bintray</li>
+  <li>publish paradox documentation</li>
+  <li>publish apps and release notes to github releases</li>
+  <li>trigger <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">acceptance-release</a> pipeline</li>
+</ul></div>
 <h2><a href="#multi-jvm-tests" name="multi-jvm-tests" class="anchor"><span class="anchor-link"></span></a>Multi-JVM Tests</h2>
 <p>Testing asynchronous distributed systems requires special tooling/framework support. Sbt has a plugin called <a href="https://github.com/sbt/sbt-multi-jvm">sbt-multi-jvm</a> which helps to test systems across multiple JVMs or machines. This is especially useful for integration testing where multiple systems communicate with each other.</p>
 <p>You can find more details on multi jvm tests <a href="https://doc.akka.io/docs/akka/2.5/multi-jvm-testing.html">here</a>.</p>
 <p>You can also refer <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> for writing your own multi JVM tests.</p>
-<p>For example: * <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> </p>
-<p>In case you want to run your Multi-JVM tests across machines, you need to add below dependency in <code>build.sbt</code>: <code>libraryDependencies    += &quot;com.typesafe.akka&quot; %% &quot;akka-multi-node-testkit&quot; % &quot;2.5.11&quot; % Test</code></p>
-<p>Then you can simply run following command to execute tests across machines: <code>sbt &lt;project&gt;/multiNodeTest</code></p>
-<p>One of the pre-requisite before running above command is that, you should have a file named <code>multi-node-test.hosts</code> at root level which contains list of ip address&rsquo;s of machines where you want to execute your tests. Also make sure, you are able to <code>ssh</code> to those machine without password (password less ssh should be enabled).</p>
+<p>For example: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> </p>
+<p>In case you want to run your Multi-JVM tests across machines, you need to add below dependency in <code>build.sbt</code>:</p>
+<p><code>libraryDependencies    += &quot;com.typesafe.akka&quot; %% &quot;akka-multi-node-testkit&quot; % &quot;2.5.11&quot; % Test</code></p>
+<p>Then you can simply run following command to execute tests across machines:</p>
+<p><code>sbt &lt;project&gt;/multiNodeTest</code></p>
+<p>One of the pre-requisite before running above command is that, you should have a file named <code>multi-node-test.hosts</code> at root level which contains a sequence of hosts to use for running the test, on the form <code>user@host:java</code> where host is the only required part. Also make sure, you are able to <code>ssh</code> to these machines without password (password less ssh should be enabled).</p>
 <p>Refer multi node testing guide for more details <a href="https://doc.akka.io/docs/akka/2.5/multi-node-testing.html">here</a>. </p>
 <h2><a href="#mockito" name="mockito" class="anchor"><span class="anchor-link"></span></a>Mockito</h2>
 <p><a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> uses <a href="http://site.mockito.org/">Mockito</a> for writing unit tests. ScalaTest comes with <a href="http://www.scalatest.org/user_guide/testing_with_mock_objects#mockito">MockitoSugar</a> trait which provides some basic syntax sugar for Mockito.</p>
-<p>For example: * <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/main/scala/csw/framework/internal/container/ContainerBehaviorTest.scala">ContainerBehaviorTest.scala</a></p>
+<p>For example: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/test/scala/csw/framework/internal/container/ContainerBehaviorTest.scala">ContainerBehaviorTest.scala</a></p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/creating-tests.md" title="Edit this page" class="md-source-file md-edit">
