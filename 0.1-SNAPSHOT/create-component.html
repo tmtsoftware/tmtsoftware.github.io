@@ -185,8 +185,7 @@ tmtsoftware/csw-prod
     <li><a href="create-component.html#lifecycle" class="header">Lifecycle</a></li>
     <li><a href="create-component.html#logging" class="header">Logging</a></li>
     <li><a href="create-component.html#receiving-commands" class="header">Receiving Commands</a></li>
-    <li><a href="create-component.html#building-staging-publishlocal" class="header">Building, Staging, PublishLocal</a></li>
-    <li><a href="create-component.html#running-component-standalone-mode-" class="header">Running Component (Standalone mode)</a></li>
+    <li><a href="create-component.html#building-and-running-component-in-standalone-mode" class="header">Building and Running component in standalone mode</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -212,8 +211,7 @@ tmtsoftware/csw-prod
     <li><a href="create-component.html#lifecycle" class="header">Lifecycle</a></li>
     <li><a href="create-component.html#logging" class="header">Logging</a></li>
     <li><a href="create-component.html#receiving-commands" class="header">Receiving Commands</a></li>
-    <li><a href="create-component.html#building-staging-publishlocal" class="header">Building, Staging, PublishLocal</a></li>
-    <li><a href="create-component.html#running-component-standalone-mode-" class="header">Running Component (Standalone mode)</a></li>
+    <li><a href="create-component.html#building-and-running-component-in-standalone-mode" class="header">Building and Running component in standalone mode</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -304,7 +302,7 @@ tmtsoftware/csw-prod
 <h3><a href="#shutdown" name="shutdown" class="anchor"><span class="anchor-link"></span></a>Shutdown</h3>
 <p>When the supervisor actor receives a <code>Shutdown</code> message, it transit the component to <code>Shutdown</code> state so that any commands received while shutdown is in progress will be ignored. Then it stop will the top level actor. The postStop hook of top level actor will call the <code>onShutdown</code> hook of <code>ComponentHandlers</code>. Component developers are expected to write any cleanup of resources or logic that should be executed for graceful shutdown of component in this hook.</p>
 <h3><a href="#lock" name="lock" class="anchor"><span class="anchor-link"></span></a>Lock</h3>
-<p>When the supervisor actor receives a <code>Lock</code> message, it transit the component to <code>Lock</code> state. Post locking, supervisor will forward the commands received from the component that locked this component and ignore others.</p>
+<p>When the supervisor actor receives a <code>Lock</code> message, it transit the component to <code>Lock</code> state. Post locking, supervisor will only forward the commands received from the component that locked this component and ignore others.</p>
 <p>In <code>Lock</code> state messages like <code>Shutdown</code> and <code>Restart</code> will be ignored. So, if these messages need to be send to the component, then it has to be first unlocked.</p>
 <h2><a href="#logging" name="logging" class="anchor"><span class="anchor-link"></span></a>Logging</h2>
 <p><code>csw-framework</code> will provide a <code>LoggerFactory</code> as dependency injection in constructor of <code>ComponentHandlers</code>. The <code>LoggerFactory</code> will have the component&rsquo;s name predefined in it. The component developer is expected to use this factory to log statements.</p>
@@ -320,7 +318,7 @@ tmtsoftware/csw-prod
 <p>Whenever a command is sent to a component it is wrapped inside a command wrapper. There are two kinds of command wrapper:</p>
 <ul>
   <li>Submit: A command is wrapped in submit when the completion result is expected from receiver component</li>
-  <li>Oneway: A command is wrapped in oneway when the completion of command is not expected from receiver component but is determined by sender component by subscribing to it&rsquo;s state</li>
+  <li>Oneway: A command is wrapped in oneway when the completion of command is not expected from receiver component but is determined by sender component by subscribing to receiver component&rsquo;s  state</li>
 </ul>
 <h3><a href="#validation" name="validation" class="anchor"><span class="anchor-link"></span></a>Validation</h3>
 <p>When a command is received by a component, top level actor will call the <code>validateCommand</code> hook of <code>ComponentHandlers</code>. Component developers are expected to perform appropriate validation of command, whether it is valid to execute, and return a <code>CommandResponse</code>. The <code>CommandResponse</code> returned from this hook will be sent back to sender directly by <code>csw-framework</code>.</p>
@@ -328,16 +326,22 @@ tmtsoftware/csw-prod
 <p>Whether the command execution will take longer or not is subjective to each component. </p>
 <p>Different types of command responses and their significance can be referred <a href="https://tmtsoftware.github.io/csw-prod/command.html#command-based-communication-between-components">here</a>.</p>
 <h3><a href="#command-response" name="command-response" class="anchor"><span class="anchor-link"></span></a>Command Response</h3>
-<p>The response returned from <code>validateCommand</code> hook of <code>ComponentHandlers</code> will be received by top level actor. Top level actor then sends response back to sender. Next, if the response returned was <code>Accepted</code> then, it either calls <code>onSubmit</code> hook or <code>onOneway</code> hook of <code>ComponentHandlers</code> depending on the wrapper in which the command is received. </p>
-<p>If the command is received in submit kind of a wrapper, then top level actor adds the response returned from <code>validateCommand</code> hook in <code>CommandResponseManager</code> and then it checks if the response is <code>Accepted</code> to call the <code>onSubmit</code> hook of <code>ComponentHandlers</code>. </p>
-<p>In case the command is received in oneway kind of wrapper then, the response returned from <code>validateCommand</code> hook will be sent to sender directly and the <code>onOneway</code> hook of  <code>ComponentHandlers</code> will be called.</p>
-<p>The <code>CommandResponseManager</code> is responsible for managing and bookkeeping the command status received in submit kind of wrapper. The sender of the command can query the status or subscribe to changes in status using <code>CommandService</code>. <code>CommandService</code> provides helper methods for communicating with other components.</p>
-<p>Creation of <code>CommandService</code> instance can be referred <a href="https://tmtsoftware.github.io/csw-prod/command.html#commandservice">here</a>.</p>
-<p>When <code>onSubmit</code> hook is called, it is the responsibility of component developers to update the status of received command in <code>CommandResponseManager</code> as it changes. The instance of commandResponseManager is provided in <code>ComponentHandlers</code> which should be injected in any worker actor or other actor/class created. </p>
+<p>The response returned from <code>validateCommand</code> hook of <code>ComponentHandlers</code> will be received by top level actor. Top level actor then sends response back to sender. Next, if the response returned was <code>Accepted</code> then, it either calls <code>onSubmit</code> hook or <code>onOneway</code> hook of <code>ComponentHandlers</code> depending on the wrapper(submit or oneway) in which the command is received. </p>
+<p>If the command is received in submit kind of a wrapper, then top level actor adds the response returned from <code>validateCommand</code> hook in <code>CommandResponseManager</code> and then it checks if the response was <code>Accepted</code> to call the <code>onSubmit</code> hook of <code>ComponentHandlers</code>. </p>
+<p>In case the command received by a component is in oneway kind of wrapper then, the response returned from <code>validateCommand</code> hook will be sent directly to sender and the <code>onOneway</code> hook of <code>ComponentHandlers</code> will be called.</p>
+<p>The <code>CommandResponseManager</code> is responsible for managing and bookkeeping the command status of the command received in submit kind of wrapper by a component. The sender of the command can query the status or subscribe to changes in status using <code>CommandService</code>. <code>CommandService</code> provides helper methods for communicating with other components.</p>
+<p>Creation of <code>CommandService</code> instance and it&rsquo;s usage can be referred <a href="https://tmtsoftware.github.io/csw-prod/command.html#commandservice">here</a>.</p>
+<p>When <code>onSubmit</code> hook is called, it is the responsibility of component developers to update the status of received command in <code>CommandResponseManager</code> as it changes. The instance of commandResponseManager is provided in <code>ComponentHandlers</code> which should be injected in any worker actor or other actor/class created for the component. </p>
 <p>More details on methods available in <code>CommandResponseManager</code> can be referred <a href="https://tmtsoftware.github.io/csw-prod/framework/managing-command-state.html">here</a>.</p>
-<h2><a href="#building-staging-publishlocal" name="building-staging-publishlocal" class="anchor"><span class="anchor-link"></span></a>Building, Staging, PublishLocal</h2>
-<p>Just for this in Standlone mode, but link to reference</p>
-<h2><a href="#running-component-standalone-mode-" name="running-component-standalone-mode-" class="anchor"><span class="anchor-link"></span></a>Running Component (Standalone mode)</h2>
+<h2><a href="#building-and-running-component-in-standalone-mode" name="building-and-running-component-in-standalone-mode" class="anchor"><span class="anchor-link"></span></a>Building and Running component in standalone mode</h2>
+<p>Once the component is ready, it need to start <code>ContainerCmd</code>. The details about starting the <code>ContainerCmd</code> in standalone mode can be referred <a href="https://tmtsoftware.github.io/csw-prod/framework/deploying-components.html">here</a>.</p>
+<p>Next, to run the component refer the following steps:</p>
+<ul>
+  <li>Run <code>sbt &lt;project&gt;/universal:packageBin</code>. This will create self contained zip in <code>&lt;project&gt;/target/universal</code> directory</li>
+  <li>Unzip generated zip file and enter into bin directory</li>
+  <li>Run the <code>./&lt;project&gt;-cmd-app --local --standalone &lt;path-to-local-config-file-to-start-the-component&gt;</code></li>
+</ul><div class="callout note "><div class="callout-title">Note</div>
+<p>CSW Location Service cluster seed must be running, and appropriate environment variables set to run apps. See <a href="https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html">https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html</a>.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/create-component.md" title="Edit this page" class="md-source-file md-edit">
