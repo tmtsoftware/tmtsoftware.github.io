@@ -174,6 +174,7 @@ tmtsoftware/csw-prod
     <li><a href="apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="manuals.html" class="page">Manuals</a></li>
+  <li><a href="sbt-tasks.html" class="page">sbt tasks</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
@@ -183,7 +184,6 @@ tmtsoftware/csw-prod
     <li><a href="getting-started.html#installation" class="header">Installation</a></li>
     <li><a href="getting-started.html#create-project" class="header">Create project</a></li>
     <li><a href="getting-started.html#add-new-sbt-project-module" class="header">Add new sbt project module</a></li>
-    <li><a href="getting-started.html#running-components" class="header">Running Components</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -207,7 +207,6 @@ tmtsoftware/csw-prod
     <li><a href="getting-started.html#installation" class="header">Installation</a></li>
     <li><a href="getting-started.html#create-project" class="header">Create project</a></li>
     <li><a href="getting-started.html#add-new-sbt-project-module" class="header">Add new sbt project module</a></li>
-    <li><a href="getting-started.html#running-components" class="header">Running Components</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -219,8 +218,9 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#getting-started" name="getting-started" class="anchor"><span class="anchor-link"></span></a>Getting Started</h1>
-<p>In this tutorial, you’ll see how to create a Scala/Java project from <a href="https://github.com/tmtsoftware/csw.g8">csw.g8</a> template which contains sample handlers for creating HCD and Assembly. It also contains a deploy project which is responsible for starting multiple components or containers. You can use this as a starting point for your own projects for writing component. We’ll use <a href="http://www.scala-sbt.org/1.x/docs/index.html">sbt</a> build tool which compiles, runs, and tests your projects among other related tasks.</p>
+<p>In this tutorial, you’ll see how to create a Scala/Java project using a <a href="http://www.foundweekends.org/giter8/">giter8</a> template for CSW (<a href="https://github.com/tmtsoftware/csw.g8">csw.g8</a>) which contains sample handlers for creating HCD and Assembly. It also contains a deploy project which is responsible for starting multiple components or containers. You can use this as a starting point for your own projects for writing component. We’ll use the <a href="http://www.scala-sbt.org/1.x/docs/index.html">sbt</a> build tool which compiles, runs, and tests your projects among other related tasks.</p>
 <h2><a href="#installation" name="installation" class="anchor"><span class="anchor-link"></span></a>Installation</h2>
+<p>Supported Operating Systems are: CentOS and MacOS</p>
 <ol>
   <li>Make sure you have the Java 8 JDK (also known as 1.8)
     <ul>
@@ -242,26 +242,15 @@ tmtsoftware/csw-prod
   </li>
   <li>Install following IntelliJ Plugins
     <ul>
-      <li>Scala</li>
-      <li>Scalafmt</li>
+      <li><a href="https://plugins.jetbrains.com/plugin/1347-scala">Scala</a></li>
+      <li><a href="https://plugins.jetbrains.com/plugin/8236-scalafmt">Scalafmt</a></li>
     </ul>
   </li>
-  <li>Supported Operating Systems are: CentOS and MacOS</li>
-  <li>Testing frameworks/tools:
+  <li>Recommended testing frameworks/tools:
     <ul>
-      <li><a href="http://www.scalatest.org/">ScalaTest</a>
-        <ul>
-          <li><a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> uses <code>scalatest</code> as a primary testing framework for writing scala tests which is recommended for component writers.</li>
-          <li><a href="https://github.com/tmtsoftware/csw.g8">giter8</a> template includes <code>scalatest</code> dependency.</li>
-        </ul>
-      </li>
-      <li><a href="https://junit.org/junit4/">JUnit</a>
-        <ul>
-          <li><a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> uses <code>junit</code> as a primary testing framework for writing java tests which is recommended for component writers.</li>
-          <li><a href="https://github.com/tmtsoftware/csw.g8">giter8</a> template includes <code>junit</code> dependency.</li>
-          <li>To run junit tests via sbt , <code>junit-interface</code> dependency needs to be added which <a href="https://github.com/tmtsoftware/csw.g8">giter8</a> template already includes.</li>
-        </ul>
-      </li>
+      <li><a href="http://www.scalatest.org/">ScalaTest</a></li>
+      <li><a href="https://junit.org/junit4/">JUnit</a>, JUnit Interface</li>
+      <li>Note: These frameworks are typically downloaded and made available by the sbt tool by specifying them as dependencies. If you are using the <a href="https://github.com/tmtsoftware/csw.g8">giter8</a> template (see below), these dependencies are specified by default, and the sbt will resolve them when it runs.</li>
     </ul>
   </li>
 </ol>
@@ -269,10 +258,10 @@ tmtsoftware/csw-prod
 <ol>
   <li><code>cd</code> to an empty folder.</li>
   <li>Run the following command <code>sbt new tmtsoftware/csw.g8</code>. This pulls the ‘csw’ template from GitHub. If above command fails to pull template, then try running with full path <code>sbt new https://github.com/tmtsoftware/csw.g8</code></li>
-  <li>Provide input details when prompted. Follow <a href="https://github.com/tmtsoftware/csw.g8/blob/master/README.md">readme.md</a> for detailed information about input parameters.</li>
-  <li>Let’s take a look at what just got generated:</li>
+  <li>Provide input details when prompted. Follow the template <a href="https://github.com/tmtsoftware/csw.g8/blob/master/README.md">readme.md</a> for detailed information about input parameters.</li>
 </ol>
-<p>For example, project was created with default parameters, then complete project structure looks like this:</p>
+<p>Let’s take a look at what just got generated:</p>
+<p>In this example, a project was created with default parameters. The complete project structure looks like this:</p>
 <ol>
   <li>As you can see in below snapshot, template will create three projects:
     <ul>
@@ -282,14 +271,14 @@ tmtsoftware/csw-prod
     </ul>
   </li>
 </ol>
-<p><img src="./images/gettingstarted/galil-project.png" alt="galil-project-structure" /> 2. <code>galil-deploy</code> project contains concrete implementation</p>
+<p><img src="./images/gettingstarted/galil-project.png" alt="galil-project-structure" /> 2. <code>galil-deploy</code> project is used to create a concrete implementation. This allows for the construction of a complete binary package bundled with all dependencies, and a launching application.</p>
 <p><img src="./images/gettingstarted/galil-deploy.png" alt="galil-deploy" /> 3. Template comes with <code>csw-prod</code> and other useful library dependencies. It also includes bunch of plugins as explained in below snapshot</p>
 <p><img src="./images/gettingstarted/project.png" alt="galil-project" /></p>
 <h2><a href="#add-new-sbt-project-module" name="add-new-sbt-project-module" class="anchor"><span class="anchor-link"></span></a>Add new sbt project module</h2>
 <p>If you want to add a new project with name <code>galil-io</code>, then follow below steps:</p>
 <ol>
   <li>
-  <p>Add library dependencies required by <code>galil-io</code> in <code>Libs.scala</code> file, if it does not exist.</p>
+  <p>Add external library dependencies required by <code>galil-io</code> in <code>Libs.scala</code> file, if it does not exist.</p>
   <pre><code>val `akka-actor` = &quot;com.typesafe.akka&quot; %% &quot;akka-actor&quot; % &quot;2.5.11&quot;
 </code></pre></li>
   <li>
@@ -301,28 +290,25 @@ tmtsoftware/csw-prod
   <pre><code>lazy val `galil-io` = project
   .settings( libraryDependencies ++= Dependencies.GalilIO )
 </code></pre></li>
-</ol>
-<h2><a href="#running-components" name="running-components" class="anchor"><span class="anchor-link"></span></a>Running Components</h2>
-<h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
-<p><code>galil-deploy</code> project contains applications (ContainerCmd and HostConfig) to run your components, make sure you add necessary dependencies in <code>galil-deploy</code> project. You can add project dependency in <code>build.sbt</code> file as follows:</p>
-<pre><code>lazy val `galil-deploy` = project
+  <li>
+  <p>If you new module depends on code from other modules within this project, use <code>.dependsOn</code> in your build.sbt file:</p>
+  <pre><code>lazy val `galil-io` = project
+  .settings( libraryDependencies ++= Dependencies.GalilIO )
   .dependsOn(
-    `galil-assembly`,
-    `galil-hcd`
+`galil-assembly`,
+`galil-hcd`
   )
-</code></pre>
-<h3><a href="#run" name="run" class="anchor"><span class="anchor-link"></span></a>Run</h3>
-<p>As seen above <code>galil-deploy</code> depends on <code>galil-assembly</code> and <code>galil-hcd</code>, now if you want to start these Assembly and HCD, follow below steps:</p>
-<ul>
-  <li>Run <code>sbt galil-deploy/universal:packageBin</code>, this will create self contained zip in <code>galil-deploy/target/universal</code> directory</li>
-  <li>Unzip generated zip file and enter into <code>bin</code> directory</li>
-  <li>You will see four scripts in <code>bin</code> directory (two bash scripts and two windows scripts)</li>
-  <li>If you want to start multiple containers on a host machine, follow this guide <a href="apps/hostconfig.html#examples">here</a></li>
-  <li>If you want to start multiple components in container mode or single component in standalone mode, follow this guide <a href="framework/deploying-components.html">here</a></li>
-  <li>Example to run container: <code>./galil-container-cmd-app --local ../../../../galil-deploy/src/main/resources/GalilAssemblyContainer.conf</code></li>
-  <li>Example to run host config: <code>./galil-host-config-app --local ../../../../galil-deploy/src/main/resources/GalilHostConfig.conf -s ./galil-container-cmd-app</code></li>
-</ul><div class="callout note "><div class="callout-title">Note</div>
-<p>CSW Location Service cluster seed must be running, and appropriate environment variables set to run apps. See <a href="https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html">https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html</a>.</p></div>
+</code></pre></li>
+  <li>
+  <p>Update the deployment dependencies:</p>
+  <pre><code>lazy val `galil-deploy` = project
+  .dependsOn(
+`galil-assembly`,
+`galil-hcd`,
+`galil-io`
+  )
+</code></pre></li>
+</ol>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/getting-started.md" title="Edit this page" class="md-source-file md-edit">
