@@ -182,7 +182,7 @@ tmtsoftware/csw-prod
   <li><a href="multiple-components.html#multiple-components" class="header">Multiple Components</a>
   <ul>
     <li><a href="multiple-components.html#creating-an-assembly" class="header">Creating an Assembly</a></li>
-    <li><a href="multiple-components.html#loading-configuration-files" class="header">Loading Configuration Files</a></li>
+    <li><a href="multiple-components.html#component-configuration-componentinfo-" class="header">Component Configuration (ComponentInfo)</a></li>
     <li><a href="multiple-components.html#tracking-dependencies" class="header">Tracking Dependencies</a></li>
     <li><a href="multiple-components.html#sending-commands" class="header">Sending Commands</a></li>
     <li><a href="multiple-components.html#deploying-multiple-components-in-a-container" class="header">Deploying Multiple Components in a Container</a></li>
@@ -209,7 +209,7 @@ tmtsoftware/csw-prod
   <li><a href="multiple-components.html#multiple-components" class="header">Multiple Components</a>
   <ul>
     <li><a href="multiple-components.html#creating-an-assembly" class="header">Creating an Assembly</a></li>
-    <li><a href="multiple-components.html#loading-configuration-files" class="header">Loading Configuration Files</a></li>
+    <li><a href="multiple-components.html#component-configuration-componentinfo-" class="header">Component Configuration (ComponentInfo)</a></li>
     <li><a href="multiple-components.html#tracking-dependencies" class="header">Tracking Dependencies</a></li>
     <li><a href="multiple-components.html#sending-commands" class="header">Sending Commands</a></li>
     <li><a href="multiple-components.html#deploying-multiple-components-in-a-container" class="header">Deploying Multiple Components in a Container</a></li>
@@ -226,18 +226,79 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#multiple-components" name="multiple-components" class="anchor"><span class="anchor-link"></span></a>Multiple Components</h1>
-<p>Deploying multiple components (in Container), and having them communicate with each other.</p>
+<p>Deploying multiple components (in Container), and having them communicate with each other. This tutorial discusses constructing an Assembly.</p>
 <h2><a href="#creating-an-assembly" name="creating-an-assembly" class="anchor"><span class="anchor-link"></span></a>Creating an Assembly</h2>
-<h2><a href="#loading-configuration-files" name="loading-configuration-files" class="anchor"><span class="anchor-link"></span></a>Loading Configuration Files</h2>
+<p>To create an assembly, the component developer need to implement the <code>ComponentHandlers</code>. More details about implementing ComponentHandlers can be referred <a href="create-component.html#handlers">here</a>. </p>
+<h2><a href="#component-configuration-componentinfo-" name="component-configuration-componentinfo-" class="anchor"><span class="anchor-link"></span></a>Component Configuration (ComponentInfo)</h2>
+<p>Component configuration contains details needed to spawn a component. This configuration resides in a configuration file for a particular component. The sample for Assembly is as follows:</p>
+<pre><code>{
+    name = &quot;Laser&quot;
+    componentType = assembly
+    behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
+    prefix = tcs.mobie.blue.filter
+    locationServiceUsage = RegisterAndTrackServices
+    connections = [
+      {
+        name: Motion_Controller
+        componentType: hcd
+        connectionType: akka
+      },
+      {
+        name: Galil
+        componentType: hcd
+        connectionType: akka
+      },
+      {
+        name: Eton
+        componentType: hcd
+        connectionType: akka
+      }
+    ]
+}
+</code></pre><div class="callout note "><div class="callout-title">Note</div>
+<p>The Assembly has multiple <code>connections</code> of HCDs that it will track in it&rsquo;s life span.</p></div>
+<p>More details about each configuration and it&rsquo;s significance can be referred <a href="create-component.html#component-configuration-(componentinfo">here</a>). </p>
 <h2><a href="#tracking-dependencies" name="tracking-dependencies" class="anchor"><span class="anchor-link"></span></a>Tracking Dependencies</h2>
-<h3><a href="#other-useful-location-service-basics-location-connection-types-" name="other-useful-location-service-basics-location-connection-types-" class="anchor"><span class="anchor-link"></span></a>Other useful Location Service basics (Location/Connection types)</h3>
-<h3><a href="#componentinfo-fields" name="componentinfo-fields" class="anchor"><span class="anchor-link"></span></a>ComponentInfo fields</h3>
+<p>The connections that are defined in configuration file for an assembly will be tracked by <code>csw-framework</code>. For each connection the following details are configured:</p>
+<pre><code>{
+  name: Eton
+  componentType: hcd
+  connectionType: akka
+}
+</code></pre>
+<p>The name of the component, the type(hcd, service, etc) and the connection(akka, http, tcp) will be used to create a <code>Connection</code> object. Connection object will be then used to track the location of a component using location service.</p>
+<p>The <code>Location</code> object represents one of the following types:</p>
+<ul>
+  <li>AkkaLocation: Represents a remote address of the actorRef. The actorRef will be the Supervisor actor of a component.</li>
+  <li>HttpLocation: Represents a Http URI of the web server e.g. configuration service</li>
+  <li>TcpLocation: Represents a tcp URI of the server e.g. event service</li>
+</ul>
+<p>More details about tracking a component using location service can be referred <a href="services/location.html#tracking-and-subscribing">here</a>.</p>
 <h3><a href="#onlocationtrackingevent-handler" name="onlocationtrackingevent-handler" class="anchor"><span class="anchor-link"></span></a>onLocationTrackingEvent Handler</h3>
+<p>For all the tracked connections, whenever a location is changed, one of the following events is generated:</p>
+<ul>
+  <li>LocationUpdated: Represents if a location is added or changed</li>
+  <li>LocationRemoved: Represents if a location is no longer available on the network</li>
+</ul>
+<p>Whenever such an event is generated, the Top level actor will call the <code>onLocationTrackingEvent</code> hook of <code>ComponentHandlers</code> with the event(LocationUpdated or LocationRemoved) as parameter of the hook.</p>
+<p>More details around tracking a connection can be referred <a href="framework/tracking-connections.html">here</a></p>
+<h3><a href="#trackconnection" name="trackconnection" class="anchor"><span class="anchor-link"></span></a>trackConnection</h3>
+<p>If the component developer wants to track a connection that is not configured in it&rsquo;s configuration file then it can use the <code>trackConnection</code> method provided by <code>csw-framework</code> in <code>ComponentHandlers</code>. The <code>trackConnection</code> method will take the <code>Connection</code> instance. How to create a connection instance can be referred <a href="services/location.html#creating-components-connections-and-registrations">here</a>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Connections tracked by <code>csw-framework</code> (from configuration file) or by component developer using <code>trackConnection</code> method both will be received in <code>onLocationTrackingEvent</code> hook of <code>ComponentHandlers</code>. </p></div>
 <h2><a href="#sending-commands" name="sending-commands" class="anchor"><span class="anchor-link"></span></a>Sending Commands</h2>
-<p>NOTE: I put moved the line below from creating-components &ndash; JLW The creation of a<code>CommandService</code> instance and its usage can also be referred <a href="https://tmtsoftware.github.io/csw-prod/command.html#commandservice">here</a>.</p>
+<p>If a component wants to send command to other component, it may use the <code>CommandService</code> instance. The creation of a<code>CommandService</code> instance and its usage can be referred <a href="command.html#commandservice">here</a>.</p>
+<p>If a component wants to send multiple commands in response to a single received command, then it may use <code>CommandDistributor</code> instance. The CommandDistributor will help in getting the aggregated response of multiple commands sent to other components. The component developer can use aggregated response to update the <code>CommandResponseManager</code> with appropriate status if the received command was in <code>Submit</code> wrapper.</p>
+<p>More details about creating <code>CommandDistributor</code> and it&rsquo;s usage can be referred <a href="command.html#distributing-commands">here</a>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p><code>CommandDistributor</code> can be used to get aggregated response only if the multiple commands sent to other components are all wrapped in <code>Submit</code> wrapper.</p></div>
 <h3><a href="#tracking-long-running-commands" name="tracking-long-running-commands" class="anchor"><span class="anchor-link"></span></a>Tracking Long Running Commands</h3>
+<p>A command, when sent in <code>Submit</code> wrapper, and received an <code>Accepted</code> response in return, is considered as a long running command.</p>
+<p>When a component sends a long running command to another component, it may be interested in knowing the status of the command and take decisions based on that. In order to subscribe to the changes in command status, the sender component will have to use <code>subscribe</code> method after <code>submit</code> or use <code>submitAndSubscribe</code> in <code>CommandService</code>.</p>
 <h3><a href="#matchers" name="matchers" class="anchor"><span class="anchor-link"></span></a>Matchers</h3>
+<p>When a component sends a command in <code>Oneway</code> to another component, it may be interested in knowing the receiver component&rsquo;s <code>CurrentState</code> and match it against a desired state. In order to do that, the component developer can use <code>onewayAndMatch</code> method of <code>CommandService</code> or <code>oneway</code> of <code>CommandService</code> and the use <code>Matcher</code> explicitly to match a desired state with current state.</p>
+<p>More details on how to use <code>Matcher</code> can be referred <a href="command.html#matching-state-for-command-completion">here</a>. </p>
 <h3><a href="#pubsub-connection" name="pubsub-connection" class="anchor"><span class="anchor-link"></span></a>PubSub Connection</h3>
+<p>A component might need to subscribe to current state of any other component provided it knows the location of that component. In order to subscribe to current state, it may use <code>subscribeCurrentState</code> method of <code>CommandService</code>. More details about the usage of <code>subscribeCurrentState</code> can ber referred <a href="command.html#subscribecurrentstate">here</a>.</p>
+<p>If a component wants to publish it&rsquo;s current state then it can use the <code>currentStatePublisher</code> provided by <code>csw-framework</code> in <code>ComponentHandlers</code>. More details about the usage of <code>currentStatePublisher</code> can ber referred <a href="framework/publishing-state.html">here</a>.</p>
 <h2><a href="#deploying-multiple-components-in-a-container" name="deploying-multiple-components-in-a-container" class="anchor"><span class="anchor-link"></span></a>Deploying Multiple Components in a Container</h2>
 <h2><a href="#running-components-in-a-container" name="running-components-in-a-container" class="anchor"><span class="anchor-link"></span></a>Running components in a Container</h2>
 <p>NOTE: the following was moved from the getting starting page. I thought it was more appropriate here, but I just cut/paste for now, expecting some of this info will be integrated into this page. &ndash; JLW</p>
