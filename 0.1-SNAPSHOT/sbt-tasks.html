@@ -18,7 +18,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="assets/tmt_favicon.ico">
-<title>Applications · TMT Common Software (CSW)</title>
+<title>sbt tasks · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="assets/stylesheets/application.7a4cdee3.css">
 <link rel="stylesheet" href="lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="lib/prettify/prettify.css">
@@ -54,7 +54,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Common Software (CSW)
 </span>
 <span class="md-header-nav__topic">
-Applications
+sbt tasks
 </span>
 </div>
 </div>
@@ -165,7 +165,7 @@ tmtsoftware/csw-prod
   </ul></li>
   <li><a href="command.html" class="page">Communication using Commands</a></li>
   <li><a href="testing.html" class="page">Testing</a></li>
-  <li><a href="apps.html" class="active page">Applications</a>
+  <li><a href="apps.html" class="page">Applications</a>
   <ul>
     <li><a href="apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
@@ -174,7 +174,7 @@ tmtsoftware/csw-prod
     <li><a href="apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="manuals.html" class="page">Manuals</a></li>
-  <li><a href="sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="sbt-tasks.html" class="active page">sbt tasks</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 </nav>
@@ -190,19 +190,67 @@ tmtsoftware/csw-prod
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h2><a href="#applications" name="applications" class="anchor"><span class="anchor-link"></span></a>Applications</h2>
-<div class="toc main">
-<ul>
-  <li><a href="apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
-  <li><a href="apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
-  <li><a href="apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-  <li><a href="apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
-  <li><a href="apps/hostconfig.html" class="page">csw-host-config</a></li>
-</ul>
-</div>
+<h2><a href="#sbt-tasks" name="sbt-tasks" class="anchor"><span class="anchor-link"></span></a>sbt tasks</h2>
+<p>csw-prod uses multiple plugins in the sbt ecosystem to help accomplish a variety of tasks. </p>
+<table>
+  <thead>
+    <tr>
+      <th align="center">plugin </th>
+      <th align="center">task </th>
+      <th align="left">Description </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">default in sbt </td>
+      <td align="center">test </td>
+      <td align="left">compile and run all tests including scala tests, java tests, multi-jvm/multi-node tests </td>
+    </tr>
+    <tr>
+      <td align="center">default in sbt </td>
+      <td align="center">test:test </td>
+      <td align="left">compile and run all tests excluding multi-jvm/multi-node tests </td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://doc.akka.io/docs/akka/current/multi-jvm-testing.html?language=scala#multi-jvm-testing">sbt-multi-jvm</a> </td>
+      <td align="center">multi-jvm:test </td>
+      <td align="left">provides support for running applications (objects with main methods) and ScalaTest tests in multiple JVMs at the same time. </td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://www.scala-sbt.org/sbt-site/">sbt-site</a> </td>
+      <td align="center">makeSite </td>
+      <td align="left">generates project’s webpage in the target/site directory</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://github.com/sbt/sbt-ghpages">sbt-ghpages</a> </td>
+      <td align="center">ghpagesPushSite </td>
+      <td align="left">publish project website to <a href="https://pages.github.com/">GitHub Pages</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://github.com/ohnosequences/sbt-github-release">sbt-github-release</a> </td>
+      <td align="center">githubRelease </td>
+      <td align="left">creates Github releases with proper release notes and optional artifact uploading. Releases in Github are first-class objects with changelogs and binary assets that present a full project history beyond Git artifacts. They’re accessible from a repository’s homepage.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://github.com/sbt/sbt-bintray">sbt-bintray</a> </td>
+      <td align="center">publish </td>
+      <td align="left">upload and release artifacts into bintray</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://sbt-native-packager.readthedocs.io/en/stable/">sbt-native-packager</a> </td>
+      <td align="center">stage </td>
+      <td align="left">stage your app so you can run it locally without having the app packaged.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://sbt-native-packager.readthedocs.io/en/stable/">sbt-native-packager</a> </td>
+      <td align="center">universal:packageBin </td>
+      <td align="left">Generates a universal zip file </td>
+    </tr>
+  </tbody>
+</table>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/apps.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/sbt-tasks.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -218,7 +266,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="testing.html" title="Testing" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="manuals.html" title="Manuals" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -227,21 +275,8 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Testing
+Manuals
 </span>
-</div>
-</a>
-<a href="apps/cswclusterseed.html" title="csw-cluster-seed" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-<span class="md-flex__ellipsis">
-<span class="md-footer-nav__direction">
-Next
-</span>
-csw-cluster-seed
-</span>
-</div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
 </div>
 </a>
 </nav>
