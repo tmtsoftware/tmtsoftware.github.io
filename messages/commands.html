@@ -182,6 +182,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../messages/commands.html#obsid" class="header">ObsId</a></li>
     <li><a href="../messages/commands.html#prefix" class="header">Prefix</a></li>
+    <li><a href="../messages/commands.html#commandname" class="header">CommandName</a></li>
     <li><a href="../messages/commands.html#setup-command" class="header">Setup Command</a></li>
     <li><a href="../messages/commands.html#observe-command" class="header">Observe Command</a></li>
     <li><a href="../messages/commands.html#wait-command" class="header">Wait Command</a></li>
@@ -211,6 +212,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../messages/commands.html#obsid" class="header">ObsId</a></li>
     <li><a href="../messages/commands.html#prefix" class="header">Prefix</a></li>
+    <li><a href="../messages/commands.html#commandname" class="header">CommandName</a></li>
     <li><a href="../messages/commands.html#setup-command" class="header">Setup Command</a></li>
     <li><a href="../messages/commands.html#observe-command" class="header">Observe Command</a></li>
     <li><a href="../messages/commands.html#wait-command" class="header">Wait Command</a></li>
@@ -229,8 +231,9 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h2><a href="#commands" name="commands" class="anchor"><span class="anchor-link"></span></a>Commands</h2>
+<p>Commands are parameter sets called Setup, Observe, and Wait. A command is created with the source of the command, given by a prefix, the name of the command, and an optional ObsId. Parameters are added to the command as needed.</p>
 <h3><a href="#obsid" name="obsid" class="anchor"><span class="anchor-link"></span></a>ObsId</h3>
-<p>It is an observation Id and can be constructed by creating instance of <code>ObsId</code>. </p>
+<p>An ObsID, or observation Id, indicates the observation the command is associated with. It can be constructed by creating an instance of <code>ObsId</code>. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -240,7 +243,7 @@ tmtsoftware/csw-prod
   <pre class="prettyprint"><code class="language-java">ObsId obsId = new ObsId(&quot;Obs001&quot;);</code></pre></dd>
 </dl>
 <h3><a href="#prefix" name="prefix" class="anchor"><span class="anchor-link"></span></a>Prefix</h3>
-<p>Identifies a <a href="subsystem.html">Subsystem</a> in TMT observatory. Component developer should supply a valid prefix string and the subsystem will be automatically parsed from it. </p>
+<p>The source of the command is given by the prefix, which should be the full name of the component sending the command. A prefix can be constructed with a string, but must start with a valid subsystem as in <a href="subsystem.html">Subsystem</a>. A component developer should supply a valid prefix string and the subsystem will be automatically parsed from it. An example of a valid string prefix is &ldquo;nfiraos.ncc.trombone&rdquo;.</p>
 <p>See below examples:</p>
 <dl>
   <dt>Scala</dt>
@@ -269,11 +272,14 @@ Prefix prefix2 = new Prefix(&quot;tcs.mobie.blue.filter&quot;);
 // will automatically get Subsystem.BAD
 Prefix badPrefix = new Prefix(&quot;abcdefgh&quot;);</code></pre></dd>
 </dl>
+<h3><a href="#commandname" name="commandname" class="anchor"><span class="anchor-link"></span></a>CommandName</h3>
+<p>Each command has a name given as a string. The <code>CommandName</code> object wraps the string name. The string should be continuous with no spaces.</p>
 <h3><a href="#setup-command" name="setup-command" class="anchor"><span class="anchor-link"></span></a>Setup Command</h3>
-<p>This command is used to describe a goal that a system should match. Component developer will require to supply following arguments to create <code>Setup</code> command.</p>
+<p>This command is used to describe a goal that a system should match. Component developer will require to supply following arguments to create a <code>Setup</code> command.</p>
 <ul>
-  <li><strong><a href="commands.html#ObsId">ObsId:</a></strong> An observation Id.</li>
-  <li><strong>Prefix:</strong></li>
+  <li><strong><a href="commands.html#Prefix">Prefix:</a></strong> the source of the command as described above</li>
+  <li><strong><a href="commands.html#CommandName">CommandName:</a></strong> a simple string name for the command (no spaces)</li>
+  <li><strong><a href="commands.html#ObsId">ObsId:</a></strong> an optional observation Id.</li>
   <li><strong>paramSet:</strong> Optional Set of Parameters. Default is empty.</li>
 </ul>
 <dl>
@@ -285,6 +291,9 @@ val k2: Key[String] = KeyType.StringKey.make(&quot;stringThing&quot;)
 val k2bad: Key[Int] = KeyType.IntKey.make(&quot;missingKey&quot;)
 val k3: Key[Int]    = KeyType.IntKey.make(&quot;filter&quot;)
 val k4: Key[Float]  = KeyType.FloatKey.make(&quot;correction&quot;)
+
+//prefix
+val prefix: Prefix = Prefix(&quot;wfos.red.detector&quot;)
 
 //parameters
 val i1: Parameter[Int]    = k1.set(22)
@@ -369,7 +378,7 @@ Setup sc4 = sc3.remove(b1);
 java.util.List&lt;String&gt; allKeys = sc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h3><a href="#observe-command" name="observe-command" class="anchor"><span class="anchor-link"></span></a>Observe Command</h3>
-<p>This command describes a science observation. Sent only to Science Detector Assemblies and Sequencers.</p>
+<p>This command describes a science observation. Sent only to Science Detector Assemblies and Sequencers. This commands will be more fully defined as part of ESW.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -379,6 +388,9 @@ val k2: Key[Int]     = KeyType.IntKey.make(&quot;expTime&quot;)
 val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;missingKey&quot;)
 val k3: Key[Int]     = KeyType.IntKey.make(&quot;filter&quot;)
 val k4: Key[Instant] = KeyType.TimestampKey.make(&quot;creation-time&quot;)
+
+//prefix
+val prefix: Prefix = Prefix(&quot;wfos.red.detector&quot;)
 
 //parameters
 val i1: Parameter[Boolean] = k1.set(true, false, true, false)
@@ -447,7 +459,7 @@ Observe oc4 = oc2.remove(k4);
 java.util.List&lt;String&gt; allKeys = oc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h3><a href="#wait-command" name="wait-command" class="anchor"><span class="anchor-link"></span></a>Wait Command</h3>
-<p>This command causes a Sequencer to wait until notified.</p>
+<p>This command causes a Sequencer to wait until notified. This command will be defined as part of ESW.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -461,6 +473,9 @@ val k4: Key[Instant] = KeyType.TimestampKey.make(&quot;creation-time&quot;)
 //parameters
 val i1: Parameter[Boolean] = k1.set(true, false, true, false)
 val i2: Parameter[Int]     = k2.set(1, 2, 3, 4)
+
+//prefix
+val prefix: Prefix = Prefix(&quot;wfos.red.detector&quot;)
 
 //create wait, add sequentially using add
 val wc1: Wait = Wait(prefix, CommandName(&quot;move&quot;), Some(obsId)).add(i1).add(i2)
@@ -540,6 +555,9 @@ val m1: MatrixData[Double] = MatrixData.fromArrays(
   Array(7.2, 8.2, 9.2)
 )
 
+//prefix
+val prefix: Prefix = Prefix(&quot;wfos.red.detector&quot;)
+
 //parameter
 val i1: Parameter[MatrixData[Double]] = k1.set(m1)
 
@@ -606,6 +624,9 @@ Wait wc1 = JavaJsonSupport.readSequenceCommand(wcJson);</code></pre></dd>
 val encoderKey: Key[Int] = KeyType.IntKey.make(&quot;encoder&quot;)
 val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc.&quot;)
+
+//prefix
+val prefix: Prefix = Prefix(&quot;wfos.red.detector&quot;)
 
 //params
 val encParam1: Parameter[Int] = encoderKey.set(1)
@@ -685,7 +706,7 @@ Setup finalSetUp = setup.madd(miscParam1, encParam1);
 List&lt;String&gt; uniqueKeys3 = finalSetUp.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h3><a href="#cloning-a-command" name="cloning-a-command" class="anchor"><span class="anchor-link"></span></a>Cloning a command</h3>
-<p>A <code>cloneCommand</code> method is available for all commands which can be used to create a new command from existing parameters, but with a new RunId. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>Every command that is sent must have a new, unique RunId. A <code>cloneCommand</code> method is available for all commands which can be used to create a new command from existing parameters, but with a new RunId. This is needed in the case where a Setup is defined once because it has no fields that change. Before submitting get a copy with a new RunId using <code>cloneCommand</code>. If a new Setup is created for each use, this command is not needed.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Any command that is sent needs to have a unique Id as this Id is the one against which the status of the command is maintained at the recipient end. This Id can thus be used to query and subscribe the status of the respective command.</p></div>
 <dl>
   <dt>Scala</dt>
