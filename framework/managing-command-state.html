@@ -280,14 +280,13 @@ hcdComponent.subscribe(controlCommand.runId).map {
 JCommandService componentCommandService = runningHcds.get(componentInfo.getConnections().get(0)).get();
 componentCommandService.subscribe(subCommand2.runId(), Timeout.durationToTimeout(FiniteDuration.apply(5, TimeUnit.SECONDS)))
         .thenAccept(commandResponse -&gt; {
-            if(commandResponse.resultType() instanceof CommandResponse.Completed) {
+            if (commandResponse.resultType() instanceof CommandResponse.Completed) {
                 // As the commands get completed, the results are updated in the commandResponseManager
                 commandResponseManager.updateSubCommand(subCommand2.runId(), commandResponse);
-            }
-            else {
+            } else {
                 // do something
             }
-});</code></pre></dd>
+        });</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>It may be the case that the component wants to avoid automatic inference of a command based on the result of the sub-commands. It should refrain from updating the status of the sub-commands in this case and update the status of the parent command directly as required.</p></div>
 <h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>query</h3>
@@ -330,12 +329,11 @@ commandResponseManager.subscribe(
   <pre class="prettyprint"><code class="language-java">// subscribe to the status of original command received and publish the state when its status changes to
 // Completed
 commandResponseManager.jSubscribe(subCommand.runId(), commandResponse -&gt; {
-    if(commandResponse.resultType() instanceof CommandResponse.Completed) {
+    if (commandResponse.resultType() instanceof CommandResponse.Completed) {
         Key&lt;String&gt; stringKey = JKeyTypes.StringKey().make(&quot;sub-command-status&quot;);
         CurrentState currentState = new CurrentState(sc.source().prefix());
         currentStatePublisher.publish(currentState.madd(stringKey.set(&quot;complete&quot;)));
-    }
-    else {
+    } else {
         // do something
     }
 });</code></pre></dd>

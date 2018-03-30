@@ -279,7 +279,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
     // required worker actors required by this assembly
     return mayBeConnection.map(connection -&gt;
             worker.thenAcceptBoth(resolveHcd(), (workerActor, hcdLocation) -&gt; {
-                if(!hcdLocation.isPresent())
+                if (!hcdLocation.isPresent())
                     throw new HcdNotFoundException();
                 else
                     runningHcds.put(connection, Optional.of(new JCommandService(hcdLocation.get(), ctx.getSystem())));
