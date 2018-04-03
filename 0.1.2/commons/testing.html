@@ -142,7 +142,7 @@ tmtsoftware/csw-prod
     <li><a href="../messages/subsystem.html" class="page">Subsystem</a></li>
     <li><a href="../messages/commands.html" class="page">Commands</a></li>
     <li><a href="../messages/events.html" class="page">Events</a></li>
-    <li><a href="../messages/states.html" class="page">State variables</a></li>
+    <li><a href="../messages/states.html" class="page">State Variables</a></li>
     <li><a href="../messages/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
@@ -159,9 +159,9 @@ tmtsoftware/csw-prod
   <li><a href="../commons/command.html" class="page">Communication using Commands</a></li>
   <li><a href="../commons/services.html" class="page">Services</a>
   <ul>
-    <li><a href="../services/location.html" class="page">Location service</a></li>
-    <li><a href="../services/config.html" class="page">Configuration service</a></li>
-    <li><a href="../services/logging.html" class="page">Logging service</a></li>
+    <li><a href="../services/location.html" class="page">Location Service</a></li>
+    <li><a href="../services/config.html" class="page">Configuration Service</a></li>
+    <li><a href="../services/logging.html" class="page">Logging Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -181,9 +181,9 @@ tmtsoftware/csw-prod
   <li><a href="../commons/testing.html#testing" class="header">Testing</a>
   <ul>
     <li><a href="../commons/testing.html#unit-tests" class="header">Unit Tests</a></li>
-    <li><a href="../commons/testing.html#acceptance-tests" class="header">Acceptance Tests</a></li>
     <li><a href="../commons/testing.html#multi-jvm-tests" class="header">Multi-JVM Tests</a></li>
     <li><a href="../commons/testing.html#mockito" class="header">Mockito</a></li>
+    <li><a href="../commons/testing.html#acceptance-tests" class="header">Acceptance Tests</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -205,9 +205,9 @@ tmtsoftware/csw-prod
   <li><a href="../commons/testing.html#testing" class="header">Testing</a>
   <ul>
     <li><a href="../commons/testing.html#unit-tests" class="header">Unit Tests</a></li>
-    <li><a href="../commons/testing.html#acceptance-tests" class="header">Acceptance Tests</a></li>
     <li><a href="../commons/testing.html#multi-jvm-tests" class="header">Multi-JVM Tests</a></li>
     <li><a href="../commons/testing.html#mockito" class="header">Mockito</a></li>
+    <li><a href="../commons/testing.html#acceptance-tests" class="header">Acceptance Tests</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -221,35 +221,51 @@ tmtsoftware/csw-prod
 <h1><a href="#testing" name="testing" class="anchor"><span class="anchor-link"></span></a>Testing</h1>
 <p>This page will help you getting started with testing your applications. </p>
 <h2><a href="#unit-tests" name="unit-tests" class="anchor"><span class="anchor-link"></span></a>Unit Tests</h2>
-<p>The goal of unit testing is to segregate smallest testable units of your application and test that it is working correctly. It is always good idea to write more number of unit test cases and relatively less component and integration tests. If you want to get an idea of how many tests you should have in different types of testing phases (Unit/Component/Integration), refer this <a href="https://martinfowler.com/articles/practical-test-pyramid.html">blog</a></p>
-<p>Unit testing simple scala/java classes or objects is straight forward. You can mock external dependencies using Mockito. Refer <a href="#mockito">Mockito</a> section for more details. </p>
-<p>Follow below guides for testing your application which uses different modules of akka:</p>
+<p>The goal of unit testing is to break you application into the smallest testable units, and test them individually, isolating a specific piece of functionality and ensuring it is working correctly. It is always good idea to write more unit test cases and relatively fewer component and integration tests. If you want to get an idea of how many tests you should have in different types of testing phases (Unit/Component/Integration), refer this <a href="https://martinfowler.com/articles/practical-test-pyramid.html">blog</a></p>
+<p>Unit testing simple scala/java classes or objects is straight forward. You can mock external dependencies using Mockito. Refer to the <a href="#mockito">Mockito</a> section for more details. </p>
+<p>The folloowing links provide guides for testing applications using different modules of Akka:</p>
 <ul>
   <li><a href="https://doc.akka.io/docs/akka/current/testing.html">Akka Untyped Actors</a></li>
   <li><a href="https://doc.akka.io/docs/akka/current/typed/testing.html">Akka Typed Actors</a></li>
   <li><a href="https://doc.akka.io/docs/akka/current/scala/stream/stream-testkit.html">Akka Streams</a></li>
 </ul>
+<h2><a href="#multi-jvm-tests" name="multi-jvm-tests" class="anchor"><span class="anchor-link"></span></a>Multi-JVM Tests</h2>
+<p>Testing asynchronous distributed systems requires special tooling/framework support. Sbt has a plugin called <a href="https://github.com/sbt/sbt-multi-jvm">sbt-multi-jvm</a> which helps to test systems across multiple JVMs or machines. This is especially useful for integration testing where multiple systems communicate with each other.</p>
+<p>You can find more details on multi-JVM tests <a href="https://doc.akka.io/docs/akka/current/multi-jvm-testing.html">here</a>.</p>
+<p>You can also refer <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> for writing your own multi-JVM tests. For example: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> </p>
+<p>In case you want to run your multi-JVM tests across machines, refer this multi-node testing guide <a href="https://doc.akka.io/docs/akka/current/multi-node-testing.html">here</a>. </p>
+<h2><a href="#mockito" name="mockito" class="anchor"><span class="anchor-link"></span></a>Mockito</h2>
+<p>Mocks are used so that unit tests can be written independent of dependencies.<br/><a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> uses <a href="http://site.mockito.org/">Mockito</a> for writing unit tests. ScalaTest comes with <a href="http://www.scalatest.org/user_guide/testing_with_mock_objects#mockito">MockitoSugar</a> trait which provides some basic syntax sugar for Mockito.</p>
+<p>For example: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/test/scala/csw/framework/internal/container/ContainerBehaviorTest.scala">ContainerBehaviorTest.scala</a></p>
 <h2><a href="#acceptance-tests" name="acceptance-tests" class="anchor"><span class="anchor-link"></span></a>Acceptance Tests</h2>
-<p>This section explains how and where csw-prod maintains and execute acceptance tests. If you are a component writer and want to maintain acceptance tests, you can create a repo similar to <a href="https://github.com/tmtsoftware/csw-acceptance">csw-acceptance</a> and update dependencies, projects as per your need. </p>
-<p>As part of acceptance tests, we run all the existing java and scala tests from <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> repo on published bintray binaries rather than directly on source code.</p>
+<p>This section explains how and where csw-prod maintains and executes acceptance tests. If you are a component writer and want to maintain acceptance tests, you can create a repo similar to <a href="https://github.com/tmtsoftware/csw-acceptance">csw-acceptance</a> and update dependencies, projects as per your need. </p>
+<p>As required by TMT Systems Engineering, the acceptance pipeline runs all the existing Java and Scala tests from <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> repo on published bintray binaries rather than directly on source code.</p>
 <p>More information can be found <a href="https://github.com/tmtsoftware/csw-acceptance/blob/master/README.md">here</a>.</p>
-<p>Below are the two separate jenkins pipelines to run <code>csw-prod</code> acceptance tests:</p>
+<p>Below are the two separate Jenkins pipelines to run <code>csw-prod</code> acceptance tests:</p>
 <ol>
   <li>
     <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev-nightly-build/">Acceptance Dev Pipeline</a></p>
     <ul>
-      <li>Auto triggered every night to get fast feedback and intended for developer&rsquo;s visibility.</li>
+      <li>Automatically triggered every night to get fast feedback and intended for developer&rsquo;s visibility.</li>
     </ul>
   </li>
   <li>
     <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">Acceptance Release Pipeline</a></p>
     <ul>
-      <li>Auto triggered on completion of <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline.</li>
-      <li>Admin needs to manually trigger <code>csw-prod-release</code> pipeline.</li>
+      <li>Automatically triggered on completion of <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline.</li>
+      <li><code>csw-prod-release</code> pipeline published CSW artifacts to bintray, and must be manually triggered by an administrator.</li>
     </ul>
   </li>
-</ol>
-<p>Acceptance pipelines are enabled to be triggered remotely. This is required, so that <code>csw-prod-release</code> pipeline can trigger <code>acceptance-release</code> pipeline which would be created in different jenkins server hosted in STILL environment. In case you want to trigger it via http end point, first you need to have security <code>token</code> configured in jenkins pipeline to trigger the job remotely and then run <code>curl</code> cmd as shown below:</p>
+</ol><div class="callout note "><div class="callout-title">Note</div>
+<p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline is responsible for following tasks:</p>
+<ul>
+  <li>build and run <code>csw-prod</code> tests</li>
+  <li>publish binaries to bintray</li>
+  <li>publish paradox documentation</li>
+  <li>publish apps and release notes to github releases</li>
+  <li>trigger <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">acceptance-release</a> pipeline</li>
+</ul></div>
+<p>Acceptance pipelines can also be triggered manually via an HTTP end point, for STIL acceptance tesing, for example. Using the security token obtained from the Jenkins pipeline settings (available upon request), run the <code>curl</code> cmd as shown below:</p>
 <ul>
   <li>For triggering <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev-nightly-build/">acceptance-dev</a> pipeline, run below</li>
 </ul>
@@ -265,23 +281,7 @@ tmtsoftware/csw-prod
     --data-urlencode token=$RELEASE_TOKEN \
     --data-urlencode RELEASE_VERSION=$RELEASE_VERSION \
     --data-urlencode BUILD_ENV=PROD
-</code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline is responsible for following tasks:</p>
-<ul>
-  <li>build and run <code>csw-prod</code> tests</li>
-  <li>publish binaries to bintray</li>
-  <li>publish paradox documentation</li>
-  <li>publish apps and release notes to github releases</li>
-  <li>trigger <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">acceptance-release</a> pipeline</li>
-</ul></div>
-<h2><a href="#multi-jvm-tests" name="multi-jvm-tests" class="anchor"><span class="anchor-link"></span></a>Multi-JVM Tests</h2>
-<p>Testing asynchronous distributed systems requires special tooling/framework support. Sbt has a plugin called <a href="https://github.com/sbt/sbt-multi-jvm">sbt-multi-jvm</a> which helps to test systems across multiple JVMs or machines. This is especially useful for integration testing where multiple systems communicate with each other.</p>
-<p>You can find more details on multi jvm tests <a href="https://doc.akka.io/docs/akka/current/multi-jvm-testing.html">here</a>.</p>
-<p>You can also refer <a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> for writing your own multi JVM tests. For example: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> </p>
-<p>In case you want to run your multi jvm tests across machines, refer this multi node testing guide <a href="https://doc.akka.io/docs/akka/current/multi-node-testing.html">here</a>. </p>
-<h2><a href="#mockito" name="mockito" class="anchor"><span class="anchor-link"></span></a>Mockito</h2>
-<p><a href="https://github.com/tmtsoftware/csw-prod">csw-prod</a> uses <a href="http://site.mockito.org/">Mockito</a> for writing unit tests. ScalaTest comes with <a href="http://www.scalatest.org/user_guide/testing_with_mock_objects#mockito">MockitoSugar</a> trait which provides some basic syntax sugar for Mockito.</p>
-<p>For example: <a href="https://github.com/tmtsoftware/csw-prod/tree/master/csw-framework/src/test/scala/csw/framework/internal/container/ContainerBehaviorTest.scala">ContainerBehaviorTest.scala</a></p>
+</code></pre>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/commons/testing.md" title="Edit this page" class="md-source-file md-edit">
