@@ -142,7 +142,7 @@ tmtsoftware/csw-prod
     <li><a href="../messages/subsystem.html" class="page">Subsystem</a></li>
     <li><a href="../messages/commands.html" class="page">Commands</a></li>
     <li><a href="../messages/events.html" class="page">Events</a></li>
-    <li><a href="../messages/states.html" class="page">State variables</a></li>
+    <li><a href="../messages/states.html" class="page">State Variables</a></li>
     <li><a href="../messages/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
@@ -159,9 +159,9 @@ tmtsoftware/csw-prod
   <li><a href="../commons/command.html" class="page">Communication using Commands</a></li>
   <li><a href="../commons/services.html" class="page">Services</a>
   <ul>
-    <li><a href="../services/location.html" class="page">Location service</a></li>
-    <li><a href="../services/config.html" class="page">Configuration service</a></li>
-    <li><a href="../services/logging.html" class="page">Logging service</a></li>
+    <li><a href="../services/location.html" class="page">Location Service</a></li>
+    <li><a href="../services/config.html" class="page">Configuration Service</a></li>
+    <li><a href="../services/logging.html" class="page">Logging Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -221,45 +221,59 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#multiple-components" name="multiple-components" class="anchor"><span class="anchor-link"></span></a>Multiple Components</h1>
-<p>Deploying multiple components (in Container), and having them communicate with each other. This tutorial discusses constructing an Assembly.</p>
+<p>In this part of the tutorial, we will demonstrate functionality involving multiple components.<br/>We will do this by creating an Assembly, demonstrating how to deploy start the Assembly and an HCD in a container, and having them communicate with each other.</p>
 <h2><a href="#creating-an-assembly" name="creating-an-assembly" class="anchor"><span class="anchor-link"></span></a>Creating an Assembly</h2>
-<p>To create an assembly, the component developer needs to implement the <code>ComponentHandlers</code>. More details about implementing ComponentHandlers can be found <a href="create-component.html#handlers">here</a>. </p>
+<p>Similar to the HCD in the previous page, to create an assembly, the component developer needs to implement the <code>ComponentHandlers</code>. More details about implementing ComponentHandlers can be found <a href="create-component.html#handlers">here</a>. </p>
 <h2><a href="#component-configuration-componentinfo-" name="component-configuration-componentinfo-" class="anchor"><span class="anchor-link"></span></a>Component Configuration (ComponentInfo)</h2>
-<p>A component configuration contains details needed to spawn a component. This configuration resides in a configuration file for a particular component. An example for an Assembly is below:</p>
-<pre><code>{
-    name = &quot;Laser&quot;
+<p>Also similar to the HCD, we will need to create a ComponentInfo file for the Assembly. The following shows an example of ComponentInfo file for an Assembly:</p>
+<pre><code>name = &quot;GalilAssembly&quot;
+componentType = assembly
+behaviorFactoryClassName = &quot;org.tmt.nfiraos.galilassembly.GalilAssemblyBehaviorFactory&quot;
+prefix = &quot;galil.assembly&quot;
+locationServiceUsage = RegisterAndTrackServices
+connections = [
+  {
+    name: &quot;GalilHcd&quot;
+    componentType: hcd
+    connectionType: akka
+  }
+]
+</code></pre><div class="callout note "><div class="callout-title">Note</div>
+<p>There is a section for listing connections. These are the connections that the component will automatically track, and can be other components or services. When available, it may make sense to track things like the Event Service. These connections can also be specified for HCDs, but of course, they should not have any component dependencies.</p></div>
+<p>The above shows a configuration file for running in standalone mode. If we want to run both the assembly and HCD in a container, the file would look like this:</p>
+<pre><code>name = &quot;GalilAssemblyContainer&quot;
+components: [
+  {
+    name = &quot;GalilAssembly&quot;
     componentType = assembly
-    behaviorFactoryClassName = csw.common.components.framework.SampleComponentBehaviorFactory
-    prefix = tcs.mobie.blue.filter
+    behaviorFactoryClassName = &quot;org.tmt.nfiraos.galilassembly.GalilAssemblyBehaviorFactory&quot;
+    prefix = &quot;galil.assembly&quot;
     locationServiceUsage = RegisterAndTrackServices
     connections = [
       {
-        name: Motion_Controller
-        componentType: hcd
-        connectionType: akka
-      },
-      {
-        name: Galil
-        componentType: hcd
-        connectionType: akka
-      },
-      {
-        name: Eton
+        name: &quot;GalilHcd&quot;
         componentType: hcd
         connectionType: akka
       }
     ]
-}
-</code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>The Assembly has multiple <code>connections</code> to HCDs that it will track in its life span.</p></div>
+  },
+  {
+    name = &quot;GalilHcd&quot;
+    componentType = hcd
+    behaviorFactoryClassName = &quot;org.tmt.nfiraos.galilhcd.GalilHcdBehaviorFactory&quot;
+    prefix = &quot;galil.hcd&quot;
+    locationServiceUsage = RegisterOnly
+  }
+]
+</code></pre>
 <p>More details about each configuration and its significance can be found <a href="create-component.html#component-configuration-componentinfo-">here</a>.</p>
-<p>A sample configuration file can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-benchmark/src/main/resources/container.conf">here</a>. </p>
+<p>Another sample container configuration file can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-benchmark/src/main/resources/container.conf">here</a>. </p>
 <h2><a href="#tracking-dependencies" name="tracking-dependencies" class="anchor"><span class="anchor-link"></span></a>Tracking Dependencies</h2>
 <p>The connections that are defined in the configuration file for an assembly will be tracked by the <code>csw-framework</code>. For each connection the following details are configured:</p>
 <pre><code>{
-  name: Eton
-  componentType: hcd
-  connectionType: akka
+    name: &quot;GalilHcd&quot;
+    componentType: hcd
+    connectionType: akka
 }
 </code></pre>
 <p>The name of the component, the type(hcd, service, etc) and the connection(akka, http, tcp) will be used to create a <code>Connection</code> object. The Connection object will be then used to track the location of a component using location service.</p>
@@ -271,7 +285,7 @@ tmtsoftware/csw-prod
 </ul>
 <p>More details about tracking a component using the location service can be found <a href="../services/location.html#tracking-and-subscribing">here</a>.</p>
 <h3><a href="#onlocationtrackingevent-handler" name="onlocationtrackingevent-handler" class="anchor"><span class="anchor-link"></span></a>onLocationTrackingEvent Handler</h3>
-<p>For all the tracked connections, whenever a location is changed, one of the following events is generated:</p>
+<p>For all the tracked connections, whenever a location is changed, added, or removed, one of the following events is generated:</p>
 <ul>
   <li>LocationUpdated: a location was added or changed</li>
   <li>LocationRemoved: a location is no longer available on the network</li>
@@ -282,7 +296,34 @@ tmtsoftware/csw-prod
 <p>If the component developer wants to track a connection that is not configured in its configuration file then it can use the <code>trackConnection</code> method provided by <code>csw-framework</code> in <code>ComponentHandlers</code>. The <code>trackConnection</code> method will take the <code>Connection</code> instance. Information on how to create a connection instance can be found <a href="../services/location.html#creating-components-connections-and-registrations">here</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Connections tracked by <code>csw-framework</code> (from a configuration file) or by a component developer using the <code>trackConnection</code> method both will be received in the <code>onLocationTrackingEvent</code> hook of <code>ComponentHandlers</code>. </p></div>
 <h2><a href="#sending-commands" name="sending-commands" class="anchor"><span class="anchor-link"></span></a>Sending Commands</h2>
-<p>If a component wants to send a command to another component, it may use a <code>CommandService</code> instance. The creation of a<code>CommandService</code> instance and its usage can be found <a href="command.html#commandservice">here</a>.</p>
+<p>From the location information obtained either by tracking dependencies or manually resolving a location, a <code>CommandService</code> instance can be created to provide a command interface to the component.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">implicit val system: ActorSystem[Nothing] = ctx.system
+
+val eventualCommandService: Future[CommandService] = locationService.resolve(hcdConnection.of[AkkaLocation], 5.seconds).map {
+  case Some(hcdLocation: AkkaLocation) =&gt; new CommandService(hcdLocation)
+  case _                               =&gt; throw HcdNotFoundException()
+}
+
+eventualCommandService.foreach { commandService ⇒
+  hcd = commandService
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolvedHcdLocation = locationService.resolve(hcdConnection, FiniteDuration.apply(5, TimeUnit.SECONDS));
+
+CompletableFuture&lt;JCommandService&gt; eventualCommandService = resolvedHcdLocation.thenApply((Optional&lt;AkkaLocation&gt; hcdLocation) -&gt; {
+    if (hcdLocation.isPresent())
+        return new JCommandService(hcdLocation.get(), ctx.getSystem());
+    else
+        throw new HcdNotFoundException();
+});
+
+eventualCommandService.thenAccept((jcommandService) -&gt; hcd = jcommandService);</code></pre></dd>
+</dl>
+<p>If a component wants to send a command to another component, it uses a <code>CommandService</code> instance. The creation of a<code>CommandService</code> instance and its usage can be found <a href="command.html#commandservice">here</a>.</p>
 <p>If a component wants to send multiple commands in response to a single received command, then it can use a <code>CommandDistributor</code> instance. The CommandDistributor will help in getting the aggregated response of multiple commands sent to other components. The component developer can use the aggregated response to update the <code>CommandResponseManager</code> with the appropriate status if the received command was in a <code>Submit</code> wrapper.</p>
 <p>More details about creating a <code>CommandDistributor</code> instance and its usage can be found <a href="command.html#distributing-commands">here</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p><code>CommandDistributor</code> can be used to get an aggregated response only if the multiple commands sent to other components are all wrapped in a <code>Submit</code> wrapper.</p></div>
