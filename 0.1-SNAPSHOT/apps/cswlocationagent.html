@@ -142,7 +142,7 @@ tmtsoftware/csw-prod
     <li><a href="../messages/subsystem.html" class="page">Subsystem</a></li>
     <li><a href="../messages/commands.html" class="page">Commands</a></li>
     <li><a href="../messages/events.html" class="page">Events</a></li>
-    <li><a href="../messages/states.html" class="page">State variables</a></li>
+    <li><a href="../messages/states.html" class="page">State Variables</a></li>
     <li><a href="../messages/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
@@ -159,9 +159,9 @@ tmtsoftware/csw-prod
   <li><a href="../commons/command.html" class="page">Communication using Commands</a></li>
   <li><a href="../commons/services.html" class="page">Services</a>
   <ul>
-    <li><a href="../services/location.html" class="page">Location service</a></li>
-    <li><a href="../services/config.html" class="page">Configuration service</a></li>
-    <li><a href="../services/logging.html" class="page">Logging service</a></li>
+    <li><a href="../services/location.html" class="page">Location Service</a></li>
+    <li><a href="../services/config.html" class="page">Configuration Service</a></li>
+    <li><a href="../services/logging.html" class="page">Logging Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -215,24 +215,41 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#csw-location-agent" name="csw-location-agent" class="anchor"><span class="anchor-link"></span></a>csw-location-agent</h1>
-<p>A utility application that starts a given external program, registers comma separated list of services the location service and unregisters them when the program exits.</p>
+<p>A utility application that starts a given external program, registers a comma separated list of services with the Location Service and unregisters them when the program exits.</p>
 <h2><a href="#command-line-parameter-options" name="command-line-parameter-options" class="anchor"><span class="anchor-link"></span></a>Command line parameter options</h2>
 <ul>
-  <li><strong><code>--names</code></strong> It&rsquo;s a required parameter. It needs to be a list of comma separated service names without a space after comma.</li>
-  <li><strong><code>--command</code></strong> The parameter is optional. The command that starts the target application. Use use %port to specify the port number. If parameter is not provided value $name.command from config file will be picked up. If value in config file is not found, the service names provided will be registered with Location Service.</li>
-  <li><strong><code>--port</code></strong> Optional port number the application listens on (default: use value of $name.port from config file, or use a random, free port.)</li>
-  <li><strong><app-config></strong> Optional config file in HOCON format. Will be automatically picked based on &ndash;names parameter (Options specified as: $name.command, $name.port, etc.)</li>
-  <li><strong><code>--delay</code></strong> Number of milliseconds to wait for the app to start before registering it with the location service (default: 1000)</li>
+  <li><strong><code>--names</code></strong> is a required parameter. It needs to be a list of comma separated service names without a space after comma.</li>
+  <li><strong><code>--command</code></strong> is an optional parameter. The command that starts the target application. Use use %port to specify the port number. If parameter is not provided value $name.command from config file will be picked up. If value in config file is not found, the service names provided will be registered with Location Service.</li>
+  <li><strong><code>--port</code></strong> the optional port number the application listens on (default: use value of $name.port from config file, or use a random, free port.)</li>
+  <li><strong><app-config></strong> an optional config file in HOCON format. Will be automatically picked based on &ndash;names parameter (Options specified as: $name.command, $name.port, etc.)</li>
+  <li><strong><code>--delay</code></strong> the number of milliseconds to wait for the app to start before registering it with the Location Service (default: 1000)</li>
   <li><strong><code>--no-exit</code></strong> For testing: prevents application from exiting after running command</li>
   <li><strong><code>--help</code></strong> Prints the help message.</li>
   <li><strong><code>--version</code></strong> Prints the version of the application.</li>
 </ul>
 <h2><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h2>
-<p><strong>Example:</strong> csw-location-agent &ndash;name &ldquo;redis&rdquo; &ndash;command &ldquo;redis-server /usr/local/etc/redis.conf&rdquo; &ndash;port 6379<br/><strong>Explanation:</strong> Application will start redis server on port 6379(default redis port) and will register a TcpConnection for the same with LocationService </p>
-<p><strong>Example:</strong> csw-location-agent &ndash;name &ldquo;foo&rdquo; &ndash;command &ldquo;sleep 30&rdquo;<br/><strong>Explanation:</strong> <strong>Explanation:</strong> Application will sleep for 30 seconds. Then, will register a service named foo on a random port with LocationService. Once sleep is over after 30 seconds, will unregister foo service.</p>
-<p><strong>Example:</strong> csw-location-agent &ndash;name &ldquo;myHttpService&rdquo; &ndash;command &ldquo;python -m SimpleHTTPServer 8080&rdquo; &ndash;port 8080<br/><strong>Explanation:</strong> Application will start a simple HTTP service on port 8080. Then, will register myHttpService as a TCP service with LocationService.</p>
-<p><strong>Example:</strong> csw-location-agent &ndash;help<br/><strong>Explanation:</strong> Prints help message</p>
-<p><strong>Example:</strong> csw-location-agent &ndash;version<br/><strong>Explanation:</strong> Prints application version</p>
+<ol>
+  <li>
+  <p>
+  <pre><code>csw-location-agent --name &quot;redis&quot; --command &quot;redis-server /usr/local/etc/redis.conf&quot; --port 6379
+</code></pre>Application will start redis server on port 6379(default redis port) and will register a TcpConnection for the same with Location Service</p></li>
+  <li>
+  <pre><code>csw-location-agent --name &quot;foo&quot; --command &quot;sleep 30&quot;
+</code></pre>
+  <p>Application will sleep for 30 seconds. Then, will register a service named foo on a random port with Location Service. Once sleep is over after 30 seconds, will unregister foo service.</p></li>
+  <li>
+  <pre><code>csw-location-agent --name &quot;myHttpService&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080
+</code></pre>
+  <p>Application will start a simple HTTP service on port 8080. Then, will register myHttpService as a TCP service with Location Service.</p></li>
+  <li>
+  <pre><code>csw-location-agent --help
+</code></pre>
+  <p>Prints help message</p></li>
+  <li>
+  <pre><code>csw-location-agent --version
+</code></pre>
+  <p>Prints application version</p></li>
+</ol>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/apps/cswlocationagent.md" title="Edit this page" class="md-source-file md-edit">

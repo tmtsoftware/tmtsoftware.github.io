@@ -142,7 +142,7 @@ tmtsoftware/csw-prod
     <li><a href="../messages/subsystem.html" class="page">Subsystem</a></li>
     <li><a href="../messages/commands.html" class="page">Commands</a></li>
     <li><a href="../messages/events.html" class="page">Events</a></li>
-    <li><a href="../messages/states.html" class="page">State variables</a></li>
+    <li><a href="../messages/states.html" class="page">State Variables</a></li>
     <li><a href="../messages/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
@@ -159,9 +159,9 @@ tmtsoftware/csw-prod
   <li><a href="../commons/command.html" class="page">Communication using Commands</a></li>
   <li><a href="../commons/services.html" class="page">Services</a>
   <ul>
-    <li><a href="../services/location.html" class="page">Location service</a></li>
-    <li><a href="../services/config.html" class="page">Configuration service</a></li>
-    <li><a href="../services/logging.html" class="page">Logging service</a></li>
+    <li><a href="../services/location.html" class="page">Location Service</a></li>
+    <li><a href="../services/config.html" class="page">Configuration Service</a></li>
+    <li><a href="../services/logging.html" class="page">Logging Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -204,8 +204,8 @@ private def resolveHcd(): Future[Option[AkkaLocation]] = {
   maybeConnection match {
     case Some(hcd) ⇒
       locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
-        case Some(akkaLocation) ⇒ Some(akkaLocation)
-        case None               ⇒
+        case loc @ Some(akkaLocation) ⇒ loc
+        case None                     ⇒
           // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
           // for the Hcd to be available
           throw HcdNotFoundException()
@@ -229,16 +229,15 @@ private CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolveHcd() {
 
     // If an Hcd is found as a connection, resolve its location from location service and create other
     // required worker actors required by this assembly
-    if(mayBeConnection.isPresent()) {
+    if (mayBeConnection.isPresent()) {
         CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolve = locationService.resolve(mayBeConnection.get().&lt;AkkaLocation&gt;of(), FiniteDuration.apply(5, TimeUnit.SECONDS));
         return resolve.thenCompose((Optional&lt;AkkaLocation&gt; resolvedHcd) -&gt; {
-            if(resolvedHcd.isPresent())
+            if (resolvedHcd.isPresent())
                 return CompletableFuture.completedFuture(resolvedHcd);
             else
                 throw new ConfigNotAvailableException();
         });
-    }
-    else
+    } else
         return CompletableFuture.completedFuture(Optional.empty());
 }</code></pre></dd>
     </dl>

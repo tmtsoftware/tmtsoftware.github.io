@@ -142,7 +142,7 @@ tmtsoftware/csw-prod
     <li><a href="../messages/subsystem.html" class="page">Subsystem</a></li>
     <li><a href="../messages/commands.html" class="page">Commands</a></li>
     <li><a href="../messages/events.html" class="page">Events</a></li>
-    <li><a href="../messages/states.html" class="page">State variables</a></li>
+    <li><a href="../messages/states.html" class="page">State Variables</a></li>
     <li><a href="../messages/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
@@ -159,9 +159,9 @@ tmtsoftware/csw-prod
   <li><a href="../commons/command.html" class="page">Communication using Commands</a></li>
   <li><a href="../commons/services.html" class="page">Services</a>
   <ul>
-    <li><a href="../services/location.html" class="page">Location service</a></li>
-    <li><a href="../services/config.html" class="page">Configuration service</a></li>
-    <li><a href="../services/logging.html" class="page">Logging service</a></li>
+    <li><a href="../services/location.html" class="page">Location Service</a></li>
+    <li><a href="../services/config.html" class="page">Configuration Service</a></li>
+    <li><a href="../services/logging.html" class="page">Logging Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -180,12 +180,12 @@ tmtsoftware/csw-prod
 <ul>
   <li><a href="../messages/keys-parameters.html#keys-and-parameters" class="header">Keys and Parameters</a>
   <ul>
-    <li><a href="../messages/keys-parameters.html#how-to-create-a-parameter" class="header">How to create a Parameter</a></li>
-    <li><a href="../messages/keys-parameters.html#primitive-datatypes" class="header">Primitive datatypes</a></li>
+    <li><a href="../messages/keys-parameters.html#how-to-create-a-parameter" class="header">How to Create a Parameter</a></li>
+    <li><a href="../messages/keys-parameters.html#primitive-datatypes" class="header">Primitive Datatypes</a></li>
     <li><a href="../messages/keys-parameters.html#arrays" class="header">Arrays</a></li>
     <li><a href="../messages/keys-parameters.html#matrices" class="header">Matrices</a></li>
     <li><a href="../messages/keys-parameters.html#domain-specific-types" class="header">Domain Specific Types</a></li>
-    <li><a href="../messages/keys-parameters.html#source-code-for-examples" class="header">Source code for examples</a></li>
+    <li><a href="../messages/keys-parameters.html#source-code-for-examples" class="header">Source Code for Examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -206,12 +206,12 @@ tmtsoftware/csw-prod
 <ul>
   <li><a href="../messages/keys-parameters.html#keys-and-parameters" class="header">Keys and Parameters</a>
   <ul>
-    <li><a href="../messages/keys-parameters.html#how-to-create-a-parameter" class="header">How to create a Parameter</a></li>
-    <li><a href="../messages/keys-parameters.html#primitive-datatypes" class="header">Primitive datatypes</a></li>
+    <li><a href="../messages/keys-parameters.html#how-to-create-a-parameter" class="header">How to Create a Parameter</a></li>
+    <li><a href="../messages/keys-parameters.html#primitive-datatypes" class="header">Primitive Datatypes</a></li>
     <li><a href="../messages/keys-parameters.html#arrays" class="header">Arrays</a></li>
     <li><a href="../messages/keys-parameters.html#matrices" class="header">Matrices</a></li>
     <li><a href="../messages/keys-parameters.html#domain-specific-types" class="header">Domain Specific Types</a></li>
-    <li><a href="../messages/keys-parameters.html#source-code-for-examples" class="header">Source code for examples</a></li>
+    <li><a href="../messages/keys-parameters.html#source-code-for-examples" class="header">Source Code for Examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -224,14 +224,16 @@ tmtsoftware/csw-prod
 <div class="md-content__searchable">
 <h2><a href="#keys-and-parameters" name="keys-and-parameters" class="anchor"><span class="anchor-link"></span></a>Keys and Parameters</h2>
 <p>Library offers a flexible and typesafe means to create Parameters to store values like <strong>primitive types, collection types or domain specific types</strong>. </p>
-<p>A <strong>Parameter</strong> is a collection of Keys and values or binary data. A key is <strong>unique</strong> in a Parameter. A Parameter is <strong>immutable</strong>, in a sense, a modification to an existing Parameter will return a new instance. </p>
-<h3><a href="#how-to-create-a-parameter" name="how-to-create-a-parameter" class="anchor"><span class="anchor-link"></span></a>How to create a Parameter</h3>
+<p>A <strong>Parameter</strong> is a Key and Value where the Value must be from a set of defined primitive types including binary data. The Value of a <code>Parameter</code> is always considered to be an Array of the type (i.e. if a single value is stored it is at array location 0). A <code>Parameter</code> is <strong>immutable</strong>; a modification to an existing <code>Parameter</code> will return a new instance. </p>
+<p>A Value can also have <code>Units</code>, which must be of the defined types. See <a href="units.html">Units</a> for more information. At this time Units are informational only&ndash;no calculation or conversion support is provided. Some systems may provide a key value with different units, and receiver can inspect the <code>Units</code> to make a decision on how to handle the value.</p>
+<p>A <strong>ParameterSet</strong> is a Set of <code>Parameter</code>. Various other message types include a <code>ParameterSet</code> (e.g. Setup, Event). A key is <strong>unique</strong> in a <code>ParameterSet</code> since it is a Set. </p>
+<h3><a href="#how-to-create-a-parameter" name="how-to-create-a-parameter" class="anchor"><span class="anchor-link"></span></a>How to Create a Parameter</h3>
 <ul>
-  <li>choose appropriate KeyType from below tables for your language(Scala/Java).</li>
-  <li>calling <code>make</code> function on KeyType and supplying a String keyName will return a suitably typed Key instance.</li>
+  <li>choose an appropriate KeyType from below tables for your language(Scala/Java).</li>
+  <li>calling the <code>make</code> method on KeyType and supplying a String keyName will return a suitably typed Key instance.</li>
   <li>explore the overloaded <code>set</code> and <code>-&gt;</code> methods, which will allow you to store values of the based on chosen KeyType. e.g. <code>JKeyTypes.BooleanKey</code> will allow storing only <code>java.lang.Boolean</code> values.</li>
 </ul>
-<h3><a href="#primitive-datatypes" name="primitive-datatypes" class="anchor"><span class="anchor-link"></span></a>Primitive datatypes</h3>
+<h3><a href="#primitive-datatypes" name="primitive-datatypes" class="anchor"><span class="anchor-link"></span></a>Primitive Datatypes</h3>
 <table>
   <thead>
     <tr>
@@ -776,7 +778,7 @@ Struct mutated2 = struct1.remove(firstKey.get());
 Set&lt;String&gt; missingKeySet = mutated1.jMissingKeys(ra, dec, epoch, JKeyTypes.StringKey().make(&quot;someRandomKey&quot;));
 List&lt;String&gt; expectedMissingKeys = Arrays.asList(&quot;ra&quot;, &quot;someRandomKey&quot;);</code></pre></dd>
 </dl>
-<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/KeysAndParametersTest.scala">Scala Example</a></li>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JKeysAndParametersTest.java">Java Example</a></li>

@@ -137,7 +137,7 @@ tmtsoftware/csw-prod
     <li><a href="messages/subsystem.html" class="page">Subsystem</a></li>
     <li><a href="messages/commands.html" class="page">Commands</a></li>
     <li><a href="messages/events.html" class="page">Events</a></li>
-    <li><a href="messages/states.html" class="page">State variables</a></li>
+    <li><a href="messages/states.html" class="page">State Variables</a></li>
     <li><a href="messages/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
@@ -154,9 +154,9 @@ tmtsoftware/csw-prod
   <li><a href="commons/command.html" class="page">Communication using Commands</a></li>
   <li><a href="commons/services.html" class="page">Services</a>
   <ul>
-    <li><a href="services/location.html" class="page">Location service</a></li>
-    <li><a href="services/config.html" class="page">Configuration service</a></li>
-    <li><a href="services/logging.html" class="page">Logging service</a></li>
+    <li><a href="services/location.html" class="page">Location Service</a></li>
+    <li><a href="services/config.html" class="page">Configuration Service</a></li>
+    <li><a href="services/logging.html" class="page">Logging Service</a></li>
   </ul></li>
   <li><a href="commons/apps.html" class="page">Applications</a>
   <ul>
@@ -175,8 +175,7 @@ tmtsoftware/csw-prod
 <ul>
   <li><a href="index.html#tmt-common-software-csw-" class="header">TMT Common Software (CSW)</a>
   <ul>
-    <li><a href="index.html#documentation" class="header">Documentation</a></li>
-    <li><a href="index.html#osw-architecture" class="header">OSW Architecture</a></li>
+    <li><a href="index.html#common-software-architecture" class="header">Common Software Architecture</a></li>
     <li><a href="index.html#csw-services" class="header">CSW Services</a></li>
   </ul></li>
 </ul>
@@ -198,8 +197,7 @@ tmtsoftware/csw-prod
 <ul>
   <li><a href="index.html#tmt-common-software-csw-" class="header">TMT Common Software (CSW)</a>
   <ul>
-    <li><a href="index.html#documentation" class="header">Documentation</a></li>
-    <li><a href="index.html#osw-architecture" class="header">OSW Architecture</a></li>
+    <li><a href="index.html#common-software-architecture" class="header">Common Software Architecture</a></li>
     <li><a href="index.html#csw-services" class="header">CSW Services</a></li>
   </ul></li>
 </ul>
@@ -212,20 +210,33 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#tmt-common-software-csw-" name="tmt-common-software-csw-" class="anchor"><span class="anchor-link"></span></a>TMT Common Software (CSW)</h1>
-<h2><a href="#documentation" name="documentation" class="anchor"><span class="anchor-link"></span></a>Documentation</h2>
 <p>Common Software is the package of services and infrastructure software that integrates the TMT software systems.</p>
 <p>Visit <a href="http://www.tmt.org">TMT website</a> to know more about Thirty Meter Telescope.</p>
-<h3><a href="#http-based-services-documentation-can-be-found-" name="http-based-services-documentation-can-be-found-" class="anchor"><span class="anchor-link"></span></a>HTTP based services documentation can be found <a href="swagger/index.html">here</a>.</h3>
-<h2><a href="#osw-architecture" name="osw-architecture" class="anchor"><span class="anchor-link"></span></a>OSW Architecture</h2>
+<h2><a href="#common-software-architecture" name="common-software-architecture" class="anchor"><span class="anchor-link"></span></a>Common Software Architecture</h2>
+<p>CSW is designed to support the Observing Mode-Oriented Architecture (OMOA). An observing mode is a well-defined instrument observing task and an associated set of owned resources, procedures, and capabilities that implement the mode. An example observing mode is: IRIS multi-filter integral field spectroscopy using the NFIRAOS adaptive optics unit with AO laser guide star correction. An instrument will generally have several associated observing modes for acquisition, science objects, and calibrations. Examples of observing mode resources could be an instrument’s hardware devices, or the use of a larger system such as the Laser Guide Star Facility.</p>
+<p>OMOA structures the software as the layers in the following figure. Each layer contains components with specific responsibilities described in the following sections. OMOA bypasses the use of standalone “subsystems” (large principal systems) for a flatter system that requires less code and allows the software system for an observing mode to optionally be more flexibly composed at run-time.</p>
+<p><img src="./images/top/OMOALayers2.png" alt="layers" /></p>
+<h4><a href="#layer-0-obseratory-hardware" name="layer-0-obseratory-hardware" class="anchor"><span class="anchor-link"></span></a>Layer 0 - Obseratory Hardware</h4>
+<p>Layer 0 represents the actual hardware being controlled and the hardware controllers that interface the hardware to the computer systems.</p>
+<h4><a href="#layer-1-hardware-control-layer" name="layer-1-hardware-control-layer" class="anchor"><span class="anchor-link"></span></a>Layer 1 - Hardware Control Layer</h4>
+<p>The lowest layer in the OMOA software system, the Hardware Control Layer, consists of all the controllable hardware that is available for use by higher levels of software. A sea of similar software components called Hardware Control Daemons (HCD) at layer 1 controls the low-level hardware of the telescope, adaptive optics, and instruments.</p>
+<p>An HCD is similar to the device driver found in many systems. Each HCD is associated with a networked motion controller, a PLC/PAC, or other low-level hardware controller present in Layer 0. Some hardware controllers will support multiple channels. An HCD may support a highly cohesive, related set of functionality. For instance, one motion controller with 8 axes might handle all the slow moving filters and gratings of an instrument. In other cases, the channels of the controller hardware could be associated with unrelated devices. If the hardware controller has multiple channels, the HCD supports access to all the channels and must multiplex access to the controller and coordinate requests and replies among the clients.</p>
+<h4><a href="#layer-2-assembly-layer" name="layer-2-assembly-layer" class="anchor"><span class="anchor-link"></span></a>Layer 2 - Assembly Layer</h4>
+<p>The Assembly Layer exists just above the Hardware Control Layer at Layer 2. Software at this layer consists of components called Assemblies. In OMOA, an Assembly represents a device as a collection of hardware that makes sense at the user level. Examples of instrument devices are a filter wheel, a deformable mirror, or a detector controller. Assemblies often represent user-oriented devices in the software system, but it is not necessary that an Assembly control HCDs.</p>
+<h4><a href="#layer-3-sequencing-layer" name="layer-3-sequencing-layer" class="anchor"><span class="anchor-link"></span></a>Layer 3 - Sequencing Layer</h4>
+<p>The Sequencing Layer is Layer 3 in the figure above. Components at this level are called Sequencers or Sequence Components because they take complex descriptions of tasks and control and synchronize the actions of the Assemblies to accomplish the tasks.</p>
+<p>Sequence Components in this layer share a software interface that allows them to be plugged together to form the sequencing hierarchy for a specific observing mode. Individual Sequencers can provide higher-level control of a set of distributed hardware (e.g., init). Individual sequencers can be programmable using scripts. There can be one or many Sequence Components in an observing mode sequencer. </p>
+<h4><a href="#layer-4-monitoring-and-control-layer" name="layer-4-monitoring-and-control-layer" class="anchor"><span class="anchor-link"></span></a>Layer 4 - Monitoring and Control Layer</h4>
+<p>The Monitoring/Control Layer is the layer of software that contains the user interface programs that are used to observe with the telescope. At TMT there will be graphical user interfaces for use by observers during observing. These applications use the CSW services to control and monitor the system.</p>
 <h2><a href="#csw-services" name="csw-services" class="anchor"><span class="anchor-link"></span></a>CSW Services</h2>
-<p>CSW or Common Software provides a shared software infrastructure based on a set of services and associated software for integrating individual components in the large observatory software architecture. The client applications use a set of loosely coupled services, each autonomous with a well-defined interface that hides the service implementation. It also<br/>provides a standardized communication with the services.</p>
-<h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="services/location.html">Location service</a></h3>
+<p>CSW or Common Software provides a shared software infrastructure based on a set of services and associated software for integrating individual components in the large observatory software architecture. The components and client applications use a set of loosely coupled services, each autonomous with a well-defined interface that hides the service implementation. It also<br/>provides a standardized communication with the services.</p>
+<h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="services/location.html">Location Service</a></h3>
 <p>The Location Service of TMT Common Software handles application, component, and service registration and discovery in the distributed TMT software system. When a component (i.e. an Sequencer, Assembly, or HCD) is initializing, it registers its name along with other information such as interface type and connection information to the Location Service. The important feature and reason for the Location Service is that details of connection information should not be hardwired, they should be discovered at runtime.</p>
 <p>Location Service is most obviously needed when one component commands another component. In this case the first component uses the Location Service to get information about the second component, and uses that information to make a connection. Discovered information might include a protocol (e.g., HTTP), interface type (e.g., command), or host and port.</p>
-<h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="services/config.html">Configuration service</a></h3>
+<h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="services/config.html">Configuration Service</a></h3>
 <p>The Configuration Service (CS) provides a centralized persistent store for “configuration files” used in the TMT Software System. In this context, a configuration file is a set of values describing state, initialization values, or other information useful to a component or set of components. The TCS provides many examples such as look-up tables of various kinds or a set of pointing model parameters or parameters for setting up a motion controller. Another is the Alarm Service Configuration File. At the applications level, the GUI used by the Observing Assistant could provide a button to save offsets between an instrument science field and its acquisition camera origin. These are the kinds of scenarios that use the Configuration Service.</p>
 <p>The Configuration Service provides the added feature of storing versions of configuration files. All versions of configuration files are retained providing a historical record of changes for each configuration file. Components can save today’s version without fear that yesterday’s version will be lost. If the configuration of a component is inadvertently lost, it will be possible to easily restore to the most recently saved version or a default version.</p>
-<h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="services/logging.html">Logging service</a></h3>
+<h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="services/logging.html">Logging Service</a></h3>
 <p>Logging is the ability of a software component to output a message, usually for diagnostic purposes. TMT Common Software will provide a Logging Service. Logging should not be confused with “data logging”, which is usually collection of measured values. </p>
 <p>This log message includes a time of the log message, a severity (INFO), the source of the log message as a package path in the software, and a formatted text message. The Logging Service provides the ability to log messages locally to a file or screen and optionally to a centralized logging aggregator.</p>
 <p>The central logging aggregator (not part of this release) provides the capability for all components to log diagnostic information to a central and optionally persistent store. The logging information is then aggregated and ordered by timestamp. A coordinated, centralized log can be an extremely useful tool for diagnosing many types of distributed software problems. Structured logging will be used with the central logging aggregator.</p>
@@ -238,6 +249,7 @@ tmtsoftware/csw-prod
 <h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="commons/framework.html">Framework</a></h3>
 <p>The framework provides templates for <a href="commons/create-component.html">creating</a> and running the kind of software components defined by TMT as well as service access interfaces for these components. It also provides <a href="apps/hostconfig.html">application</a> support for running multiple components on a host machine.</p>
 <p>The framework also contains the structures that are common to components, such as commands and event structures.</p>
+<h4><a href="#http-based-services-api-documentation-can-be-found-" name="http-based-services-api-documentation-can-be-found-" class="anchor"><span class="anchor-link"></span></a>HTTP-based services API documentation can be found <a href="swagger/index.html">here</a>.</h4>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/index.md" title="Edit this page" class="md-source-file md-edit">
