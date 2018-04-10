@@ -1,6 +1,6 @@
 # TMT Software
 
-This repository contains software being deveoped for the [Thirty Meter Telescope](http://www.tmt.org).
+This site contains software being deveoped for the [Thirty Meter Telescope](http://www.tmt.org).
 
 Some projects we are currently working on:
 
@@ -10,4 +10,4 @@ Some projects we are currently working on:
 * [csw-prod-qa](https://github.com/tmtsoftware/csw-prod-qa) - A project used for testing the CSW APIs
 * [galil-play-rest-api](https://github.com/tmtsoftware/galil-play-rest-api) - An example Play project that provides an HTTP/REST API to the galil-prototype HCD
 
-See https://github.com/tmtsoftware  for the complete list of projects.
+See the [TMT GitHub](https://github.com/tmtsoftware) page for the complete list of projects.
