@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -224,11 +224,11 @@ tmtsoftware/csw-prod
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h2><a href="#events" name="events" class="anchor"><span class="anchor-link"></span></a>Events</h2>
+<h1><a href="#events" name="events" class="anchor"><span class="anchor-link"></span></a>Events</h1>
 <p>Events are the most basic type of asynchronous notification in TMT when an activity occurs somewhere in the TMT system and other components need to be notified. Each type of event has a unique purpose and unique information, but they all share same structural features. All events have <strong>EventInfo</strong> and <strong>ParameterSet</strong>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p><code>csw-messages</code> library offers out of the box support to serialize Events using <strong>Protobuf</strong>, so that events can be produced and consumed by JVM(Java virtual machine) as well as Non-JVM applications.</p>
 <p>For more on this <a href="events.html#protobuf">Protobuf support</a> section below.</p></div>
-<h3><a href="#eventtime" name="eventtime" class="anchor"><span class="anchor-link"></span></a>EventTime</h3>
+<h2><a href="#eventtime" name="eventtime" class="anchor"><span class="anchor-link"></span></a>EventTime</h2>
 <p>It captures the instance of a time in UTC format. To create current instance of time use default constructor. For other utility functions, see below examples:</p>
 <dl>
   <dt>Scala</dt>
@@ -260,7 +260,7 @@ EventTime currentTime = EventTime.toCurrent();
 EventTime aDayAgo = EventTime.toEventTime(Instant.now().minusSeconds(86400));
 </code></pre></dd>
 </dl>
-<h3><a href="#observe-event" name="observe-event" class="anchor"><span class="anchor-link"></span></a>Observe Event</h3>
+<h2><a href="#observe-event" name="observe-event" class="anchor"><span class="anchor-link"></span></a>Observe Event</h2>
 <p>ObserveEvent is used to describe an event within a standardized data acquisition process. Published only by Science Detector Assemblies, who emit ObserveEvents during their exposures to signal the occurrence of specific activities/actions during the acquisition of data. Observe Events are published by the detector system using the Event Service.</p>
 <dl>
   <dt>Scala</dt>
@@ -345,7 +345,7 @@ Set&lt;String&gt; missingKeys = oc3.jMissingKeys(k1, k2, k3, k4);
 //remove keys
 ObserveEvent oc4 = oc3.remove(k3);</code></pre></dd>
 </dl>
-<h3><a href="#system-event" name="system-event" class="anchor"><span class="anchor-link"></span></a>System Event</h3>
+<h2><a href="#system-event" name="system-event" class="anchor"><span class="anchor-link"></span></a>System Event</h2>
 <p>SystemEvent is used to describe a demand or other algorithm input from one component to the other. It is also used to publish internal state or status values of a component that may be of interest to other components in the system.</p>
 <dl>
   <dt>Scala</dt>
@@ -437,7 +437,7 @@ Set&lt;String&gt; missingKeys = se3.jMissingKeys(k1, k2, k3, k4);
 //remove keys
 SystemEvent se4 = se3.remove(k3);</code></pre></dd>
 </dl>
-<h3><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON Serialization</h3>
+<h2><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON Serialization</h2>
 <p>Events can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize Status, Observe and System events.</p>
 <dl>
   <dt>Scala</dt>
@@ -510,7 +510,7 @@ SystemEvent statusFromPrettyStr = JavaJsonSupport.readEvent(Json.parse(str));
 ObserveEvent observeEvent1 = JavaJsonSupport.readEvent(observeJson);
 SystemEvent systemEvent1 = JavaJsonSupport.readEvent(systemJson);</code></pre></dd>
 </dl>
-<h3><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key Constraint</h3>
+<h2><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key Constraint</h2>
 <p>By choice, a ParameterSet in either <strong>ObserveEvent</strong> or <strong>SystemEvent</strong> event will be optimized to store only unique keys. When using <code>add</code> or <code>madd</code> methods on events to add new parameters, if the parameter being added has a key which is already present in the <code>paramSet</code>, the already stored parameter will be replaced by the given parameter. </p><div class="callout note "><div class="callout-title">Note</div>
 <p>If the <code>Set</code> is created by component developers and given directly while creating an event, then it will be the responsibility of component developers to maintain uniqueness with parameters based on key.</p></div>
 <p>Here are some examples that illustrate this point:</p>
@@ -602,7 +602,7 @@ SystemEvent finalEvent = changedEvent.madd(miscParam1, encParam1);
 //now contains encoderKey, filterKey, miscKey
 List&lt;String&gt; uniqueKeys3 = finalEvent.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
-<h3><a href="#protobuf" name="protobuf" class="anchor"><span class="anchor-link"></span></a>Protobuf</h3>
+<h2><a href="#protobuf" name="protobuf" class="anchor"><span class="anchor-link"></span></a>Protobuf</h2>
 <p>Protobuf aka Protocol buffers, are a language-neutral, platform-neutral extensible mechanism for serializing structured data. For more, visit <a href="https://developers.google.com/protocol-buffers/">Protobuf home page</a></p>
 <p>In TMT observatory, subsystems and components could be running on JVM(Java virtual machine) and Non-JVM platform. This leads to solving a non-trivial problem of a <strong>Non-JVM component</strong> wanting to consume an Event produced by a <strong>JVM component</strong>. Amongst the available options for <strong>data over the wire</strong>, Protobuf was chosen for its performance, data compression and official/unofficial support many mainstream languages. </p>
 <p><code>csw-messages</code> library enhances the Protobuf support, by providing out of the box helper methods, to convert events from/to protobuf binary data.</p><div class="callout note "><div class="callout-title">Protobuf Code generation for Non-JVM languages</div>
@@ -671,7 +671,7 @@ ObserveEvent pbObserveEvent = ObserveEvent.fromPb(byteArray2);
 SystemEvent pbSystemEvent1 = SystemEvent.fromPb(byteArray3);
 SystemEvent pbSystemEvent2 = SystemEvent.fromPb(byteArray4);</code></pre></dd>
 </dl>
-<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h2>
+<h1><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h1>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/EventsTest.scala">Scala Example</a></li>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JEventsTest.java">Java Example</a></li>

@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -230,9 +230,9 @@ tmtsoftware/csw-prod
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h2><a href="#commands" name="commands" class="anchor"><span class="anchor-link"></span></a>Commands</h2>
+<h1><a href="#commands" name="commands" class="anchor"><span class="anchor-link"></span></a>Commands</h1>
 <p>Commands are parameter sets called Setup, Observe, and Wait. A command is created with the source of the command, given by a prefix, the name of the command, and an optional ObsId. Parameters are added to the command as needed. As the ESW design is developed, these command structures may evolve.</p>
-<h3><a href="#obsid" name="obsid" class="anchor"><span class="anchor-link"></span></a>ObsId</h3>
+<h2><a href="#obsid" name="obsid" class="anchor"><span class="anchor-link"></span></a>ObsId</h2>
 <p>An ObsID, or observation Id, indicates the observation the command is associated with. It can be constructed by creating an instance of <code>ObsId</code>. </p>
 <dl>
   <dt>Scala</dt>
@@ -242,7 +242,7 @@ tmtsoftware/csw-prod
   <dd>
   <pre class="prettyprint"><code class="language-java">ObsId obsId = new ObsId(&quot;Obs001&quot;);</code></pre></dd>
 </dl>
-<h3><a href="#prefix" name="prefix" class="anchor"><span class="anchor-link"></span></a>Prefix</h3>
+<h2><a href="#prefix" name="prefix" class="anchor"><span class="anchor-link"></span></a>Prefix</h2>
 <p>The source of the command is given by the prefix, which should be the full name of the component sending the command. A prefix can be constructed with a string, but must start with a valid subsystem as in <a href="subsystem.html">Subsystem</a>. A component developer should supply a valid prefix string and the subsystem will be automatically parsed from it. An example of a valid string prefix is &ldquo;nfiraos.ncc.trombone&rdquo;.</p>
 <p>See below examples:</p>
 <dl>
@@ -272,9 +272,9 @@ Prefix prefix2 = new Prefix(&quot;tcs.mobie.blue.filter&quot;);
 // will automatically get Subsystem.BAD
 Prefix badPrefix = new Prefix(&quot;abcdefgh&quot;);</code></pre></dd>
 </dl>
-<h3><a href="#commandname" name="commandname" class="anchor"><span class="anchor-link"></span></a>CommandName</h3>
+<h2><a href="#commandname" name="commandname" class="anchor"><span class="anchor-link"></span></a>CommandName</h2>
 <p>Each command has a name given as a string. The <code>CommandName</code> object wraps the string name. The string should be continuous with no spaces.</p>
-<h3><a href="#setup-command" name="setup-command" class="anchor"><span class="anchor-link"></span></a>Setup Command</h3>
+<h2><a href="#setup-command" name="setup-command" class="anchor"><span class="anchor-link"></span></a>Setup Command</h2>
 <p>This command is used to describe a goal that a system should match. Component developer will require to supply following arguments to create a <code>Setup</code> command.</p>
 <ul>
   <li><strong><a href="commands.html#Prefix">Prefix:</a></strong> the source of the command as described above</li>
@@ -377,7 +377,7 @@ Setup sc4 = sc3.remove(b1);
 //list all keys
 java.util.List&lt;String&gt; allKeys = sc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
-<h3><a href="#observe-command" name="observe-command" class="anchor"><span class="anchor-link"></span></a>Observe Command</h3>
+<h2><a href="#observe-command" name="observe-command" class="anchor"><span class="anchor-link"></span></a>Observe Command</h2>
 <p>This command describes a science observation. Sent only to Science Detector Assemblies and Sequencers.</p>
 <dl>
   <dt>Scala</dt>
@@ -458,7 +458,7 @@ Observe oc4 = oc2.remove(k4);
 //list all keys
 java.util.List&lt;String&gt; allKeys = oc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
-<h3><a href="#wait-command" name="wait-command" class="anchor"><span class="anchor-link"></span></a>Wait Command</h3>
+<h2><a href="#wait-command" name="wait-command" class="anchor"><span class="anchor-link"></span></a>Wait Command</h2>
 <p>This command causes a Sequencer to wait until notified.</p>
 <dl>
   <dt>Scala</dt>
@@ -539,7 +539,7 @@ Wait wc4 = wc2.remove(k4);
 //list all keys
 java.util.List&lt;String&gt; allKeys = wc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
-<h3><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON serialization</h3>
+<h2><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON serialization</h2>
 <p>Commands can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize Setup, Observe and Wait commands.</p>
 <dl>
   <dt>Scala</dt>
@@ -613,7 +613,7 @@ Setup sc1 = JavaJsonSupport.readSequenceCommand(Json.parse(str));
 Observe oc1 = JavaJsonSupport.readSequenceCommand(ocJson);
 Wait wc1 = JavaJsonSupport.readSequenceCommand(wcJson);</code></pre></dd>
 </dl>
-<h3><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key constraint</h3>
+<h2><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key constraint</h2>
 <p>By design, a ParameterSet in a <strong>Setup, Observe,</strong> or <strong>Wait</strong> command is optimized to store only unique keys. When using <code>add</code> or <code>madd</code> methods on commands to add new parameters, if the parameter being added has a key which is already present in the <code>paramSet</code>, the already stored parameter will be replaced by the given parameter. </p><div class="callout note "><div class="callout-title">Note</div>
 <p>If the <code>Set</code> is created by component developers and given directly while creating a command, then it will be the responsibility of component developers to maintain uniqueness with parameters based on key.</p></div>
 <p>Here are some examples that illustrate this point:</p>
@@ -705,7 +705,7 @@ Setup finalSetUp = setup.madd(miscParam1, encParam1);
 //now contains encoderKey, filterKey, miscKey
 List&lt;String&gt; uniqueKeys3 = finalSetUp.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
-<h3><a href="#cloning-a-command" name="cloning-a-command" class="anchor"><span class="anchor-link"></span></a>Cloning a Command</h3>
+<h2><a href="#cloning-a-command" name="cloning-a-command" class="anchor"><span class="anchor-link"></span></a>Cloning a Command</h2>
 <p>In order to track the completion of a command, every command that is sent must have a unique RunId. If you wish to resubmit a previously sent Setup, the <code>cloneCommand</code> method must be used prior to submission to create a new command from existing parameters, but with a new RunId.</p>
 <dl>
   <dt>Scala</dt>
@@ -729,7 +729,7 @@ Observe observe2 = observe.cloneCommand();
 Wait wait = new Wait(new Prefix(prefix), commandName, Optional.of(obsId)).add(encoderParam);
 Wait wait2 = wait.cloneCommand();</code></pre></dd>
 </dl>
-<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h2>
+<h1><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h1>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/CommandsTest.scala">Scala Example</a></li>
   <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JCommandsTest.java">Java Example</a></li>
