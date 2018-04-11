@@ -18,7 +18,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/tmt_favicon.ico">
-<title>Lifecycle support · TMT Common Software (CSW)</title>
+<title>Component Handlers · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.7a4cdee3.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -54,7 +54,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Common Software (CSW)
 </span>
 <span class="md-header-nav__topic">
-Lifecycle support
+Component Handlers
 </span>
 </div>
 </div>
@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="active page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="active page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,19 +172,17 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
 <ul>
-  <li><a href="../framework/handling-lifecycle.html#lifecycle-support" class="header">Lifecycle support</a>
+  <li><a href="../framework/handling-lifecycle.html#component-handlers" class="header">Component Handlers</a>
   <ul>
-    <li><a href="../framework/handling-lifecycle.html#initialize" class="header">initialize</a></li>
-    <li><a href="../framework/handling-lifecycle.html#onshutdown" class="header">onShutdown</a></li>
-    <li><a href="../framework/handling-lifecycle.html#isonline" class="header">isOnline</a></li>
-    <li><a href="../framework/handling-lifecycle.html#ongooffline" class="header">onGoOffline</a></li>
-    <li><a href="../framework/handling-lifecycle.html#ongoonline" class="header">onGoOnline</a></li>
+    <li><a href="../framework/handling-lifecycle.html#component-lifecycle" class="header">Component Lifecycle</a></li>
+    <li><a href="../framework/handling-lifecycle.html#shutting-down" class="header">Shutting Down</a></li>
+    <li><a href="../framework/handling-lifecycle.html#component-online-and-offline" class="header">Component Online and Offline</a></li>
     <li><a href="../framework/handling-lifecycle.html#handling-commands" class="header">Handling commands</a></li>
   </ul></li>
 </ul>
@@ -204,13 +202,11 @@ tmtsoftware/csw-prod
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
 <ul>
-  <li><a href="../framework/handling-lifecycle.html#lifecycle-support" class="header">Lifecycle support</a>
+  <li><a href="../framework/handling-lifecycle.html#component-handlers" class="header">Component Handlers</a>
   <ul>
-    <li><a href="../framework/handling-lifecycle.html#initialize" class="header">initialize</a></li>
-    <li><a href="../framework/handling-lifecycle.html#onshutdown" class="header">onShutdown</a></li>
-    <li><a href="../framework/handling-lifecycle.html#isonline" class="header">isOnline</a></li>
-    <li><a href="../framework/handling-lifecycle.html#ongooffline" class="header">onGoOffline</a></li>
-    <li><a href="../framework/handling-lifecycle.html#ongoonline" class="header">onGoOnline</a></li>
+    <li><a href="../framework/handling-lifecycle.html#component-lifecycle" class="header">Component Lifecycle</a></li>
+    <li><a href="../framework/handling-lifecycle.html#shutting-down" class="header">Shutting Down</a></li>
+    <li><a href="../framework/handling-lifecycle.html#component-online-and-offline" class="header">Component Online and Offline</a></li>
     <li><a href="../framework/handling-lifecycle.html#handling-commands" class="header">Handling commands</a></li>
   </ul></li>
 </ul>
@@ -222,7 +218,15 @@ tmtsoftware/csw-prod
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h2><a href="#lifecycle-support" name="lifecycle-support" class="anchor"><span class="anchor-link"></span></a>Lifecycle support</h2>
+<h1><a href="#component-handlers" name="component-handlers" class="anchor"><span class="anchor-link"></span></a>Component Handlers</h1>
+<p>A component developer creates a Top Level Actor (TLA) by inheriting from an abstract class <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/framework/scaladsl/ComponentHandlers.html">ComponentHandlers</a> or <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/java/?csw/framework/javadsl/JComponentHandlers.html">JComponentHandlers</a> for Scala or Java, respectively. Each of these abstract classes provides several <strong>handler</strong> methods that can be overridden by the developer to provide component-specific code as described below. </p>
+<h2><a href="#component-lifecycle" name="component-lifecycle" class="anchor"><span class="anchor-link"></span></a>Component Lifecycle</h2>
+<p>For each component, the CSW framework creates a <code>Supervisor</code> that creates the TLA, and along with the abstract behavior class provided by the framework, it starts up and intiailizes the component in a standardized way. At the conclusion of the startup of the component, it is ready to receive commands from the outside world. The following figure is used to describe the startup lifecycle interactions between the framework and the TLA.</p>
+<p><img src="../images/framework/Lifecycle.png" alt="lifecycle" /></p>
+<p>As described in <a href="../commons/create-component.html">Creating a Component</a>, in either standalone or when running within a container, a <code>Supervisor</code> is created with a <a href="describing-components.html">ComponentInfo</a> file. The figure shows that the Supervisor in the framework creates the specified TLA. Once the TLA is created, the framework calls the <code>initialize</code> handler. This is the oportunity for the component to perform initialization needed before it is ready to receive commands.</p>
+<p>The TLA indicates a successful <code>initialize</code> by returning. If it cannot initialize, it can throw an exception, which will be caught and logged. The Supervisor will retry the creation and initialization of the TLA three times. If it fails after three times processing stops.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>After failing to create and initialize three times, the Supervisor will log a message and stop. In the future when the Alarm Service exists, there will probably be an alarm that will be set to notify the operator of a failure since there is serious problem.</p></div>
+<p>When <code>initialize</code> succeeds, the Supervisor in the framework and the component itself enter the Running state. When in the Running state, commands received from outside the component are passed to the TLA (see below).</p>
 <h3><a href="#initialize" name="initialize" class="anchor"><span class="anchor-link"></span></a>initialize</h3>
 <p>The <code>initialize</code> handler is invoked when the component is created. This is different than constructor initialization to allow non-blocking asynchronous operations. The component can initialize state such as configuration to be fetched from Configuration Service, location of components or services to be fetched from Location Service etc. These vary from component to component.</p>
 <dl>
@@ -323,6 +327,15 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
     return CompletableFuture.allOf(currentFuture, statsFuture);
 }</code></pre></dd>
 </dl>
+<h4><a href="#creation-timeout" name="creation-timeout" class="anchor"><span class="anchor-link"></span></a>Creation Timeout</h4>
+<p>The <code>Supervisor</code> waits for the <code>initialize</code> to complete. If it times out, it will retry the creation of the TLA 3 times in the same way as with initialize failures. The timeout value is configurable by the TLA by setting the <code>initializeTimeout</code> value in <a href="describing-components.html">ComponentInfo</a>.</p>
+<h4><a href="#location-service-interactions" name="location-service-interactions" class="anchor"><span class="anchor-link"></span></a>Location Service Interactions</h4>
+<p>Once the Supervisor and TLA are in the Running state, the Supervisor registers the component with the Location Service. This allows the component to be located so it can be contacted. Registration with Location Service happens only if locationServiceUsage in <a href="describing-components.html">ComponentInfo</a> is not set to <code>DoNotRegister</code>.</p>
+<p>If the component has connections and locationServiceUsage in <a href="describing-components.html">ComponentInfo</a> is set to <code>RegisterAndTrackServices</code>, the framework will resolve the components and deliver <code>TrackingEvent</code>s to the TLA through the <code>onTrackingEvent</code> <a href="tracking-connections.html"><code>onTrackingEvent</code></a> handler. </p>
+<h2><a href="#shutting-down" name="shutting-down" class="anchor"><span class="anchor-link"></span></a>Shutting Down</h2>
+<p>A component may be shutdown by an external administrative program whether it is deployed in a container or standalone. Shutting down may occur when the component is <code>Running</code>/<code>onLine</code> or <code>offLine</code> (see below).</p>
+<p>The TLA provides a handler called <code>onShutdown</code> that is called by the Supervisor when shutting down to give the TLA an opportunity to perform any clean up it may require such as freeing resources.</p>
+<p>As with <code>initialize</code> the framework will only wait for 10 seconds for the component to return from <code>doShutdown</code>. If it does not return, it is assumed the TLA is damaged. After successful return from <code>doShutdown</code>, the Supervisor deletes the component. The <code>doShutdown</code> timeout cannot be changed.</p>
 <h3><a href="#onshutdown" name="onshutdown" class="anchor"><span class="anchor-link"></span></a>onShutdown</h3>
 <p>The <code>onShutdown</code> handler can be used for carrying out the tasks which will allow the component to shutdown gracefully. </p>
 <dl>
@@ -352,8 +365,16 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
     });
 }</code></pre></dd>
 </dl>
+<h3><a href="#restarting" name="restarting" class="anchor"><span class="anchor-link"></span></a>Restarting</h3>
+<p>A component may be restarted by an external administrative program whether it is deployed in a container or standalone. A restart may occur when the component is <code>Running</code>/<code>onLine</code> or <code>offLine</code> (see below).</p>
+<p>A <code>restart</code> causes the component to be destroyed and re-created with a new TLA. The <code>onShutdown</code> handler is called to allow the component to tidy up before it is destroyed. Then the Supervisor creates a new TLA and the startup proceeds as with <code>initialize</code> above.</p>
+<h2><a href="#component-online-and-offline" name="component-online-and-offline" class="anchor"><span class="anchor-link"></span></a>Component Online and Offline</h2>
+<p><code>Online</code> describes a component that is currently part of the observing system that is in use. When a component enters the Running state it is also &ldquo;online&rdquo;.</p>
+<p>A component is <code>offline</code> when it is operating and available for active observing but is not currently in use.</p>
+<p>If a component is to transition from the online state to the offline state, the <code>onGoOffLine</code> handler is called. The component should make any changes in its operation for offline use.</p>
+<p>If a component is to transition from the offline state to the online state, the <code>onGoOnline</code> handler is called. The component should make any changes in its operation needed for online use.</p>
 <h3><a href="#isonline" name="isonline" class="anchor"><span class="anchor-link"></span></a>isOnline</h3>
-<p>A component has access to <code>isOnline</code> boolean flag which can be used to determine if the component is online or offline state.</p>
+<p>A component has access to the <code>isOnline</code> boolean flag, which can be used to determine if the component is in the online or offline state.</p>
 <h3><a href="#ongooffline" name="ongooffline" class="anchor"><span class="anchor-link"></span></a>onGoOffline</h3>
 <p>A component can be notified to run in offline mode in case it is not in use. The component can change its behavior if needed as a part of this handler.</p>
 <dl>
@@ -406,9 +427,11 @@ public void onGoOnline() {
     // do something when going online
 }</code></pre></dd>
 </dl>
-<h3><a href="#handling-commands" name="handling-commands" class="anchor"><span class="anchor-link"></span></a>Handling commands</h3>
-<h4><a href="#validatecommand" name="validatecommand" class="anchor"><span class="anchor-link"></span></a>validateCommand</h4>
-<p>A command can be sent as a <code>Submit</code> or <code>Oneway</code> message to the component actor. If a command can be completed immediately, a <code>CommandResponse</code> indicating the final response for the command can be returned. If a command requires time for processing, the component is required to validate the <code>ControlCommand</code> received and return a validation result as <code>Accepted</code> or <code>Invalid</code>. The final response for a command sent as <code>Submit</code> can be obtained by the sender command by querying or subscribing for this response to the component as described here. </p>
+<h2><a href="#handling-commands" name="handling-commands" class="anchor"><span class="anchor-link"></span></a>Handling commands</h2>
+<p>The remaining handlers are associated with handling incoming commands. There is a handler for submit commands called <code>onSubmit</code> and a handler for oneway called <code>onOneway</code>.</p>
+<h3><a href="#validatecommand" name="validatecommand" class="anchor"><span class="anchor-link"></span></a>validateCommand</h3>
+<p>Whenever a command is received by a component it is first validated. The component should inspect the command and its parameters to determine if the actions related to the command can be executed or started.</p>
+<p>A command can be sent as a <code>Submit</code> or <code>Oneway</code> message to the component. If a command can be completed immediately, a <code>CommandResponse</code> indicating the final response for the command can be returned. If a command requires time for processing, the component is required to validate the <code>ControlCommand</code> received and return a validation result as <code>Accepted</code> or <code>Invalid</code>. The final response for a command sent as <code>Submit</code> can be obtained by the sender command by querying or subscribing for this response to the component as described here. </p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -455,8 +478,8 @@ public CommandResponse validateCommand(ControlCommand controlCommand) {
 }</code></pre></dd>
 </dl>
 <p>If a response can be provided immediately, a final <code>CommandResponse</code> such as <code>CommandCompleted</code> or <code>Error</code> can be sent from this handler.</p>
-<h4><a href="#onsubmit" name="onsubmit" class="anchor"><span class="anchor-link"></span></a>onSubmit</h4>
-<p>On receiving a command as <code>Submit</code>, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. In case a command is received as a submit, command response should be updated in the <code>CommandResponseManager</code>. <code>CommandResponseManager</code> is an actor whose reference <code>commandResponseManager</code> is available in the <code>ComponentHandlers</code>. </p>
+<h3><a href="#onsubmit" name="onsubmit" class="anchor"><span class="anchor-link"></span></a>onSubmit</h3>
+<p>On receiving a command as <code>Submit</code>, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. In case a command is received as a submit, the command response should be updated in the <code>CommandResponseManager</code>, which is an actor (A reference to it is passed to the component handler constructor). </p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -489,7 +512,7 @@ public void onSubmit(ControlCommand controlCommand) {
         submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command
 }</code></pre></dd>
 </dl>
-<h4><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h4>
+<h3><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h3>
 <p>On receiving a command as <code>Oneway</code>, the <code>onOneway</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>.In case a command is received as a oneway, command response should not be provided to the sender.</p>
 <dl>
   <dt>Assembly/Scala</dt>

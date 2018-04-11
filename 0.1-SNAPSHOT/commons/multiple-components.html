@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -183,8 +183,15 @@ tmtsoftware/csw-prod
     <li><a href="../commons/multiple-components.html#creating-an-assembly" class="header">Creating an Assembly</a></li>
     <li><a href="../commons/multiple-components.html#component-configuration-componentinfo-" class="header">Component Configuration (ComponentInfo)</a></li>
     <li><a href="../commons/multiple-components.html#tracking-dependencies" class="header">Tracking Dependencies</a></li>
+    <li><a href="../commons/multiple-components.html#onlocationtrackingevent-handler" class="header">onLocationTrackingEvent Handler</a></li>
+    <li><a href="../commons/multiple-components.html#trackconnection" class="header">trackConnection</a></li>
     <li><a href="../commons/multiple-components.html#sending-commands" class="header">Sending Commands</a></li>
+    <li><a href="../commons/multiple-components.html#tracking-long-running-commands" class="header">Tracking Long Running Commands</a></li>
+    <li><a href="../commons/multiple-components.html#matchers" class="header">Matchers</a></li>
+    <li><a href="../commons/multiple-components.html#pubsub-connection" class="header">PubSub Connection</a></li>
     <li><a href="../commons/multiple-components.html#deploying-and-running-components" class="header">Deploying and Running Components</a></li>
+    <li><a href="../commons/multiple-components.html#pre-requisite" class="header">Pre-requisite</a></li>
+    <li><a href="../commons/multiple-components.html#run" class="header">Run</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -208,8 +215,15 @@ tmtsoftware/csw-prod
     <li><a href="../commons/multiple-components.html#creating-an-assembly" class="header">Creating an Assembly</a></li>
     <li><a href="../commons/multiple-components.html#component-configuration-componentinfo-" class="header">Component Configuration (ComponentInfo)</a></li>
     <li><a href="../commons/multiple-components.html#tracking-dependencies" class="header">Tracking Dependencies</a></li>
+    <li><a href="../commons/multiple-components.html#onlocationtrackingevent-handler" class="header">onLocationTrackingEvent Handler</a></li>
+    <li><a href="../commons/multiple-components.html#trackconnection" class="header">trackConnection</a></li>
     <li><a href="../commons/multiple-components.html#sending-commands" class="header">Sending Commands</a></li>
+    <li><a href="../commons/multiple-components.html#tracking-long-running-commands" class="header">Tracking Long Running Commands</a></li>
+    <li><a href="../commons/multiple-components.html#matchers" class="header">Matchers</a></li>
+    <li><a href="../commons/multiple-components.html#pubsub-connection" class="header">PubSub Connection</a></li>
     <li><a href="../commons/multiple-components.html#deploying-and-running-components" class="header">Deploying and Running Components</a></li>
+    <li><a href="../commons/multiple-components.html#pre-requisite" class="header">Pre-requisite</a></li>
+    <li><a href="../commons/multiple-components.html#run" class="header">Run</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -224,16 +238,31 @@ tmtsoftware/csw-prod
 <p>In this part of the tutorial, we will demonstrate functionality involving multiple components.<br/>We will do this by creating an Assembly, demonstrating how to deploy start the Assembly and an HCD in a container, and having them communicate with each other.</p>
 <h2><a href="#creating-an-assembly" name="creating-an-assembly" class="anchor"><span class="anchor-link"></span></a>Creating an Assembly</h2>
 <p>Similar to the HCD in the previous page, to create an assembly, the component developer needs to implement the <code>ComponentHandlers</code>. More details about implementing ComponentHandlers can be found <a href="create-component.html#handlers">here</a>. </p>
+<h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an Assembly</em></h4>
+<p>If using the giter8 template with the default parameters, our <code>ComponentHandlers</code> class will be the <code>SampleAssemblyHandlers</code> class, and the factory will be <code>SampleAssemblyBehaviorFactory</code>.</p>
+<p>Like we did for the HCD, let&rsquo;s add some log messages for the <code>initialize</code> and <code>onShutdown</code> hooks, but not the <code>onTrackingLocationEvent</code> hook. We&rsquo;ll cover that in more detail later.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">override def initialize(): Future[Unit] = {
+  log.info(&quot;In Assembly initialize&quot;)
+  Future.unit
+}
+override def onShutdown(): Future[Unit] = {
+  log.info(&quot;Assembly is shutting down.&quot;)
+  Future.unit
+}</code></pre></dd>
+</dl>
 <h2><a href="#component-configuration-componentinfo-" name="component-configuration-componentinfo-" class="anchor"><span class="anchor-link"></span></a>Component Configuration (ComponentInfo)</h2>
 <p>Also similar to the HCD, we will need to create a ComponentInfo file for the Assembly. The following shows an example of ComponentInfo file for an Assembly:</p>
-<pre><code>name = &quot;GalilAssembly&quot;
+<pre><code>name = &quot;SampleAssembly&quot;
 componentType = assembly
-behaviorFactoryClassName = &quot;org.tmt.nfiraos.galilassembly.GalilAssemblyBehaviorFactory&quot;
-prefix = &quot;galil.assembly&quot;
+behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
+prefix = &quot;tmt.nfiraos.sample&quot;
 locationServiceUsage = RegisterAndTrackServices
 connections = [
   {
-    name: &quot;GalilHcd&quot;
+    name: &quot;SampleHcd&quot;
     componentType: hcd
     connectionType: akka
   }
@@ -241,27 +270,27 @@ connections = [
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
 <p>There is a section for listing connections. These are the connections that the component will automatically track, and can be other components or services. When available, it may make sense to track things like the Event Service. These connections can also be specified for HCDs, but of course, they should not have any component dependencies.</p></div>
 <p>The above shows a configuration file for running in standalone mode. If we want to run both the assembly and HCD in a container, the file would look like this:</p>
-<pre><code>name = &quot;GalilAssemblyContainer&quot;
+<pre><code>name = &quot;SampleAssemblyContainer&quot;
 components: [
   {
-    name = &quot;GalilAssembly&quot;
+    name = &quot;SampleAssembly&quot;
     componentType = assembly
-    behaviorFactoryClassName = &quot;org.tmt.nfiraos.galilassembly.GalilAssemblyBehaviorFactory&quot;
-    prefix = &quot;galil.assembly&quot;
+    behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
+    prefix = &quot;tmt.nfiraos.sample&quot;
     locationServiceUsage = RegisterAndTrackServices
     connections = [
       {
-        name: &quot;GalilHcd&quot;
+        name: &quot;SampleHcd&quot;
         componentType: hcd
         connectionType: akka
       }
     ]
   },
   {
-    name = &quot;GalilHcd&quot;
+    name = &quot;SampleHcd&quot;
     componentType = hcd
-    behaviorFactoryClassName = &quot;org.tmt.nfiraos.galilhcd.GalilHcdBehaviorFactory&quot;
-    prefix = &quot;galil.hcd&quot;
+    behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
+    prefix = &quot;tmt.nfiraos.samplehcd&quot;
     locationServiceUsage = RegisterOnly
   }
 ]
@@ -271,7 +300,7 @@ components: [
 <h2><a href="#tracking-dependencies" name="tracking-dependencies" class="anchor"><span class="anchor-link"></span></a>Tracking Dependencies</h2>
 <p>The connections that are defined in the configuration file for an assembly will be tracked by the <code>csw-framework</code>. For each connection the following details are configured:</p>
 <pre><code>{
-    name: &quot;GalilHcd&quot;
+    name: &quot;SampleHcd&quot;
     componentType: hcd
     connectionType: akka
 }
@@ -284,7 +313,7 @@ components: [
   <li>TcpLocation: Represents a TCP URI of the server, e.g. Event Service</li>
 </ul>
 <p>More details about tracking a component using the location service can be found <a href="../services/location.html#tracking-and-subscribing">here</a>.</p>
-<h3><a href="#onlocationtrackingevent-handler" name="onlocationtrackingevent-handler" class="anchor"><span class="anchor-link"></span></a>onLocationTrackingEvent Handler</h3>
+<h2><a href="#onlocationtrackingevent-handler" name="onlocationtrackingevent-handler" class="anchor"><span class="anchor-link"></span></a>onLocationTrackingEvent Handler</h2>
 <p>For all the tracked connections, whenever a location is changed, added, or removed, one of the following events is generated:</p>
 <ul>
   <li>LocationUpdated: a location was added or changed</li>
@@ -292,11 +321,26 @@ components: [
 </ul>
 <p>Whenever such an event is generated, the Top level actor will call the <code>onLocationTrackingEvent</code> hook of <code>ComponentHandlers</code> with the event(LocationUpdated or LocationRemoved) as parameter of the hook.</p>
 <p>More details about tracking connections can be found <a href="../framework/tracking-connections.html">here</a>.</p>
-<h3><a href="#trackconnection" name="trackconnection" class="anchor"><span class="anchor-link"></span></a>trackConnection</h3>
+<h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an Assembly</em></h4>
+<p>For our sample component, we will set it up so that when the HCD is found by the location service, we will immediately send a command to it. We will do this by using the location to obtain a <code>CommandService</code> reference (see <a href="multiple-components.html#sending-commands">below</a>) to the HCD, and then pass this reference to a worker actor to send and monitor the command (we will get more into this command actor later), so that we don&rsquo;t block our Assembly from receiving messages. If we are notified that the HCD is removed, log a message. </p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
+  log.debug(s&quot;onLocationTrackingEvent called: $trackingEvent&quot;)
+  trackingEvent match {
+    case LocationUpdated(location) =&gt;
+      val hcd = new CommandService(location.asInstanceOf[AkkaLocation])(ctx.system)
+      commandSender ! SendCommand(hcd)
+    case LocationRemoved(_) =&gt; log.info(&quot;HCD no longer available&quot;)
+  }
+}</code></pre></dd>
+</dl>
+<h2><a href="#trackconnection" name="trackconnection" class="anchor"><span class="anchor-link"></span></a>trackConnection</h2>
 <p>If the component developer wants to track a connection that is not configured in its configuration file then it can use the <code>trackConnection</code> method provided by <code>csw-framework</code> in <code>ComponentHandlers</code>. The <code>trackConnection</code> method will take the <code>Connection</code> instance. Information on how to create a connection instance can be found <a href="../services/location.html#creating-components-connections-and-registrations">here</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Connections tracked by <code>csw-framework</code> (from a configuration file) or by a component developer using the <code>trackConnection</code> method both will be received in the <code>onLocationTrackingEvent</code> hook of <code>ComponentHandlers</code>. </p></div>
 <h2><a href="#sending-commands" name="sending-commands" class="anchor"><span class="anchor-link"></span></a>Sending Commands</h2>
-<p>From the location information obtained either by tracking dependencies or manually resolving a location, a <code>CommandService</code> instance can be created to provide a command interface to the component.</p>
+<p>From the location information obtained either by tracking dependencies or manually resolving a location, a <code>CommandService</code> instance can be created to provide a command interface to the component. The following snippet, not from our tutorial, shows how  to obtain a <code>CommandService</code> reference using by resolving a location using the Location Service.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -327,30 +371,79 @@ eventualCommandService.thenAccept((jcommandService) -&gt; hcd = jcommandService)
 <p>If a component wants to send multiple commands in response to a single received command, then it can use a <code>CommandDistributor</code> instance. The CommandDistributor will help in getting the aggregated response of multiple commands sent to other components. The component developer can use the aggregated response to update the <code>CommandResponseManager</code> with the appropriate status if the received command was in a <code>Submit</code> wrapper.</p>
 <p>More details about creating a <code>CommandDistributor</code> instance and its usage can be found <a href="command.html#distributing-commands">here</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p><code>CommandDistributor</code> can be used to get an aggregated response only if the multiple commands sent to other components are all wrapped in a <code>Submit</code> wrapper.</p></div>
-<h3><a href="#tracking-long-running-commands" name="tracking-long-running-commands" class="anchor"><span class="anchor-link"></span></a>Tracking Long Running Commands</h3>
+<h2><a href="#tracking-long-running-commands" name="tracking-long-running-commands" class="anchor"><span class="anchor-link"></span></a>Tracking Long Running Commands</h2>
 <p>A command sent in a <code>Submit</code> wrapper that receives an <code>Accepted</code> response in return is considered as a long running command.</p>
 <p>When a component sends a long running command to another component, it may be interested in knowing the status of the command and take decisions based on that. In order to subscribe to the changes in command status, the sender component will have to use the <code>subscribe</code> method after <code>submit</code> or use <code>submitAndSubscribe</code> in <code>CommandService</code>.</p>
-<h3><a href="#matchers" name="matchers" class="anchor"><span class="anchor-link"></span></a>Matchers</h3>
+<h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an Assembly</em></h4>
+<p>We use our worker actor to submit the command to the HCD, and then subscribe to the HCD&rsquo;s <code>CommandResponseManager</code> for command completion.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">sealed trait WorkerCommand
+case class SendCommand(hcd: CommandService) extends WorkerCommand
+
+private val commandSender =
+  ctx.spawn(
+    Behaviors.immutable[WorkerCommand]((_, msg) =&gt; {
+      msg match {
+        case command: SendCommand =&gt;
+          log.trace(s&quot;WorkerActor received SendCommand message.&quot;)
+          handle(command.hcd)
+        case _ =&gt; log.error(&quot;Unsupported message type&quot;)
+      }
+      Behaviors.same
+    }),
+    &quot;CommandSender&quot;
+  )
+
+private implicit val submitTimeout: Timeout = Timeout(1000.millis)
+def handle(hcd: CommandService): Unit = {
+
+  // Construct Setup command
+  val sleepTimeKey: Key[Long]         = KeyType.LongKey.make(&quot;SleepTime&quot;)
+  val sleepTimeParam: Parameter[Long] = sleepTimeKey.set(5000).withUnits(Units.millisecond)
+  val setupCommand                    = Setup(componentInfo.prefix, CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam)
+
+  // Submit command, and handle validation response.  Final response is returned as a Future
+  val submitCommandResponseF: Future[CommandResponse] = hcd.submit(setupCommand).flatMap {
+    case _: Accepted =&gt;
+      // If valid, subscribe to the HCD&#39;s CommandResponseManager
+      // This explicit timeout indicates how long to wait for completion
+      hcd.subscribe(setupCommand.runId)(10000.seconds)
+    case x =&gt;
+      log.error(&quot;Sleep command invalid&quot;)
+      Future(x)
+  }
+
+  // Wait for final response, and log result
+  submitCommandResponseF.foreach {
+    case _: CommandResponse.Completed =&gt; log.info(&quot;Command completed successfully&quot;)
+    case x: CommandResponse.Error     =&gt; log.error(s&quot;Command Completed with error: ${x.message}&quot;)
+    case _                            =&gt; log.error(&quot;Command failed&quot;)
+  }
+}</code></pre></dd>
+</dl>
+<h2><a href="#matchers" name="matchers" class="anchor"><span class="anchor-link"></span></a>Matchers</h2>
 <p>When a component sends a command as <code>Oneway</code> to another component, it may be interested in knowing the receiver component&rsquo;s <code>CurrentState</code> and match it against a desired state. In order to do that, the component developer can use the <code>onewayAndMatch</code> method of <code>CommandService</code> or use <code>oneway</code> and then use a <code>Matcher</code> explicitly to match a desired state with current state.</p>
 <p>More details on how to use <code>Matcher</code> can be found <a href="command.html#matching-state-for-command-completion">here</a>. </p>
-<h3><a href="#pubsub-connection" name="pubsub-connection" class="anchor"><span class="anchor-link"></span></a>PubSub Connection</h3>
+<h2><a href="#pubsub-connection" name="pubsub-connection" class="anchor"><span class="anchor-link"></span></a>PubSub Connection</h2>
 <p>A component might need to subscribe to the current state of any other component provided it knows the location of that component. In order to subscribe to current state, it may use the <code>subscribeCurrentState</code> method of the <code>CommandService</code>. More details about the usage of <code>subscribeCurrentState</code> can ber found <a href="command.html#subscribecurrentstate">here</a>.</p>
 <p>If a component wants to publish its current state then it can use the <code>currentStatePublisher</code> provided by <code>csw-framework</code> in <code>ComponentHandlers</code>. More details about the usage of <code>currentStatePublisher</code> can ber found <a href="../framework/publishing-state.html">here</a>.</p>
 <h2><a href="#deploying-and-running-components" name="deploying-and-running-components" class="anchor"><span class="anchor-link"></span></a>Deploying and Running Components</h2>
-<h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
-<p>A project, for example with the name <code>galil-deploy</code>, contains applications (ContainerCmd and HostConfig coming from <code>csw-framework</code>) to run components. Make sure that the necessary dependencies are added in the <code>galil-deploy</code>.</p>
-<h3><a href="#run" name="run" class="anchor"><span class="anchor-link"></span></a>Run</h3>
-<p>Assuming that <code>galil-deploy</code> depends on <code>galil-assembly</code> and <code>galil-hcd</code>, to start the Assembly and HCD, follow the steps below:</p>
+<h2><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h2>
+<p>A project, for example with the name <code>sample-deploy</code>, contains applications (ContainerCmd and HostConfig coming from <code>csw-framework</code>) to run components. Make sure that the necessary dependencies are added in the <code>sample-deploy</code>.</p>
+<h2><a href="#run" name="run" class="anchor"><span class="anchor-link"></span></a>Run</h2>
+<p>To start the Assembly and HCD, <code>sbt runMain</code> can be used as with the HCD, but with slightly different options.<br/>Now, we do not want to run in standalone mode, and we need to make sure to pass the container configuration file.</p>
+<p>Go to the project root directory and type <code>sbt &quot;&lt;deploy-module&gt;/runMain &lt;mainClass&gt; --local &lt;path-to-config-file&gt;&quot;</code>, where</p>
 <ul>
-  <li>Run <code>sbt galil-deploy/universal:packageBin</code>, this will create self contained zip in <code>galil-deploy/target/universal</code> directory.</li>
-  <li>Unzip the generated zip file and enter into <code>bin</code> directory.</li>
-  <li>You will see four scripts in the <code>bin</code> directory (two bash scripts and two windows scripts).</li>
-  <li>If you want to start multiple containers on a host machine, follow this guide <a href="../apps/hostconfig.html#examples">here</a>.</li>
-  <li>If you want to start multiple components in container mode or single component in standalone mode, follow this guide <a href="../framework/deploying-components.html">here</a>.</li>
-  <li>Example to run container: <code>./galil-container-cmd-app --local ../../../../galil-deploy/src/main/resources/GalilAssemblyContainer.conf</code></li>
-  <li>Example to run host config: <code>./galil-host-config-app --local ../../../../galil-deploy/src/main/resources/GalilHostConfig.conf -s ./galil-container-cmd-app</code></li>
-</ul><div class="callout note "><div class="callout-title">Note</div>
-<p>The CSW Location Service cluster seed must be running and appropriate environment variables set to run the apps. See <a href="https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html">https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html</a>.</p></div>
+  <li><code>&lt;deploy-module&gt;</code> is the name of the deployment module created by the template (<code>sample-deploy</code> if using defaults)</li>
+  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;prefix&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt run</code> and it will prompt you the possibilities.</li>
+  <li><code>&lt;path-to-config-file&gt;</code> is the filename, which can be an absolute path or relative to the directory of the deployment module. If using defaults, this would be <code>src/main/resources/SampleAssemblyContainer.conf</code>.</li>
+</ul>
+<p>So if using the template defaults, the full command would be <code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/SampleAssemblyContainer.conf&quot;</code></p>
+<p>Like with the HCD, the <code>sbt stage</code> command can also be used to create binaries in the <code>target/universal/stage/bin</code> directories of the root project.</p>
+<p>To run using the deployment packaging, follow the steps below:  - Run <code>sbt sample-deploy/universal:packageBin</code>, this will create self contained zip in <code>sample-deploy/target/universal</code> directory.  - Unzip the generated zip file and enter into <code>bin</code> directory.  - You will see four scripts in the <code>bin</code> directory (two bash scripts and two windows scripts).  - If you want to start multiple containers on a host machine, follow this guide <a href="../apps/hostconfig.html#examples">here</a>.  - If you want to start multiple components in container mode or single component in standalone mode, follow this guide <a href="../framework/deploying-components.html">here</a>.  - Example to run container: <code>./sample-container-cmd-app --local ../../../../sample-deploy/src/main/resources/SampleAssemblyContainer.conf</code>  - Example to run host config: <code>./sample-host-config-app --local ../../../../sample-deploy/src/main/resources/SampleHostConfig.conf -s ./sample-container-cmd-app</code></p><div class="callout note "><div class="callout-title">Note</div>
+<p>The CSW Location Service cluster seed must be running and appropriate environment variables set to run the apps. See <a href="../apps/cswclusterseed.html">CSW Cluster Seed</a>.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/commons/multiple-components.md" title="Edit this page" class="md-source-file md-edit">

@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="active page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -220,9 +220,9 @@ tmtsoftware/csw-prod
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h2><a href="#managing-command-state" name="managing-command-state" class="anchor"><span class="anchor-link"></span></a>Managing Command State</h2>
+<h1><a href="#managing-command-state" name="managing-command-state" class="anchor"><span class="anchor-link"></span></a>Managing Command State</h1>
 <p>A component has access to <code>commandResponseManager</code> which is used to manage the state of commands during its execution. On receiving a command as a part of <code>onSubmit</code>, the component framework adds the command to an internal CommandResponseManager. The component should then update the status of the command using the following API provided in <code>commandResponseManager</code>:</p>
-<h3><a href="#addorupdatecommand" name="addorupdatecommand" class="anchor"><span class="anchor-link"></span></a>addOrUpdateCommand</h3>
+<h2><a href="#addorupdatecommand" name="addorupdatecommand" class="anchor"><span class="anchor-link"></span></a>addOrUpdateCommand</h2>
 <p>Add a new command or update the status of an existing command.</p>
 <dl>
   <dt>Scala</dt>
@@ -235,13 +235,13 @@ commandResponseManager.addOrUpdateCommand(controlCommand.runId, Accepted(control
 CommandResponse.Accepted accepted = new CommandResponse.Accepted(controlCommand.runId());
 commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);</code></pre></dd>
 </dl>
-<h3><a href="#addsubcommand" name="addsubcommand" class="anchor"><span class="anchor-link"></span></a>addSubCommand</h3>
+<h2><a href="#addsubcommand" name="addsubcommand" class="anchor"><span class="anchor-link"></span></a>addSubCommand</h2>
 <p>A received command can be often split into two or more sub-commands. The status of original command can then be derived from the status of the sub-commands. In order to achieve this, a component has to first add the sub-commands against in relation to the parent command using this method.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">shortSetup = Setup(prefix, shortRunning, controlCommand.maybeObsId)
-commandResponseManager.addSubCommand(commandId, shortSetup.runId)</code></pre></dd>
+commandResponseManager.addSubCommand(runId, shortSetup.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">Prefix prefix = new Prefix(&quot;wfos.red.detector&quot;);
@@ -252,7 +252,7 @@ Setup subCommand2 = new Setup(prefix, new CommandName(&quot;sub-command-2&quot;)
 commandResponseManager.addSubCommand(sc.runId(), subCommand2.runId());
 </code></pre></dd>
 </dl>
-<h3><a href="#updatesubcommand" name="updatesubcommand" class="anchor"><span class="anchor-link"></span></a>updateSubCommand</h3>
+<h2><a href="#updatesubcommand" name="updatesubcommand" class="anchor"><span class="anchor-link"></span></a>updateSubCommand</h2>
 <p>Update the <code>CommandResponse</code> of the sub-command which would trigger the automatic derivation of the status of the original/parent command when status of all the sub-commands have been updated. A <code>CommandResponse</code> indicating failure such as <code>Invalid</code> or <code>Error</code> in any one of the sub-commands would result in the error status of the parent command. Status of any other sub-commands wil not be considered in this case.</p>
 <dl>
   <dt>Scala</dt>
@@ -289,7 +289,7 @@ componentCommandService.subscribe(subCommand2.runId(), Timeout.durationToTimeout
         });</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>It may be the case that the component wants to avoid automatic inference of a command based on the result of the sub-commands. It should refrain from updating the status of the sub-commands in this case and update the status of the parent command directly as required.</p></div>
-<h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>query</h3>
+<h2><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>query</h2>
 <p>Query for the result of a command that is already present in the component&rsquo;s CommandResponseManager.</p>
 <dl>
   <dt>Scala</dt>
@@ -310,7 +310,7 @@ commandResponseManager
         });
 </code></pre></dd>
 </dl>
-<h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
+<h2><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h2>
 <p>Subscribe for the result of a command that is already present in the component&rsquo;s CommandResponseManager and perform action on the change in status.</p>
 <dl>
   <dt>Scala</dt>
@@ -356,7 +356,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../framework/handling-lifecycle.html" title="Lifecycle support" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../framework/handling-lifecycle.html" title="Component Handlers" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -365,7 +365,7 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Lifecycle support
+Component Handlers
 </span>
 </div>
 </a>
