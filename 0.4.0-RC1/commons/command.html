@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -181,7 +181,7 @@ tmtsoftware/csw-prod
   <li><a href="../commons/command.html#communication-using-commands" class="header">Communication using Commands</a>
   <ul>
     <li><a href="../commons/command.html#dependencies" class="header">Dependencies</a></li>
-    <li><a href="../commons/command.html#command-based-communication-between-components" class="header">Command based communication between components</a></li>
+    <li><a href="../commons/command.html#command-based-communication-between-components" class="header">Command-based Communication Between Components</a></li>
     <li><a href="../commons/command.html#commandservice" class="header">CommandService</a></li>
     <li><a href="../commons/command.html#matching-state-for-command-completion" class="header">Matching state for command completion</a></li>
     <li><a href="../commons/command.html#distributing-commands" class="header">Distributing commands</a></li>
@@ -206,7 +206,7 @@ tmtsoftware/csw-prod
   <li><a href="../commons/command.html#communication-using-commands" class="header">Communication using Commands</a>
   <ul>
     <li><a href="../commons/command.html#dependencies" class="header">Dependencies</a></li>
-    <li><a href="../commons/command.html#command-based-communication-between-components" class="header">Command based communication between components</a></li>
+    <li><a href="../commons/command.html#command-based-communication-between-components" class="header">Command-based Communication Between Components</a></li>
     <li><a href="../commons/command.html#commandservice" class="header">CommandService</a></li>
     <li><a href="../commons/command.html#matching-state-for-command-completion" class="header">Matching state for command completion</a></li>
     <li><a href="../commons/command.html#distributing-commands" class="header">Distributing commands</a></li>
@@ -230,13 +230,23 @@ tmtsoftware/csw-prod
   <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-command&quot; % &quot;0.4.0-RC1&quot;
 </code></pre></dd>
 </dl>
-<h2><a href="#command-based-communication-between-components" name="command-based-communication-between-components" class="anchor"><span class="anchor-link"></span></a>Command based communication between components</h2>
+<h2><a href="#command-based-communication-between-components" name="command-based-communication-between-components" class="anchor"><span class="anchor-link"></span></a>Command-based Communication Between Components</h2>
 <p>A component can send <a href="../messages/commands.html">Commands</a> to other components. The commands can be sent as following two types of messages: </p>
 <ul>
-  <li><strong>Submit</strong> - A command is sent as Submit when the result of completion is desired.</li>
-  <li><strong>Oneway</strong> - A command is sent as Oneway when the result of completion is not desired.</li>
+  <li><strong>submit</strong> - A command is sent as Submit when the result of completion is desired.</li>
+  <li><strong>oneway</strong> - A command is sent as Oneway when the result of completion is not desired.</li>
 </ul>
-<p>A <code>Oneway</code> should only be used between an Assembly and an HCD. It is also used when tracking completion using a Matcher (see below).</p>
+<p>A <code>oneway</code> is meant to be used between an Assembly and an HCD. It is also used when tracking completion using a Matcher and current state values (see below).</p><div class="callout warning "><div class="callout-title">Feedback Needed on Future of Oneway</div>
+<p>In the FDR prototype version of CSW, the <code>oneway</code> message was used between an Assembly and HCD to &ldquo;fire and forget&rdquo;. A <code>oneway</code> command was sent to the destination and no validation or command completion is provided in order to be as efficient as possible. In this case completion information is provided through Command Service pubsub and current state values.</p>
+<p>In this release version of CSW, <code>oneway</code> <em>does</em> provide validation to the caller, and this version of CSW Command Service also reinstates immediate completion, which was dropped in the CSW prototype release. The only feature left from the FDR version is that <code>oneway</code> tells the sender that there is no completion information provided.</p>
+<p>Given these two changes, the use of <code>oneway</code> is not sufficiently different from submit. With this in mind we anticipate one of the two possibly futures for <code>oneway</code>:</p>
+<ol>
+  <li><code>Oneway</code> should provide a clear difference with <code>submit</code> and go back to its original features with no validation or command completion.</li>
+  <li><code>Oneway</code> could be removed simplifying the command API to just <code>submit</code>.</li>
+</ol>
+<p>The reason for <code>oneway</code> case 1 is to provide the best possible performance. A scenario is an actor that is subscribed to a 20 Hz demand event and sends out motion commands to one or more HCDs based on a calculation using data in this event. At 20 Hz, it&rsquo;s probably not useful to get validation information. Nothing can be done anyway. The receiver could log a message. </p>
+<p>However, maybe even in this case validation is useful and can be used by the sender to understand problems in the receiver, so providing only <code>submit</code> is adequate.</p>
+<p>We are looking for feedback. Do you see a continued role for <code>oneway</code>? Maybe there is another scenario for <code>oneway</code>? Please write us if with your recommendation for oneway &ndash; and be warned that it may change behavior or disappear in the next release based on feedback.</p></div>
 <p>The following responses can be received as a <code>CommandResponse</code> after sending a command with <code>Submit</code> or <code>Oneway</code>:</p>
 <ul>
   <li><strong>Accepted</strong> : The command is validated and will be executed, this is returned for a long-running action.</li>

@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -220,11 +220,11 @@ tmtsoftware/csw-prod
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h2><a href="#state-variables" name="state-variables" class="anchor"><span class="anchor-link"></span></a>State Variables</h2>
-<p>These state variables are used when an Assembly wants to track the status of a command sent to an HCD using a matcher. For more information, see <a href="../framework/publishing-state.md">Publishing State</a>.</p>
+<h1><a href="#state-variables" name="state-variables" class="anchor"><span class="anchor-link"></span></a>State Variables</h1>
+<p>These state variables are used when an Assembly wants to track the status of a command sent to an HCD using a matcher. For more information, see <a href="../framework/publishing-state.html">Publishing State</a>.</p>
 <p>A states represent a component&rsquo;s internal state. There are two types called <code>CurrentState</code> and <code>DemandState</code>. They both share the same structural features. All state variables have <strong><a href="commands.html#Prefix">Prefix</a></strong> and <strong>ParameterSet</strong>.</p>
 <p>The PubSub feature of the HCD provides <code>CurrentState</code> values to the PubSub subscriber.</p>
-<h3><a href="#demandstate" name="demandstate" class="anchor"><span class="anchor-link"></span></a>DemandState</h3>
+<h2><a href="#demandstate" name="demandstate" class="anchor"><span class="anchor-link"></span></a>DemandState</h2>
 <p>A state variable that indicates the demand or requested state.</p>
 <dl>
   <dt>Scala</dt>
@@ -324,7 +324,7 @@ DemandState ds4 = ds3.remove(timestampKey);
 //update existing keys - set it back by an hour
 DemandState ds5 = ds3.add(timestampKey.set(Instant.now().minusSeconds(3600)));</code></pre></dd>
 </dl>
-<h3><a href="#currentstate" name="currentstate" class="anchor"><span class="anchor-link"></span></a>CurrentState</h3>
+<h2><a href="#currentstate" name="currentstate" class="anchor"><span class="anchor-link"></span></a>CurrentState</h2>
 <p>A state variable that is published by a component that describes its internal state. Used by Assemblies to determine command completion in Command Service.</p>
 <dl>
   <dt>Scala</dt>
@@ -424,7 +424,7 @@ CurrentState cs4 = cs3.remove(timestampKey);
 //update existing keys - set it back by an hour
 CurrentState cs5 = cs3.add(timestampKey.set(Instant.now().minusSeconds(3600)));</code></pre></dd>
 </dl>
-<h3><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON Serialization</h3>
+<h2><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON Serialization</h2>
 <p>State variables can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize DemandState and CurrentState.</p>
 <dl>
   <dt>Scala</dt>
@@ -490,7 +490,7 @@ DemandState dsFromPrettyStr = JavaJsonSupport.readStateVariable(Json.parse(str))
 DemandState ds1 = JavaJsonSupport.readStateVariable(dsJson);
 CurrentState cs1 = JavaJsonSupport.readStateVariable(csJson);</code></pre></dd>
 </dl>
-<h3><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key Constraint</h3>
+<h2><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key Constraint</h2>
 <p>By design, a ParameterSet in either <strong>DemandState</strong> or <strong>CurrentState</strong> will be optimized to store only unique keys. When using <code>add</code> or <code>madd</code> methods on events to add new parameters, if the parameter being added has a key which is already present in the <code>paramSet</code>, the already stored parameter will be replaced by the given parameter. </p><div class="callout note "><div class="callout-title">Note</div>
 <p>If the <code>Set</code> is created by component developers and given directly while creating an event, then it will be the responsibility of component developers to maintain uniqueness with parameters based on key.</p></div>
 <p>Here are some examples that illustrate this point:</p>
