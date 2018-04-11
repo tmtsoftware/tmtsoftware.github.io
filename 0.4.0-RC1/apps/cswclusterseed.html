@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -181,10 +181,7 @@ tmtsoftware/csw-prod
   <li><a href="../apps/cswclusterseed.html#csw-cluster-seed" class="header">csw-cluster-seed</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html#prerequisite" class="header">Prerequisite</a></li>
-    <li><a href="../apps/cswclusterseed.html#if-deploying-a-single-seed-application" class="header">If Deploying a Single Seed Application</a></li>
-    <li><a href="../apps/cswclusterseed.html#if-deploying-two-seed-applications" class="header">If Deploying Two Seed Applications</a></li>
-    <li><a href="../apps/cswclusterseed.html#help" class="header">Help</a></li>
-    <li><a href="../apps/cswclusterseed.html#version" class="header">Version</a></li>
+    <li><a href="../apps/cswclusterseed.html#environment-variables" class="header">Environment Variables</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -206,10 +203,7 @@ tmtsoftware/csw-prod
   <li><a href="../apps/cswclusterseed.html#csw-cluster-seed" class="header">csw-cluster-seed</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html#prerequisite" class="header">Prerequisite</a></li>
-    <li><a href="../apps/cswclusterseed.html#if-deploying-a-single-seed-application" class="header">If Deploying a Single Seed Application</a></li>
-    <li><a href="../apps/cswclusterseed.html#if-deploying-two-seed-applications" class="header">If Deploying Two Seed Applications</a></li>
-    <li><a href="../apps/cswclusterseed.html#help" class="header">Help</a></li>
-    <li><a href="../apps/cswclusterseed.html#version" class="header">Version</a></li>
+    <li><a href="../apps/cswclusterseed.html#environment-variables" class="header">Environment Variables</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -223,8 +217,12 @@ tmtsoftware/csw-prod
 <h1><a href="#csw-cluster-seed" name="csw-cluster-seed" class="anchor"><span class="anchor-link"></span></a>csw-cluster-seed</h1>
 <p>This application will start a CSW cluster seed required for all clustered services like Location Service. It is required that you start one or more seed applications before consuming Location Service. Even though a single seed app is good enough to make use of Location Service it is recommended that in production you deploy more than one instance on different machines to get fault tolerance in case one of the machines hosting the seed crashes.</p>
 <h2><a href="#prerequisite" name="prerequisite" class="anchor"><span class="anchor-link"></span></a>Prerequisite</h2>
-<p>The command <code>sbt csw-cluster-seed/universal:publishLocal</code> will publish necessary artifacts to run csw-cluster-seed application. </p>
-<p>The target of above command is a zip file titled &ldquo;csw-cluster-seed.zip&rdquo; and its path will be printed on console. Unzip this file and switch current working directory to the extracted folder. Choose appropriate instructions from below based on requirement ie single seed or multiple seeds.</p>
+<p>The CSW cluster seed application can be installed as binaries or constructed from source. To download the application, go to the <a href="https://tmtsoftware.github.com/csw-prod/releases/">CSW Release page</a> and follow instructions.</p>
+<p>To install from source, the command <code>sbt csw-cluster-seed/universal:publishLocal</code> will publish necessary artifacts to run csw-cluster-seed application. The target of above command is a zip file titled &ldquo;csw-cluster-seed.zip&rdquo; and its path will be printed on console. </p>
+<p>Note: An alternative method is to run <code>sbt publishLocal stage</code>, which installs all the dependencies locally and also installs all the csw applications  in <code>target/universal/stage/bin</code>.</p>
+<p>Unzip either the downloaded or constructed zip file and switch current working directory to the extracted folder. Choose appropriate instructions from below based on requirement ie single seed or multiple seeds.</p>
+<h1><a href="#environment-variables" name="environment-variables" class="anchor"><span class="anchor-link"></span></a>Environment Variables</h1>
+<p>Note that before running any CSW applications that use the location service (including HCDs, assemblies and other services), some environment variables or system properties will need to be set to indicate the correct cluster seeds and possibly the network interface to use. More detailed comments on this can be found in the <a href="https://tmtsoftware.github.io/csw-prod/api/scala/csw/services/location/commons/ClusterSettings.html">ClusterSettings</a> API documentation.</p>
 <h2><a href="#if-deploying-a-single-seed-application" name="if-deploying-a-single-seed-application" class="anchor"><span class="anchor-link"></span></a>If Deploying a Single Seed Application</h2>
 <p>The steps below describe how to run cluster seed on a single machine. This can be a requirement for testing or demo purpose.</p>
 <p><strong>Preparation</strong>: Find out the IP address and dedicated port for running the seed. Assume that IP is 192.168.1.21 and port is 3552.</p>
@@ -235,6 +233,7 @@ tmtsoftware/csw-prod
 <p><strong>Preparation</strong>: Identify machines which are to run cluster seeds. Let&rsquo;s assume they are two for now, and the IP address for machine1 is 192.168.1.21 and for machine2 is 192.168.1.22. Also, they will both have dedicated port 3552 to run the seeds. </p>
 <p><strong>Provisioning</strong>: Make sure you have the environment variable clusterSeeds set to <code>192.168.1.21:3552,192.168.1.22:3552</code> on <strong>machine1 and machine2</strong>.</p>
 <p>Switch to application directory and run this command on <strong>machine1 and machine2</strong> - <code>./bin/csw-cluster-seed --clusterPort=3552</code></p>
+<p>Note: In some cases it may be necessary to also specify the network interface to use, for example, if the host has multiple network interfaces and the correct one is not used automatically. In this case, you can set the environment variable <code>interfaceName</code> to the name of the network interface to use or pass the <code>--interfaceName=...</code> command line option. Use <code>ifconfig -a</code> to see a list of the available network interfaces.</p>
 <h2><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>Help</h2>
 <p>Use the following command to get help on the options available with this app.</p>
 <p><code>./bin/csw-cluster-seed --help</code></p>

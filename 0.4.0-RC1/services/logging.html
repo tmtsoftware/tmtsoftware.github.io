@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -237,7 +237,7 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#logging-service" name="logging-service" class="anchor"><span class="anchor-link"></span></a>Logging Service</h1>
-<p>Logging Service library provides an advanced logging facility for csw components and services. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>The Logging Service library provides an advanced logging facility for csw components and services. </p><div class="callout note "><div class="callout-title">Note</div>
 <p>With this release of CSW, only the local logging is provided. A future release will provide the centralized logging facility.</p></div>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the Logging Service without using the framework, add this to your <code>build.sbt</code> file:</p>
@@ -326,8 +326,8 @@ tmtsoftware/csw-prod
   }
   
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> is the name of component that will be registered with <code>LocationService</code>. By default all components will log at level specified by <code>csw-logging.logLevel</code>. </p></div>
-<p>Library provides <code>StdOutAppender</code> as default logging appender. To use <code>FileAppender</code> or some custom appender along-with <code>StdOutAppender</code>, override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
+<p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> is the name of component that will be registered with <code>LocationService</code>, which is the <code>name</code> field in the ComponentInfo file (see <a href="../framework/deploying-components.html">DeployingComponents</a>). By default, all components will log at level specified by <code>csw-logging.logLevel</code>. </p></div>
+<p>The library provides <code>StdOutAppender</code> as default logging appender. To use <code>FileAppender</code> or some custom appender along-with <code>StdOutAppender</code>, override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
 <pre><code><br/>appenders = [&quot;csw.services.logging.appenders.FileAppender$&quot;, &quot;csw.services.logging.appenders.StdOutAppender$&quot;]
 
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
@@ -376,7 +376,7 @@ tmtsoftware/csw-prod
   <li>DEBUG</li>
   <li>TRACE</li>
 </ul>
-<p>Library allows separate log levels for the logging API(logLevel), Akka logging(akkaLogLevel), and Slf4J(slf4jLogLevel). The initial values of these are set in the configuration file as seen above. These can be overriden in the application.conf file.</p>
+<p>The library allows separate log levels for the logging API(logLevel), Akka logging(akkaLogLevel), and Slf4J(slf4jLogLevel). The initial values of these are set in the configuration file as seen above. These can be overriden in the application.conf file.</p>
 <p>These values can also be changed dynamically by calling methods on <code>LoggingSystem</code> class.</p>
 <h2><a href="#log-structure" name="log-structure" class="anchor"><span class="anchor-link"></span></a>Log Structure</h2>
 <p>All messages are logged by default as Json. Logs can contain following fields:</p>
@@ -579,7 +579,7 @@ tmtsoftware/csw-prod
 }
 </code></pre></dd>
 </dl>
-<p>Library allows usage of <code>Map</code> in message as follows:</p>
+<p>The library allows usage of <code>Map</code> in message as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -659,7 +659,7 @@ tmtsoftware/csw-prod
 }
 </code></pre></dd>
 </dl>
-<p>Library allows to log an error with its full stacktrace as follows:</p>
+<p>The library allows you to log an error with its full stacktrace as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -677,8 +677,8 @@ log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <pre class="prettyprint"><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
 log.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
 </dl>
-<h2><a href="#create-loggerfactory" name="create-loggerfactory" class="anchor"><span class="anchor-link"></span></a>Create LoggerFactory</h2>
-<h3><a href="#available-for-test-understanding-purpose" name="available-for-test-understanding-purpose" class="anchor"><span class="anchor-link"></span></a>Available for test/understanding purpose</h3>
+<h2><a href="#create-loggerfactory" name="create-loggerfactory" class="anchor"><span class="anchor-link"></span></a>Create LoggerFactory</h2><div class="callout note "><div class="callout-title">Note</div>
+<p>This functionality is included in the framework code and users should not have to implement it themselves. Documentation is included for testing or further understanding.</p></div>
 <p>In order to create a LoggerFactory with a custom componentName refer the following code:</p>
 <dl>
   <dt>Scala</dt>
@@ -694,8 +694,8 @@ val jLoggerFactory: JLoggerFactory = loggerFactory.asJava</code></pre></dd>
 // convert a java JLoggerFactory to scala LoggerFactory
 LoggerFactory loggerFactory = jLoggerFactory.asScala();</code></pre></dd>
 </dl>
-<h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2>
-<h3><a href="#available-for-test-understanding-purpose" name="available-for-test-understanding-purpose" class="anchor"><span class="anchor-link"></span></a>Available for test/understanding purpose</h3>
+<h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2><div class="callout note "><div class="callout-title">Note</div>
+<p>This functionality is included in the framework code and users should not have to implement it themselves. Documentation is included for testing or further understanding.</p></div>
 <p>For logging statements to appear in the program, start <code>LoggingSystem</code> at an earliest location in an application. <strong>Also note, <code>LoggingSystem</code> should be started only once in an application.</strong> The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files.</p>
 <dl>
   <dt>Scala</dt>
@@ -711,8 +711,8 @@ loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&
 <ul>
   <li>The <code>hostname</code> that is provided while creating <code>LoggingSystem</code> will appear in log statements against <code>@host</code> tag</li>
 </ul></div>
-<h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2>
-<h3><a href="#available-for-test-understanding-purpose" name="available-for-test-understanding-purpose" class="anchor"><span class="anchor-link"></span></a>Available for test/understanding purpose</h3>
+<h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2><div class="callout note "><div class="callout-title">Note</div>
+<p>This functionality is included in the framework code and users should not have to implement it themselves. Documentation is included for testing or further understanding.</p></div>
 <p>Please ensure to stop <code>LoggingSystem</code> before application exits.</p>
 <dl>
   <dt>Scala</dt>

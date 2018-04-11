@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -259,55 +259,61 @@ tmtsoftware/csw-prod
   <li>Run the following command <code>sbt new tmtsoftware/csw.g8</code>. This pulls the ‘csw’ template from GitHub. If above command fails to pull template, then try running with full path <code>sbt new https://github.com/tmtsoftware/csw.g8</code></li>
   <li>Provide input details when prompted. Follow the template <a href="https://github.com/tmtsoftware/csw.g8/blob/master/README.md">readme.md</a> for detailed information about input parameters.</li>
 </ol>
+<p>To open the project in IntelliJ, start IntelliJ and click on Import Project in the Intro dialog. If you have a project already open, click on File -&gt; New -&gt; Project from Existing Sources&hellip; </p>
+<p><img src="../images/gettingstarted/intellijIntro.png" alt="intellijIntro" /></p>
+<p>Then select the directory created by the template and click Open.</p>
+<p>You will then see a dialog asking how to import the project. </p>
+<p><img src="../images/gettingstarted/intellijImport.png" alt="intellijImport" /></p>
+<p>Be sure the Import project from external model radio button and sbt options are selected and click Next. Then click Finish on the next dialog to accept the defaults.</p>
 <p>Let’s take a look at what just got generated:</p>
 <p>In this example, a project was created with default parameters. The complete project structure looks like this:</p>
 <ol>
   <li>As you can see in below snapshot, template will create three projects:
     <ul>
-      <li><code>galil-assembly</code></li>
-      <li><code>galil-hcd</code></li>
-      <li><code>galil-deploy</code></li>
+      <li><code>sample-assembly</code></li>
+      <li><code>sample-hcd</code></li>
+      <li><code>sample-deploy</code></li>
     </ul>
   </li>
 </ol>
-<p><img src="../images/gettingstarted/galil-project.png" alt="galil-project-structure" /></p>
+<p><img src="../images/gettingstarted/sampleProjectLayout.png" alt="sample-project-structure" /></p>
 <ol>
-  <li><code>galil-deploy</code> project is used to create a concrete implementation. This allows for the construction of a complete binary package bundled with all dependencies, and a launching application.</li>
+  <li><code>sample-deploy</code> project is used to create a concrete implementation. This allows for the construction of a complete binary package bundled with all dependencies, and a launching application.</li>
 </ol>
-<p><img src="../images/gettingstarted/galil-deploy.png" alt="galil-deploy" /> 3. Template comes with <code>csw-prod</code> and other useful library dependencies. It also includes bunch of plugins as explained in below snapshot</p>
-<p><img src="../images/gettingstarted/project.png" alt="galil-project" /></p>
+<p><img src="../images/gettingstarted/sampleDeploy.png" alt="sample-deploy" /> 3. Template comes with <code>csw-prod</code> and other useful library dependencies. It also includes bunch of plugins as explained in below snapshot</p>
+<p><img src="../images/gettingstarted/sampleProjectFolder.png" alt="sample-project" /></p>
 <h2><a href="#add-new-sbt-project-module" name="add-new-sbt-project-module" class="anchor"><span class="anchor-link"></span></a>Add new sbt project module</h2>
-<p>If you want to add a new project with name <code>galil-io</code>, then follow below steps:</p>
+<p>If you want to add another component to the project, for example, with the name <code>sample-io</code>, you have to create a new sbt module:</p>
 <ol>
   <li>
-  <p>Add external library dependencies required by <code>galil-io</code> in <code>Libs.scala</code> file, if it does not exist.</p>
+  <p>Add external library dependencies required by <code>sample-io</code> in <code>Libs.scala</code> file, if it does not exist.</p>
   <pre><code>val `akka-actor` = &quot;com.typesafe.akka&quot; %% &quot;akka-actor&quot; % &quot;2.5.11&quot;
 </code></pre></li>
   <li>
   <p>Map new/existing library dependencies in <code>Dependencies.scala</code> file against new project.</p>
-  <pre><code>val GalilIO = Seq( Libs.`akka-actor` )
+  <pre><code>val SampleIO = Seq( Libs.`akka-actor` )
 </code></pre></li>
   <li>
   <p>Include below snippet in <code>build.sbt</code> file, this will create new sbt project module.</p>
-  <pre><code>lazy val `galil-io` = project
-  .settings( libraryDependencies ++= Dependencies.GalilIO )
+  <pre><code>lazy val `sample-io` = project
+  .settings( libraryDependencies ++= Dependencies.SampleIO )
 </code></pre></li>
   <li>
-  <p>If you new module depends on code from other modules within this project, use <code>.dependsOn</code> in your build.sbt file:</p>
-  <pre><code>lazy val `galil-io` = project
-  .settings( libraryDependencies ++= Dependencies.GalilIO )
+  <p>If your new module depends on code from other modules within this project, use <code>.dependsOn</code> in your build.sbt file:</p>
+  <pre><code>lazy val `sample-io` = project
+  .settings( libraryDependencies ++= Dependencies.SampleIO )
   .dependsOn(
-`galil-assembly`,
-`galil-hcd`
+`sample-assembly`,
+`sample-hcd`
   )
 </code></pre></li>
   <li>
   <p>Update the deployment dependencies:</p>
-  <pre><code>lazy val `galil-deploy` = project
+  <pre><code>lazy val `sample-deploy` = project
   .dependsOn(
-`galil-assembly`,
-`galil-hcd`,
-`galil-io`
+`sample-assembly`,
+`sample-hcd`,
+`sample-io`
   )
 </code></pre></li>
 </ol>

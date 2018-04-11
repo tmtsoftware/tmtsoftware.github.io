@@ -149,7 +149,7 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../framework/describing-components.html" class="page">ComponentInfo</a></li>
     <li><a href="../framework/creating-components.html" class="page">Creating an Assembly or Hcd Component</a></li>
-    <li><a href="../framework/handling-lifecycle.html" class="page">Lifecycle support</a></li>
+    <li><a href="../framework/handling-lifecycle.html" class="page">Component Handlers</a></li>
     <li><a href="../framework/managing-command-state.html" class="page">Managing Command State</a></li>
     <li><a href="../framework/tracking-connections.html" class="page">Tracking Connections</a></li>
     <li><a href="../framework/publishing-state.html" class="page">Publishing State</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
-  <li><a href="../commons/sbt-tasks.html" class="page">sbt tasks</a></li>
+  <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -232,7 +232,7 @@ tmtsoftware/csw-prod
 <div class="md-content__searchable">
 <h1><a href="#location-service" name="location-service" class="anchor"><span class="anchor-link"></span></a>Location Service</h1>
 <p>The Location Service handles component (i.e., Applications, Sequencers, Assemblies, HCDs, and Services) registration and discovery in the distributed TMT software system.</p>
-<p>CSW Location Service cluster seed must be running, and appropriate environment variables set to run apps. See <a href="https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html">https://tmtsoftware.github.io/csw-prod/apps/cswclusterseed.html</a>.</p>
+<p>CSW Location Service cluster seed must be running, and appropriate environment variables set to run apps. See <a href="../apps/cswclusterseed.html">CSW Cluster Seed</a>.</p>
 <p>A component’s location information can be used by other components and services to connect to it and use it. An example of location information is:</p>
 <ul>
   <li>host address/port pairs</li>
@@ -242,7 +242,7 @@ tmtsoftware/csw-prod
 </ul><div class="callout note "><div class="callout-title">async handling in scala and java examples.</div>
 <ul>
   <li>
-  <p><strong>Scala:</strong> <code>async</code> marks a block of asynchronous code and allows to <code>await</code> the computation till the Future is complete.  For more info, please refer: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></li>
+  <p><strong>Scala:</strong> <code>async</code> marks a block of asynchronous code and allows to <code>await</code> the computation till the Future is complete.  For more info, please refer to: <a href="https://github.com/scala/async">https://github.com/scala/async</a></p></li>
   <li>
   <p><strong>Java non-blocking example:</strong> The code snippets use <code>CompletableFuture</code> and its <code>thenAsync</code>, <code>thenApply</code> methods. This style allows to compose multiple Futures and not block the calling thread till Futures are complete. </p></li>
   <li>
@@ -280,10 +280,26 @@ Await.result(locationService.shutdown(ActorTerminatedReason), 20.seconds)</code>
   <pre class="prettyprint"><code class="language-java">locationService.shutdown(CoordinatedShutdownReasons.actorTerminatedReason()).get();</code></pre></dd>
 </dl>
 <h2><a href="#creating-components-connections-and-registrations" name="creating-components-connections-and-registrations" class="anchor"><span class="anchor-link"></span></a>Creating Components, Connections and Registrations</h2>
-<p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal observatory operations. It must register its location information with Location Service so that other components can find it.</p>
-<p><strong>Components</strong> have a name and a type, such as Container, HCD, Assembly, Service.</p>
-<p><strong>Connections</strong> are the means to reach components and are categorized as <code>Akka</code>, <code>HTTP</code>, or <code>Tcp</code> type connections.</p>
-<p><strong>Registrations</strong> are service endpoints stored in Location Service.</p>
+<p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal observatory operations. It must register its location information with Location Service so that other components can find it. A location information comprises of:</p>
+<ul>
+  <li>
+    <p><strong>ComponentId</strong> : A component id comprises of</p>
+    <ul>
+      <li><strong>ComponentName</strong> : a name depicting the component.</li>
+      <li><strong>ComponentType</strong> : such as Container, Sequencer, HCD, Assembly, Service.</li>
+    </ul>
+  </li>
+  <li>
+  <p><strong>ConnectionType</strong> : the means to reach components. These are categorized as <code>Akka</code>, <code>HTTP</code>, or <code>Tcp</code> type connections.</p></li>
+</ul>
+<p>The location information is stored in Location Service as <strong>Registrations</strong>.</p>
+<p>Some of the examples of string representation of a connection are:</p>
+<ul>
+  <li>TromboneAssembly-assembly-akka</li>
+  <li>TromboneHcd-hcd-akka</li>
+  <li>ConfigServer-service-http</li>
+  <li>EventService-service-tcp</li>
+</ul>
 <p>The <code>register</code> API takes a <code>Registration</code> parameter and returns a future registration result. If registration fails for some reason, the returned future will fail with an exception. (Registration will fail if the <code>csw-cluster-seed</code> application is not running or could not be found or if the given component name was already registered.)</p>
 <p>The following example shows registration of both UnTyped ActorRef and Typed ActorRef:</p>
 <dl>
