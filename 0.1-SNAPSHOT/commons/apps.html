@@ -176,11 +176,34 @@ tmtsoftware/csw-prod
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="toc">Table of contents</label>
+<ul>
+  <li><a href="../commons/apps.html#applications" class="header">Applications</a>
+  <ul>
+    <li><a href="../commons/apps.html#starting-apps-for-development" class="header">Starting apps for development</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 <div class="md-nav__title--site md-version" title="Version">
 <i class="md-icon">label_outline</i> 0.1*
 </div>
+</nav>
+
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="toc">Table of contents</label>
+<ul>
+  <li><a href="../commons/apps.html#applications" class="header">Applications</a>
+  <ul>
+    <li><a href="../commons/apps.html#starting-apps-for-development" class="header">Starting apps for development</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </div>
@@ -192,6 +215,7 @@ tmtsoftware/csw-prod
 <h1><a href="#applications" name="applications" class="anchor"><span class="anchor-link"></span></a>Applications</h1>
 <div class="toc main">
 <ul>
+  <li><a href="../commons/apps.html#starting-apps-for-development" class="header">Starting apps for development</a></li>
   <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
   <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
   <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
@@ -199,6 +223,15 @@ tmtsoftware/csw-prod
   <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
 </ul>
 </div>
+<h1><a href="#starting-apps-for-development" name="starting-apps-for-development" class="anchor"><span class="anchor-link"></span></a>Starting apps for development</h1>
+<p>In order to run a component it is required to run <code>csw-cluster-seed</code>. Moreover, even to start event service or configuration service, <code>csw-cluster-seed</code> should be running.</p>
+<p>But for developers to start <code>csw-cluster-seed</code> first and then configuration service and then event service is a tedious job. So, for development purpose, it is recommended to use a shell script which will start <code>csw-cluster-seed</code> and/or configuration service and/or event service.</p>
+<p>Assuming that developer has downloaded <code>csw-apps-&lt;some-version&gt;.zip</code> from <a href="https://github.com/tmtsoftware/csw-prod/releases">csw releases</a> and unzipped it.</p>
+<p>There are three folders, as follows, in <code>csw-apps-&lt;some-version&gt;</code> * bin * lib * and conf.</p>
+<p>All the shell scripts provided by <code>csw-prod</code> reside in <code>bin</code> folder. The shell script referred in this segment is named as <code>csw-services.sh</code>. Go to the bin folder and hit <code>./csw-services.sh --help</code>. This will list all possible options applicable for the script.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>This shell script will start <code>csw-cluster-seed</code> as the first step regardless of any options provided. </p></div>
+<p>The execution of the script is such that it starts <code>csw-cluster-seed</code>, then checks whether to start configuration service from provided <code>--config</code> option, if provided, then starts configuration service. Next, it checks whether to start event service from provided <code>--event</code> option, if provided, it starts event service.</p>
+<p>With this, the component code is now ready to connect to configuration service and event service started via <code>csw-services.sh</code>. </p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/commons/apps.md" title="Edit this page" class="md-source-file md-edit">

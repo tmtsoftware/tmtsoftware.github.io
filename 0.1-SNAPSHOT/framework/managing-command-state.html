@@ -263,14 +263,17 @@ hcdComponent.subscribe(controlCommand.runId).map {
   case _: Completed ⇒
     controlCommand.runId match {
       case id if id == shortSetup.runId ⇒
-        currentStatePublisher.publish(CurrentState(shortSetup.source, Set(choiceKey.set(shortCmdCompleted))))
+        currentStatePublisher
+          .publish(CurrentState(shortSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(shortCmdCompleted))))
         // As the commands get completed, the results are updated in the commandResponseManager
         commandResponseManager.updateSubCommand(id, Completed(id))
       case id if id == mediumSetup.runId ⇒
-        currentStatePublisher.publish(CurrentState(mediumSetup.source, Set(choiceKey.set(mediumCmdCompleted))))
+        currentStatePublisher
+          .publish(CurrentState(mediumSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(mediumCmdCompleted))))
         commandResponseManager.updateSubCommand(id, Completed(id))
       case id if id == longSetup.runId ⇒
-        currentStatePublisher.publish(CurrentState(longSetup.source, Set(choiceKey.set(longCmdCompleted))))
+        currentStatePublisher
+          .publish(CurrentState(longSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(longCmdCompleted))))
         commandResponseManager.updateSubCommand(id, Completed(id))
     }</code></pre></dd>
   <dt>Java</dt>
@@ -320,7 +323,9 @@ commandResponseManager
 commandResponseManager.subscribe(
   controlCommand.runId, {
     case Completed(_) ⇒
-      currentStatePublisher.publish(CurrentState(controlCommand.source, Set(choiceKey.set(longRunningCmdCompleted))))
+      currentStatePublisher.publish(
+        CurrentState(controlCommand.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(longRunningCmdCompleted)))
+      )
     case _ ⇒
   }
 )</code></pre></dd>
@@ -331,7 +336,7 @@ commandResponseManager.subscribe(
 commandResponseManager.jSubscribe(subCommand.runId(), commandResponse -&gt; {
     if (commandResponse.resultType() instanceof CommandResponse.Completed) {
         Key&lt;String&gt; stringKey = JKeyTypes.StringKey().make(&quot;sub-command-status&quot;);
-        CurrentState currentState = new CurrentState(sc.source().prefix());
+        CurrentState currentState = new CurrentState(sc.source().prefix(), new StateName(&quot;testStateName&quot;));
         currentStatePublisher.publish(currentState.madd(stringKey.set(&quot;complete&quot;)));
     } else {
         // do something

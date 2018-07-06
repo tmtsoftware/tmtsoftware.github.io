@@ -104,15 +104,15 @@
 Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> Commands and Events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
 These are all based on type-safe keys and items (a set of values with optional units).
 Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="../../commands/Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="../../commands/SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="../../commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="../../commands/Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="../../commands/Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="../../commands/Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../../events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../../events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../../events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="../../commands/matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
-One of the use case for using matcher is when Assembly sends <a href="../../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+One of the use case for using matcher is when Assembly sends <a href="../../CommandMessage$$Oneway.html" class="extype" name="csw.messages.CommandMessage.Oneway">csw.messages.CommandMessage.Oneway</a> command to HCD
 and in response to this command HCD keeps publishing its current state.
 Then Assembly can use Matcher with the matching definition as provided by <a href="../../commands/matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
 match against the current states published by HCD.</p><h5> Location and Framework </h5><p>These packages contain reusable classes, traits and models. We are keeping all the models which are getting transferred over the wire and
 requires serialization and deserialization in <code>csw-messages</code> project. All the models are marked with <a href="../../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a>.
-<a href="../../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a> is a marker trait which extends <span class="extype" name="Serializable">Serializable</span>. This is configured to use <code>kryo</code> serialization.
+<a href="../../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a> is a marker trait which extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html" class="extype" name="scala.Serializable">scala.Serializable</a>. This is configured to use <code>kryo</code> serialization.
 Also these models are being shared between multiple projects. <code>csw-location</code>, <code>csw-framework</code> and <code>csw-logging</code> depends on <code>csw-messages</code> project
 which uses these models.</p><p>Location Service uses <a href="../../location/Connection.html" class="extype" name="csw.messages.location.Connection">csw.messages.location.Connection</a> model to register component/container of type:</p><ul><li><a href="../../location/ComponentType$$Assembly$.html" class="extype" name="csw.messages.location.ComponentType.Assembly">csw.messages.location.ComponentType.Assembly</a></li><li><a href="../../location/ComponentType$$HCD$.html" class="extype" name="csw.messages.location.ComponentType.HCD">csw.messages.location.ComponentType.HCD</a></li><li><a href="../../location/ComponentType$$Service$.html" class="extype" name="csw.messages.location.ComponentType.Service">csw.messages.location.ComponentType.Service</a></li><li><a href="../../location/ComponentType$$Container$.html" class="extype" name="csw.messages.location.ComponentType.Container">csw.messages.location.ComponentType.Container</a></li></ul><p>When you resolve/find a <a href="../../location/Connection.html" class="extype" name="csw.messages.location.Connection">csw.messages.location.Connection</a>, you get <a href="../../location/Location.html" class="extype" name="csw.messages.location.Location">csw.messages.location.Location</a> in return which can be one of below type:</p><ul><li><a href="../../location/AkkaLocation.html" class="extype" name="csw.messages.location.AkkaLocation">csw.messages.location.AkkaLocation</a></li><li><a href="../../location/TcpLocation.html" class="extype" name="csw.messages.location.TcpLocation">csw.messages.location.TcpLocation</a></li><li><a href="../../location/HttpLocation.html" class="extype" name="csw.messages.location.HttpLocation">csw.messages.location.HttpLocation</a></li></ul><p>Framework package contains following actor messages:</p><ul><li>Messages of type <a href="../../framework/PubSub.html" class="extype" name="csw.messages.framework.PubSub">csw.messages.framework.PubSub</a> are supported by PubSubActor</li><li>Below Lifecycle messages can be sent to component when component is in <a href="../../framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state,
- note that these messages should be wrapped inside <a href="../../scaladsl/RunningMessage$$Lifecycle.html" class="extype" name="csw.messages.scaladsl.RunningMessage.Lifecycle">csw.messages.scaladsl.RunningMessage.Lifecycle</a> before sending it to Supervisor actor.<ul><li><a href="../../framework/ToComponentLifecycleMessages$$GoOnline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOnline">csw.messages.framework.ToComponentLifecycleMessages.GoOnline</a></li><li><a href="../../framework/ToComponentLifecycleMessages$$GoOffline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOffline">csw.messages.framework.ToComponentLifecycleMessages.GoOffline</a></li></ul></li></ul><h5> Params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <span class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</span></li><li>Kryo : <span class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</span></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+ note that these messages should be wrapped inside <a href="../../RunningMessage$$Lifecycle.html" class="extype" name="csw.messages.RunningMessage.Lifecycle">csw.messages.RunningMessage.Lifecycle</a> before sending it to Supervisor actor.<ul><li><a href="../../framework/ToComponentLifecycleMessages$$GoOnline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOnline">csw.messages.framework.ToComponentLifecycleMessages.GoOnline</a></li><li><a href="../../framework/ToComponentLifecycleMessages$$GoOffline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOffline">csw.messages.framework.ToComponentLifecycleMessages.GoOffline</a></li></ul></li></ul><h5> Params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <span class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</span></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
 new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
 that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
 of the given type.</p><p>Following <a href="../generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><pre>+--------------+-------------------------+---------------------------+
@@ -260,6 +260,10 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
                         <a class="class" href="DemandState.html" title="A state variable that indicates the demand or requested state."></a>
                         <a href="DemandState.html" title="A state variable that indicates the demand or requested state.">DemandState</a>
                       </li><li class="current-entities indented4">
+                        <a class="object" href="StateName$.html" title=""></a>
+                        <a class="class" href="StateName.html" title="A wrapper class representing the name of a state"></a>
+                        <a href="StateName.html" title="A wrapper class representing the name of a state">StateName</a>
+                      </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="object" href="StateVariable$.html" title=""></a>
                         <a href="StateVariable$.html" title="">StateVariable</a>
@@ -338,7 +342,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A state variable that indicates the current or actual state." href="CurrentState.html"><span class="name">CurrentState</span></a><span class="result"> extends <a href="../generics/ParameterSetType.html" class="extype" name="csw.messages.params.generics.ParameterSetType">ParameterSetType</a>[<a href="CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">CurrentState</a>] with <a href="../generics/ParameterSetKeyData.html" class="extype" name="csw.messages.params.generics.ParameterSetKeyData">ParameterSetKeyData</a> with <a href="StateVariable$$StateVariable.html" class="extype" name="csw.messages.params.states.StateVariable.StateVariable">states.StateVariable.StateVariable</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A state variable that indicates the current or actual state." href="CurrentState.html"><span class="name">CurrentState</span></a><span class="result"> extends <a href="../generics/ParameterSetType.html" class="extype" name="csw.messages.params.generics.ParameterSetType">ParameterSetType</a>[<a href="CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">CurrentState</a>] with <a href="../generics/ParameterSetKeyData.html" class="extype" name="csw.messages.params.generics.ParameterSetKeyData">ParameterSetKeyData</a> with <a href="StateVariable$$StateVariable.html" class="extype" name="csw.messages.params.states.StateVariable.StateVariable">states.StateVariable.StateVariable</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A state variable that indicates the <i>current</i> or actual state.</p>
@@ -354,7 +358,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Combines multiple CurrentState objects together" href="CurrentStates.html"><span class="name">CurrentStates</span></a><span class="params">(<span name="states">states: <span class="extype" name="scala.Seq">Seq</span>[<a href="CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">CurrentState</a>]</span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Combines multiple CurrentState objects together" href="CurrentStates.html"><span class="name">CurrentStates</span></a><span class="params">(<span name="states">states: <span class="extype" name="scala.Seq">Seq</span>[<a href="CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">CurrentState</a>]</span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Combines multiple CurrentState objects together
@@ -372,10 +376,28 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A state variable that indicates the demand or requested state." href="DemandState.html"><span class="name">DemandState</span></a><span class="result"> extends <a href="../generics/ParameterSetType.html" class="extype" name="csw.messages.params.generics.ParameterSetType">ParameterSetType</a>[<a href="DemandState.html" class="extype" name="csw.messages.params.states.DemandState">DemandState</a>] with <a href="../generics/ParameterSetKeyData.html" class="extype" name="csw.messages.params.generics.ParameterSetKeyData">ParameterSetKeyData</a> with <a href="StateVariable$$StateVariable.html" class="extype" name="csw.messages.params.states.StateVariable.StateVariable">states.StateVariable.StateVariable</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A state variable that indicates the demand or requested state." href="DemandState.html"><span class="name">DemandState</span></a><span class="result"> extends <a href="../generics/ParameterSetType.html" class="extype" name="csw.messages.params.generics.ParameterSetType">ParameterSetType</a>[<a href="DemandState.html" class="extype" name="csw.messages.params.states.DemandState">DemandState</a>] with <a href="../generics/ParameterSetKeyData.html" class="extype" name="csw.messages.params.generics.ParameterSetKeyData">ParameterSetKeyData</a> with <a href="StateVariable$$StateVariable.html" class="extype" name="csw.messages.params.states.StateVariable.StateVariable">states.StateVariable.StateVariable</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A state variable that indicates the <i>demand</i> or requested state.</p>
+    </li><li name="csw.messages.params.states.StateName" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="StateNameextendsProductwithSerializable"></a><a id="StateName:StateName"></a>
+      <span class="permalink">
+      <a href="../../../../csw/messages/params/states/index.html#StateNameextendsProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="A wrapper class representing the name of a state" href="StateName.html"><span class="name">StateName</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">A wrapper class representing the name of a state
+</p><div class="fullcomment"><div class="comment cmt"><p>A wrapper class representing the name of a state
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>represents the name of the state for CurrentState or DemandState</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -396,7 +418,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="CurrentState$.html"><span class="name">CurrentState</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="CurrentState$.html"><span class="name">CurrentState</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -412,7 +434,23 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="DemandState$.html"><span class="name">DemandState</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="DemandState$.html"><span class="name">DemandState</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.params.states.StateName" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StateName"></a><a id="StateName:StateName"></a>
+      <span class="permalink">
+      <a href="../../../../csw/messages/params/states/index.html#StateName" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="StateName$.html"><span class="name">StateName</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       

@@ -221,23 +221,23 @@ tmtsoftware/csw-prod
 <p>To install from source, the command <code>sbt csw-cluster-seed/universal:publishLocal</code> will publish necessary artifacts to run csw-cluster-seed application. The target of above command is a zip file titled &ldquo;csw-cluster-seed.zip&rdquo; and its path will be printed on console. </p>
 <p>Note: An alternative method is to run <code>sbt publishLocal stage</code>, which installs all the dependencies locally and also installs all the csw applications  in <code>target/universal/stage/bin</code>.</p>
 <p>Unzip either the downloaded or constructed zip file and switch current working directory to the extracted folder. Choose appropriate instructions from below based on requirement ie single seed or multiple seeds.</p>
-<h1><a href="#environment-variables" name="environment-variables" class="anchor"><span class="anchor-link"></span></a>Environment Variables</h1>
+<h2><a href="#environment-variables" name="environment-variables" class="anchor"><span class="anchor-link"></span></a>Environment Variables</h2>
 <p>Note that before running any CSW applications that use the location service (including HCDs, assemblies and other services), some environment variables or system properties will need to be set to indicate the correct cluster seeds and possibly the network interface to use. More detailed comments on this can be found in the <a href="https://tmtsoftware.github.io/csw-prod/api/scala/csw/services/location/commons/ClusterSettings.html">ClusterSettings</a> API documentation.</p>
-<h2><a href="#if-deploying-a-single-seed-application" name="if-deploying-a-single-seed-application" class="anchor"><span class="anchor-link"></span></a>If Deploying a Single Seed Application</h2>
+<h3><a href="#if-deploying-a-single-seed-application" name="if-deploying-a-single-seed-application" class="anchor"><span class="anchor-link"></span></a>If Deploying a Single Seed Application</h3>
 <p>The steps below describe how to run cluster seed on a single machine. This can be a requirement for testing or demo purpose.</p>
 <p><strong>Preparation</strong>: Find out the IP address and dedicated port for running the seed. Assume that IP is 192.168.1.21 and port is 3552.</p>
 <p><strong>Provisioning</strong>: Make sure you have the environment variable clusterSeeds set to the IP address and port as in <code>192.168.1.21:3552</code></p>
 <p><strong>Running</strong>: Switch to application directory and run this command - <code>./bin/csw-cluster-seed --clusterPort=3552</code></p>
-<h2><a href="#if-deploying-two-seed-applications" name="if-deploying-two-seed-applications" class="anchor"><span class="anchor-link"></span></a>If Deploying Two Seed Applications</h2>
+<h3><a href="#if-deploying-two-seed-applications" name="if-deploying-two-seed-applications" class="anchor"><span class="anchor-link"></span></a>If Deploying Two Seed Applications</h3>
 <p>The steps below describe how to run cluster seed on multiple machines, which is the recommended set-up for production usage.</p>
 <p><strong>Preparation</strong>: Identify machines which are to run cluster seeds. Let&rsquo;s assume they are two for now, and the IP address for machine1 is 192.168.1.21 and for machine2 is 192.168.1.22. Also, they will both have dedicated port 3552 to run the seeds. </p>
 <p><strong>Provisioning</strong>: Make sure you have the environment variable clusterSeeds set to <code>192.168.1.21:3552,192.168.1.22:3552</code> on <strong>machine1 and machine2</strong>.</p>
-<p>Switch to application directory and run this command on <strong>machine1 and machine2</strong> - <code>./bin/csw-cluster-seed --clusterPort=3552</code></p>
-<p>Note: In some cases it may be necessary to also specify the network interface to use, for example, if the host has multiple network interfaces and the correct one is not used automatically. In this case, you can set the environment variable <code>interfaceName</code> to the name of the network interface to use or pass the <code>--interfaceName=...</code> command line option. Use <code>ifconfig -a</code> to see a list of the available network interfaces.</p>
-<h2><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>Help</h2>
+<p>Switch to application directory and run this command on <strong>machine1 and machine2</strong> - <code>./bin/csw-cluster-seed --clusterPort=3552</code></p><div class="callout note "><div class="callout-title">Note</div>
+<p>In some cases it may be necessary to also specify the network interface to use, for example, if the host has multiple network interfaces and the correct one is not used automatically. In this case, you can set the environment variable <code>interfaceName</code> to the name of the network interface to use or pass the <code>--interfaceName=...</code> command line option. Use <code>ifconfig -a</code> to see a list of the available network interfaces.</p></div>
+<h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>Help</h3>
 <p>Use the following command to get help on the options available with this app.</p>
 <p><code>./bin/csw-cluster-seed --help</code></p>
-<h2><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a>Version</h2>
+<h3><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a>Version</h3>
 <p>Use the following command to get version information for this app.</p>
 <p><code>./bin/csw-cluster-seed --version</code></p>
 </div>

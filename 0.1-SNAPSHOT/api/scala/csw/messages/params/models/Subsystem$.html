@@ -104,15 +104,15 @@
 Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> Commands and Events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
 These are all based on type-safe keys and items (a set of values with optional units).
 Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="../../commands/Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="../../commands/SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="../../commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="../../commands/Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="../../commands/Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="../../commands/Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../../events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../../events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../../events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="../../commands/matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
-One of the use case for using matcher is when Assembly sends <a href="../../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+One of the use case for using matcher is when Assembly sends <a href="../../CommandMessage$$Oneway.html" class="extype" name="csw.messages.CommandMessage.Oneway">csw.messages.CommandMessage.Oneway</a> command to HCD
 and in response to this command HCD keeps publishing its current state.
 Then Assembly can use Matcher with the matching definition as provided by <a href="../../commands/matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
 match against the current states published by HCD.</p><h5> Location and Framework </h5><p>These packages contain reusable classes, traits and models. We are keeping all the models which are getting transferred over the wire and
 requires serialization and deserialization in <code>csw-messages</code> project. All the models are marked with <a href="../../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a>.
-<a href="../../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a> is a marker trait which extends <span class="extype" name="Serializable">Serializable</span>. This is configured to use <code>kryo</code> serialization.
+<a href="../../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a> is a marker trait which extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html" class="extype" name="scala.Serializable">scala.Serializable</a>. This is configured to use <code>kryo</code> serialization.
 Also these models are being shared between multiple projects. <code>csw-location</code>, <code>csw-framework</code> and <code>csw-logging</code> depends on <code>csw-messages</code> project
 which uses these models.</p><p>Location Service uses <a href="../../location/Connection.html" class="extype" name="csw.messages.location.Connection">csw.messages.location.Connection</a> model to register component/container of type:</p><ul><li><a href="../../location/ComponentType$$Assembly$.html" class="extype" name="csw.messages.location.ComponentType.Assembly">csw.messages.location.ComponentType.Assembly</a></li><li><a href="../../location/ComponentType$$HCD$.html" class="extype" name="csw.messages.location.ComponentType.HCD">csw.messages.location.ComponentType.HCD</a></li><li><a href="../../location/ComponentType$$Service$.html" class="extype" name="csw.messages.location.ComponentType.Service">csw.messages.location.ComponentType.Service</a></li><li><a href="../../location/ComponentType$$Container$.html" class="extype" name="csw.messages.location.ComponentType.Container">csw.messages.location.ComponentType.Container</a></li></ul><p>When you resolve/find a <a href="../../location/Connection.html" class="extype" name="csw.messages.location.Connection">csw.messages.location.Connection</a>, you get <a href="../../location/Location.html" class="extype" name="csw.messages.location.Location">csw.messages.location.Location</a> in return which can be one of below type:</p><ul><li><a href="../../location/AkkaLocation.html" class="extype" name="csw.messages.location.AkkaLocation">csw.messages.location.AkkaLocation</a></li><li><a href="../../location/TcpLocation.html" class="extype" name="csw.messages.location.TcpLocation">csw.messages.location.TcpLocation</a></li><li><a href="../../location/HttpLocation.html" class="extype" name="csw.messages.location.HttpLocation">csw.messages.location.HttpLocation</a></li></ul><p>Framework package contains following actor messages:</p><ul><li>Messages of type <a href="../../framework/PubSub.html" class="extype" name="csw.messages.framework.PubSub">csw.messages.framework.PubSub</a> are supported by PubSubActor</li><li>Below Lifecycle messages can be sent to component when component is in <a href="../../framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state,
- note that these messages should be wrapped inside <a href="../../scaladsl/RunningMessage$$Lifecycle.html" class="extype" name="csw.messages.scaladsl.RunningMessage.Lifecycle">csw.messages.scaladsl.RunningMessage.Lifecycle</a> before sending it to Supervisor actor.<ul><li><a href="../../framework/ToComponentLifecycleMessages$$GoOnline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOnline">csw.messages.framework.ToComponentLifecycleMessages.GoOnline</a></li><li><a href="../../framework/ToComponentLifecycleMessages$$GoOffline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOffline">csw.messages.framework.ToComponentLifecycleMessages.GoOffline</a></li></ul></li></ul><h5> Params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <span class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</span></li><li>Kryo : <span class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</span></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+ note that these messages should be wrapped inside <a href="../../RunningMessage$$Lifecycle.html" class="extype" name="csw.messages.RunningMessage.Lifecycle">csw.messages.RunningMessage.Lifecycle</a> before sending it to Supervisor actor.<ul><li><a href="../../framework/ToComponentLifecycleMessages$$GoOnline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOnline">csw.messages.framework.ToComponentLifecycleMessages.GoOnline</a></li><li><a href="../../framework/ToComponentLifecycleMessages$$GoOffline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOffline">csw.messages.framework.ToComponentLifecycleMessages.GoOffline</a></li></ul></li></ul><h5> Params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <span class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</span></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
 new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
 that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
 of the given type.</p><p>Following <a href="../generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><pre>+--------------+-------------------------+---------------------------+
@@ -213,8 +213,8 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
                         <a href="ObsId.html" title="Represents a unique observation id">ObsId</a>
                       </li><li class="current-entities indented4">
                         <a class="object" href="Prefix$.html" title=""></a>
-                        <a class="class" href="Prefix.html" title="A top level key for a parameter set: combines subsystem and the subsystem's prefix"></a>
-                        <a href="Prefix.html" title="A top level key for a parameter set: combines subsystem and the subsystem's prefix">Prefix</a>
+                        <a class="class" href="Prefix.html" title="A top level key for a parameter set: combination of subsystem and the subsystem's prefix Eg."></a>
+                        <a href="Prefix.html" title="A top level key for a parameter set: combination of subsystem and the subsystem's prefix Eg.">Prefix</a>
                       </li><li class="current-entities indented4">
                         <a class="object" href="RaDec$.html" title=""></a>
                         <a class="class" href="RaDec.html" title="Holds Ra(Right Ascension) and Dec(Declination) values"></a>
@@ -256,7 +256,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">Subsystem</span><span class="result"> extends <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum_2.12/1.5.13/enumeratum_2.12-1.5.13-javadoc.jar/!/enumeratum/Enum.html#enumeratum.Enum" class="extype" name="enumeratum.Enum">Enum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>] with <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum-play-json_2.12/1.5.13/enumeratum-play-json_2.12-1.5.13-javadoc.jar/!/enumeratum/PlayJsonEnum.html#enumeratum.PlayJsonEnum" class="extype" name="enumeratum.PlayJsonEnum">PlayJsonEnum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>] with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <span class="name">Subsystem</span><span class="result"> extends <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum_2.12/1.5.12/enumeratum_2.12-1.5.12-javadoc.jar/!/enumeratum/Enum.html#enumeratum.Enum" class="extype" name="enumeratum.Enum">Enum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>] with <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum-play-json_2.12/1.5.12/enumeratum-play-json_2.12-1.5.12-javadoc.jar/!/enumeratum/PlayJsonEnum.html#enumeratum.PlayJsonEnum" class="extype" name="enumeratum.PlayJsonEnum">PlayJsonEnum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>] with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       </h4>
 
@@ -266,7 +266,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html#java.io.Serializable" class="extype" name="java.io.Serializable">Serializable</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum-play-json_2.12/1.5.13/enumeratum-play-json_2.12-1.5.13-javadoc.jar/!/enumeratum/PlayJsonEnum.html#enumeratum.PlayJsonEnum" class="extype" name="enumeratum.PlayJsonEnum">PlayJsonEnum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>], <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum_2.12/1.5.13/enumeratum_2.12-1.5.13-javadoc.jar/!/enumeratum/Enum.html#enumeratum.Enum" class="extype" name="enumeratum.Enum">Enum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>], <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html#java.io.Serializable" class="extype" name="java.io.Serializable">Serializable</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum-play-json_2.12/1.5.12/enumeratum-play-json_2.12-1.5.12-javadoc.jar/!/enumeratum/PlayJsonEnum.html#enumeratum.PlayJsonEnum" class="extype" name="enumeratum.PlayJsonEnum">PlayJsonEnum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>], <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum_2.12/1.5.12/enumeratum_2.12-1.5.12-javadoc.jar/!/enumeratum/Enum.html#enumeratum.Enum" class="extype" name="enumeratum.Enum">Enum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>], <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div></div>
         
 
@@ -331,7 +331,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -347,7 +347,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -363,7 +363,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -395,7 +395,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -419,7 +419,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -435,7 +435,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -451,7 +451,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -473,7 +473,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">findValues</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/IndexedSeq.html#scala.collection.immutable.IndexedSeq" class="extype" name="scala.collection.immutable.IndexedSeq">IndexedSeq</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">findValues</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/collection/immutable/IndexedSeq.html#scala.collection.immutable.IndexedSeq" class="extype" name="scala.collection.immutable.IndexedSeq">IndexedSeq</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -508,7 +508,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
@@ -527,7 +527,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">indexOf</span><span class="params">(<span name="member">member: <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+        <span class="name">indexOf</span><span class="params">(<span name="member">member: <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -543,7 +543,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -575,7 +575,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">lowerCaseNamesToValuesMap</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/Map.html#scala.collection.immutable.Map" class="extype" name="scala.collection.immutable.Map">Map</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">lowerCaseNamesToValuesMap</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/collection/immutable/Map.html#scala.collection.immutable.Map" class="extype" name="scala.collection.immutable.Map">Map</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -587,11 +587,11 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
       </a>
     </span>
       <span class="modifier_kind">
-        <span class="modifier"></span>
+        <span class="modifier">final </span>
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">namesToValuesMap</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/Map.html#scala.collection.immutable.Map" class="extype" name="scala.collection.immutable.Map">Map</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">namesToValuesMap</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/collection/immutable/Map.html#scala.collection.immutable.Map" class="extype" name="scala.collection.immutable.Map">Map</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -607,7 +607,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -623,7 +623,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -642,7 +642,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -693,7 +693,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">upperCaseNameValuesToMap</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/Map.html#scala.collection.immutable.Map" class="extype" name="scala.collection.immutable.Map">Map</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">upperCaseNameValuesToMap</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/collection/immutable/Map.html#scala.collection.immutable.Map" class="extype" name="scala.collection.immutable.Map">Map</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -709,7 +709,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">values</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/IndexedSeq.html#scala.collection.immutable.IndexedSeq" class="extype" name="scala.collection.immutable.IndexedSeq">IndexedSeq</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">values</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/collection/immutable/IndexedSeq.html#scala.collection.immutable.IndexedSeq" class="extype" name="scala.collection.immutable.IndexedSeq">IndexedSeq</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> → Enum</dd></dl></div>
@@ -725,7 +725,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">valuesToIndex</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/Map.html#scala.collection.immutable.Map" class="extype" name="scala.collection.immutable.Map">Map</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>]</span>
+        <span class="name">valuesToIndex</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/collection/immutable/Map.html#scala.collection.immutable.Map" class="extype" name="scala.collection.immutable.Map">Map</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -741,7 +741,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -763,7 +763,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -785,7 +785,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -847,7 +847,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withNameInsensitiveOption</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">withNameInsensitiveOption</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -882,7 +882,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withNameLowercaseOnlyOption</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">withNameLowercaseOnlyOption</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -898,7 +898,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withNameOption</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">withNameOption</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -933,7 +933,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withNameUppercaseOnlyOption</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
+        <span class="name">withNameUppercaseOnlyOption</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Option.html#scala.Option" class="extype" name="scala.Option">Option</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Enum</dd></dl></div>
@@ -949,7 +949,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$AOESW$.html"><span class="name">AOESW</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$AOESW$.html"><span class="name">AOESW</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -965,7 +965,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$APS$.html"><span class="name">APS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$APS$.html"><span class="name">APS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -981,7 +981,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$BAD$.html"><span class="name">BAD</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$BAD$.html"><span class="name">BAD</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -997,7 +997,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$CIS$.html"><span class="name">CIS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$CIS$.html"><span class="name">CIS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1013,7 +1013,23 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$CSW$.html"><span class="name">CSW</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$CSW$.html"><span class="name">CSW</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.messages.params.models.Subsystem.Container" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Container"></a><a id="Container:Container"></a>
+      <span class="permalink">
+      <a href="../../../../csw/messages/params/models/Subsystem$.html#Container" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Subsystem$$Container$.html"><span class="name">Container</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1029,7 +1045,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$DMS$.html"><span class="name">DMS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$DMS$.html"><span class="name">DMS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1045,7 +1061,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$DPS$.html"><span class="name">DPS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$DPS$.html"><span class="name">DPS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1061,7 +1077,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$ENC$.html"><span class="name">ENC</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$ENC$.html"><span class="name">ENC</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1077,7 +1093,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$ESEN$.html"><span class="name">ESEN</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$ESEN$.html"><span class="name">ESEN</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1093,7 +1109,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$ESW$.html"><span class="name">ESW</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$ESW$.html"><span class="name">ESW</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1109,7 +1125,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$GMS$.html"><span class="name">GMS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$GMS$.html"><span class="name">GMS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1125,7 +1141,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$IRIS$.html"><span class="name">IRIS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$IRIS$.html"><span class="name">IRIS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1141,7 +1157,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$IRMS$.html"><span class="name">IRMS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$IRMS$.html"><span class="name">IRMS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1157,7 +1173,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$LGSF$.html"><span class="name">LGSF</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$LGSF$.html"><span class="name">LGSF</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1173,7 +1189,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$M1CS$.html"><span class="name">M1CS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$M1CS$.html"><span class="name">M1CS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1189,7 +1205,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$M2CS$.html"><span class="name">M2CS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$M2CS$.html"><span class="name">M2CS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1205,7 +1221,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$M3CS$.html"><span class="name">M3CS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$M3CS$.html"><span class="name">M3CS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1221,7 +1237,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$MCS$.html"><span class="name">MCS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$MCS$.html"><span class="name">MCS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1237,7 +1253,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$NFIRAOS$.html"><span class="name">NFIRAOS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$NFIRAOS$.html"><span class="name">NFIRAOS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1253,7 +1269,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$NSCU$.html"><span class="name">NSCU</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$NSCU$.html"><span class="name">NSCU</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1269,7 +1285,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$OSS$.html"><span class="name">OSS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$OSS$.html"><span class="name">OSS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1285,7 +1301,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$PFCS$.html"><span class="name">PFCS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$PFCS$.html"><span class="name">PFCS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1301,7 +1317,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$PSFR$.html"><span class="name">PSFR</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$PSFR$.html"><span class="name">PSFR</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1317,7 +1333,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$RPG$.html"><span class="name">RPG</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$RPG$.html"><span class="name">RPG</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1333,7 +1349,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$RTC$.html"><span class="name">RTC</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$RTC$.html"><span class="name">RTC</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1349,7 +1365,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$SCMS$.html"><span class="name">SCMS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$SCMS$.html"><span class="name">SCMS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1365,7 +1381,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$SOSS$.html"><span class="name">SOSS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$SOSS$.html"><span class="name">SOSS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1381,7 +1397,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$STR$.html"><span class="name">STR</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$STR$.html"><span class="name">STR</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1397,7 +1413,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$SUM$.html"><span class="name">SUM</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$SUM$.html"><span class="name">SUM</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1413,7 +1429,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$TCS$.html"><span class="name">TCS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$TCS$.html"><span class="name">TCS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1429,7 +1445,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$TEST$.html"><span class="name">TEST</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$TEST$.html"><span class="name">TEST</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1445,7 +1461,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$TINC$.html"><span class="name">TINC</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$TINC$.html"><span class="name">TINC</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1461,7 +1477,7 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Subsystem$$WFOS$.html"><span class="name">WFOS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="" href="Subsystem$$WFOS$.html"><span class="name">WFOS</span></a><span class="result"> extends <a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -1476,17 +1492,17 @@ of the given type.</p><p>Following <a href="../generics/KeyType.html" class="ext
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html#java.io.Serializable" class="extype" name="java.io.Serializable">Serializable</a></h3>
             </div><div class="parent" name="enumeratum.PlayJsonEnum">
-              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum-play-json_2.12/1.5.13/enumeratum-play-json_2.12-1.5.13-javadoc.jar/!/enumeratum/PlayJsonEnum.html#enumeratum.PlayJsonEnum" class="extype" name="enumeratum.PlayJsonEnum">PlayJsonEnum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</h3>
+              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum-play-json_2.12/1.5.12/enumeratum-play-json_2.12-1.5.12-javadoc.jar/!/enumeratum/PlayJsonEnum.html#enumeratum.PlayJsonEnum" class="extype" name="enumeratum.PlayJsonEnum">PlayJsonEnum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</h3>
             </div><div class="parent" name="enumeratum.Enum">
-              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum_2.12/1.5.13/enumeratum_2.12-1.5.13-javadoc.jar/!/enumeratum/Enum.html#enumeratum.Enum" class="extype" name="enumeratum.Enum">Enum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</h3>
+              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/beachape/enumeratum_2.12/1.5.12/enumeratum_2.12-1.5.12-javadoc.jar/!/enumeratum/Enum.html#enumeratum.Enum" class="extype" name="enumeratum.Enum">Enum</a>[<a href="Subsystem.html" class="extype" name="csw.messages.params.models.Subsystem">Subsystem</a>]</h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>

@@ -186,12 +186,12 @@ https://tmtsoftware.github.io/csw-prod/services/location.html
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ClusterSettings</span><span class="params">(<span name="clusterName">clusterName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">Constants.ClusterName</span></span>, <span name="values">values: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a>] = <span class="symbol">Map.empty</span></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <span class="name">ClusterSettings</span><span class="params">(<span name="clusterName">clusterName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">Constants.ClusterName</span></span>, <span name="values">values: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a>] = <span class="symbol">Map.empty</span></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>ClusterSettings manages <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/config/1.3.2/config-1.3.2-javadoc.jar/!/com/typesafe/config/Config.html" class="extype" name="com.typesafe.config.Config">com.typesafe.config.Config</a> values required by an <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.11/akka-actor_2.12-2.5.11-javadoc.jar/!/akka/actor/ActorSystem.html" class="extype" name="akka.actor.ActorSystem">akka.actor.ActorSystem</a> to boot. It configures mainly
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>ClusterSettings manages <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/config/1.3.2/config-1.3.2-javadoc.jar/!/com/typesafe/config/Config.html" class="extype" name="com.typesafe.config.Config">com.typesafe.config.Config</a> values required by an <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.13/akka-actor_2.12-2.5.13-javadoc.jar/!/akka/actor/ActorSystem.html" class="extype" name="akka.actor.ActorSystem">akka.actor.ActorSystem</a> to boot. It configures mainly
 four parameters of an <code>ActorSystem</code>, namely :</p><ul><li>name (Name is defaulted to a constant value so that ActorSystem joins the cluster while booting)</li><li>akka.remote.netty.tcp.hostname (The hostname to boot an ActorSystem on)</li><li>akka.remote.netty.tcp.port     (The port to boot an ActorSystem on)</li><li>akka.cluster.seed-nodes        (Seed Nodes of the cluster)</li></ul><p>ClusterSettings require three values namely :</p><ul><li>interfaceName (The network interface where cluster is formed.)</li><li>clusterSeeds (The host address of the seedNode of the cluster)</li><li>clusterPort (Specify port on which to start this service)</li></ul><p>The config values of the <code>ActorSystem</code> will be evaluated based on the above three settings as follows :</p><ul><li><code>akka.remote.netty.tcp.hostname</code> will be ipV4 address based on <code>interfaceName</code> from <span class="extype" name="csw.services.location.internal.Networks">csw.services.location.internal.Networks</span></li><li><code>akka.remote.netty.tcp.port</code> will be a random port or if <code>clusterPort</code> is specified that value will be picked</li><li><code>akka.cluster.seed-nodes</code> will pick values of <code>clusterSeeds</code></li></ul><p>If none of the settings are provided then defaults will be picked as follows :</p><ul><li><code>akka.remote.netty.tcp.hostname</code> will be ipV4 address from <span class="extype" name="csw.services.location.internal.Networks">csw.services.location.internal.Networks</span></li><li><code>akka.remote.netty.tcp.port</code> will be a random port</li><li><code>akka.cluster.seed-nodes</code> will be empty
 and an <code>ActorSystem</code> will be created and a cluster will be formed with no Seed Nodes. It will self join the cluster.</li></ul><p><code>ClusterSettings</code> can be given in three ways :</p><ul><li>by using the api</li><li>by providing system properties</li><li>or by providing environment variables</li></ul><p>If a <code>ClusterSettings</code> value e.g. clusterPort is provided by more than one ways, then the precedence of consumption will be first from</p><ul><li>System Properties</li><li>then from Environment variable</li><li>and then from <code>ClusterSettings</code> api
 </li></ul></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>although <code>ClusterSettings</code> can be added through multiple ways, it is recommended that
@@ -199,7 +199,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html#java.io.Serializable" class="extype" name="java.io.Serializable">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html#java.io.Serializable" class="extype" name="java.io.Serializable">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div><div class="toggleContainer block">
             <span class="toggle">
               Known Subclasses
@@ -262,7 +262,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ClusterSettings</span><span class="params">(<span name="clusterName">clusterName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">Constants.ClusterName</span></span>, <span name="values">values: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a>] = <span class="symbol">Map.empty</span></span>)</span>
+        <span class="name">ClusterSettings</span><span class="params">(<span name="clusterName">clusterName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">Constants.ClusterName</span></span>, <span name="values">values: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a>] = <span class="symbol">Map.empty</span></span>)</span>
       </span>
       
       
@@ -288,7 +288,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -304,7 +304,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -320,7 +320,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -352,7 +352,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -392,7 +392,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -408,7 +408,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -465,7 +465,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -481,7 +481,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">joinLocal</span><span class="params">(<span name="port">port: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>, <span name="ports">ports: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>*</span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
+        <span class="name">joinLocal</span><span class="params">(<span name="port">port: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>, <span name="ports">ports: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>*</span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
@@ -516,7 +516,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -532,7 +532,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -551,7 +551,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -570,7 +570,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">onPort</span><span class="params">(<span name="port">port: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
+        <span class="name">onPort</span><span class="params">(<span name="port">port: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
       </span>
       
       
@@ -618,7 +618,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">system</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.11/akka-actor_2.12-2.5.11-javadoc.jar/!/akka/actor/ActorSystem.html#akka.actor.ActorSystem" class="extype" name="akka.actor.ActorSystem">ActorSystem</a></span>
+        <span class="name">system</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor_2.12/2.5.13/akka-actor_2.12-2.5.13-javadoc.jar/!/akka/actor/ActorSystem.html#akka.actor.ActorSystem" class="extype" name="akka.actor.ActorSystem">ActorSystem</a></span>
       </span>
       
       
@@ -634,7 +634,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">values</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a>]</span>
+        <span class="name">values</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a>]</span>
       </span>
       
       
@@ -650,7 +650,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -672,7 +672,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -694,7 +694,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -718,7 +718,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withEntries</span><span class="params">(<span name="entries">entries: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a>]</span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
+        <span class="name">withEntries</span><span class="params">(<span name="entries">entries: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a>]</span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
       </span>
       
       
@@ -750,7 +750,7 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withManagementPort</span><span class="params">(<span name="port">port: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
+        <span class="name">withManagementPort</span><span class="params">(<span name="port">port: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="" class="extype" name="csw.services.location.commons.ClusterSettings">ClusterSettings</a></span>
       </span>
       
       
@@ -765,17 +765,17 @@ and an <code>ActorSystem</code> will be created and a cluster will be formed wit
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html#java.io.Serializable" class="extype" name="java.io.Serializable">Serializable</a></h3>
             </div><div class="parent" name="scala.Product">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a></h3>
             </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>

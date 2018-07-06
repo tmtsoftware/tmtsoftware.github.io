@@ -246,11 +246,11 @@ val booleanParam: Parameter[Boolean] = booleanKey.set(true, false)
 val timestamp: Parameter[Instant]    = timestampKey.set(Instant.now)
 
 //create DemandState and use sequential add
-val ds1: DemandState = DemandState(prefix).add(charParam).add(intParam)
+val ds1: DemandState = DemandState(prefix, StateName(&quot;testStateName&quot;)).add(charParam).add(intParam)
 //create DemandState and add more than one Parameters using madd
-val ds2: DemandState = DemandState(prefix).madd(intParam, booleanParam)
+val ds2: DemandState = DemandState(prefix, StateName(&quot;testStateName&quot;)).madd(intParam, booleanParam)
 //create DemandState using apply
-val ds3: DemandState = DemandState(prefix, Set(timestamp))
+val ds3: DemandState = DemandState(prefix, StateName(&quot;testStateName&quot;), Set(timestamp))
 
 //access keys
 val charKeyExists: Boolean = ds1.exists(charKey) //true
@@ -297,11 +297,11 @@ Parameter&lt;Boolean&gt; booleanParam = booleanKey.set(true, false);
 Parameter&lt;Instant&gt; timestamp = timestampKey.set(Instant.now());
 
 //create DemandState and use sequential add
-DemandState ds1 = new DemandState(prefix).add(charParam).add(intParam);
+DemandState ds1 = new DemandState(prefix, new StateName(&quot;testStateName&quot;)).add(charParam).add(intParam);
 //create DemandState and add more than one Parameters using madd
-DemandState ds2 = new DemandState(prefix).madd(intParam, booleanParam);
+DemandState ds2 = new DemandState(prefix, new StateName(&quot;testStateName&quot;)).madd(intParam, booleanParam);
 //create DemandState using apply
-DemandState ds3 = new DemandState(prefix).add(timestamp);
+DemandState ds3 = new DemandState(prefix, new StateName(&quot;testStateName&quot;)).add(timestamp);
 
 //access keys
 Boolean charKeyExists = ds1.exists(charKey); //true
@@ -346,11 +346,11 @@ val booleanParam = booleanKey.set(true, false)
 val timestamp    = timestampKey.set(Instant.now)
 
 //create CurrentState and use sequential add
-val cs1 = CurrentState(prefix).add(charParam).add(intParam)
+val cs1 = CurrentState(prefix, StateName(&quot;testStateName&quot;)).add(charParam).add(intParam)
 //create CurrentState and add more than one Parameters using madd
-val cs2 = CurrentState(prefix).madd(intParam, booleanParam)
+val cs2 = CurrentState(prefix, StateName(&quot;testStateName&quot;)).madd(intParam, booleanParam)
 //create CurrentState using apply
-val cs3 = CurrentState(prefix, Set(timestamp))
+val cs3 = CurrentState(prefix, StateName(&quot;testStateName&quot;), Set(timestamp))
 
 //access keys
 val charKeyExists = cs1.exists(charKey) //true
@@ -397,11 +397,11 @@ Parameter&lt;Boolean&gt; booleanParam = booleanKey.set(true, false);
 Parameter&lt;Instant&gt; timestamp = timestampKey.set(Instant.now());
 
 //create CurrentState and use sequential add
-CurrentState cs1 = new CurrentState(prefix).add(charParam).add(intParam);
+CurrentState cs1 = new CurrentState(prefix, new StateName(&quot;testStateName&quot;)).add(charParam).add(intParam);
 //create CurrentState and add more than one Parameters using madd
-CurrentState cs2 = new CurrentState(prefix).madd(intParam, booleanParam);
+CurrentState cs2 = new CurrentState(prefix, new StateName(&quot;testStateName&quot;)).madd(intParam, booleanParam);
 //create CurrentState using apply
-CurrentState cs3 = new CurrentState(prefix).add(timestamp);
+CurrentState cs3 = new CurrentState(prefix, new StateName(&quot;testStateName&quot;)).add(timestamp);
 
 //access keys
 Boolean charKeyExists = cs1.exists(charKey); //true
@@ -444,8 +444,8 @@ val m1: MatrixData[Double] = MatrixData.fromArrays(
 val p1: Parameter[MatrixData[Double]] = k1.set(m1)
 
 //state variables
-val ds: DemandState  = DemandState(Prefix(&quot;wfos.blue.filter&quot;)).add(p1)
-val cs: CurrentState = CurrentState(Prefix(&quot;wfos.blue.filter&quot;)).add(p1)
+val ds: DemandState  = DemandState(Prefix(&quot;wfos.blue.filter&quot;), StateName(&quot;testStateName&quot;)).add(p1)
+val cs: CurrentState = CurrentState(Prefix(&quot;wfos.blue.filter&quot;), StateName(&quot;testStateName&quot;)).add(p1)
 
 //json support - write
 val dsJson: JsValue = JsonSupport.writeStateVariable(ds)
@@ -473,8 +473,8 @@ MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
 Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
 
 //state variables
-DemandState ds = new DemandState(&quot;wfos.blue.filter&quot;).add(i1);
-CurrentState cs = new CurrentState(&quot;wfos.blue.filter&quot;).add(i1);
+DemandState ds = new DemandState(&quot;wfos.blue.filter&quot;, new StateName(&quot;testStateName&quot;)).add(i1);
+CurrentState cs = new CurrentState(&quot;wfos.blue.filter&quot;, new StateName(&quot;testStateName&quot;)).add(i1);
 
 //json support - write
 JsValue dsJson = JavaJsonSupport.writeStateVariable(ds);
@@ -503,7 +503,7 @@ val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc.&quot;)
 
 //prefix
-val prefix = &quot;wfos.blue.filter&quot;
+val prefix = Prefix(&quot;wfos.blue.filter&quot;)
 
 //params
 val encParam1 = encoderKey.set(1)
@@ -519,6 +519,7 @@ val miscParam1 = miscKey.set(100)
 //DemandState with duplicate key via constructor
 val statusEvent = DemandState(
   prefix,
+  StateName(&quot;testStateName&quot;),
   Set(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3)
 )
 //four duplicate keys are removed; now contains one Encoder and one Filter key
@@ -561,7 +562,7 @@ Parameter&lt;Integer&gt; filterParam3 = filterKey.set(3);
 Parameter&lt;Integer&gt; miscParam1 = miscKey.set(100);
 
 //Demand state with duplicate key via madd
-DemandState state = new DemandState(prefix).madd(
+DemandState state = new DemandState(prefix, new StateName(&quot;testStateName&quot;)).madd(
         encParam1,
         encParam2,
         encParam3,
