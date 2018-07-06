@@ -104,15 +104,15 @@
 Consumer of this library will be able to create Commands, Events, States to store ParameterSets.</p><h4> Imp Packages </h4><h5> Commands and Events </h5><p>This packages contains classes, traits and models used to create *commands* and *events*.
 These are all based on type-safe keys and items (a set of values with optional units).
 Each key has a specific type and the key's values must be of that type.</p><p>Two types of <a href="Command.html" class="extype" name="csw.messages.commands.Command">csw.messages.commands.Command</a> are supported:</p><ul><li><a href="SequenceCommand.html" class="extype" name="csw.messages.commands.SequenceCommand">csw.messages.commands.SequenceCommand</a><ul><li>This commands are targeted to Sequencer. Subtypes of this are: Setup, Observe and Wait.</li></ul></li><li><a href="ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">csw.messages.commands.ControlCommand</a><ul><li>This commands are targeted to Assemblies and HCD's. Subtypes of this are: Setup and Observe.</li></ul></li></ul><p>Following are the concrete commands supported by csw:</p><ul><li><a href="Setup.html" class="extype" name="csw.messages.commands.Setup">csw.messages.commands.Setup</a></li><li><a href="Observe.html" class="extype" name="csw.messages.commands.Observe">csw.messages.commands.Observe</a></li><li><a href="Wait.html" class="extype" name="csw.messages.commands.Wait">csw.messages.commands.Wait</a></li></ul><p>Two types of <a href="../events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> are supported:</p><ul><li><a href="../events/SystemEvent.html" class="extype" name="csw.messages.events.SystemEvent">csw.messages.events.SystemEvent</a></li><li><a href="../events/ObserveEvent.html" class="extype" name="csw.messages.events.ObserveEvent">csw.messages.events.ObserveEvent</a></li></ul><p>Another important feature provided by *commands* package is <a href="matchers/Matcher.html" class="extype" name="csw.messages.commands.matchers.Matcher">csw.messages.commands.matchers.Matcher</a>
-One of the use case for using matcher is when Assembly sends <a href="../scaladsl/CommandMessage$$Oneway.html" class="extype" name="csw.messages.scaladsl.CommandMessage.Oneway">csw.messages.scaladsl.CommandMessage.Oneway</a> command to HCD
+One of the use case for using matcher is when Assembly sends <a href="../CommandMessage$$Oneway.html" class="extype" name="csw.messages.CommandMessage.Oneway">csw.messages.CommandMessage.Oneway</a> command to HCD
 and in response to this command HCD keeps publishing its current state.
 Then Assembly can use Matcher with the matching definition as provided by <a href="matchers/StateMatcher.html" class="extype" name="csw.messages.commands.matchers.StateMatcher">csw.messages.commands.matchers.StateMatcher</a> to
 match against the current states published by HCD.</p><h5> Location and Framework </h5><p>These packages contain reusable classes, traits and models. We are keeping all the models which are getting transferred over the wire and
 requires serialization and deserialization in <code>csw-messages</code> project. All the models are marked with <a href="../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a>.
-<a href="../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a> is a marker trait which extends <span class="extype" name="Serializable">Serializable</span>. This is configured to use <code>kryo</code> serialization.
+<a href="../TMTSerializable.html" class="extype" name="csw.messages.TMTSerializable">csw.messages.TMTSerializable</a> is a marker trait which extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html" class="extype" name="scala.Serializable">scala.Serializable</a>. This is configured to use <code>kryo</code> serialization.
 Also these models are being shared between multiple projects. <code>csw-location</code>, <code>csw-framework</code> and <code>csw-logging</code> depends on <code>csw-messages</code> project
 which uses these models.</p><p>Location Service uses <a href="../location/Connection.html" class="extype" name="csw.messages.location.Connection">csw.messages.location.Connection</a> model to register component/container of type:</p><ul><li><a href="../location/ComponentType$$Assembly$.html" class="extype" name="csw.messages.location.ComponentType.Assembly">csw.messages.location.ComponentType.Assembly</a></li><li><a href="../location/ComponentType$$HCD$.html" class="extype" name="csw.messages.location.ComponentType.HCD">csw.messages.location.ComponentType.HCD</a></li><li><a href="../location/ComponentType$$Service$.html" class="extype" name="csw.messages.location.ComponentType.Service">csw.messages.location.ComponentType.Service</a></li><li><a href="../location/ComponentType$$Container$.html" class="extype" name="csw.messages.location.ComponentType.Container">csw.messages.location.ComponentType.Container</a></li></ul><p>When you resolve/find a <a href="../location/Connection.html" class="extype" name="csw.messages.location.Connection">csw.messages.location.Connection</a>, you get <a href="../location/Location.html" class="extype" name="csw.messages.location.Location">csw.messages.location.Location</a> in return which can be one of below type:</p><ul><li><a href="../location/AkkaLocation.html" class="extype" name="csw.messages.location.AkkaLocation">csw.messages.location.AkkaLocation</a></li><li><a href="../location/TcpLocation.html" class="extype" name="csw.messages.location.TcpLocation">csw.messages.location.TcpLocation</a></li><li><a href="../location/HttpLocation.html" class="extype" name="csw.messages.location.HttpLocation">csw.messages.location.HttpLocation</a></li></ul><p>Framework package contains following actor messages:</p><ul><li>Messages of type <a href="../framework/PubSub.html" class="extype" name="csw.messages.framework.PubSub">csw.messages.framework.PubSub</a> are supported by PubSubActor</li><li>Below Lifecycle messages can be sent to component when component is in <a href="../framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state,
- note that these messages should be wrapped inside <a href="../scaladsl/RunningMessage$$Lifecycle.html" class="extype" name="csw.messages.scaladsl.RunningMessage.Lifecycle">csw.messages.scaladsl.RunningMessage.Lifecycle</a> before sending it to Supervisor actor.<ul><li><a href="../framework/ToComponentLifecycleMessages$$GoOnline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOnline">csw.messages.framework.ToComponentLifecycleMessages.GoOnline</a></li><li><a href="../framework/ToComponentLifecycleMessages$$GoOffline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOffline">csw.messages.framework.ToComponentLifecycleMessages.GoOffline</a></li></ul></li></ul><h5> Params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <span class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</span></li><li>Kryo : <span class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</span></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
+ note that these messages should be wrapped inside <a href="../RunningMessage$$Lifecycle.html" class="extype" name="csw.messages.RunningMessage.Lifecycle">csw.messages.RunningMessage.Lifecycle</a> before sending it to Supervisor actor.<ul><li><a href="../framework/ToComponentLifecycleMessages$$GoOnline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOnline">csw.messages.framework.ToComponentLifecycleMessages.GoOnline</a></li><li><a href="../framework/ToComponentLifecycleMessages$$GoOffline$.html" class="extype" name="csw.messages.framework.ToComponentLifecycleMessages.GoOffline">csw.messages.framework.ToComponentLifecycleMessages.GoOffline</a></li></ul></li></ul><h5> Params </h5><p>This package supports serialization and deserialization of commands, events and state variables in following formats:</p><ul><li>JSON : <a href="../params/formats/JsonSupport.html" class="extype" name="csw.messages.params.formats.JsonSupport">csw.messages.params.formats.JsonSupport</a></li><li>Kryo : <span class="extype" name="csw.messages.params.generics.ParamSetSerializer">csw.messages.params.generics.ParamSetSerializer</span></li><li>Protobuf : package pb contains utility and directory protobuf contains proto schema files.</li></ul><h5> Scala and Java APIs </h5><p>All the param and event classes are immutable. The <code>set</code> methods return a new instance of the object with a
 new item added and the <code>get</code> methods return an Option, in case the Key is not found. There are also <code>value</code> methods
 that return a value directly, throwing an exception if the key or value is not found.</p><h5> Key Types </h5><p>A set of standard key types and matching items are defined. Each key accepts one or more values
 of the given type.</p><p>Following <a href="../params/generics/KeyType.html" class="extype" name="csw.messages.params.generics.KeyType">csw.messages.params.generics.KeyType</a> are supported by csw:</p><pre>+--------------+-------------------------+---------------------------+
@@ -269,7 +269,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div></div>
         
 
@@ -329,7 +329,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when an Assembly receives a command and one is already executing" href="CommandIssue$$AssemblyBusyIssue.html"><span class="name">AssemblyBusyIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when an Assembly receives a command and one is already executing" href="CommandIssue$$AssemblyBusyIssue.html"><span class="name">AssemblyBusyIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when an Assembly receives a command and one is already executing
@@ -347,7 +347,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when command received by one component when it is locked by other component" href="CommandIssue$$ComponentLockedIssue.html"><span class="name">ComponentLockedIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when command received by one component when it is locked by other component" href="CommandIssue$$ComponentLockedIssue.html"><span class="name">ComponentLockedIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when command received by one component when it is locked by other component
@@ -365,7 +365,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when a command is missing a required key/parameter" href="CommandIssue$$MissingKeyIssue.html"><span class="name">MissingKeyIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when a command is missing a required key/parameter" href="CommandIssue$$MissingKeyIssue.html"><span class="name">MissingKeyIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when a command is missing a required key/parameter
@@ -383,7 +383,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when some other issue occurred apart from those already defined" href="CommandIssue$$OtherIssue.html"><span class="name">OtherIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when some other issue occurred apart from those already defined" href="CommandIssue$$OtherIssue.html"><span class="name">OtherIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when some other issue occurred apart from those already defined
@@ -401,7 +401,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Parameter of a command is out of range" href="CommandIssue$$ParameterValueOutOfRangeIssue.html"><span class="name">ParameterValueOutOfRangeIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Parameter of a command is out of range" href="CommandIssue$$ParameterValueOutOfRangeIssue.html"><span class="name">ParameterValueOutOfRangeIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt"> Parameter of a command is out of range
@@ -419,7 +419,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A required Assembly is not available" href="CommandIssue$$RequiredAssemblyUnavailableIssue.html"><span class="name">RequiredAssemblyUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A required Assembly is not available" href="CommandIssue$$RequiredAssemblyUnavailableIssue.html"><span class="name">RequiredAssemblyUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A required Assembly is not available
@@ -437,7 +437,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="sA required HCD is not available" href="CommandIssue$$RequiredHCDUnavailableIssue.html"><span class="name">RequiredHCDUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="sA required HCD is not available" href="CommandIssue$$RequiredHCDUnavailableIssue.html"><span class="name">RequiredHCDUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt"> sA required HCD is not available
@@ -455,7 +455,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A required Sequencer is not available" href="CommandIssue$$RequiredSequencerUnavailableIssue.html"><span class="name">RequiredSequencerUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A required Sequencer is not available" href="CommandIssue$$RequiredSequencerUnavailableIssue.html"><span class="name">RequiredSequencerUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A required Sequencer is not available
@@ -473,7 +473,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A required service is not available" href="CommandIssue$$RequiredServiceUnavailableIssue.html"><span class="name">RequiredServiceUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A required service is not available" href="CommandIssue$$RequiredServiceUnavailableIssue.html"><span class="name">RequiredServiceUnavailableIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A required service is not available
@@ -491,7 +491,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when some required location is not available" href="CommandIssue$$UnresolvedLocationsIssue.html"><span class="name">UnresolvedLocationsIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when some required location is not available" href="CommandIssue$$UnresolvedLocationsIssue.html"><span class="name">UnresolvedLocationsIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when some required location is not available
@@ -509,7 +509,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A command is unsupported in the current state" href="CommandIssue$$UnsupportedCommandInStateIssue.html"><span class="name">UnsupportedCommandInStateIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A command is unsupported in the current state" href="CommandIssue$$UnsupportedCommandInStateIssue.html"><span class="name">UnsupportedCommandInStateIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A command is unsupported in the current state
@@ -527,7 +527,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A command is unsupported by component" href="CommandIssue$$UnsupportedCommandIssue.html"><span class="name">UnsupportedCommandIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="A command is unsupported by component" href="CommandIssue$$UnsupportedCommandIssue.html"><span class="name">UnsupportedCommandIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A command is unsupported by component
@@ -545,7 +545,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="The component is in the wrong internal state to handle a command" href="CommandIssue$$WrongInternalStateIssue.html"><span class="name">WrongInternalStateIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="The component is in the wrong internal state to handle a command" href="CommandIssue$$WrongInternalStateIssue.html"><span class="name">WrongInternalStateIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">The component is in the wrong internal state to handle a command
@@ -563,7 +563,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when a command does not have the correct number of parameters" href="CommandIssue$$WrongNumberOfParametersIssue.html"><span class="name">WrongNumberOfParametersIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when a command does not have the correct number of parameters" href="CommandIssue$$WrongNumberOfParametersIssue.html"><span class="name">WrongNumberOfParametersIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when a command does not have the correct number of parameters
@@ -581,7 +581,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when the parameter for a key is not the correct type (i.e." href="CommandIssue$$WrongParameterTypeIssue.html"><span class="name">WrongParameterTypeIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when the parameter for a key is not the correct type (i.e." href="CommandIssue$$WrongParameterTypeIssue.html"><span class="name">WrongParameterTypeIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when the parameter for a key is not the correct type (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Returned when the parameter for a key is not the correct type (i.e. int vs double, etc.)
@@ -598,7 +598,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when an Assembly receives a configuration with a Prefix that it doesn't support" href="CommandIssue$$WrongPrefixIssue.html"><span class="name">WrongPrefixIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when an Assembly receives a configuration with a Prefix that it doesn't support" href="CommandIssue$$WrongPrefixIssue.html"><span class="name">WrongPrefixIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when an Assembly receives a configuration with a Prefix that it doesn't support
@@ -616,7 +616,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Returned when a parameter value does not have the correct units" href="CommandIssue$$WrongUnitsIssue.html"><span class="name">WrongUnitsIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Returned when a parameter value does not have the correct units" href="CommandIssue$$WrongUnitsIssue.html"><span class="name">WrongUnitsIssue</span></a><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Returned when a parameter value does not have the correct units
@@ -642,7 +642,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -658,7 +658,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -674,7 +674,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -706,7 +706,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -730,7 +730,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -746,7 +746,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -762,7 +762,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -803,7 +803,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
@@ -822,10 +822,298 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormat" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormat:play.api.libs.json.Format[csw.messages.commands.CommandIssue]"></a><a id="jsonFormat:Format[CommandIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormat:play.api.libs.json.Format[csw.messages.commands.CommandIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormat</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue">CommandIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatAssemblyBusyIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatAssemblyBusyIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.AssemblyBusyIssue]"></a><a id="jsonFormatAssemblyBusyIssue:Format[AssemblyBusyIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatAssemblyBusyIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.AssemblyBusyIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatAssemblyBusyIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$AssemblyBusyIssue.html" class="extype" name="csw.messages.commands.CommandIssue.AssemblyBusyIssue">AssemblyBusyIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatComponentLockedIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatComponentLockedIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.ComponentLockedIssue]"></a><a id="jsonFormatComponentLockedIssue:Format[ComponentLockedIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatComponentLockedIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.ComponentLockedIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatComponentLockedIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$ComponentLockedIssue.html" class="extype" name="csw.messages.commands.CommandIssue.ComponentLockedIssue">ComponentLockedIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatMissingKeyIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatMissingKeyIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.MissingKeyIssue]"></a><a id="jsonFormatMissingKeyIssue:Format[MissingKeyIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatMissingKeyIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.MissingKeyIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatMissingKeyIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$MissingKeyIssue.html" class="extype" name="csw.messages.commands.CommandIssue.MissingKeyIssue">MissingKeyIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatOtherIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatOtherIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.OtherIssue]"></a><a id="jsonFormatOtherIssue:Format[OtherIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatOtherIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.OtherIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatOtherIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$OtherIssue.html" class="extype" name="csw.messages.commands.CommandIssue.OtherIssue">OtherIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatParameterValueOutOfRangeIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatParameterValueOutOfRangeIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue]"></a><a id="jsonFormatParameterValueOutOfRangeIssue:Format[ParameterValueOutOfRangeIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatParameterValueOutOfRangeIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatParameterValueOutOfRangeIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$ParameterValueOutOfRangeIssue.html" class="extype" name="csw.messages.commands.CommandIssue.ParameterValueOutOfRangeIssue">ParameterValueOutOfRangeIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatRequiredAssemblyUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatRequiredAssemblyUnavailableIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.RequiredAssemblyUnavailableIssue]"></a><a id="jsonFormatRequiredAssemblyUnavailableIssue:Format[RequiredAssemblyUnavailableIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatRequiredAssemblyUnavailableIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.RequiredAssemblyUnavailableIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatRequiredAssemblyUnavailableIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$RequiredAssemblyUnavailableIssue.html" class="extype" name="csw.messages.commands.CommandIssue.RequiredAssemblyUnavailableIssue">RequiredAssemblyUnavailableIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatRequiredHCDUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatRequiredHCDUnavailableIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.RequiredHCDUnavailableIssue]"></a><a id="jsonFormatRequiredHCDUnavailableIssue:Format[RequiredHCDUnavailableIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatRequiredHCDUnavailableIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.RequiredHCDUnavailableIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatRequiredHCDUnavailableIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$RequiredHCDUnavailableIssue.html" class="extype" name="csw.messages.commands.CommandIssue.RequiredHCDUnavailableIssue">RequiredHCDUnavailableIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatRequiredSequencerUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatRequiredSequencerUnavailableIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.RequiredSequencerUnavailableIssue]"></a><a id="jsonFormatRequiredSequencerUnavailableIssue:Format[RequiredSequencerUnavailableIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatRequiredSequencerUnavailableIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.RequiredSequencerUnavailableIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatRequiredSequencerUnavailableIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$RequiredSequencerUnavailableIssue.html" class="extype" name="csw.messages.commands.CommandIssue.RequiredSequencerUnavailableIssue">RequiredSequencerUnavailableIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatRequiredServiceUnavailableIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatRequiredServiceUnavailableIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.RequiredServiceUnavailableIssue]"></a><a id="jsonFormatRequiredServiceUnavailableIssue:Format[RequiredServiceUnavailableIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatRequiredServiceUnavailableIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.RequiredServiceUnavailableIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatRequiredServiceUnavailableIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$RequiredServiceUnavailableIssue.html" class="extype" name="csw.messages.commands.CommandIssue.RequiredServiceUnavailableIssue">RequiredServiceUnavailableIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatUnresolvedLocationsIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatUnresolvedLocationsIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.UnresolvedLocationsIssue]"></a><a id="jsonFormatUnresolvedLocationsIssue:Format[UnresolvedLocationsIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatUnresolvedLocationsIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.UnresolvedLocationsIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatUnresolvedLocationsIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$UnresolvedLocationsIssue.html" class="extype" name="csw.messages.commands.CommandIssue.UnresolvedLocationsIssue">UnresolvedLocationsIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatUnsupportedCommandInStateIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatUnsupportedCommandInStateIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.UnsupportedCommandInStateIssue]"></a><a id="jsonFormatUnsupportedCommandInStateIssue:Format[UnsupportedCommandInStateIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatUnsupportedCommandInStateIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.UnsupportedCommandInStateIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatUnsupportedCommandInStateIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$UnsupportedCommandInStateIssue.html" class="extype" name="csw.messages.commands.CommandIssue.UnsupportedCommandInStateIssue">UnsupportedCommandInStateIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatUnsupportedCommandIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatUnsupportedCommandIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.UnsupportedCommandIssue]"></a><a id="jsonFormatUnsupportedCommandIssue:Format[UnsupportedCommandIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatUnsupportedCommandIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.UnsupportedCommandIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatUnsupportedCommandIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$UnsupportedCommandIssue.html" class="extype" name="csw.messages.commands.CommandIssue.UnsupportedCommandIssue">UnsupportedCommandIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatWrongInternalStateIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatWrongInternalStateIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongInternalStateIssue]"></a><a id="jsonFormatWrongInternalStateIssue:Format[WrongInternalStateIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatWrongInternalStateIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongInternalStateIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatWrongInternalStateIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$WrongInternalStateIssue.html" class="extype" name="csw.messages.commands.CommandIssue.WrongInternalStateIssue">WrongInternalStateIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatWrongNumberOfParametersIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatWrongNumberOfParametersIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongNumberOfParametersIssue]"></a><a id="jsonFormatWrongNumberOfParametersIssue:Format[WrongNumberOfParametersIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatWrongNumberOfParametersIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongNumberOfParametersIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatWrongNumberOfParametersIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$WrongNumberOfParametersIssue.html" class="extype" name="csw.messages.commands.CommandIssue.WrongNumberOfParametersIssue">WrongNumberOfParametersIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatWrongParameterTypeIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatWrongParameterTypeIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongParameterTypeIssue]"></a><a id="jsonFormatWrongParameterTypeIssue:Format[WrongParameterTypeIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatWrongParameterTypeIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongParameterTypeIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatWrongParameterTypeIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$WrongParameterTypeIssue.html" class="extype" name="csw.messages.commands.CommandIssue.WrongParameterTypeIssue">WrongParameterTypeIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatWrongPrefixIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatWrongPrefixIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongPrefixIssue]"></a><a id="jsonFormatWrongPrefixIssue:Format[WrongPrefixIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatWrongPrefixIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongPrefixIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatWrongPrefixIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$WrongPrefixIssue.html" class="extype" name="csw.messages.commands.CommandIssue.WrongPrefixIssue">WrongPrefixIssue</a>]</span>
+      </span>
+      
+      
+    </li><li name="csw.messages.commands.CommandIssue#jsonFormatWrongUnitsIssue" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="jsonFormatWrongUnitsIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongUnitsIssue]"></a><a id="jsonFormatWrongUnitsIssue:Format[WrongUnitsIssue]"></a>
+      <span class="permalink">
+      <a href="../../../csw/messages/commands/CommandIssue$.html#jsonFormatWrongUnitsIssue:play.api.libs.json.Format[csw.messages.commands.CommandIssue.WrongUnitsIssue]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">jsonFormatWrongUnitsIssue</span><span class="result">: <a href="https://playframework.com/documentation/2.6.x/api/scala/play/api/libs/json/Format.html#play.api.libs.json.Format" class="extype" name="play.api.libs.json.Format">Format</a>[<a href="CommandIssue$$WrongUnitsIssue.html" class="extype" name="csw.messages.commands.CommandIssue.WrongUnitsIssue">WrongUnitsIssue</a>]</span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -838,7 +1126,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -854,7 +1142,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -873,7 +1161,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -924,7 +1212,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -946,7 +1234,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -968,7 +1256,7 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -991,9 +1279,9 @@ of the given type.</p><p>Following <a href="../params/generics/KeyType.html" cla
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.AnyRef" class="extype" name="scala.collection.immutable.List">AnyRef</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.4/scala/collection/immutable/List.html#scala.Any" class="extype" name="scala.collection.immutable.List">Any</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>
