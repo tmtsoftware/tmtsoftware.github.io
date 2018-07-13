@@ -162,6 +162,7 @@ tmtsoftware/csw-prod
     <li><a href="../services/location.html" class="page">Location Service</a></li>
     <li><a href="../services/config.html" class="page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
+    <li><a href="../services/event.html" class="page">Event Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -220,11 +221,13 @@ tmtsoftware/csw-prod
     private final CommandResponseManager commandResponseManager;
     private final CurrentStatePublisher currentStatePublisher;
     private final ILocationService locationService;
+    private final IEventService eventService;
     private ILogger log;
     private IConfigClientService configClient;
     private Map&lt;Connection, Optional&lt;JCommandService&gt;&gt; runningHcds;
     private ActorRef&lt;DiagnosticPublisherMessages&gt; diagnosticPublisher;
     private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
+    private ActorRef&lt;Event&gt; eventHandler;
 
     public JAssemblyComponentHandlers(
             akka.actor.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
@@ -242,11 +245,13 @@ tmtsoftware/csw-prod
         this.commandResponseManager = commandResponseManager;
         this.currentStatePublisher = currentStatePublisher;
         this.locationService = locationService;
+        this.eventService = eventService;
         log = loggerFactory.getLogger(this.getClass());
         configClient = JConfigClientFactory.clientApi(Adapter.toUntyped(ctx.getSystem()), locationService);
 
         runningHcds = new HashMap&lt;&gt;();
         commandResponseAdapter = TestProbe.&lt;CommandResponse&gt;create(ctx.getSystem()).ref();
+        eventHandler = ctx.spawnAnonymous(JEventHandlerFactory.make());
     }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
@@ -276,6 +281,7 @@ tmtsoftware/csw-prod
     private final CommandResponseManager commandResponseManager;
     private final CurrentStatePublisher currentStatePublisher;
     private final ILocationService locationService;
+    private final IEventService eventService;
     private ILogger log;
     private IConfigClientService configClient;
     private ConfigData hcdConfig;
@@ -299,6 +305,7 @@ tmtsoftware/csw-prod
         this.commandResponseManager = commandResponseManager;
         this.currentStatePublisher = currentStatePublisher;
         this.locationService = locationService;
+        this.eventService = eventService;
         log = loggerFactory.getLogger(this.getClass());
     }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
