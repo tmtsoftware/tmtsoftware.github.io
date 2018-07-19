@@ -170,6 +170,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -228,6 +229,7 @@ tmtsoftware/csw-prod
     private ActorRef&lt;DiagnosticPublisherMessages&gt; diagnosticPublisher;
     private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
     private ActorRef&lt;Event&gt; eventHandler;
+    private CompletableFuture&lt;IEventSubscriber&gt; subscriberF;
 
     public JAssemblyComponentHandlers(
             akka.actor.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
@@ -252,6 +254,7 @@ tmtsoftware/csw-prod
         runningHcds = new HashMap&lt;&gt;();
         commandResponseAdapter = TestProbe.&lt;CommandResponse&gt;create(ctx.getSystem()).ref();
         eventHandler = ctx.spawnAnonymous(JEventHandlerFactory.make());
+        subscriberF = eventService.defaultSubscriber();
     }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>

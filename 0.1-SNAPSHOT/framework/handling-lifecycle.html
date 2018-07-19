@@ -170,6 +170,7 @@ tmtsoftware/csw-prod
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -285,9 +286,6 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
             .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD)
             .findFirst();
 
-    // retrieve default subscriber from event service
-    CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
-
     // If an Hcd is found as a connection, resolve its location from location service and create other
     // required worker actors required by this assembly, also subscribe to HCD&#39;s filter wheel event stream
     return mayBeConnection.map(connection -&gt;
@@ -298,7 +296,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
                     runningHcds.put(connection, Optional.of(new JCommandService(hcdLocation.get(), ctx.getSystem())));
                     CompletableFuture&lt;IEventSubscription&gt; subscription = subscriberF.thenApply(subscriber -&gt; {
                         EventKey filterWheelEventKey = new EventKey(hcdLocation.get().prefix(), new EventName(&quot;filter_wheel&quot;));
-                        return subscriber.subscribeActorRef(Collections.singleton(filterWheelEventKey), eventHandler, Duration.ofMillis(100), SubscriptionModes.jRateAdapterMode());
+                        return subscriber.subscribeActorRef(Collections.singleton(filterWheelEventKey), eventHandler);
                     });
                 }
                 diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisherFactory.make(new JCommandService(hcdLocation.get(), ctx.getSystem()), workerActor));
