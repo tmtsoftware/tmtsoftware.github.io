@@ -113,10 +113,40 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../../index.html"><span class="name">event</span></a>
+        <a title="This module implements an Event Service responsible for publishing an csw.messages.events.Event or subscribing to an csw.messages.events.Event." href="../../index.html"><span class="name">event</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
+      <p class="shortcomment cmt">This module implements an Event Service responsible for publishing an <a href="../../../../messages/events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> or subscribing to an <a href="../../../../messages/events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a>.</p><div class="fullcomment"><div class="comment cmt"><h4> Event Service </h4><p>This module implements an Event Service responsible for publishing an <a href="../../../../messages/events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a> or subscribing to an <a href="../../../../messages/events/Event.html" class="extype" name="csw.messages.events.Event">csw.messages.events.Event</a>.
+An event is published on a <a href="../../../../messages/events/EventKey.html" class="extype" name="csw.messages.events.EventKey">csw.messages.events.EventKey</a>. The event key is composed of a <a href="../../../../messages/params/models/Prefix.html" class="extype" name="csw.messages.params.models.Prefix">csw.messages.params.models.Prefix</a> depicting the source and an <a href="../../../../messages/events/EventName.html" class="extype" name="csw.messages.events.EventName">csw.messages.events.EventName</a>.
+The subscriber can subscribe to the <a href="../../../../messages/events/EventKey.html" class="extype" name="csw.messages.events.EventKey">csw.messages.events.EventKey</a> to receive all events published on the Key.</p><h5> Example: Event Service </h5><pre><span class="kw">val</span> eventServiceFactory          = <span class="kw">new</span> EventServiceFactory()
+<span class="kw">val</span> eventService: EventService   = eventServiceFactory.make(locationService)</pre><p>Using above code, you can create instance of <a href="../scaladsl/EventService.html" class="extype" name="csw.services.event.api.scaladsl.EventService">csw.services.event.api.scaladsl.EventService</a>. EventService is the factory to create publishers and subscribers.</p><p>You can choose to use defaultPublisher in case you want to share same connection for publishing different events.</p><h5> Example: Event Publisher </h5><p>Event Publisher provides asynchronous APIs to publish one or more Events</p><pre><span class="kw">val</span> event = SystemEvent(prefix, EventName(<span class="lit">"filter_wheel"</span>))
+
+async {
+  <span class="kw">val</span> publisher    = await(eventService.defaultPublisher)
+  publisher.publish(event)
+}</pre><h5> Example: Event Subscriber (subscribe and get API) </h5><p>Event Subscriber provides asynchronous APIs to subscribe to one or more Event Keys.
+It also provides APIs to subscribe using a pattern.
+In addition, there are APIs to <code>get</code> latest events for one ore more Event Keys without making a subscription</p><p>The EventSubscriber provides various API's to subscribe to <a href="../../../../messages/events/EventKey.html" class="extype" name="csw.messages.events.EventKey">csw.messages.events.EventKey</a>.
+One of such a subscribe method takes an ActorRef of an arbitrary actor or a callback function to be called
+when an event matching the given <a href="../../../../messages/events/EventKey.html" class="extype" name="csw.messages.events.EventKey">csw.messages.events.EventKey</a> is received. In the example below, we only provide the callback
+argument value. You could also provide an ActorRef of some actor that should receive the Event message.</p><pre> <span class="kw">def</span> callback(ev: Event): <span class="std">Unit</span> = {
+   <span class="cmt">// ...</span>
+ }
+
+ async {
+   <span class="kw">val</span> subscriber    = await(eventService.defaultSubscriber)
+   subscriber.subscribeCallback(<span class="std">Set</span>(EventKey(prefix, EventName(<span class="lit">"filter_wheel"</span>))), callback)
+
+   <span class="kw">val</span> event = await(subscriber.get(event.eventKey))
+
+   event <span class="kw">match</span> {
+     <span class="kw">case</span> e: ObserveEvent <span class="kw">=&gt;</span> assert(e.prefix == expectedPrefix)
+     <span class="kw">case</span> _               <span class="kw">=&gt;</span> fail(<span class="lit">"Expected ObserveEvent"</span>)
+   }
+}</pre><p><code>csw-prod</code> provides two implementations for Event Service which can be accessed through <code>csw-event-client</code> :
+1. <a href="../../internal/redis/RedisEventService.html" class="extype" name="csw.services.event.internal.redis.RedisEventService">csw.services.event.internal.redis.RedisEventService</a> - Redis as event store and publisher/subscriber functionality
+2. <a href="../../internal/kafka/KafkaEventService.html" class="extype" name="csw.services.event.internal.kafka.KafkaEventService">csw.services.event.internal.kafka.KafkaEventService</a> - Kafka as event store and publisher/subscriber functionality</p><p>Complete guide of usage of different API's provided by EventService is available at:
+https://tmtsoftware.github.io/csw-prod/services/event.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../index.html" class="extype" name="csw.services">services</a></dd></dl></div>
     </li><li name="csw.services.event.api" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="api"></a><a id="api:api"></a>
       <span class="permalink">
