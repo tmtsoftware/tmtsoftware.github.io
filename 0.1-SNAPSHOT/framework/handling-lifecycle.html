@@ -251,9 +251,6 @@ tmtsoftware/csw-prod
   // 4. If an Hcd is found as a connection, resolve its location from location service and create other
   // required worker actors required by this assembly
 
-  // 5. retrieve default subscriber from event service
-  val subscriber = await(eventService.defaultSubscriber)
-
   maybeConnection match {
     case Some(_) ⇒
       resolveHcd().map {
@@ -261,8 +258,6 @@ tmtsoftware/csw-prod
           runningHcds = runningHcds.updated(maybeConnection.get, Some(new CommandService(hcd)(ctx.system)))
           diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.make(runningHcds(maybeConnection.get).get, worker))
           commandHandler = ctx.spawnAnonymous(CommandHandler.make(calculationConfig, runningHcds(maybeConnection.get)))
-          // subscribe to HCD&#39;s filter_wheel event stream
-          subscriber.subscribeActorRef(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))), eventHandler)
         case None ⇒ // do something
       }
     case None ⇒ Future.successful(Unit)
@@ -287,17 +282,12 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
             .findFirst();
 
     // If an Hcd is found as a connection, resolve its location from location service and create other
-    // required worker actors required by this assembly, also subscribe to HCD&#39;s filter wheel event stream
     return mayBeConnection.map(connection -&gt;
             worker.thenAcceptBoth(resolveHcd(), (workerActor, hcdLocation) -&gt; {
                 if (!hcdLocation.isPresent())
                     throw new HcdNotFoundException();
                 else {
                     runningHcds.put(connection, Optional.of(new JCommandService(hcdLocation.get(), ctx.getSystem())));
-                    CompletableFuture&lt;IEventSubscription&gt; subscription = subscriberF.thenApply(subscriber -&gt; {
-                        EventKey filterWheelEventKey = new EventKey(hcdLocation.get().prefix(), new EventName(&quot;filter_wheel&quot;));
-                        return subscriber.subscribeActorRef(Collections.singleton(filterWheelEventKey), eventHandler);
-                    });
                 }
                 diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisherFactory.make(new JCommandService(hcdLocation.get(), ctx.getSystem()), workerActor));
             })).get();

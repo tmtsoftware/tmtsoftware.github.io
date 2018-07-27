@@ -238,19 +238,14 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
   <dt>Hcd/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = trackingEvent match {
-  case LocationUpdated(location) if location.connection == EventServiceConnection.value ⇒ startPublishingEvents()
-  case LocationUpdated(location)                                                        ⇒ // do something for the tracked location when it is updated
-  case LocationRemoved(connection)                                                      ⇒ // do something for the tracked location when it is no longer available
+  case LocationUpdated(location)   ⇒ // do something for the tracked location when it is updated
+  case LocationRemoved(connection) ⇒ // do something for the tracked location when it is no longer available
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
 public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
-    // start publishing events when event service is up
-    if (trackingEvent instanceof LocationUpdated &amp;&amp; trackingEvent.connection().name().equals(EventServiceConnection.value().name())) {
-        CompletableFuture&lt;Cancellable&gt; cancellableF = startPublishingEvents();
-        // stop publishing by calling cancellableF.thenApply(Cancellable::cancel)
-    } else if (trackingEvent instanceof LocationUpdated) {
+    if (trackingEvent instanceof LocationUpdated) {
         // do something for the tracked location when it is updated
     } else if (trackingEvent instanceof LocationRemoved) {
         // do something for the tracked location when it is no longer available

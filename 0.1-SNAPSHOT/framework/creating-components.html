@@ -228,8 +228,6 @@ tmtsoftware/csw-prod
     private Map&lt;Connection, Optional&lt;JCommandService&gt;&gt; runningHcds;
     private ActorRef&lt;DiagnosticPublisherMessages&gt; diagnosticPublisher;
     private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
-    private ActorRef&lt;Event&gt; eventHandler;
-    private CompletableFuture&lt;IEventSubscriber&gt; subscriberF;
 
     public JAssemblyComponentHandlers(
             akka.actor.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
@@ -239,7 +237,6 @@ tmtsoftware/csw-prod
             ILocationService locationService,
             IEventService eventService,
             JLoggerFactory loggerFactory
-
     ) {
         super(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, eventService, loggerFactory);
         this.ctx = ctx;
@@ -253,8 +250,6 @@ tmtsoftware/csw-prod
 
         runningHcds = new HashMap&lt;&gt;();
         commandResponseAdapter = TestProbe.&lt;CommandResponse&gt;create(ctx.getSystem()).ref();
-        eventHandler = ctx.spawnAnonymous(JEventHandlerFactory.make());
-        subscriberF = eventService.defaultSubscriber();
     }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
