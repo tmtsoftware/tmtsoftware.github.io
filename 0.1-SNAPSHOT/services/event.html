@@ -357,45 +357,84 @@ subscriberF.thenApply(subscriber -&gt; {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
+  <pre class="prettyprint"><code class="language-scala">def subscribe(): Future[Unit] = async {
   val subscriber = await(eventService.defaultSubscriber)
+  subscriber.subscribeAsync(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))), callback)
+}
 
-  subscriber.subscribeAsync(
-    Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))),
-    event ⇒ Future.successful { /*do something*/ }
-  )
+private def callback(event: Event): Future[String] = {
+  /* do something */
+  Future.successful(&quot;some value&quot;)
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
+  <pre class="prettyprint"><code class="language-java">public CompletableFuture&lt;IEventSubscription&gt; subscribe() {
+    CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
 
-subscriberF.thenApply(subscriber -&gt; {
-    EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-    return subscriber.subscribeAsync(Collections.singleton(filterWheelEventKey), CompletableFuture::completedFuture);
-});
-</code></pre></dd>
+    return subscriberF.thenApply(subscriber -&gt; {
+        EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
+        return subscriber.subscribeAsync(Collections.singleton(filterWheelEventKey), this::callback);
+    });
+}
+
+private CompletableFuture&lt;String&gt; callback(Event event) {
+    /* do something */
+    return CompletableFuture.completedFuture(&quot;some value&quot;);
+}</code></pre></dd>
 </dl>
 <h3><a href="#with-actorref" name="with-actorref" class="anchor"><span class="anchor-link"></span></a>With ActorRef</h3>
 <p>If there is a need to mutate state on receiving each event, then it is recommended to use this API. To use this API, you have to create an actor which takes event and then you can safely keep mutable state inside this actor. In the example shown below, <code>eventHandler</code> is the actorRef which accepts events. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
+  <pre class="prettyprint"><code class="language-scala">def subscribe(ctx: ActorContext[TopLevelActorMessage]): Future[Unit] = async {
   val subscriber                    = await(eventService.defaultSubscriber)
   val eventHandler: ActorRef[Event] = ctx.spawnAnonymous(EventHandler.make())
 
   subscriber.subscribeActorRef(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))), eventHandler)
+}
+
+object EventHandler {
+  def make(): Behavior[Event] = Behaviors.setup(ctx ⇒ new EventHandler(ctx))
+}
+
+class EventHandler(ctx: ActorContext[Event]) extends MutableBehavior[Event] {
+  override def onMessage(msg: Event): Behavior[Event] = {
+    // handle messages
+    Behaviors.same
+  }
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
-ActorRef&lt;Event&gt; eventHandler = ctx.spawnAnonymous(JEventHandlerFactory.make());
+  <pre class="prettyprint"><code class="language-java">public CompletableFuture&lt;IEventSubscription&gt; subscribe(ActorContext&lt;TopLevelActorMessage&gt; ctx) {
 
-subscriberF.thenApply(subscriber -&gt; {
-    EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-    return subscriber.subscribeActorRef(Collections.singleton(filterWheelEventKey), eventHandler);
-});
-</code></pre></dd>
+    CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
+    ActorRef&lt;Event&gt; eventHandler = ctx.spawnAnonymous(new JEventHandlerFactory().make());
+
+    return subscriberF.thenApply(subscriber -&gt; {
+        EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
+        return subscriber.subscribeActorRef(Collections.singleton(filterWheelEventKey), eventHandler);
+    });
+}
+
+public class JEventHandlerFactory {
+    public Behavior&lt;Event&gt; make() {
+        return Behaviors.setup(JEventHandler::new);
+    }
+}
+
+public class JEventHandler extends MutableBehavior&lt;Event&gt; {
+    private ActorContext&lt;Event&gt; ctx;
+    JEventHandler(ActorContext&lt;Event&gt; context) {
+        ctx = context;
+    }
+
+    @Override
+    public Behaviors.Receive&lt;Event&gt; createReceive() {
+        // handle messages
+        return null;
+    }
+}</code></pre></dd>
 </dl>
 <h3><a href="#receive-event-stream" name="receive-event-stream" class="anchor"><span class="anchor-link"></span></a>Receive Event Stream</h3>
 <p>This API takes a set of Event keys to subscribe to and returns a Source of events. This API gives more control to the user to customize behavior of the event stream.</p>
@@ -480,14 +519,7 @@ subscriberF.thenApply(subscriber -&gt; subscriber.pSubscribeCallback(subsystem, 
   <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/java/?csw/services/event/api/javadsl/IEventSubscriber.html">IEventSubscriber</a></li>
 </ul>
 <h2><a href="#create-event-service" name="create-event-service" class="anchor"><span class="anchor-link"></span></a>Create Event Service</h2>
-<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/api/scaladsl/EventService.html">EventService</a> using <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/EventServiceFactory.html">EventServiceFactory</a>. </p>
-<p>Event service supports following two event stores:</p>
-<ul>
-  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/models/EventStores/EventStores$$RedisStore.html">RedisStore</a> : This is the default and recommended store.</li>
-  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/models/EventStores/EventStores$$KafkaStore$.html">KafkaStore</a> : Not recommended. You should not use this unless you have strong reasons to do so.</li>
-</ul>
-<h3><a href="#default-event-service" name="default-event-service" class="anchor"><span class="anchor-link"></span></a>Default Event Service</h3>
-<p>Default event service is backed up by RedisStore.</p>
+<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/api/scaladsl/EventService.html">EventService</a> using <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/EventServiceFactory.html">EventServiceFactory</a>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -504,46 +536,34 @@ IEventService eventService1 = new EventServiceFactory().jMake(locationService, a
 // create event service using host and port of event server.
 IEventService eventService2 = new EventServiceFactory().jMake(&quot;localhost&quot;, 26379, actorSystem);</code></pre></dd>
 </dl>
-<h3><a href="#event-service-with-redis-store" name="event-service-with-redis-store" class="anchor"><span class="anchor-link"></span></a>Event Service with Redis Store</h3>
-<p>You can optionally supply a RedisClient to the EventStore from outside which allows you to customize the behaviour of RedisClient used by Event Service which in most of the cases will be required in test scope only. </p>
+<p>Event service is backed up by Redis. Above example demonstrates creation of event service with default redis client options. You can optionally supply a RedisClient to the EventStore from outside which allows you to customize the behaviour of RedisClient used by Event Service which in most of the cases will be required in test scope only. </p>
 <p>RedisClient is an expensive resource. Reuse this instance as much as possible.</p>
 <p>Note that it is the responsibility of consumer of this API to shutdown Redis Client when it is no longer in use.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">// create event service using location service
+  <pre class="prettyprint"><code class="language-scala"><br/>val clientOptions = ClientOptions.builder().disconnectedBehavior(DisconnectedBehavior.REJECT_COMMANDS).build
+val redisClient   = RedisClient.create()
+redisClient.setOptions(clientOptions)
+
+// create event service using location service
 val eventService1: EventService = new EventServiceFactory(RedisStore(redisClient)).make(locationService)
 
 // create event service using host and port of event server.
 val eventService2: EventService = new EventServiceFactory(RedisStore(redisClient)).make(&quot;localhost&quot;, 26379)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">EventStores.RedisStore redisStore = new EventStores.RedisStore(redisClient);
+  <pre class="prettyprint"><code class="language-java">ClientOptions clientOptions = ClientOptions.builder().disconnectedBehavior(ClientOptions.DisconnectedBehavior.REJECT_COMMANDS).build();
+RedisClient redisClient   = RedisClient.create();
+redisClient.setOptions(clientOptions);
+
+EventStores.RedisStore redisStore = new EventStores.RedisStore(redisClient);
 // create event service using location service
 IEventService eventService1 = new EventServiceFactory(redisStore).jMake(locationService, actorSystem);
 
 // create event service using host and port of event server.
 IEventService eventService2 = new EventServiceFactory(redisStore).jMake(&quot;localhost&quot;, 26379, actorSystem);</code></pre></dd>
 </dl>
-<h3><a href="#event-service-with-kafka-store" name="event-service-with-kafka-store" class="anchor"><span class="anchor-link"></span></a>Event Service with Kafka Store</h3>
-<p>Event Service supports Kafka store but it does not meet TMT&rsquo;s performance requirements and hence not recommended for production use. </p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">// create event service using location service
-val eventService1: EventService = new EventServiceFactory(KafkaStore).make(locationService)
-
-// create event service using host and port of event server.
-val eventService2: EventService = new EventServiceFactory(KafkaStore).make(&quot;localhost&quot;, 26379)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">// create event service using location service
-IEventService eventService1 = new EventServiceFactory(EventStores.jKafkaStore()).jMake(locationService, actorSystem);
-
-// create event service using host and port of event server.
-IEventService eventService2 = new EventServiceFactory(EventStores.jKafkaStore()).jMake(&quot;localhost&quot;, 26379, actorSystem);</code></pre></dd>
-</dl><div class="callout warning "><div class="callout-title">Warning</div>
-<p>Do not use Kafka Store for production purpose. </p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/event.md" title="Edit this page" class="md-source-file md-edit">
