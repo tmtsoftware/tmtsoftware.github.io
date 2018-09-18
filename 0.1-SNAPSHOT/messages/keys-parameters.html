@@ -163,14 +163,16 @@ tmtsoftware/csw-prod
     <li><a href="../services/config.html" class="page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
+    <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
     <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
+    <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -336,9 +338,9 @@ val head: Short = paramWithShorts1.head</code></pre></dd>
   <dd>
   <pre class="prettyprint"><code class="language-java">//making 3 keys
 String keyName = &quot;encoder&quot;;
-Key&lt;Boolean&gt; k1 = JKeyTypes.BooleanKey().make(keyName);
-Key&lt;Short&gt; k2 = JKeyTypes.ShortKey().make(keyName);
-Key&lt;String&gt; k3 = JKeyTypes.StringKey().make(keyName);
+Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(keyName);
+Key&lt;Short&gt; k2 = JKeyType.ShortKey().make(keyName);
+Key&lt;String&gt; k3 = JKeyType.StringKey().make(keyName);
 
 //storing a single value
 Parameter&lt;Boolean&gt; booleanParam = k1.set(true);
@@ -437,7 +439,7 @@ Double[] arr1 = {1.0, 2.0, 3.0, 4.0, 5.0};
 Double[] arr2 = {10.0, 20.0, 30.0, 40.0, 50.0};
 
 //keys
-Key&lt;ArrayData&lt;Double&gt;&gt; filterKey = JKeyTypes.DoubleArrayKey().make(&quot;filter&quot;);
+Key&lt;ArrayData&lt;Double&gt;&gt; filterKey = JKeyType.DoubleArrayKey().make(&quot;filter&quot;);
 
 //Store some values using helper method in ArrayData
 Parameter&lt;ArrayData&lt;Double&gt;&gt; p1 = filterKey.set(ArrayData.fromJavaArray(arr1), ArrayData.fromJavaArray(arr2));
@@ -526,7 +528,7 @@ Byte[][] m1 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 Byte[][] m2 = {{1, 2, 3, 4, 5}, {10, 20, 30, 40, 50}};
 
 //keys
-Key&lt;MatrixData&lt;Byte&gt;&gt; encoderKey = JKeyTypes.ByteMatrixKey().make(&quot;encoder&quot;);
+Key&lt;MatrixData&lt;Byte&gt;&gt; encoderKey = JKeyType.ByteMatrixKey().make(&quot;encoder&quot;);
 
 //Store some values using helper method in ArrayData
 Parameter&lt;MatrixData&lt;Byte&gt;&gt; p1 = encoderKey.set(
@@ -612,8 +614,8 @@ val values: Array[Choice] = p2.values
 final Choices choices = Choices.from(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);
 
 //keys
-GChoiceKey choice1Key = JKeyTypes.ChoiceKey().make(&quot;mode&quot;, choices);
-GChoiceKey choice2Key = JKeyTypes.ChoiceKey().make(
+GChoiceKey choice1Key = JKeyType.ChoiceKey().make(&quot;mode&quot;, choices);
+GChoiceKey choice2Key = JKeyType.ChoiceKey().make(
         &quot;mode-reset&quot;,
         Choices.fromChoices(
                 new Choice(&quot;c&quot;),
@@ -668,7 +670,7 @@ RaDec raDec1 = new RaDec(1.0, 2.0);
 RaDec raDec2 = new RaDec(3.0, 4.0);
 
 //keys
-Key&lt;RaDec&gt; raDecKey = JKeyTypes.RaDecKey().make(&quot;raDecKey&quot;);
+Key&lt;RaDec&gt; raDecKey = JKeyType.RaDecKey().make(&quot;raDecKey&quot;);
 
 //store values
 Parameter&lt;RaDec&gt; p1 = raDecKey.set(raDec1);
@@ -735,11 +737,11 @@ assert(missingKeySet === Set(&quot;ra&quot;, &quot;missingKey&quot;))
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//keys
-Key&lt;Struct&gt; skey = JKeyTypes.StructKey().make(&quot;myStruct&quot;);
+Key&lt;Struct&gt; skey = JKeyType.StructKey().make(&quot;myStruct&quot;);
 
-Key&lt;String&gt; ra = JKeyTypes.StringKey().make(&quot;ra&quot;);
-Key&lt;String&gt; dec = JKeyTypes.StringKey().make(&quot;dec&quot;);
-Key&lt;Double&gt; epoch = JKeyTypes.DoubleKey().make(&quot;epoch&quot;);
+Key&lt;String&gt; ra = JKeyType.StringKey().make(&quot;ra&quot;);
+Key&lt;String&gt; dec = JKeyType.StringKey().make(&quot;dec&quot;);
+Key&lt;Double&gt; epoch = JKeyType.DoubleKey().make(&quot;epoch&quot;);
 
 //initialize struct
 Struct struct1 = new Struct().madd(
@@ -766,9 +768,9 @@ Struct head = p1.head();
 List&lt;Struct&gt; structs = p2.jValues();
 
 //get individual keys
-Optional&lt;Parameter&lt;String&gt;&gt; firstKey = struct1.jGet(JKeyTypes.StringKey().make(&quot;ra&quot;));
-Optional&lt;Parameter&lt;String&gt;&gt; secondKey = struct1.jGet(&quot;dec&quot;, JKeyTypes.StringKey());
-Optional&lt;Parameter&lt;Double&gt;&gt; thirdKey = struct1.jGet(&quot;epoch&quot;, JKeyTypes.DoubleKey());
+Optional&lt;Parameter&lt;String&gt;&gt; firstKey = struct1.jGet(JKeyType.StringKey().make(&quot;ra&quot;));
+Optional&lt;Parameter&lt;String&gt;&gt; secondKey = struct1.jGet(&quot;dec&quot;, JKeyType.StringKey());
+Optional&lt;Parameter&lt;Double&gt;&gt; thirdKey = struct1.jGet(&quot;epoch&quot;, JKeyType.DoubleKey());
 
 //access parameter using &#39;parameter&#39; and &#39;apply&#39; method
 boolean bSuccess = struct1.parameter(ra) == struct1.apply(ra);
@@ -778,13 +780,13 @@ Struct mutated1 = struct1.remove(ra); //using key
 Struct mutated2 = struct1.remove(firstKey.get());
 
 //find out missing keys
-Set&lt;String&gt; missingKeySet = mutated1.jMissingKeys(ra, dec, epoch, JKeyTypes.StringKey().make(&quot;someRandomKey&quot;));
+Set&lt;String&gt; missingKeySet = mutated1.jMissingKeys(ra, dec, epoch, JKeyType.StringKey().make(&quot;someRandomKey&quot;));
 List&lt;String&gt; expectedMissingKeys = Arrays.asList(&quot;ra&quot;, &quot;someRandomKey&quot;);</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/KeysAndParametersTest.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JKeysAndParametersTest.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/messages/KeysAndParametersTest.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/messages/JKeysAndParametersTest.java">Java Example</a></li>
 </ul>
 </div>
 <div>

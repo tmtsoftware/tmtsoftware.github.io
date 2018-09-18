@@ -163,14 +163,16 @@ tmtsoftware/csw-prod
     <li><a href="../services/config.html" class="active page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
+    <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
     <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
+    <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -278,14 +280,14 @@ tmtsoftware/csw-prod
 </ul>
 <h2><a href="#api-flavors" name="api-flavors" class="anchor"><span class="anchor-link"></span></a>API Flavors</h2>
 <p>The Configuration Service is used to provide the runtime settings for components. When a component is started, it will use a limited &ldquo;clientAPI&rdquo; to obtain the &ldquo;active&rdquo; configuration from the Configuration Service, and use those settings for its execution.</p>
-<p>To change the active configuration, an administrative tool with access to the full &ldquo;admin API&rdquo; must be used. These tools would have the ability to create, delete, and update configurations, as well as retrieve past configurations and their history. Any time a new configuration is to be used by a component, the user must use one of these tools (via <a href="../apps/cswconfigclientcli.html">CLI</a>, perhaps) to set the active configuration for a component. Since a history of active configurations is maintained by the service, the settings of each component each time it is run can be retrieved, and the system configuration at any moment can be recreated.</p>
+<p>To change the active configuration, an administrative tool with access to the full &ldquo;admin API&rdquo; must be used. These tools would have the ability to create, delete, and update configurations, as well as retrieve past configurations and their history. Any time a new configuration is to be used by a component, the user must use one of these tools (via <a href="../apps/cswconfigcli.html">CLI</a>, perhaps) to set the active configuration for a component. Since a history of active configurations is maintained by the service, the settings of each component each time it is run can be retrieved, and the system configuration at any moment can be recreated.</p>
 <ul>
   <li><strong>clientAPI</strong> : Must be used in Assembly and HCD components. Available functions are: <code>{exists | getActive}</code></li>
   <li><strong>adminAPI</strong> : Full functionality exposed by Configuration Service Server is available with this API. Expected to be used administrators. Available functions are: <code>{create | update | getById | getLatest | getByTime | delete | list | history | historyActive | setActiveVersion | resetActiveVersion | getActiveVersion | getActiveByTime | getMetadata | exists | getActive}</code></li>
 </ul><div class="callout warning "><div class="callout-title">Component developers must use clientAPI.</div></div>
 <h2><a href="#accessing-clientapi-and-adminapi" name="accessing-clientapi-and-adminapi" class="anchor"><span class="anchor-link"></span></a>Accessing clientAPI and adminAPI</h2>
 <p>ConfigClientFactory exposes functions to get clientAPI and adminAPI. Both the functions require Location Service instance which is used to resolve ConfigServer.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>Components should only use the client API. The Admin API may be used from an engineering user interface. The <a href="../apps/cswconfigclientcli.html">CSW Config Client CLI application</a> is provided with this functionality.</p></div>
+<p>Components should only use the client API. The Admin API may be used from an engineering user interface. The <a href="../apps/cswconfigcli.html">CSW Config Client CLI application</a> is provided with this functionality.</p></div>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -848,8 +850,8 @@ Assert.assertNotEquals(metadata.repoPath(), &quot;&quot;);</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/config/ConfigClientExampleTest.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/config/JConfigClientExampleTest.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/config/ConfigClientExampleTest.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/config/JConfigClientExampleTest.java">Java Example</a></li>
 </ul>
 </div>
 <div>

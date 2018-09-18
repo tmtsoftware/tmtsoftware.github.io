@@ -163,14 +163,16 @@ tmtsoftware/csw-prod
     <li><a href="../services/config.html" class="page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="active page">Event Service</a></li>
+    <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
     <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
+    <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -223,9 +225,10 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#event-service" name="event-service" class="anchor"><span class="anchor-link"></span></a>Event Service</h1>
-<p>The Event Service implements the <a href="https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern">publish/subscribe messaging paradigm</a> where one component publishes an event and all components that have subscribed receive the event. The advantage of this type of message system is that publishers and subscribers are decoupled. This decoupling of publishers and subscribers can allow for greater scalability and a more dynamic network topology. Publishers can publish regardless of whether there are subscribers, and subscribers can subscribe even if there are no publishers. The relationship between publishers and subscribers can be one-to-one, one-to-many, many to one, or even many-to-many. </p>
-<p>Event Service is optimized for the high performance requirements of event streams which support multiple streams with varying rates, for ex. 100 Hz, 50 Hz etc. In the TMT control system, event streams are created as an output of a calculation by one component for the input to a calculation in one or more other components. Event streams often consist of events that are published at a specific rate. These events are transient. Historical events are not stored/persisted. </p>
-<p>The Event Service provides an API that allows <a href="../messages/events.html">Event</a>s to be created and published as well as allows clients to subscribe and unsubscribe to specific types of events.</p>
+<p>The Event Service implements the <a href="https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern">publish/subscribe messaging paradigm</a> where one component publishes an event and all components that have subscribed receive the event. In CSW, the events published are described under the messages documentation <a href="../messages/events.html">here</a>. One advantage of this type of message system and Event Service also is that publishers and subscribers are decoupled. This decoupling of publishers and subscribers can allow for greater scalability and a more dynamic network topology. Publishers can publish regardless of whether there are subscribers, and subscribers can subscribe even if there are no publishers. The relationship between publishers and subscribers can be one-to-one, one-to-many, many to one, or even many-to-many. </p>
+<p>Event Service is optimized for the high performance requirements of events as demands with varying rates, for ex. 100 Hz, 50 Hz etc., but can also be used with events that are published infrequently or when values change. In the TMT control system, events may be created as the output of a calculation by one component for the input to a calculation in one or more other components. Demand events often consist of events that are published at a specific rate.</p>
+<p>The Event Service provides an API that allows events to be published and also allows clients to subscribe and unsubscribe to specific events and call developer code when events are received.</p>
+<p>Event Service also stores the most recent published event for every unique event by prefix and name. This is useful for publishing components when an event contains state information that changes. Other components needing to check the state can do so without the overhead of subscribing. </p>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>If you already have a dependency on <code>csw-framework</code> in your <code>build.sbt</code>, then you can skip this as <code>csw-framework</code> depends on <code>csw-event-client</code> Otherwise add below dependency in your <code>build.sbt</code></p>
 <dl>
@@ -236,55 +239,52 @@ tmtsoftware/csw-prod
 </dl>
 <h2><a href="#accessing-event-service" name="accessing-event-service" class="anchor"><span class="anchor-link"></span></a>Accessing Event Service</h2>
 <p>When you create component handlers using <code>csw-framework</code> as explained <a href="../framework/creating-components.html">here</a>, you get a handle to <code>EventService</code> which is created by <code>csw-framework</code></p>
-<p>Using <code>EventService</code> you can start publishing or subscribing to events. <code>EventService</code> injected in component handlers via <code>csw-framwework</code> provides following features: </p>
-<ul>
-  <li>
-  <p>Access to <code>defaultPublisher</code>: Using <code>defaultPublisher</code>, you can publish event or stream of events to event server. In most of the cases, you should use <code>defaultPublisher</code>, because you can then pass the instance of <code>EventService</code> in worker actors or different places in your code and call <code>eventService.defaultPublisher</code> to access publisher. This way you reuse same instance of <code>EventPublisher</code> which means all events published via <code>defaultPublisher</code> go through same TCP connection.</p></li>
-  <li>
-  <p>Access to <code>defaultSubscriber</code>: Using <code>defaultSubscriber</code>, you can subscribe to specific event keys. You can share <code>defaultSubscriber</code> same way like <code>defaultPublisher</code> by passing instance of <code>EventService</code> to different parts of your code. Unlike <code>defaultPublisher</code>, each subscription <code>defaultSubscriber.subscribe</code> call creates a new TCP connection. This behavior is similar either you use <code>defaultSubscriber</code> or <code>makeNewSubscriber</code> call on <code>EventService</code>. But whenever you create a new <code>EventSubscriber</code>, it creates one more TCP connection which is used to get latest event from event server (Note that this is a different connection than the one which gets created on subscription). That means, with <code>defaultSubscriber</code>, you are sharing same connection for getting latest events and creating a new connection for each subscribe call.</p></li>
-  <li>
-  <p>Create new <code>Publisher</code> or <code>Subscriber</code>: Whenever a new publisher or subscriber is created, location of event service is resolved. So, in case your event server goes down, and you wish to re-resolve the event server location, you would make a call to <code>makeNewPublisher</code> or <code>makeNewSubscriber</code> instead of using the <code>defaultPublisher</code> and <code>defaultSubscriber</code>. Apart from the above mentioned scenario, one can choose to create a new publisher in case of high frequency event streams to dedicate a separate connection to demanding streams without affecting the performance of all other low frequency (for ex. 1Hz, 20Hz etc.) event streams.</p></li>
-</ul>
+<p>Using <code>EventService</code> you can start publishing or subscribing to events. <code>EventService</code> is injected in component handlers via <code>csw-framwework</code> and provides the following features: </p>
+<p><strong>Access to <code>defaultPublisher</code></strong>: Using <code>defaultPublisher</code> in <code>EventService</code>, you can publish a single event or a stream of demand events to Event Service. In most cases, you should use <code>defaultPublisher</code>, because you can then pass the instance of <code>EventService</code> in worker actors or different places in your code and call <code>eventService.defaultPublisher</code> to access publisher. Each <code>EventPublisher</code> has its own TCP connection to the Event Service. When you reuse the <code>defaultPublisher</code> instance of <code>EventPublisher</code>, all events published go through same TCP connection. </p>
+<p><strong>Access to <code>defaultSubscriber</code></strong>: Using <code>defaultSubscriber</code>, you can subscribe to specific event keys. You can share <code>defaultSubscriber</code> in the same way as <code>defaultPublisher</code> by passing an instance of <code>EventService</code> to different parts of your code. Unlike <code>defaultPublisher</code>, each subscription with <code>defaultSubscriber.subscribe</code> creates a new TCP connection for just that subscription. This behavior is the same whether you use <code>defaultSubscriber</code> or <code>makeNewSubscriber</code> call on <code>EventService</code>.</p>
+<p>Each <code>EventSubscriber</code> also has one TCP connection that is used to provide the latest event from the event server when subscribing and also for the explicit <code>get</code> calls. That means, with <code>defaultSubscriber</code>, you are sharing same connection for getting latest events and creating a new connection for each subscribe call. The underlying event server can handle many connections, but it is good to understand how connections are used and reused.</p>
+<p><strong>Creating a new <code>Publisher</code> or <code>Subscriber</code></strong>: The <code>makeNewPublisher</code> API of Event Service can be used to create a new publisher which would internally create a new TCP connection to the Event Store. One of the use cases of this API could be to publish high frequency event streams in order to dedicate a separate connection to demanding streams without affecting the performance of all other low frequency (for ex. 1Hz, 20Hz etc.) event streams.</p>
+<p>However, <code>makeNewSubscriber</code> API does not really have any specific use cases. Both <code>defaultSubscriber</code> and <code>makeNewSubscriber</code> APIs behave almost similar since the <code>subscribe</code> API of EventService itself creates a new connection for every subscription. Prefer using <code>defaultSubscriber</code> over <code>makeNewSubscriber</code>.</p>
 <h2><a href="#usage-of-eventpublisher" name="usage-of-eventpublisher" class="anchor"><span class="anchor-link"></span></a>Usage of EventPublisher</h2>
 <p>Below examples demonstrate the usage of multiple variations of publish API.</p>
 <h3><a href="#for-single-event" name="for-single-event" class="anchor"><span class="anchor-link"></span></a>For Single Event</h3>
-<p>This is the simplest API to publish a single event. It returns a Future which will complete successfully if the event is published or fail with a <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/api/exceptions/PublishFailure.html">PublishFailure</a> exception.</p>
+<p>This is the simplest API to publish a single event. It returns a Future which will complete successfully if the event is published or fail immediately with a <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/event/api/exceptions/PublishFailure.html">PublishFailure</a> exception if the component cannot publish the event.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
-  val publisher = await(eventService.defaultPublisher)
+  <pre class="prettyprint"><code class="language-scala">{
+  val publisher = eventService.defaultPublisher
   val event     = SystemEvent(componentInfo.prefix, EventName(&quot;filter_wheel&quot;))
   publisher.publish(event)
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">Event event = new SystemEvent(componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;));
-eventService.defaultPublisher().thenApply(publisher -&gt; publisher.publish(event));</code></pre></dd>
+eventService.defaultPublisher().publish(event);</code></pre></dd>
 </dl>
 <h3><a href="#with-generator" name="with-generator" class="anchor"><span class="anchor-link"></span></a>With Generator</h3>
-<p>Below example demonstrates the usage of publish API with event generator which will publish one event at each <code>interval</code>. <code>eventGenerator</code> is a function responsible for generating events. It can hold domain specific logic of generating new events based on certain conditions.</p>
+<p>A generator is useful when component code needs to publish events with a specific frequency. The following example demonstrates the usage of publish API with event generator which will publish one event at each <code>interval</code>. <code>eventGenerator</code> is a function responsible for generating events. It can hold domain specific logic of generating new events based on certain conditions.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
-  val publisher        = await(eventService.defaultPublisher)
+  <pre class="prettyprint"><code class="language-scala">{
+  val publisher        = eventService.defaultPublisher
   val baseEvent: Event = SystemEvent(componentInfo.prefix, EventName(&quot;filter_wheel&quot;))
   val interval         = 100.millis
-
-  publisher.publish(eventGenerator(), interval)
 
   // this holds the logic for event generation, could be based on some computation or current state of HCD
   def eventGenerator(): Event = baseEvent match {
     case e: SystemEvent  ⇒ e.copy(eventId = Id(), eventTime = EventTime())
     case e: ObserveEvent ⇒ e.copy(eventId = Id(), eventTime = EventTime())
   }
+
+  publisher.publish(eventGenerator(), interval)
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">private CompletableFuture&lt;Cancellable&gt; startPublishingEvents(ComponentInfo componentInfo) {
+  <pre class="prettyprint"><code class="language-java">private Cancellable startPublishingEvents(ComponentInfo componentInfo) {
     Event baseEvent = new SystemEvent(componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;));
-    return eventService.defaultPublisher().thenApply(publisher -&gt; publisher.publish(() -&gt; eventGenerator(baseEvent), Duration.ofMillis(100)));
+    return eventService.defaultPublisher().publish(() -&gt; eventGenerator(baseEvent), Duration.ofMillis(100));
 }
 
 // this holds the logic for event generation, could be based on some computation or current state of HCD
@@ -294,48 +294,43 @@ private Event eventGenerator(Event baseEvent) {
 }</code></pre></dd>
 </dl>
 <h3><a href="#with-event-stream" name="with-event-stream" class="anchor"><span class="anchor-link"></span></a>With Event Stream</h3>
-<p>In order to publish a continuous stream of events, this API can be used. If an infinite stream is provided, shutdown of the stream needs to be taken care by the users.</p>
+<p>In order to publish a continuous stream of events, this stream-based API can also be used. If an infinite stream is provided, shutdown of the stream needs to be taken care by the users. (Note that streams discussed here are an Akka feature that is supported in event publisher and subscriber APIs. See <a href="https://doc.akka.io/docs/akka/current/stream/index.html?language=scala">Akka stream documentation.</a>)</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
-  val publisher = await(eventService.defaultPublisher)
-  val eventStream: Source[Event, Future[Done]] = Source(1 to n)
-    .map(id ⇒ makeEvent(id, componentInfo.prefix, EventName(&quot;filter_wheel&quot;)))
-    .watchTermination()(Keep.right)
+  <pre class="prettyprint"><code class="language-scala">def onError(publishFailure: PublishFailure): Unit =
+  log.error(s&quot;Publish failed for event: [${publishFailure.event}]&quot;, ex = publishFailure.cause)
 
-  publisher.publish(eventStream, failure ⇒ onError(failure))
-}
+val publisher = eventService.defaultPublisher
+val eventStream: Source[Event, Future[Done]] = Source(1 to n)
+  .map(id ⇒ makeEvent(id, componentInfo.prefix, EventName(&quot;filter_wheel&quot;)))
+  .watchTermination()(Keep.right)
 
-def onError(publishFailure: PublishFailure): Unit =
-  log.error(s&quot;Publish failed for event: [${publishFailure.event}]&quot;, ex = publishFailure.cause)</code></pre></dd>
+publisher.publish(eventStream, failure ⇒ onError(failure))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">eventService.defaultPublisher().thenApply(publisher -&gt; {
-    Source&lt;Event, CompletionStage&lt;Done&gt;&gt; eventStream = Source
-            .range(1, n)
-            .map(id -&gt; makeEvent(id, componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;)))
-            .watchTermination(Keep.right());
+  <pre class="prettyprint"><code class="language-java">Source&lt;Event, CompletionStage&lt;Done&gt;&gt; eventStream = Source
+        .range(1, n)
+        .map(id -&gt; makeEvent(id, componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;)))
+        .watchTermination(Keep.right());
 
-    return publisher.&lt;CompletionStage&lt;Done&gt;&gt;publish(eventStream, failure -&gt; { /*do something*/ });
-
-});</code></pre></dd>
+return eventService.defaultPublisher().&lt;CompletionStage&lt;Done&gt;&gt;publish(eventStream, failure -&gt; { /*do something*/ });</code></pre></dd>
 </dl>
-<p>This API also demonstrates the usage of onError callback which can be used to get the handle of events that were failed to be published. The <code>eventGenerator</code> API showed just above this example above also supports the <code>onError</code> callback.</p>
+<p>This API also demonstrates the usage of onError callback which can be used to be alerted to and handle events that failed while being published. The <code>eventGenerator</code> API showed just above also demonstrates the use of the <code>onError</code> callback.</p>
 <p>You can find complete list of APIs supported by <code>EventPublisher</code> and <code>IEventPublisher</code> with detailed description of each API here: </p>
 <ul>
-  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/api/scaladsl/EventPublisher.html">EventPublisher</a></li>
-  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/java/?csw/services/event/api/javadsl/IEventPublisher.html">IEventPublisher</a></li>
+  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventPublisher.html">EventPublisher</a></li>
+  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/java/?csw/event/api/javadsl/IEventPublisher.html">IEventPublisher</a></li>
 </ul>
 <h2><a href="#usage-of-eventsubscriber" name="usage-of-eventsubscriber" class="anchor"><span class="anchor-link"></span></a>Usage of EventSubscriber</h2>
-<p>Below examples demonstrate the usage of multiple variations of subscribe API.</p>
+<p>The EventSubscriber API has several options available that are useful in different situations. Examples below demonstrate the usage of multiple variations available in the subscribe API.</p>
 <h3><a href="#with-callback" name="with-callback" class="anchor"><span class="anchor-link"></span></a>With Callback</h3>
-<p>The example shown below takes a set of event keys to subscribe to and a callback function which will be called on each event received by the event stream. This is the simplest and most commonly used API. </p>
+<p>The example shown below takes a set of event keys to subscribe to and a callback function which will be called on each event received by the event stream. This is the simplest and most commonly used API. The example below uses an inline function, but that is not necessary. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
-  val subscriber = await(eventService.defaultSubscriber)
+  <pre class="prettyprint"><code class="language-scala">{
+  val subscriber = eventService.defaultSubscriber
 
   subscriber.subscribeCallback(
     Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))),
@@ -344,21 +339,19 @@ def onError(publishFailure: PublishFailure): Unit =
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
+  <pre class="prettyprint"><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
-subscriberF.thenApply(subscriber -&gt; {
-    EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-    return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /*do something*/ });
-});
+EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
+return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /*do something*/ });
 </code></pre></dd>
 </dl>
 <h3><a href="#with-asynchronous-callback" name="with-asynchronous-callback" class="anchor"><span class="anchor-link"></span></a>With Asynchronous Callback</h3>
-<p>The above example will run into concurrency issues, if the callback has an asynchronous behavior. To avoid that use the following API which will give the guarantee of ordered execution of these asynchronous callbacks.</p>
+<p>The above example will run into concurrency issues if the callback has an shared state or asynchronous behavior. To avoid that use the following API which will give the guarantee of ordered execution of these asynchronous callbacks. In this case, no further processing occurs until the Future completes.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">def subscribe(): Future[Unit] = async {
-  val subscriber = await(eventService.defaultSubscriber)
+  <pre class="prettyprint"><code class="language-scala">def subscribe(): EventSubscription = {
+  val subscriber = eventService.defaultSubscriber
   subscriber.subscribeAsync(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))), callback)
 }
 
@@ -368,13 +361,11 @@ private def callback(event: Event): Future[String] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public CompletableFuture&lt;IEventSubscription&gt; subscribe() {
-    CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
+  <pre class="prettyprint"><code class="language-java">public IEventSubscription subscribe() {
+    IEventSubscriber subscriber = eventService.defaultSubscriber();
 
-    return subscriberF.thenApply(subscriber -&gt; {
-        EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-        return subscriber.subscribeAsync(Collections.singleton(filterWheelEventKey), this::callback);
-    });
+    EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
+    return subscriber.subscribeAsync(Collections.singleton(filterWheelEventKey), this::callback);
 }
 
 private CompletableFuture&lt;String&gt; callback(Event event) {
@@ -383,12 +374,12 @@ private CompletableFuture&lt;String&gt; callback(Event event) {
 }</code></pre></dd>
 </dl>
 <h3><a href="#with-actorref" name="with-actorref" class="anchor"><span class="anchor-link"></span></a>With ActorRef</h3>
-<p>If there is a need to mutate state on receiving each event, then it is recommended to use this API. To use this API, you have to create an actor which takes event and then you can safely keep mutable state inside this actor. In the example shown below, <code>eventHandler</code> is the actorRef which accepts events. </p>
+<p>If there is a need to mutate state on receiving each event, then it is recommended to use this API and send a message to an actor. To use this API, you have to create an actor which takes event and then you can safely keep mutable state inside this actor. In the example shown below, <code>eventHandler</code> is the actorRef which accepts events. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">def subscribe(ctx: ActorContext[TopLevelActorMessage]): Future[Unit] = async {
-  val subscriber                    = await(eventService.defaultSubscriber)
+  <pre class="prettyprint"><code class="language-scala">def subscribe(ctx: ActorContext[TopLevelActorMessage]): EventSubscription = {
+  val subscriber                    = eventService.defaultSubscriber
   val eventHandler: ActorRef[Event] = ctx.spawnAnonymous(EventHandler.make())
 
   subscriber.subscribeActorRef(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))), eventHandler)
@@ -406,15 +397,13 @@ class EventHandler(ctx: ActorContext[Event]) extends MutableBehavior[Event] {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">public CompletableFuture&lt;IEventSubscription&gt; subscribe(ActorContext&lt;TopLevelActorMessage&gt; ctx) {
+  <pre class="prettyprint"><code class="language-java">public IEventSubscription subscribe(ActorContext&lt;TopLevelActorMessage&gt; ctx) {
 
-    CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
+    IEventSubscriber subscriber = eventService.defaultSubscriber();
     ActorRef&lt;Event&gt; eventHandler = ctx.spawnAnonymous(new JEventHandlerFactory().make());
 
-    return subscriberF.thenApply(subscriber -&gt; {
-        EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-        return subscriber.subscribeActorRef(Collections.singleton(filterWheelEventKey), eventHandler);
-    });
+    EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
+    return subscriber.subscribeActorRef(Collections.singleton(filterWheelEventKey), eventHandler);
 }
 
 public class JEventHandlerFactory {
@@ -425,6 +414,7 @@ public class JEventHandlerFactory {
 
 public class JEventHandler extends MutableBehavior&lt;Event&gt; {
     private ActorContext&lt;Event&gt; ctx;
+
     JEventHandler(ActorContext&lt;Event&gt; context) {
         ctx = context;
     }
@@ -437,33 +427,35 @@ public class JEventHandler extends MutableBehavior&lt;Event&gt; {
 }</code></pre></dd>
 </dl>
 <h3><a href="#receive-event-stream" name="receive-event-stream" class="anchor"><span class="anchor-link"></span></a>Receive Event Stream</h3>
-<p>This API takes a set of Event keys to subscribe to and returns a Source of events. This API gives more control to the user to customize behavior of the event stream.</p>
+<p>This API takes a set of Event keys to subscribe to and returns a Source of events (see <a href="https://doc.akka.io/docs/akka/current/stream/index.html?language=scala">Akka stream documentation</a>). This API gives more control to the user to customize behavior of an event stream.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
-  val subscriber = await(eventService.defaultSubscriber)
+  <pre class="prettyprint"><code class="language-scala">{
+  val subscriber = eventService.defaultSubscriber
 
-  subscriber.subscribe(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;)))).runForeach(event ⇒ { /*do something*/ })
+  subscriber
+    .subscribe(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))))
+    .to(Sink.foreach { event =&gt; /*do something*/
+    })
+    .run()
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
+  <pre class="prettyprint"><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
-subscriberF.thenApply(subscriber -&gt; {
-    EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-    return subscriber.subscribe(Collections.singleton(filterWheelEventKey)).runForeach(event -&gt; { /*do something*/ }, mat);
-});
+EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
+return subscriber.subscribe(Collections.singleton(filterWheelEventKey)).to(Sink.foreach(event -&gt; { /*do something*/ })).run(mat);
 </code></pre></dd>
 </dl>
 <h3><a href="#controlling-subscription-rate" name="controlling-subscription-rate" class="anchor"><span class="anchor-link"></span></a>Controlling Subscription Rate</h3>
-<p>In all the examples shown above, events are received by the subscriber as soon as they are published. There will be scenarios where you would like to control the rate of events received. For instance, slow subscribers can receive events at their own specified speed rather than being overloaded with events to catch up with the publisher&rsquo;s speed. </p>
+<p>In all the examples shown above, events are received by the subscriber as soon as they are published. There will be scenarios where you would like to control the rate of events received by your code. For instance, slow subscribers can receive events at their own specified speed rather than being overloaded with events to catch up with the publisher&rsquo;s speed. </p>
 <p>All the APIs in EventSubscriber can be provided with <code>interval</code> and <code>SubscriptionMode</code> to control the subscription rate. Following example demonstrates this with the subscribeCallback API. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
-  val subscriber = await(eventService.defaultSubscriber)
+  <pre class="prettyprint"><code class="language-scala">{
+  val subscriber = eventService.defaultSubscriber
 
   subscriber.subscribeCallback(
     Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))),
@@ -474,12 +466,10 @@ subscriberF.thenApply(subscriber -&gt; {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
+  <pre class="prettyprint"><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
-subscriberF.thenApply(subscriber -&gt; {
-    EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-    return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /* do something*/ },  Duration.ofMillis(1000), SubscriptionModes.jRateAdapterMode());
-});
+EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
+return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /* do something*/ }, Duration.ofMillis(1000), SubscriptionModes.jRateAdapterMode());
 </code></pre></dd>
 </dl>
 <p>There are two types of Subscription modes:</p>
@@ -487,39 +477,39 @@ subscriberF.thenApply(subscriber -&gt; {
   <li><code>RateAdapterMode</code> which ensures that an event is received exactly at each tick of the specified interval.</li>
   <li><code>RateLimiterMode</code> which ensures that events are received as they are published along with the guarantee that no more than one event is delivered within a given interval.</li>
 </ul>
-<p>Read more about Subscription Mode <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/api/scaladsl/SubscriptionMode.html">here</a></p>
+<p>Read more about Subscription Mode <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/SubscriptionMode.html">here</a></p>
 <h3><a href="#pattern-subscription" name="pattern-subscription" class="anchor"><span class="anchor-link"></span></a>Pattern Subscription</h3>
-<p>Below example demonstrates the usage of pattern subscribe API with callback. Events with keys that match the specified pattern and belong to the given subsystem are received by the subscriber. The callback function provided is called on each event received.</p>
+<p>The following example demonstrates the usage of pattern subscribe API with callback. Events with keys that match the specified pattern and belong to the given subsystem are received by the subscriber. The callback function provided is called on each event received.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">async {
-  val subscriber = await(eventService.defaultSubscriber)
+  <pre class="prettyprint"><code class="language-scala">{
+  val subscriber = eventService.defaultSubscriber
   subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event ⇒ { /*do something*/ })
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>CompletableFuture&lt;IEventSubscriber&gt; subscriberF = eventService.defaultSubscriber();
-
-subscriberF.thenApply(subscriber -&gt; subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event -&gt; { /* do something*/ }));
+  <pre class="prettyprint"><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event -&gt; { /* do something*/ });
 </code></pre></dd>
 </dl><div class="callout warning "><div class="callout-title">Warning</div>
-<p>DO NOT include subsystem in the provided pattern. Final pattern generated will be provided pattern prepended with subsystem. For Ex. <code>pSubscribe(Subsytem.WFOS, *)</code> will subscribe to event keys matching pattern : <code>wfos.*</code></p></div>
+<p>DO NOT include subsystem in the provided pattern. Final pattern generated will be provided pattern prepended with subsystem. For Ex. <code>pSubscribe(Subsytem.WFOS, *)</code> will subscribe to event keys matching pattern : <code>wfos.*</code></p></div><div class="callout warning "><div class="callout-title">Warning</div>
+<p>The pattern-based subscribe API is provided because it is useful in testing, but <em>should not be used in production code</em>. The use of certain patterns and many pattern-based subscriptions can impact the overall-performance of the Event Service.</p></div>
 <h3><a href="#event-subscription" name="event-subscription" class="anchor"><span class="anchor-link"></span></a>Event Subscription</h3>
-<p>On subscription to event keys, you get a handle to <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/api/scaladsl/EventSubscription.html">EventSubscription</a> which provides following APIs:</p>
+<p>On subscription to event keys, you receive an <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventSubscription.html">EventSubscription</a> which provides following APIs:</p>
 <ul>
   <li>
   <p><code>unsubscribe</code>: On un-subscribing, the event stream is destroyed and the connection created to event server while subscription is released.</p></li>
   <li>
-  <p><code>ready</code>: check if event subscription is successful or not.</p></li>
+  <p><code>ready</code>: check if event subscription is successful or not. </p></li>
 </ul>
 <p>You can find complete list of API&rsquo;s supported by <code>EventSubscriber</code> and <code>IEventSubscriber</code> with detailed description of each API here: </p>
 <ul>
-  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/api/scaladsl/EventSubscriber.html">EventSubscriber</a></li>
-  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/java/?csw/services/event/api/javadsl/IEventSubscriber.html">IEventSubscriber</a></li>
+  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventSubscriber.html">EventSubscriber</a></li>
+  <li><a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/java/?csw/event/api/javadsl/IEventSubscriber.html">IEventSubscriber</a></li>
 </ul>
 <h2><a href="#create-event-service" name="create-event-service" class="anchor"><span class="anchor-link"></span></a>Create Event Service</h2>
-<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/api/scaladsl/EventService.html">EventService</a> using <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/services/event/EventServiceFactory.html">EventServiceFactory</a>.</p>
+<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventService.html">EventService</a> using <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/event/EventServiceFactory.html">EventServiceFactory</a>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -536,7 +526,7 @@ IEventService eventService1 = new EventServiceFactory().jMake(locationService, a
 // create event service using host and port of event server.
 IEventService eventService2 = new EventServiceFactory().jMake(&quot;localhost&quot;, 26379, actorSystem);</code></pre></dd>
 </dl>
-<p>Event service is backed up by Redis. Above example demonstrates creation of event service with default Redis client options. You can optionally supply a RedisClient to the EventStore from outside which allows you to customize the behaviour of RedisClient used by Event Service which in most of the cases will be required in test scope only. </p>
+<p>The provided implementation of Event Service is backed up by Redis. The above example demonstrates creation of Event Service with default Redis client options. You can optionally supply a RedisClient to the EventStore from outside which allows you to customize the behaviour of RedisClient used by Event Service, which in most often be required in test scope only. </p>
 <p>RedisClient is an expensive resource. Reuse this instance as much as possible.</p>
 <p>Note that it is the responsibility of consumer of this API to shutdown Redis Client when it is no longer in use.</p>
 <dl>
@@ -595,13 +585,13 @@ Logging Service
 </span>
 </div>
 </a>
-<a href="../commons/apps.html" title="Applications" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../services/alarm.html" title="Alarm Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Applications
+Alarm Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

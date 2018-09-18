@@ -163,14 +163,16 @@ tmtsoftware/csw-prod
     <li><a href="../services/config.html" class="page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
+    <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
     <li><a href="../apps/csweventcli.html" class="active page">csw-event-cli</a></li>
+    <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -264,34 +266,34 @@ tmtsoftware/csw-prod
   <li>
   <pre><code>csw-event-cli get -e wfos.prog.cloudcover:epoch -o json
 </code></pre>
-  <p>Displays event <code>wfos.prog.cloudcover</code> with only <code>epcoh</code> key in json format.</p></li>
+  <p>Displays event <code>wfos.prog.cloudcover</code> with only <code>epcoh</code> key in JSON format.</p></li>
 </ol><div class="callout note "><div class="callout-title">Note</div>
-<p><code>-t</code>, <code>--id</code> &amp; <code>--u</code> options are not applicable when <code>-o json</code> option is provided. Event displayed in <code>json</code> format will always have <code>timestamp</code>, <code>event id</code> and <code>units</code> irrespective of whether those options are provided or not via cli.</p></div>
+<p><code>-t</code>, <code>--id</code> &amp; <code>--u</code> options are not applicable when <code>-o json</code> option is provided. Event displayed in <code>json</code> format will always have <code>timestamp</code>, <code>event id</code> and <code>units</code> irrespective of whether those options are provided or not via CLI.</p></div>
 <h3><a href="#publish" name="publish" class="anchor"><span class="anchor-link"></span></a>publish</h3>
-<p>Publishes an event to event server from provided input data file or cli params.</p>
+<p>Publishes an event to event server from provided input data file or CLI params.</p>
 <ul>
   <li><code>-e</code>, <code>--event</code> event key to publish</li>
-  <li><code>--data</code> absolute file path which contains event in json format</li>
-  <li><code>--params</code> pipe &lsquo;|&rsquo; separated list of params enclosed in double quotes in the form of <code>&quot;keyName:keyType:unit=values| ...&quot;</code>. unit is optional here. Supported key types are:  <code>[i = IntKey | s = StringKey | f = FloatKey | d = DoubleKey | l = LongKey | b = BooleanKey]</code>.  You can optionally choose to enclose param values in [, ] brackets.  Values of string key should be provided in single quotes and use &rsquo;&#39; to escape string.  Ex. <code>&quot;addressKey:s=[&#39;Kevin O\&#39;Brien&#39;,&#39;Chicago, USA&#39;]|timestampKey:s=[&#39;2016-08-05T16:23:19.002&#39;]&quot;</code></li>
+  <li><code>--data</code> absolute file path which contains event in JSON format</li>
+  <li><code>--params</code> pipe &lsquo;|&rsquo; separated list of params enclosed in double quotes in the form of <code>&quot;keyName:keyType:unit=values| ...&quot;</code>. unit is optional here. Supported key types are:  <code>[i = IntKey | s = StringKey | f = FloatKey | d = DoubleKey | l = LongKey | b = BooleanKey]</code>.  You can optionally choose to enclose param values in [, ] brackets.  Values of string key should be provided in single quotes and use backslash to escape string.  Ex. <code>&quot;addressKey:s=[&#39;Kevin O\&#39;Brien&#39;,&#39;Chicago, USA&#39;]|timestampKey:s=[&#39;2016-08-05T16:23:19.002&#39;]&quot;</code></li>
   <li><code>-i</code>, <code>--interval</code> interval in <code>&lt;ms&gt;</code> to publish event, single event will be published if not provided</li>
   <li><code>-p</code>, <code>--period</code> publish events for this duration <code>&lt;seconds&gt;</code> on provided interval. Default is <code>2147483</code> seconds.</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
-<p>If <code>--data</code> &amp; <code>--params</code> are provided together, then event is generated from both <code>--data</code> file &amp; <code>--params</code> option. <code>--params</code> takes a precedence and overrides params from event data file if it already presents in the file.</p>
+<p>If <code>--data</code> &amp; <code>--params</code> are provided together, then event is generated from both <code>--data</code> file &amp; <code>--params</code> option. <code>--params</code> takes a precedence and overrides params from event data file if it is already present in the file.</p>
 <p>Option <code>-p</code> should be used with <code>-i</code>, otherwise <code>-p</code> is ignored. </p></div>
 <h4><a href="#examples-" name="examples-" class="anchor"><span class="anchor-link"></span></a>Examples:</h4>
 <ol>
   <li>
   <p>
   <pre><code>csw-event-cli publish -e wfos.prog.cloudcover --data /path/to/event.json
-</code></pre>Creates event from provided json file and publishes same with key <code>wfos.prog.cloudcover</code> to event server.</p></li>
+</code></pre>Creates event from provided JSON file and publishes same with key <code>wfos.prog.cloudcover</code> to event server.</p></li>
   <li>
   <pre><code>csw-event-cli publish -e wfos.prog.cloudcover --data /path/to/event.json -i 500 -p 60
 </code></pre>
-  <p>Creates event from provided json file and publishes same event at every <code>500ms</code> for duration of <code>60s</code>. </p></li>
+  <p>Creates event from provided JSON file and publishes same event at every <code>500ms</code> for duration of <code>60s</code>. </p></li>
   <li>
   <pre><code>csw-event-cli publish -e wfos.prog.cloudcover --params &quot;k1:s=[&#39;Kevin O\&#39;Brien&#39;,&#39;Chicago, USA&#39;]|k2:s=[&#39;2016-08-05T16:23:19.002&#39;]&quot;
 </code></pre>
-  <p>First fetches already published event for key <code>wfos.prog.cloudcover</code> from event server and then update&rsquo;s that event with provided <code>--params</code> If provided keys already presents in existing event, then those will be updated else new param entries will be added to event. If no event is published in past for provided key, then new event gets created with provided params and event key. </p></li>
+  <p>First fetches already published event for key <code>wfos.prog.cloudcover</code> from event server and then updates that event with provided <code>--params</code> If provided keys are already present in existing event, then those will be updated else new param entries will be added to event. If no event is published in past for provided key, then new event gets created with provided params and event key. </p></li>
 </ol>
 <h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
 <p>Takes a comma separated list of events with nested key paths and displays continuous stream of event information as soon as it receives event. </p>
@@ -308,28 +310,28 @@ tmtsoftware/csw-prod
   <li>
   <p>
   <pre><code>csw-event-cli subscribe -e wfos.prog.cloudcover
-</code></pre>Subscribes to event key <code>wfos.prog.cloudcover</code> and displays all keys information as soon as their is a event published for key <code>wfos.prog.cloudcover</code> in the form of oneline.</p></li>
+</code></pre>Subscribes to event key <code>wfos.prog.cloudcover</code> and displays all keys information as soon as there is an event published for key <code>wfos.prog.cloudcover</code> in the form of oneline.</p></li>
   <li>
   <pre><code>csw-event-cli subscribe -e wfos.prog.cloudcover:struct1/ra:epoch -t --id -u
 </code></pre>
-  <p>Subscribes to event key <code>wfos.prog.cloudcover</code> and displays information of only <code>struct1/ra</code> and <code>epoch</code> keys along with <code>timestamp</code>, <code>event id</code> and <code>units</code> of provided keys in oneline form as soon as their is a event published for key <code>wfos.prog.cloudcover</code>.</p></li>
+  <p>Subscribes to event key <code>wfos.prog.cloudcover</code> and displays information of only <code>struct1/ra</code> and <code>epoch</code> keys along with <code>timestamp</code>, <code>event id</code> and <code>units</code> of provided keys in oneline form as soon as there is an event published for key <code>wfos.prog.cloudcover</code>.</p></li>
   <li>
   <pre><code>csw-event-cli subscribe -e wfos.prog.cloudcover -i 500
 </code></pre>
-  <p>Subscribes to event key <code>wfos.prog.cloudcover</code> and displays all keys information at provided interval <500ms>. Irrespective of whether their is multiple event&rsquo;s published for key <code>wfos.prog.cloudcover</code> within <code>500ms</code> interval or no event published, at every tick i.e. 500ms, latest event information will be displayed on the console. </p></li>
+  <p>Subscribes to event key <code>wfos.prog.cloudcover</code> and displays all keys information at provided interval <500ms>. Irrespective of whether there are multiple events published for key <code>wfos.prog.cloudcover</code> within <code>500ms</code> interval or not, at every tick (i.e. 500ms), latest event information will be displayed on the console. </p></li>
   <li>
   <pre><code>csw-event-cli subscribe -e wfos.prog.cloudcover:epoch -o json
 </code></pre>
-  <p>Subscribes to event key <code>wfos.prog.cloudcover</code> and displays only <code>epoch</code> key information as soon as their is a event published for key <code>wfos.prog.cloudcover</code> in the form of json.</p></li>
+  <p>Subscribes to event key <code>wfos.prog.cloudcover</code> and displays only <code>epoch</code> key information as soon as there is an event published for key <code>wfos.prog.cloudcover</code> in the form of JSON.</p></li>
 </ol><div class="callout note "><div class="callout-title">Note</div>
-<p><code>-t</code>, <code>--id</code> &amp; <code>--u</code> options are not applicable when <code>-o json</code> option is provided. Event displayed in <code>json</code> format will always have <code>timestamp</code>, <code>event id</code> and <code>units</code> irrespective of whether those options are provided or not via cli.</p></div>
+<p><code>-t</code>, <code>--id</code> &amp; <code>--u</code> options are not applicable when <code>-o json</code> option is provided. Event displayed in <code>json</code> format will always have <code>timestamp</code>, <code>event id</code> and <code>units</code> irrespective of whether those options are provided or not via CLI.</p></div>
 <h2><a href="#about-this-application" name="about-this-application" class="anchor"><span class="anchor-link"></span></a>About this application</h2>
 <h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a><code>--help</code></h3>
 <p>Prints the help message.</p>
 <h3><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a><code>--version</code></h3>
 <p>Prints the version of the application.</p>
 <h2><a href="#testing-development" name="testing-development" class="anchor"><span class="anchor-link"></span></a>Testing/Development</h2>
-<p>While testing or development, in order to use this cli application, below prerequisites must be satisfied: </p>
+<p>While testing or development, in order to use this CLI application, below prerequisites must be satisfied: </p>
 <ul>
   <li><a href="cswclusterseed.html">csw-cluster-seed</a> application is running.</li>
   <li><a href="cswlocationagent.html">csw-location-agent</a> application is running, which has started event server and registered it to location service.</li>
@@ -347,15 +349,15 @@ keys       mem      clients blocked requests            connections
 305        20.71M   605     0       1960837 (+50639)    615
 305        20.74M   605     0       2001565 (+40728)    615
 </code></pre>
-<p>In above example, new line is printed every second with useful information and the difference between the old data point. </p>
+<p>In above example, new line is printed every second with useful information and also the difference between the current and old data point. </p>
 <ul>
-  <li><code>keys</code>: Represents all the keys present in the redis database which in case of event service are EventKeys</li>
-  <li><code>clients</code>: Represents total number of clients currently connected to redis server</li>
-  <li><code>requests</code>: Represents total number of redis commands processed along with delta between every interval, in this case 1 second</li>
-  <li><code>connections</code>: Represents total number of socket connections opened to redis server</li>
+  <li><code>keys</code>: Represents all the keys present in the Redis database which in case of event service are EventKeys</li>
+  <li><code>clients</code>: Represents total number of clients currently connected to Redis server</li>
+  <li><code>requests</code>: Represents total number of Redis commands processed along with delta between every interval, in this case 1 second</li>
+  <li><code>connections</code>: Represents total number of socket connections opened to Redis server</li>
 </ul>
 <p>The <code>-i &lt;interval&gt;</code> option in this case works as a modifier in order to change the frequency at which new lines are emitted. The default is one second.</p>
-<p>You can explicitly pass hostname and port of redis server while running <code>redis-cli</code></p>
+<p>You can explicitly pass hostname and port of Redis server while running <code>redis-cli</code></p>
 <pre><code>$ redis-cli -h redis.tmt.org -p 6379
 </code></pre>
 <p>Detailed list of operations you can perform with <code>redis-cli</code> can be found <a href="https://redis.io/topics/rediscli">here</a> </p>
@@ -377,7 +379,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../apps/cswconfigclientcli.html" title="csw-config-client-cli" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../apps/cswconfigcli.html" title="csw-config-cli" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -386,17 +388,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-csw-config-client-cli
+csw-config-cli
 </span>
 </div>
 </a>
-<a href="../apps/hostconfig.html" title="csw-host-config" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../apps/cswalarmcli.html" title="csw-alarm-cli" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-csw-host-config
+csw-alarm-cli
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
