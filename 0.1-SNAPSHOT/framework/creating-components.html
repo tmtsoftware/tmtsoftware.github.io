@@ -163,14 +163,16 @@ tmtsoftware/csw-prod
     <li><a href="../services/config.html" class="page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
+    <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
     <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
+    <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -196,23 +198,8 @@ tmtsoftware/csw-prod
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class AssemblyComponentHandlers(
-    ctx: ActorContext[TopLevelActorMessage],
-    componentInfo: ComponentInfo,
-    commandResponseManager: CommandResponseManager,
-    currentStatePublisher: CurrentStatePublisher,
-    locationService: LocationService,
-    eventService: EventService,
-    loggerFactory: LoggerFactory
-) extends ComponentHandlers(
-      ctx,
-      componentInfo,
-      commandResponseManager,
-      currentStatePublisher,
-      locationService,
-      eventService,
-      loggerFactory: LoggerFactory
-    )</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">class AssemblyComponentHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext)
+    extends ComponentHandlers(ctx, cswCtx)</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">public class JAssemblyComponentHandlers extends JComponentHandlers {
@@ -229,23 +216,15 @@ tmtsoftware/csw-prod
     private ActorRef&lt;DiagnosticPublisherMessages&gt; diagnosticPublisher;
     private ActorRef&lt;CommandResponse&gt; commandResponseAdapter;
 
-    public JAssemblyComponentHandlers(
-            akka.actor.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
-            ComponentInfo componentInfo,
-            CommandResponseManager commandResponseManager,
-            CurrentStatePublisher currentStatePublisher,
-            ILocationService locationService,
-            IEventService eventService,
-            JLoggerFactory loggerFactory
-    ) {
-        super(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, eventService, loggerFactory);
+    public JAssemblyComponentHandlers(akka.actor.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx, JCswContext cswCtx) {
+        super(ctx, cswCtx);
         this.ctx = ctx;
-        this.componentInfo = componentInfo;
-        this.commandResponseManager = commandResponseManager;
-        this.currentStatePublisher = currentStatePublisher;
-        this.locationService = locationService;
-        this.eventService = eventService;
-        log = loggerFactory.getLogger(this.getClass());
+        this.componentInfo = cswCtx.componentInfo();
+        this.commandResponseManager = cswCtx.commandResponseManager();
+        this.currentStatePublisher = cswCtx.currentStatePublisher();
+        this.locationService = cswCtx.locationService();
+        this.eventService = cswCtx.eventService();
+        log = cswCtx.loggerFactory().getLogger(this.getClass());
         configClient = JConfigClientFactory.clientApi(Adapter.toUntyped(ctx.getSystem()), locationService);
 
         runningHcds = new HashMap&lt;&gt;();
@@ -253,23 +232,8 @@ tmtsoftware/csw-prod
     }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">class HcdComponentHandlers(
-    ctx: ActorContext[TopLevelActorMessage],
-    componentInfo: ComponentInfo,
-    commandResponseManager: CommandResponseManager,
-    currentStatePublisher: CurrentStatePublisher,
-    locationService: LocationService,
-    eventService: EventService,
-    loggerFactory: LoggerFactory
-) extends ComponentHandlers(
-      ctx,
-      componentInfo,
-      commandResponseManager,
-      currentStatePublisher,
-      locationService,
-      eventService,
-      loggerFactory: LoggerFactory
-    )</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">class HcdComponentHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext)
+    extends ComponentHandlers(ctx, cswCtx)</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">public class JHcdComponentHandlers extends JComponentHandlers {
@@ -289,22 +253,16 @@ tmtsoftware/csw-prod
 
     public JHcdComponentHandlers(
             akka.actor.typed.javadsl.ActorContext&lt;TopLevelActorMessage&gt; ctx,
-            ComponentInfo componentInfo,
-            CommandResponseManager commandResponseManager,
-            CurrentStatePublisher currentStatePublisher,
-            ILocationService locationService,
-            IEventService eventService,
-            JLoggerFactory loggerFactory
-
+            JCswContext cswCtx
     ) {
-        super(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, eventService, loggerFactory);
+        super(ctx, cswCtx);
         this.ctx = ctx;
-        this.componentInfo = componentInfo;
-        this.commandResponseManager = commandResponseManager;
-        this.currentStatePublisher = currentStatePublisher;
-        this.locationService = locationService;
-        this.eventService = eventService;
-        log = loggerFactory.getLogger(this.getClass());
+        this.componentInfo = cswCtx.componentInfo();
+        this.commandResponseManager = cswCtx.commandResponseManager();
+        this.currentStatePublisher = cswCtx.currentStatePublisher();
+        this.locationService = cswCtx.locationService();
+        this.eventService = cswCtx.eventService();
+        log = cswCtx.loggerFactory().getLogger(this.getClass());
     }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><strong>Converting a typed actor system to an untyped actor system</strong> </p>
@@ -315,79 +273,29 @@ tmtsoftware/csw-prod
   <dt>Assembly/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">class AssemblyComponentBehaviorFactory extends ComponentBehaviorFactory {
-  protected override def handlers(
-      ctx: ActorContext[TopLevelActorMessage],
-      componentInfo: ComponentInfo,
-      commandResponseManager: CommandResponseManager,
-      currentStatePublisher: CurrentStatePublisher,
-      locationService: LocationService,
-      eventService: EventService,
-      loggerFactory: LoggerFactory
-  ): ComponentHandlers =
-    new AssemblyComponentHandlers(
-      ctx,
-      componentInfo,
-      commandResponseManager,
-      currentStatePublisher,
-      locationService,
-      eventService,
-      loggerFactory
-    )
+  protected override def handlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext): ComponentHandlers =
+    new AssemblyComponentHandlers(ctx, cswCtx)
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">public class JAssemblyComponentBehaviorFactory extends JComponentBehaviorFactory {
-
     @Override
-    public JComponentHandlers jHandlers(
-            ActorContext&lt;TopLevelActorMessage&gt; ctx,
-            ComponentInfo componentInfo,
-            CommandResponseManager commandResponseManager,
-            CurrentStatePublisher currentStatePublisher,
-            ILocationService locationService,
-            IEventService eventService,
-            JLoggerFactory loggerFactory
-    ) {
-        return new JAssemblyComponentHandlers(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, eventService, loggerFactory);
+    public JComponentHandlers jHandlers(ActorContext&lt;TopLevelActorMessage&gt; ctx, JCswContext cswCtx) {
+        return new JAssemblyComponentHandlers(ctx, cswCtx);
     }
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">class HcdComponentBehaviorFactory extends ComponentBehaviorFactory {
-  protected override def handlers(
-      ctx: ActorContext[TopLevelActorMessage],
-      componentInfo: ComponentInfo,
-      commandResponseManager: CommandResponseManager,
-      currentStatePublisher: CurrentStatePublisher,
-      locationService: LocationService,
-      eventService: EventService,
-      loggerFactory: LoggerFactory
-  ): ComponentHandlers =
-    new HcdComponentHandlers(
-      ctx,
-      componentInfo,
-      commandResponseManager,
-      currentStatePublisher,
-      locationService,
-      eventService,
-      loggerFactory
-    )
+  protected override def handlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext): ComponentHandlers =
+    new HcdComponentHandlers(ctx, cswCtx)
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">public class JHcdComponentBehaviorFactory extends JComponentBehaviorFactory {
-
     @Override
-    public JComponentHandlers jHandlers(
-            ActorContext&lt;TopLevelActorMessage&gt; ctx,
-            ComponentInfo componentInfo,
-            CommandResponseManager commandResponseManager,
-            CurrentStatePublisher currentStatePublisher,
-            ILocationService locationService,
-            IEventService eventService,
-            JLoggerFactory loggerFactory
-    ) {
-        return new JHcdComponentHandlers(ctx, componentInfo, commandResponseManager, currentStatePublisher, locationService, eventService, loggerFactory);
+    public JComponentHandlers jHandlers(ActorContext&lt;TopLevelActorMessage&gt; ctx, JCswContext cswCtx) {
+        return new JHcdComponentHandlers(ctx, cswCtx);
     }
 }</code></pre></dd>
 </dl>

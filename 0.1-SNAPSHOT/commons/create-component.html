@@ -163,14 +163,16 @@ tmtsoftware/csw-prod
     <li><a href="../services/config.html" class="page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
+    <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
     <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
+    <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -194,6 +196,7 @@ tmtsoftware/csw-prod
     <li><a href="../commons/create-component.html#receiving-commands" class="header">Receiving Commands</a></li>
     <li><a href="../commons/create-component.html#validation" class="header">Validation</a></li>
     <li><a href="../commons/create-component.html#command-response" class="header">Command Response</a></li>
+    <li><a href="../commons/create-component.html#events" class="header">Events</a></li>
     <li><a href="../commons/create-component.html#building-and-running-component-in-standalone-mode" class="header">Building and Running component in standalone mode</a></li>
   </ul></li>
 </ul>
@@ -227,6 +230,7 @@ tmtsoftware/csw-prod
     <li><a href="../commons/create-component.html#receiving-commands" class="header">Receiving Commands</a></li>
     <li><a href="../commons/create-component.html#validation" class="header">Validation</a></li>
     <li><a href="../commons/create-component.html#command-response" class="header">Command Response</a></li>
+    <li><a href="../commons/create-component.html#events" class="header">Events</a></li>
     <li><a href="../commons/create-component.html#building-and-running-component-in-standalone-mode" class="header">Building and Running component in standalone mode</a></li>
   </ul></li>
 </ul>
@@ -344,8 +348,10 @@ locationServiceUsage = RegisterOnly</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def initialize(): Future[Unit] = {
+  <pre class="prettyprint"><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
+override def initialize(): Future[Unit] = {
   log.info(&quot;In HCD initialize&quot;)
+  maybePublishingGenerator = Some(publishCounter())
   Future.unit
 }
 
@@ -359,9 +365,13 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
+  <pre class="prettyprint"><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
+@Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
-    return CompletableFuture.runAsync(() -&gt; log.info(&quot;In HCD initialize&quot;));
+    return CompletableFuture.runAsync(() -&gt; {
+        log.info(&quot;In HCD initialize&quot;);
+        maybePublishingGenerator = Optional.of(publishCounter());
+    });
 }
 
 @Override
@@ -374,6 +384,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
     return CompletableFuture.runAsync(() -&gt; log.info(&quot;HCD is shutting down&quot;));
 }</code></pre></dd>
 </dl>
+<p>In the example code, you&rsquo;ll notice we have added some functionality to start publishing events. We will cover the Event Service later. You can leave that code out for now.</p>
 <p>Next we&rsquo;ll add some command handling.</p>
 <h2><a href="#receiving-commands" name="receiving-commands" class="anchor"><span class="anchor-link"></span></a>Receiving Commands</h2>
 <p>A command is something that carries some metadata and a set of parameters. A component sends message to other components using <code>commands</code>. Various kinds of commands are as follows:</p>
@@ -382,7 +393,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
   <li>Observe: Contains goal or demand information to be used by a detector.  system. Properties and their value types will be standardized  by the ESW for the ESW PDR.</li>
   <li>Wait: Sequencer only. Instructs a sequencer to pause until told to continue.</li>
 </ul>
-<p>More details about creating commands can be found <a href="messages.html#setup-command">here</a>.</p>
+<p>More details about creating commands can be found <a href="../messages/commands.html#setup-command">here</a>.</p>
 <p>Whenever a command is sent to a component it is wrapped inside a command wrapper. There are two kinds of command wrapper:</p>
 <ul>
   <li>Submit: A command is wrapped in submit when the completion result is expected from receiver component</li>
@@ -466,7 +477,7 @@ public void onSubmit(ControlCommand controlCommand) {
 }
 
 private void onSetup(Setup setup) {
-    Key&lt;Long&gt; sleepTimeKey = JKeyTypes.LongKey().make(&quot;SleepTime&quot;);
+    Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;);
 
     // get param from the Parameter Set in the Setup
     Optional&lt;Parameter&lt;Long&gt;&gt; sleepTimeParamOption = setup.jGet(sleepTimeKey);
@@ -540,6 +551,94 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
 </dl>
 <p>This worker actor simply takes the time passed in the message, sleeps that amount, and then updates the <code>CommandResponseManager</code> that the command is complete.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>If the component developer creates new set of messages for worker actor then it is mandatory that those messages extend <code>TMTSerializable</code> which will enable messages to serialize on wire.</p></div>
+<h2><a href="#events" name="events" class="anchor"><span class="anchor-link"></span></a>Events</h2>
+<p>CSW <code>Events</code> have a similar structure to commands, in that along with a name and a prefix (used to represent the source of the event), they include data represented in the <code>Event</code> in a set of parameters. </p>
+<p>More details about events can be found <a href="../messages/events.html">here</a>.</p>
+<p>Access to the Event Service is passed in to the handlers class in the constructor. The Event Service provides a factory method to create a &ldquo;default&rdquo; publisher and subscriber, which can be accessed in various parts of your code to reuse a single connection to the service. In most cases, reusing this connection will provide the performance needed.<br/>But if you prefer to create new connections, custom publishers and subscribers can be constructed. See the manual on the <a href="../services/event.html">Event Service</a> for more information.</p>
+<p>Publishers have an API that allows the publishing of a single event, a stream of events, or periodic events created by an <code>EventGenerator</code>, which is simply a function that returns an event. </p>
+<h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
+<p>Let&rsquo;s add a publisher to our component. We will use the default publisher that will periodically publish events generated by an <code>EventGenerator</code>. </p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">private def publishCounter(): Cancellable = {
+  var counter = 0
+  def incrementCounterEvent() = {
+    counter += 1
+    val param: Parameter[Int] = KeyType.IntKey.make(&quot;counter&quot;).set(counter)
+    SystemEvent(componentInfo.prefix, EventName(&quot;HcdCounter&quot;)).add(param)
+  }
+
+  log.info(&quot;Starting publish stream.&quot;)
+  eventService.defaultPublisher.publish(incrementCounterEvent(), 5.second, err =&gt; log.error(err.getMessage, ex = err))
+}
+
+private def stopPublishingGenerator(): Unit = {
+  log.info(&quot;Stopping publish stream&quot;)
+  maybePublishingGenerator.foreach(_.cancel)
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">private int counter = 0;
+private Event incrementCounterEvent() {
+    counter += 1;
+    Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;counter&quot;).set(counter);
+    return new SystemEvent(componentInfo.prefix(), new EventName(&quot;HcdCounter&quot;)).add(param);
+}
+
+private Cancellable publishCounter() {
+    log.info(&quot;Starting publish stream.&quot;);
+    return eventService.defaultPublisher().publish(this::incrementCounterEvent, Duration.ofSeconds(5));
+}
+
+private void stopPublishingGenerator() {
+    log.info(&quot;Stopping publish stream&quot;);
+    maybePublishingGenerator.ifPresent(Cancellable::cancel);
+}</code></pre></dd>
+</dl>
+<p>In Java, you must save a reference to the <code>IEventService</code> passed into the constructor as a member variable. We use the name <code>eventService</code> (not shown here).</p>
+<p>We encapsulate the starting of the publishing in our method <code>publishCounter</code>. Our <code>EventGenerator</code> is the <code>incrementCounterEvent</code> method which increments our integer variable <code>counter</code> and stores it in the <code>ParameterSet</code> of a new <code>SystemEvent</code> and returns it. Once our <code>defaultPublisher</code> is resolved, we pass in a reference to <code>incrementCounterEvent</code> and specify a period of 5 seconds. We log a message when publishing the event so that it can be observed when running the component.</p>
+<p>The <code>publish</code> method returns a <code>Cancellable</code> type in a future. When the publishing is set up, the <code>Cancellable</code> can be used to stop the event generator. We demonstrate its usage in the <code>stopPublishingGenerator</code> method, although this method is not called in our tutorial.</p>
+<p>We will start this publishing when our component initializes, so we return to our <code>initialize</code> method and add a call to our <code>publishCounter</code> method. We save a reference to the <code>Cancellable</code> object for future use in our <code>stopPublishingGenerator</code> method. </p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
+override def initialize(): Future[Unit] = {
+  log.info(&quot;In HCD initialize&quot;)
+  maybePublishingGenerator = Some(publishCounter())
+  Future.unit
+}
+
+override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
+  log.debug(s&quot;TrackingEvent received: ${trackingEvent.connection.name}&quot;)
+}
+
+override def onShutdown(): Future[Unit] = {
+  log.info(&quot;HCD is shutting down&quot;)
+  Future.unit
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
+@Override
+public CompletableFuture&lt;Void&gt; jInitialize() {
+    return CompletableFuture.runAsync(() -&gt; {
+        log.info(&quot;In HCD initialize&quot;);
+        maybePublishingGenerator = Optional.of(publishCounter());
+    });
+}
+
+@Override
+public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
+    log.debug(() -&gt; &quot;TrackingEvent received: &quot; + trackingEvent.connection().name());
+}
+
+@Override
+public CompletableFuture&lt;Void&gt; jOnShutdown() {
+    return CompletableFuture.runAsync(() -&gt; log.info(&quot;HCD is shutting down&quot;));
+}</code></pre></dd>
+</dl>
 <h2><a href="#building-and-running-component-in-standalone-mode" name="building-and-running-component-in-standalone-mode" class="anchor"><span class="anchor-link"></span></a>Building and Running component in standalone mode</h2>
 <p>Once the component is ready, it is started using the <code>ContainerCmd</code> object in standalone mode. The details about starting the <code>ContainerCmd</code> in standalone mode can be found <a href="https://tmtsoftware.github.io/csw-prod/framework/deploying-components.html">here</a>.</p>
 <p>There are various ways to build and run the project. A simple way during development is to to use sbt to run it. The sbt command <code>runMain</code> can be used to specify an application with a main method and run it with arguments specified at the command line. When this command is executed, sbt will take care of any downloading of dependencies, compiling, or building necessary to run your application. </p>

@@ -105,21 +105,21 @@ These handlers are executed under an Supervisor Actor: <span class="extype" name
 and TLA Actor (Top Level Actor): <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
 defined in the framework which handles the lifecycle and supervision of this component.</p><p>Components are controlled by a <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span> actor
 that intercepts common messages (ex. Shutdown, Restart) or lifecycle messages (ex. GoOffline or GoOnline)
-sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../../messages/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state, do not receive <a href="../../messages/CommandMessage.html" class="extype" name="csw.messages.CommandMessage">csw.messages.CommandMessage</a>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
-LocationService only when Component moves to <a href="../../messages/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state.
-That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <a href="../../messages/CommandMessage.html" class="extype" name="csw.messages.CommandMessage">messages.CommandMessage</a></p><h5> Important Actors in Framework </h5><p>- <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span>
-: Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a> based on the messages it receives.
-Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>.
-For complete list of supported messages per <a href="../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
+sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../../command/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState.Running">csw.command.models.framework.SupervisorLifecycleState.Running</a> state, do not receive <span class="extype" name="csw.params.CommandMessage">csw.params.CommandMessage</span>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
+LocationService only when Component moves to <a href="../../command/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState.Running">csw.command.models.framework.SupervisorLifecycleState.Running</a> state.
+That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <span class="extype" name="params.CommandMessage">params.CommandMessage</span></p><h5> Important Actors in Framework </h5><p>- <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span>
+: Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a> based on the messages it receives.
+Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a>.
+For complete list of supported messages per <a href="../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
 : Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
 And it also maintains its own state <span class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</span> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
 This is where framework code meets Component specific code.</p><p>- <span class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</span>
 : This actor is created by framework which is wrapped into <a href="../CurrentStatePublisher.html" class="extype" name="csw.framework.CurrentStatePublisher">csw.framework.CurrentStatePublisher</a> for easy interaction with this actor
-and then passed to component handlers so that component can publish their <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> published by other component (ex. HCD)
-then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> to all subscribers.</p><p>- <span class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</span>
+and then passed to component handlers so that component can publish their <a href="../../params/core/states/CurrentState.html" class="extype" name="csw.params.core.states.CurrentState">csw.params.core.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="../../params/core/states/CurrentState.html" class="extype" name="csw.params.core.states.CurrentState">csw.params.core.states.CurrentState</a> published by other component (ex. HCD)
+then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="../../params/core/states/CurrentState.html" class="extype" name="csw.params.core.states.CurrentState">csw.params.core.states.CurrentState</a> to all subscribers.</p><p>- <span class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</span>
 : When multiple components needs to be started in container, then this actor is created.
-Job of this actor is just to logically group multiple components and support <a href="../../messages/SupervisorContainerCommonMessages$.html" class="extype" name="csw.messages.SupervisorContainerCommonMessages">csw.messages.SupervisorContainerCommonMessages</a>.
-It receives <a href="../../messages/SupervisorContainerCommonMessages$$Shutdown$.html" class="extype" name="csw.messages.SupervisorContainerCommonMessages.Shutdown">csw.messages.SupervisorContainerCommonMessages.Shutdown</a> or <a href="../../messages/SupervisorContainerCommonMessages$$Restart$.html" class="extype" name="csw.messages.SupervisorContainerCommonMessages.Restart">csw.messages.SupervisorContainerCommonMessages.Restart</a> message
+Job of this actor is just to logically group multiple components and support <span class="extype" name="csw.params.SupervisorContainerCommonMessages">csw.params.SupervisorContainerCommonMessages</span>.
+It receives <span class="extype" name="csw.params.SupervisorContainerCommonMessages.Shutdown">csw.params.SupervisorContainerCommonMessages.Shutdown</span> or <span class="extype" name="csw.params.SupervisorContainerCommonMessages.Restart">csw.params.SupervisorContainerCommonMessages.Restart</span> message
 and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <span class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</span>
 : ContainerCmd is a helper utility provided by framework to start multiple components in container mode
 or single component in Standalone mode.</p><h5> Example of Container Config File </h5><p>Here is an example of a config file for creating a container with the name <i>IRIS_Container</i> that
@@ -187,6 +187,22 @@ containers: [
       configFileLocation: <span class="lit">"Local"</span>
     }
 ]</pre></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+    </li><li name="csw.framework.commons" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="commons"></a><a id="commons:commons"></a>
+      <span class="permalink">
+      <a href="../../csw/framework/index.html#commons" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../commons/index.html"><span class="name">commons</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.framework">framework</a></dd></dl></div>
     </li><li name="csw.framework.deploy" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="deploy"></a><a id="deploy:deploy"></a>
       <span class="permalink">
@@ -261,8 +277,8 @@ containers: [
                         <a href="JComponentHandlers.html" title="Base class for component handlers which will be used by the component actor">JComponentHandlers</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="JComponentInfo$.html" title="Helper instance for Java to create csw.messages.framework.ComponentInfo"></a>
-                        <a href="JComponentInfo$.html" title="Helper instance for Java to create csw.messages.framework.ComponentInfo">JComponentInfo</a>
+                        <a class="object" href="JComponentInfo$.html" title="Helper instance for Java to create csw.command.models.framework.ComponentInfo"></a>
+                        <a href="JComponentInfo$.html" title="Helper instance for Java to create csw.command.models.framework.ComponentInfo">JComponentInfo</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="JContainerCmd$.html" title="Helper instance for Java to start csw.framework.deploy.containercmd.ContainerCmd app"></a>
@@ -271,7 +287,23 @@ containers: [
                         <span class="separator"></span>
                         <a class="object" href="JHostConfig$.html" title="Helper instance for Java to start csw.framework.deploy.hostconfig.HostConfig app"></a>
                         <a href="JHostConfig$.html" title="Helper instance for Java to start csw.framework.deploy.hostconfig.HostConfig app">JHostConfig</a>
-                      </li><li name="csw.framework.scaladsl" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
+                      </li><li name="csw.framework.models" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="models"></a><a id="models:models"></a>
+      <span class="permalink">
+      <a href="../../csw/framework/index.html#models" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../models/index.html"><span class="name">models</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.framework">framework</a></dd></dl></div>
+    </li><li name="csw.framework.scaladsl" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="scaladsl"></a><a id="scaladsl:scaladsl"></a>
       <span class="permalink">
       <a href="../../csw/framework/index.html#scaladsl" title="Permalink">
@@ -404,10 +436,10 @@ containers: [
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="Helper instance for Java to create csw.messages.framework.ComponentInfo" href="JComponentInfo$.html"><span class="name">JComponentInfo</span></a>
+        <a title="Helper instance for Java to create csw.command.models.framework.ComponentInfo" href="JComponentInfo$.html"><span class="name">JComponentInfo</span></a>
       </span>
       
-      <p class="shortcomment cmt">Helper instance for Java to create <a href="../../messages/framework/ComponentInfo.html" class="extype" name="csw.messages.framework.ComponentInfo">csw.messages.framework.ComponentInfo</a>
+      <p class="shortcomment cmt">Helper instance for Java to create <a href="../../command/models/framework/ComponentInfo.html" class="extype" name="csw.command.models.framework.ComponentInfo">csw.command.models.framework.ComponentInfo</a>
 </p>
     </li><li name="csw.framework.javadsl.JContainerCmd" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="JContainerCmd"></a><a id="JContainerCmd:JContainerCmd"></a>

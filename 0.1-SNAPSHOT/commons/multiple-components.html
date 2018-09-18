@@ -163,14 +163,16 @@ tmtsoftware/csw-prod
     <li><a href="../services/config.html" class="page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
+    <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
     <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
+    <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -191,9 +193,8 @@ tmtsoftware/csw-prod
     <li><a href="../commons/multiple-components.html#tracking-long-running-commands" class="header">Tracking Long Running Commands</a></li>
     <li><a href="../commons/multiple-components.html#matchers" class="header">Matchers</a></li>
     <li><a href="../commons/multiple-components.html#pubsub-connection" class="header">PubSub Connection</a></li>
+    <li><a href="../commons/multiple-components.html#subscribing-to-events" class="header">Subscribing to Events</a></li>
     <li><a href="../commons/multiple-components.html#deploying-and-running-components" class="header">Deploying and Running Components</a></li>
-    <li><a href="../commons/multiple-components.html#pre-requisite" class="header">Pre-requisite</a></li>
-    <li><a href="../commons/multiple-components.html#run" class="header">Run</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -223,9 +224,8 @@ tmtsoftware/csw-prod
     <li><a href="../commons/multiple-components.html#tracking-long-running-commands" class="header">Tracking Long Running Commands</a></li>
     <li><a href="../commons/multiple-components.html#matchers" class="header">Matchers</a></li>
     <li><a href="../commons/multiple-components.html#pubsub-connection" class="header">PubSub Connection</a></li>
+    <li><a href="../commons/multiple-components.html#subscribing-to-events" class="header">Subscribing to Events</a></li>
     <li><a href="../commons/multiple-components.html#deploying-and-running-components" class="header">Deploying and Running Components</a></li>
-    <li><a href="../commons/multiple-components.html#pre-requisite" class="header">Pre-requisite</a></li>
-    <li><a href="../commons/multiple-components.html#run" class="header">Run</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -246,8 +246,10 @@ tmtsoftware/csw-prod
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def initialize(): Future[Unit] = {
+  <pre class="prettyprint"><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
+override def initialize(): Future[Unit] = {
   log.info(&quot;In Assembly initialize&quot;)
+  maybeEventSubscription = Some(subscribeToHcd())
   Future.unit
 }
 
@@ -257,9 +259,13 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
+  <pre class="prettyprint"><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+@Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
-    return CompletableFuture.runAsync(() -&gt; log.info(&quot;In Assembly initialize&quot;));
+    return CompletableFuture.runAsync(() -&gt; {
+        log.info(&quot;In Assembly initialize&quot;);
+        maybeEventSubscription = Optional.of(subscribeToHcd());
+    });
 }
 
 @Override
@@ -267,6 +273,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
     return CompletableFuture.runAsync(() -&gt; log.info(&quot;Assembly is shutting down.&quot;));
 }</code></pre></dd>
 </dl>
+<p>Once again, ingore the code about setting up the subscription. This will be covered later when we discuss subscribing to events.</p>
 <h2><a href="#component-configuration-componentinfo-" name="component-configuration-componentinfo-" class="anchor"><span class="anchor-link"></span></a>Component Configuration (ComponentInfo)</h2>
 <p>Also similar to the HCD, we will need to create a ComponentInfo file for the Assembly. The following shows an example of ComponentInfo file for an Assembly:</p>
 <dl>
@@ -434,10 +441,11 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
   <dd>
   <pre class="prettyprint"><code class="language-scala">implicit val system: ActorSystem[Nothing] = ctx.system
 
-val eventualCommandService: Future[CommandService] = locationService.resolve(hcdConnection.of[AkkaLocation], 5.seconds).map {
-  case Some(hcdLocation: AkkaLocation) =&gt; new CommandService(hcdLocation)
-  case _                               =&gt; throw HcdNotFoundException()
-}
+val eventualCommandService: Future[CommandService] =
+  cswCtx.locationService.resolve(hcdConnection.of[AkkaLocation], 5.seconds).map {
+    case Some(hcdLocation: AkkaLocation) =&gt; new CommandService(hcdLocation)
+    case _                               =&gt; throw HcdNotFoundException()
+  }
 
 eventualCommandService.foreach { commandService ⇒
   hcd = commandService
@@ -542,7 +550,7 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
 private void handle(JCommandService hcd) {
 
     // Construct Setup command
-    Key&lt;Long&gt; sleepTimeKey = JKeyTypes.LongKey().make(&quot;SleepTime&quot;);
+    Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;);
     Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L).withUnits(JUnits.millisecond);
 
     Setup setupCommand = new Setup(componentInfo.prefix(), new CommandName(&quot;sleep&quot;), Optional.of(new ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam);
@@ -582,10 +590,105 @@ private void handle(JCommandService hcd) {
 <h2><a href="#pubsub-connection" name="pubsub-connection" class="anchor"><span class="anchor-link"></span></a>PubSub Connection</h2>
 <p>A component might need to subscribe to the current state of any other component provided it knows the location of that component. In order to subscribe to current state, it may use the <code>subscribeCurrentState</code> method of the <code>CommandService</code>. More details about the usage of <code>subscribeCurrentState</code> can ber found <a href="command.html#subscribecurrentstate">here</a>.</p>
 <p>If a component wants to publish its current state then it can use the <code>currentStatePublisher</code> provided by <code>csw-framework</code> in <code>ComponentHandlers</code>. More details about the usage of <code>currentStatePublisher</code> can ber found <a href="../framework/publishing-state.html">here</a>.</p>
+<h2><a href="#subscribing-to-events" name="subscribing-to-events" class="anchor"><span class="anchor-link"></span></a>Subscribing to Events</h2>
+<p>To subscribe to events, a subscriber is accessed done in a similar way to publishing. Typically a <code>defaultSubscriber</code> is obtained, but additional subscribers with their own connection can be created.</p>
+<p>The subscribe API specifies a set of <code>Events</code> to subscribe to and then specifies how the events should be handled. This can be a callback, an Actor reference to receive the <code>Event</code> as a message, or as a stream to allow flow operations to be applied. </p>
+<h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an Assembly</em></h4>
+<p>We will setup our subscription to the counter events generated by our HCD in the <code>subscribeToHCD</code> method. </p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">private val counterEventKey = EventKey(Prefix(&quot;nfiraos.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
+private val hcdCounterKey   = KeyType.IntKey.make(&quot;counter&quot;)
+
+private def processEvent(event: Event): Unit = {
+  log.info(s&quot;Event received: ${event.eventKey}&quot;)
+  event match {
+    case e: SystemEvent =&gt;
+      e.eventKey match {
+        case `counterEventKey` =&gt; log.info(s&quot;Counter = ${e(hcdCounterKey).head}&quot;)
+        case _                 =&gt; log.warn(&quot;Unexpected event received.&quot;)
+      }
+    case e: ObserveEvent =&gt; log.warn(&quot;Unexpected ObserveEvent received.&quot;) // not expected
+  }
+}
+
+private def subscribeToHcd(): EventSubscription = {
+  log.info(&quot;Starting subscription.&quot;)
+  eventService.defaultSubscriber.subscribeCallback(Set(counterEventKey), processEvent)
+}
+
+private def unsubscribeHcd(): Unit = {
+  log.info(&quot;Stopping subscription.&quot;)
+  maybeEventSubscription.foreach(_.unsubscribe())
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">private EventKey counterEventKey = new EventKey(new Prefix(&quot;nfiraos.samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
+private Key&lt;Integer&gt; hcdCounterKey = JKeyType.IntKey().make(&quot;counter&quot;);
+
+private void processEvent(Event event) {
+    log.info(&quot;Event received: &quot;+ event.eventKey());
+    if (event instanceof SystemEvent) {
+        SystemEvent sysEvent = (SystemEvent)event;
+        if (event.eventKey().equals(counterEventKey)) {
+            log.info(&quot;Counter = &quot; + sysEvent.parameter(hcdCounterKey).head());
+        } else {
+            log.warn(&quot;Unexpected event received.&quot;);
+        }
+    } else {
+        // ObserveEvent, not expected
+        log.warn(&quot;Unexpected ObserveEvent received.&quot;);
+    }
+}
+
+private IEventSubscription subscribeToHcd() {
+    log.info(&quot;Starting subscription.&quot;);
+    return eventService.defaultSubscriber().subscribeCallback(Collections.singleton(counterEventKey), this::processEvent);
+}
+
+private void unsubscribeHcd() {
+    log.info(&quot;Stopping subscription.&quot;);
+    maybeEventSubscription.ifPresent(IEventSubscription::unsubscribe);
+}</code></pre></dd>
+</dl>
+<p>Again, in Java, you must save a reference to the <code>IEventService</code> passed into the constructor as a member variable. We use the name <code>eventService</code> (not shown here).</p>
+<p>We use the <code>subscribeCallback</code> method from the API and specify the method <code>processEvent</code> as our callback, in which we unpack the event and log the counter value. The subscribe methods in the API return a <code>EventSubscription</code> object, which can be used to stop the subscription, as demonstrated in the <code>unsubscribeHCD</code> method (which again, is not called in our tutorial).</p>
+<p>Again, we return to our <code>initialize</code> method to show how subscription is started, and the reference to the subscription is stored for later use.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
+override def initialize(): Future[Unit] = {
+  log.info(&quot;In Assembly initialize&quot;)
+  maybeEventSubscription = Some(subscribeToHcd())
+  Future.unit
+}
+
+override def onShutdown(): Future[Unit] = {
+  log.info(&quot;Assembly is shutting down.&quot;)
+  Future.unit
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+@Override
+public CompletableFuture&lt;Void&gt; jInitialize() {
+    return CompletableFuture.runAsync(() -&gt; {
+        log.info(&quot;In Assembly initialize&quot;);
+        maybeEventSubscription = Optional.of(subscribeToHcd());
+    });
+}
+
+@Override
+public CompletableFuture&lt;Void&gt; jOnShutdown() {
+    return CompletableFuture.runAsync(() -&gt; log.info(&quot;Assembly is shutting down.&quot;));
+}</code></pre></dd>
+</dl>
 <h2><a href="#deploying-and-running-components" name="deploying-and-running-components" class="anchor"><span class="anchor-link"></span></a>Deploying and Running Components</h2>
-<h2><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h2>
+<h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
 <p>A project, for example with the name <code>sample-deploy</code>, contains applications (ContainerCmd and HostConfig coming from <code>csw-framework</code>) to run components. Make sure that the necessary dependencies are added in the <code>sample-deploy</code>.</p>
-<h2><a href="#run" name="run" class="anchor"><span class="anchor-link"></span></a>Run</h2>
+<h3><a href="#run" name="run" class="anchor"><span class="anchor-link"></span></a>Run</h3>
 <p>To start the Assembly and HCD, <code>sbt runMain</code> can be used as with the HCD, but with slightly different options.<br/>Now, we do not want to run in standalone mode, and we need to make sure to pass the container configuration file.</p>
 <p>Go to the project root directory and type <code>sbt &quot;&lt;deploy-module&gt;/runMain &lt;mainClass&gt; --local &lt;path-to-config-file&gt;&quot;</code>, where</p>
 <ul>

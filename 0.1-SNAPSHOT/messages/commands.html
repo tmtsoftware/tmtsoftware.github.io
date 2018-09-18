@@ -163,14 +163,16 @@ tmtsoftware/csw-prod
     <li><a href="../services/config.html" class="page">Configuration Service</a></li>
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
+    <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
-    <li><a href="../apps/cswconfigclientcli.html" class="page">csw-config-client-cli</a></li>
+    <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
     <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
+    <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
@@ -335,11 +337,11 @@ val allKeys: Set[String] = sc4.paramSet.map(_.keyName)
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//keys
-Key&lt;Integer&gt; k1 = JKeyTypes.IntKey().make(&quot;encoder&quot;);
-Key&lt;String&gt; k2 = JKeyTypes.StringKey().make(&quot;stringThing&quot;);
-Key&lt;Integer&gt; k2bad = JKeyTypes.IntKey().make(&quot;missingKey&quot;);
-Key&lt;Integer&gt; k3 = JKeyTypes.IntKey().make(&quot;filter&quot;);
-Key&lt;Float&gt; k4 = JKeyTypes.FloatKey().make(&quot;correction&quot;);
+Key&lt;Integer&gt; k1 = JKeyType.IntKey().make(&quot;encoder&quot;);
+Key&lt;String&gt; k2 = JKeyType.StringKey().make(&quot;stringThing&quot;);
+Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
+Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
+Key&lt;Float&gt; k4 = JKeyType.FloatKey().make(&quot;correction&quot;);
 
 //prefix
 String prefixName = &quot;wfos.red.detector&quot;;
@@ -363,8 +365,8 @@ Setup sc2 = sc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(1.0f, 2.0f
 int paramSize = sc2.size();
 
 //add binary payload
-Key&lt;Byte&gt; byteKey1 = JKeyTypes.ByteKey().make(&quot;byteKey1&quot;);
-Key&lt;Byte&gt; byteKey2 = JKeyTypes.ByteKey().make(&quot;byteKey2&quot;);
+Key&lt;Byte&gt; byteKey1 = JKeyType.ByteKey().make(&quot;byteKey1&quot;);
+Key&lt;Byte&gt; byteKey2 = JKeyType.ByteKey().make(&quot;byteKey2&quot;);
 Byte[] bytes1 = {10, 20};
 Byte[] bytes2 = {30, 40};
 
@@ -422,11 +424,11 @@ val oc4: Observe = oc2.remove(k4)
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//keys
-Key&lt;Boolean&gt; k1 = JKeyTypes.BooleanKey().make(&quot;repeat&quot;);
-Key&lt;Integer&gt; k2 = JKeyTypes.IntKey().make(&quot;expTime&quot;);
-Key&lt;Integer&gt; k2bad = JKeyTypes.IntKey().make(&quot;missingKey&quot;);
-Key&lt;Integer&gt; k3 = JKeyTypes.IntKey().make(&quot;filter&quot;);
-Key&lt;Instant&gt; k4 = JKeyTypes.TimestampKey().make(&quot;creation-time&quot;);
+Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(&quot;repeat&quot;);
+Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;expTime&quot;);
+Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
+Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
+Key&lt;Instant&gt; k4 = JKeyType.TimestampKey().make(&quot;creation-time&quot;);
 
 //prefix
 String prefixName = &quot;wfos.red.detector&quot;;
@@ -444,7 +446,7 @@ Optional&lt;Parameter&lt;Boolean&gt;&gt; k1Param = oc1.jGet(k1); //present
 java.util.List&lt;Boolean&gt; values = k1Param.get().jValues();
 
 //access parameters
-Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = oc1.jGet(k2bad.keyName(), JKeyTypes.FloatArrayKey());
+Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = oc1.jGet(k2bad.keyName(), JKeyType.FloatArrayKey());
 
 //add more than one parameters, using madd
 Observe oc2 = oc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(Instant.now()));
@@ -503,11 +505,11 @@ val wc4: Wait = wc2.remove(k4)
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//keys
-Key&lt;Boolean&gt; k1 = JKeyTypes.BooleanKey().make(&quot;repeat&quot;);
-Key&lt;Integer&gt; k2 = JKeyTypes.IntKey().make(&quot;expTime&quot;);
-Key&lt;Integer&gt; k2bad = JKeyTypes.IntKey().make(&quot;missingKey&quot;);
-Key&lt;Integer&gt; k3 = JKeyTypes.IntKey().make(&quot;filter&quot;);
-Key&lt;Instant&gt; k4 = JKeyTypes.TimestampKey().make(&quot;creation-time&quot;);
+Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(&quot;repeat&quot;);
+Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;expTime&quot;);
+Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
+Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
+Key&lt;Instant&gt; k4 = JKeyType.TimestampKey().make(&quot;creation-time&quot;);
 
 //prefix
 String prefixName = &quot;wfos.red.detector&quot;;
@@ -525,7 +527,7 @@ Optional&lt;Parameter&lt;Boolean&gt;&gt; k1Param = wc1.jGet(k1); //present
 java.util.List&lt;Boolean&gt; values = k1Param.get().jValues();
 
 //access parameters
-Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = wc1.jGet(&quot;absentKeyHere&quot;, JKeyTypes.FloatArrayKey());
+Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = wc1.jGet(&quot;absentKeyHere&quot;, JKeyType.FloatArrayKey());
 
 //add more than one parameters, using madd
 Wait wc2 = wc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(Instant.now()));
@@ -586,7 +588,7 @@ val wc1: Wait    = JsonSupport.readSequenceCommand[Wait](wcJson)</code></pre></d
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//key
-Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyTypes.DoubleMatrixKey().make(&quot;myMatrix&quot;);
+Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyType.DoubleMatrixKey().make(&quot;myMatrix&quot;);
 
 //values
 Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
@@ -668,9 +670,9 @@ val uniqueKeys3: List[String] = finalSetUp.paramSet.toList.map(_.keyName)</code>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//keys
-Key&lt;Integer&gt; encoderKey = JKeyTypes.IntKey().make(&quot;encoder&quot;);
-Key&lt;Integer&gt; filterKey = JKeyTypes.IntKey().make(&quot;filter&quot;);
-Key&lt;Integer&gt; miscKey = JKeyTypes.IntKey().make(&quot;misc.&quot;);
+Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
+Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
 
 //prefix
 String prefix = &quot;wfos.blue.filter&quot;;
@@ -733,8 +735,8 @@ Wait wait2 = wait.cloneCommand();</code></pre></dd>
 </dl>
 <h1><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h1>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/services/messages/CommandsTest.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/services/messages/JCommandsTest.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/messages/CommandsTest.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/messages/JCommandsTest.java">Java Example</a></li>
 </ul>
 </div>
 <div>

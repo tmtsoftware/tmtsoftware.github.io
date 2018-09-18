@@ -105,21 +105,21 @@ These handlers are executed under an Supervisor Actor: <span class="extype" name
 and TLA Actor (Top Level Actor): <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
 defined in the framework which handles the lifecycle and supervision of this component.</p><p>Components are controlled by a <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span> actor
 that intercepts common messages (ex. Shutdown, Restart) or lifecycle messages (ex. GoOffline or GoOnline)
-sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../../messages/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state, do not receive <a href="../../messages/CommandMessage.html" class="extype" name="csw.messages.CommandMessage">csw.messages.CommandMessage</a>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
-LocationService only when Component moves to <a href="../../messages/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState.Running">csw.messages.framework.SupervisorLifecycleState.Running</a> state.
-That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <a href="../../messages/CommandMessage.html" class="extype" name="csw.messages.CommandMessage">messages.CommandMessage</a></p><h5> Important Actors in Framework </h5><p>- <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span>
-: Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a> based on the messages it receives.
-Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>.
-For complete list of supported messages per <a href="../../messages/framework/SupervisorLifecycleState.html" class="extype" name="csw.messages.framework.SupervisorLifecycleState">csw.messages.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
+sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../../command/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState.Running">csw.command.models.framework.SupervisorLifecycleState.Running</a> state, do not receive <span class="extype" name="csw.params.CommandMessage">csw.params.CommandMessage</span>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
+LocationService only when Component moves to <a href="../../command/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState.Running">csw.command.models.framework.SupervisorLifecycleState.Running</a> state.
+That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <span class="extype" name="params.CommandMessage">params.CommandMessage</span></p><h5> Important Actors in Framework </h5><p>- <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span>
+: Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a> based on the messages it receives.
+Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a>.
+For complete list of supported messages per <a href="../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
 : Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
 And it also maintains its own state <span class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</span> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
 This is where framework code meets Component specific code.</p><p>- <span class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</span>
 : This actor is created by framework which is wrapped into <a href="../CurrentStatePublisher.html" class="extype" name="csw.framework.CurrentStatePublisher">csw.framework.CurrentStatePublisher</a> for easy interaction with this actor
-and then passed to component handlers so that component can publish their <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> published by other component (ex. HCD)
-then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> to all subscribers.</p><p>- <span class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</span>
+and then passed to component handlers so that component can publish their <a href="../../params/core/states/CurrentState.html" class="extype" name="csw.params.core.states.CurrentState">csw.params.core.states.CurrentState</a>.</p><p>If one component (ex. Assembly) is interested in <a href="../../params/core/states/CurrentState.html" class="extype" name="csw.params.core.states.CurrentState">csw.params.core.states.CurrentState</a> published by other component (ex. HCD)
+then Assembly can subscribe to HCD's current state.</p><p>PubSub actor maintains the list of subscribers and keeps publishing <a href="../../params/core/states/CurrentState.html" class="extype" name="csw.params.core.states.CurrentState">csw.params.core.states.CurrentState</a> to all subscribers.</p><p>- <span class="extype" name="csw.framework.internal.container.ContainerBehavior">csw.framework.internal.container.ContainerBehavior</span>
 : When multiple components needs to be started in container, then this actor is created.
-Job of this actor is just to logically group multiple components and support <a href="../../messages/SupervisorContainerCommonMessages$.html" class="extype" name="csw.messages.SupervisorContainerCommonMessages">csw.messages.SupervisorContainerCommonMessages</a>.
-It receives <a href="../../messages/SupervisorContainerCommonMessages$$Shutdown$.html" class="extype" name="csw.messages.SupervisorContainerCommonMessages.Shutdown">csw.messages.SupervisorContainerCommonMessages.Shutdown</a> or <a href="../../messages/SupervisorContainerCommonMessages$$Restart$.html" class="extype" name="csw.messages.SupervisorContainerCommonMessages.Restart">csw.messages.SupervisorContainerCommonMessages.Restart</a> message
+Job of this actor is just to logically group multiple components and support <span class="extype" name="csw.params.SupervisorContainerCommonMessages">csw.params.SupervisorContainerCommonMessages</span>.
+It receives <span class="extype" name="csw.params.SupervisorContainerCommonMessages.Shutdown">csw.params.SupervisorContainerCommonMessages.Shutdown</span> or <span class="extype" name="csw.params.SupervisorContainerCommonMessages.Restart">csw.params.SupervisorContainerCommonMessages.Restart</span> message
 and forwards it to all the components residing in this container.</p><h4> deploy package </h4><p>- <span class="extype" name="csw.framework.deploy.containercmd.ContainerCmd">csw.framework.deploy.containercmd.ContainerCmd</span>
 : ContainerCmd is a helper utility provided by framework to start multiple components in container mode
 or single component in Standalone mode.</p><h5> Example of Container Config File </h5><p>Here is an example of a config file for creating a container with the name <i>IRIS_Container</i> that
@@ -213,8 +213,8 @@ containers: [
                         <a href="" title="Base class for component handlers which will be used by the component actor">JComponentHandlers</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="JComponentInfo$.html" title="Helper instance for Java to create csw.messages.framework.ComponentInfo"></a>
-                        <a href="JComponentInfo$.html" title="Helper instance for Java to create csw.messages.framework.ComponentInfo">JComponentInfo</a>
+                        <a class="object" href="JComponentInfo$.html" title="Helper instance for Java to create csw.command.models.framework.ComponentInfo"></a>
+                        <a href="JComponentInfo$.html" title="Helper instance for Java to create csw.command.models.framework.ComponentInfo">JComponentInfo</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="JContainerCmd$.html" title="Helper instance for Java to start csw.framework.deploy.containercmd.ContainerCmd app"></a>
@@ -303,9 +303,9 @@ containers: [
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="csw.framework.javadsl.JComponentHandlers#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(ctx:akka.actor.typed.javadsl.ActorContext[csw.messages.TopLevelActorMessage],componentInfo:csw.messages.framework.ComponentInfo,commandResponseManager:csw.services.command.CommandResponseManager,currentStatePublisher:csw.framework.CurrentStatePublisher,locationService:csw.services.location.javadsl.ILocationService,eventService:csw.services.event.api.javadsl.IEventService,loggerFactory:csw.services.logging.javadsl.JLoggerFactory):csw.framework.javadsl.JComponentHandlers"></a><a id="&lt;init&gt;:JComponentHandlers"></a>
+      <a id="&lt;init&gt;(ctx:akka.actor.typed.javadsl.ActorContext[csw.command.messages.TopLevelActorMessage],cswCtx:csw.framework.models.JCswContext):csw.framework.javadsl.JComponentHandlers"></a><a id="&lt;init&gt;:JComponentHandlers"></a>
       <span class="permalink">
-      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#&lt;init&gt;(ctx:akka.actor.typed.javadsl.ActorContext[csw.messages.TopLevelActorMessage],componentInfo:csw.messages.framework.ComponentInfo,commandResponseManager:csw.services.command.CommandResponseManager,currentStatePublisher:csw.framework.CurrentStatePublisher,locationService:csw.services.location.javadsl.ILocationService,eventService:csw.services.event.api.javadsl.IEventService,loggerFactory:csw.services.logging.javadsl.JLoggerFactory):csw.framework.javadsl.JComponentHandlers" title="Permalink">
+      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#&lt;init&gt;(ctx:akka.actor.typed.javadsl.ActorContext[csw.command.messages.TopLevelActorMessage],cswCtx:csw.framework.models.JCswContext):csw.framework.javadsl.JComponentHandlers" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -314,10 +314,10 @@ containers: [
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">JComponentHandlers</span><span class="params">(<span name="ctx">ctx: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.14/akka-actor-typed_2.12-2.5.14-javadoc.jar/!/akka/actor/typed/javadsl/ActorContext.html#akka.actor.typed.javadsl.ActorContext" class="extype" name="akka.actor.typed.javadsl.ActorContext">ActorContext</a>[<a href="../../messages/TopLevelActorMessage.html" class="extype" name="csw.messages.TopLevelActorMessage">TopLevelActorMessage</a>]</span>, <span name="componentInfo">componentInfo: <a href="../../messages/framework/ComponentInfo.html" class="extype" name="csw.messages.framework.ComponentInfo">ComponentInfo</a></span>, <span name="commandResponseManager">commandResponseManager: <a href="../../services/command/CommandResponseManager.html" class="extype" name="csw.services.command.CommandResponseManager">CommandResponseManager</a></span>, <span name="currentStatePublisher">currentStatePublisher: <a href="../CurrentStatePublisher.html" class="extype" name="csw.framework.CurrentStatePublisher">CurrentStatePublisher</a></span>, <span name="locationService">locationService: <a href="../../services/location/javadsl/ILocationService.html" class="extype" name="csw.services.location.javadsl.ILocationService">ILocationService</a></span>, <span name="eventService">eventService: <a href="../../services/event/api/javadsl/IEventService.html" class="extype" name="csw.services.event.api.javadsl.IEventService">IEventService</a></span>, <span name="loggerFactory">loggerFactory: <a href="../../services/logging/javadsl/JLoggerFactory.html" class="extype" name="csw.services.logging.javadsl.JLoggerFactory">JLoggerFactory</a></span>)</span>
+        <span class="name">JComponentHandlers</span><span class="params">(<span name="ctx">ctx: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.15/akka-actor-typed_2.12-2.5.15-javadoc.jar/!/akka/actor/typed/javadsl/ActorContext.html#akka.actor.typed.javadsl.ActorContext" class="extype" name="akka.actor.typed.javadsl.ActorContext">ActorContext</a>[<a href="../../command/messages/TopLevelActorMessage.html" class="extype" name="csw.command.messages.TopLevelActorMessage">TopLevelActorMessage</a>]</span>, <span name="cswCtx">cswCtx: <a href="../models/JCswContext.html" class="extype" name="csw.framework.models.JCswContext">JCswContext</a></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">ctx</dt><dd class="cmt"><p>the <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.14/akka-actor-typed_2.12-2.5.14-javadoc.jar/!/akka/actor/typed/javadsl/ActorContext.html" class="extype" name="akka.actor.typed.javadsl.ActorContext">akka.actor.typed.javadsl.ActorContext</a> under which the actor instance of the component, which use these handlers, is created</p></dd><dt class="param">componentInfo</dt><dd class="cmt"><p>component related information as described in the configuration file</p></dd><dt class="param">commandResponseManager</dt><dd class="cmt"><p>to manage state of a received Submit command</p></dd><dt class="param">currentStatePublisher</dt><dd class="cmt"><p>the pub sub actor to publish state represented by <a href="../../messages/params/states/CurrentState.html" class="extype" name="csw.messages.params.states.CurrentState">csw.messages.params.states.CurrentState</a> for this component</p></dd><dt class="param">locationService</dt><dd class="cmt"><p>the single instance of Location service created for a running application</p></dd><dt class="param">eventService</dt><dd class="cmt"><p>the single instance of event service with default publishers and subcribers as well as the capability to create new ones</p></dd><dt class="param">loggerFactory</dt><dd class="cmt"><p>factory to create suitable logger instance</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">ctx</dt><dd class="cmt"><p>the <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.15/akka-actor-typed_2.12-2.5.15-javadoc.jar/!/akka/actor/typed/javadsl/ActorContext.html" class="extype" name="akka.actor.typed.javadsl.ActorContext">akka.actor.typed.javadsl.ActorContext</a> under which the actor instance of the component, which use these handlers, is created</p></dd><dt class="param">cswCtx</dt><dd class="cmt"><p>provides access to csw services e.g. location, event, alarm, etc</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -400,9 +400,9 @@ if needed as a part of this handler.
 change its behavior if needed as a part of this handler.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">ComponentHandlers</a></dd></dl></div>
     </li><li name="csw.framework.scaladsl.ComponentHandlers#onLocationTrackingEvent" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="onLocationTrackingEvent(trackingEvent:csw.messages.location.TrackingEvent):Unit"></a><a id="onLocationTrackingEvent(TrackingEvent):Unit"></a>
+      <a id="onLocationTrackingEvent(trackingEvent:csw.location.api.models.TrackingEvent):Unit"></a><a id="onLocationTrackingEvent(TrackingEvent):Unit"></a>
       <span class="permalink">
-      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#onLocationTrackingEvent(trackingEvent:csw.messages.location.TrackingEvent):Unit" title="Permalink">
+      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#onLocationTrackingEvent(trackingEvent:csw.location.api.models.TrackingEvent):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -411,7 +411,7 @@ change its behavior if needed as a part of this handler.
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">onLocationTrackingEvent</span><span class="params">(<span name="trackingEvent">trackingEvent: <a href="../../messages/location/TrackingEvent.html" class="extype" name="csw.messages.location.TrackingEvent">TrackingEvent</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">onLocationTrackingEvent</span><span class="params">(<span name="trackingEvent">trackingEvent: <a href="../../location/api/models/TrackingEvent.html" class="extype" name="csw.location.api.models.TrackingEvent">TrackingEvent</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <p class="shortcomment cmt">The onLocationTrackingEvent handler can be used to take action on the TrackingEvent for a particular connection.</p><div class="fullcomment"><div class="comment cmt"><p>The onLocationTrackingEvent handler can be used to take action on the TrackingEvent for a particular connection.
@@ -419,9 +419,9 @@ This event could be for the connections in ComponentInfo tracked automatically o
 explicitly using trackConnection method.
 </p></div><dl class="paramcmts block"><dt class="param">trackingEvent</dt><dd class="cmt"><p>represents a LocationUpdated or LocationRemoved event received for a tracked connection</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">ComponentHandlers</a></dd></dl></div>
     </li><li name="csw.framework.scaladsl.ComponentHandlers#onOneway" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="onOneway(controlCommand:csw.messages.commands.ControlCommand):Unit"></a><a id="onOneway(ControlCommand):Unit"></a>
+      <a id="onOneway(controlCommand:csw.params.commands.ControlCommand):Unit"></a><a id="onOneway(ControlCommand):Unit"></a>
       <span class="permalink">
-      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#onOneway(controlCommand:csw.messages.commands.ControlCommand):Unit" title="Permalink">
+      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#onOneway(controlCommand:csw.params.commands.ControlCommand):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -430,7 +430,7 @@ explicitly using trackConnection method.
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">onOneway</span><span class="params">(<span name="controlCommand">controlCommand: <a href="../../messages/commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">ControlCommand</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">onOneway</span><span class="params">(<span name="controlCommand">controlCommand: <a href="../../params/commands/ControlCommand.html" class="extype" name="csw.params.commands.ControlCommand">ControlCommand</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <p class="shortcomment cmt">On receiving a command as Oneway, the onOneway handler is invoked for a component only if the validateCommand handler
@@ -438,9 +438,9 @@ returns Accepted.In case a command is received as a oneway, command response sho
 returns Accepted.In case a command is received as a oneway, command response should not be provided to the sender.
 </p></div><dl class="paramcmts block"><dt class="param">controlCommand</dt><dd class="cmt"><p>represents a command received e.g. Setup, Observe or wait</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">ComponentHandlers</a></dd></dl></div>
     </li><li name="csw.framework.scaladsl.ComponentHandlers#onSubmit" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="onSubmit(controlCommand:csw.messages.commands.ControlCommand):Unit"></a><a id="onSubmit(ControlCommand):Unit"></a>
+      <a id="onSubmit(controlCommand:csw.params.commands.ControlCommand):Unit"></a><a id="onSubmit(ControlCommand):Unit"></a>
       <span class="permalink">
-      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#onSubmit(controlCommand:csw.messages.commands.ControlCommand):Unit" title="Permalink">
+      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#onSubmit(controlCommand:csw.params.commands.ControlCommand):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -449,7 +449,7 @@ returns Accepted.In case a command is received as a oneway, command response sho
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">onSubmit</span><span class="params">(<span name="controlCommand">controlCommand: <a href="../../messages/commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">ControlCommand</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">onSubmit</span><span class="params">(<span name="controlCommand">controlCommand: <a href="../../params/commands/ControlCommand.html" class="extype" name="csw.params.commands.ControlCommand">ControlCommand</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <p class="shortcomment cmt">On receiving a command as Submit, the onSubmit handler is invoked for a component only if the validateCommand handler
@@ -458,9 +458,9 @@ returns Accepted. In case a command is received as a submit, command response sh
 CommandResponseManager is an actor whose reference commandResponseManager is available in the ComponentHandlers.
 </p></div><dl class="paramcmts block"><dt class="param">controlCommand</dt><dd class="cmt"><p>represents a command received e.g. Setup, Observe or wait</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../scaladsl/ComponentHandlers.html" class="extype" name="csw.framework.scaladsl.ComponentHandlers">ComponentHandlers</a></dd></dl></div>
     </li><li name="csw.framework.scaladsl.ComponentHandlers#validateCommand" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="validateCommand(controlCommand:csw.messages.commands.ControlCommand):csw.messages.commands.CommandResponse"></a><a id="validateCommand(ControlCommand):CommandResponse"></a>
+      <a id="validateCommand(controlCommand:csw.params.commands.ControlCommand):csw.params.commands.CommandResponse"></a><a id="validateCommand(ControlCommand):CommandResponse"></a>
       <span class="permalink">
-      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#validateCommand(controlCommand:csw.messages.commands.ControlCommand):csw.messages.commands.CommandResponse" title="Permalink">
+      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#validateCommand(controlCommand:csw.params.commands.ControlCommand):csw.params.commands.CommandResponse" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -469,7 +469,7 @@ CommandResponseManager is an actor whose reference commandResponseManager is ava
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">validateCommand</span><span class="params">(<span name="controlCommand">controlCommand: <a href="../../messages/commands/ControlCommand.html" class="extype" name="csw.messages.commands.ControlCommand">ControlCommand</a></span>)</span><span class="result">: <a href="../../messages/commands/CommandResponse.html" class="extype" name="csw.messages.commands.CommandResponse">CommandResponse</a></span>
+        <span class="name">validateCommand</span><span class="params">(<span name="controlCommand">controlCommand: <a href="../../params/commands/ControlCommand.html" class="extype" name="csw.params.commands.ControlCommand">ControlCommand</a></span>)</span><span class="result">: <a href="../../params/commands/CommandResponse.html" class="extype" name="csw.params.commands.CommandResponse">CommandResponse</a></span>
       </span>
       
       <p class="shortcomment cmt">The validateCommand is invoked when a command is received by this component.</p><div class="fullcomment"><div class="comment cmt"><p>The validateCommand is invoked when a command is received by this component. If a command can be completed immediately,
@@ -652,7 +652,7 @@ the component is required to validate the ControlCommand received and return a v
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#java.lang.Class" class="extype" name="java.lang.Class">Class</a>[_]</span>
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
@@ -834,9 +834,9 @@ the component is required to validate the ControlCommand received and return a v
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="csw.framework.scaladsl.ComponentHandlers#trackConnection" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="trackConnection(connection:csw.messages.location.Connection):Unit"></a><a id="trackConnection(Connection):Unit"></a>
+      <a id="trackConnection(connection:csw.location.api.models.Connection):Unit"></a><a id="trackConnection(Connection):Unit"></a>
       <span class="permalink">
-      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#trackConnection(connection:csw.messages.location.Connection):Unit" title="Permalink">
+      <a href="../../../csw/framework/javadsl/JComponentHandlers.html#trackConnection(connection:csw.location.api.models.Connection):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -845,7 +845,7 @@ the component is required to validate the ControlCommand received and return a v
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">trackConnection</span><span class="params">(<span name="connection">connection: <a href="../../messages/location/Connection.html" class="extype" name="csw.messages.location.Connection">Connection</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">trackConnection</span><span class="params">(<span name="connection">connection: <a href="../../location/api/models/Connection.html" class="extype" name="csw.location.api.models.Connection">Connection</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <p class="shortcomment cmt">Track any connection.</p><div class="fullcomment"><div class="comment cmt"><p>Track any connection. The handlers for received events are defined in onLocationTrackingEvent() method
