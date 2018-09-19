@@ -294,7 +294,7 @@ tmtsoftware/csw-prod
 | subscribeAggregatedSeverityActorRef | subscribeAggregatedHealthCallback | subscribeAggregatedHealthActorRef }</code></li>
 </ul>
 <h2><a href="#creating-clientapi-and-adminapi" name="creating-clientapi-and-adminapi" class="anchor"><span class="anchor-link"></span></a>Creating clientAPI and adminAPI</h2>
-<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmService.html">AlarmService</a> using <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/alarm/AlarmServiceFactory.html">AlarmServiceFactory</a>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmService.html">AlarmService</a> using <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/alarm/client/AlarmServiceFactory.html">AlarmServiceFactory</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>The Admin API will be used from an administrative user interface or an alarm cli. More details about alarm cli can be found here.  The <a href="../apps/cswalarmcli.html">CSW Alarm Client CLI application</a> is provided with this functionality.</p></div>
 <dl>
   <dt>Scala</dt>
@@ -324,11 +324,11 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  await(clientAPI1.setSeverity(alarmKey, Okay))
+  await(clientAPI.setSeverity(alarmKey, Okay))
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">private val done: Done = jclientAPI1.setSeverity(alarmKey, Okay).get()</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">private val done: Done = jclientAPI.setSeverity(alarmKey, Okay).get()</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>If the alarm is not refreshed within 9 seconds, it will be inferred as <code>Disconnected</code></li>
@@ -340,8 +340,9 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  val alarmsConfig: Config = ConfigFactory.parseResources(&quot;test-alarms/valid-alarms.conf&quot;)
-  await(adminAPI1.initAlarms(alarmsConfig))
+  val resource             = &quot;test-alarms/valid-alarms.conf&quot;
+  val alarmsConfig: Config = ConfigFactory.parseResources(resource)
+  await(adminAPI.initAlarms(alarmsConfig))
 }</code></pre></dd>
 </dl>
 <h2><a href="#acknowledge" name="acknowledge" class="anchor"><span class="anchor-link"></span></a>acknowledge</h2>
@@ -350,7 +351,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  await(adminAPI1.acknowledge(alarmKey))
+  await(adminAPI.acknowledge(alarmKey))
 }</code></pre></dd>
 </dl>
 <h2><a href="#shelve" name="shelve" class="anchor"><span class="anchor-link"></span></a>shelve</h2>
@@ -359,7 +360,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  await(adminAPI1.shelve(alarmKey))
+  await(adminAPI.shelve(alarmKey))
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Shelved alarms are also considered in aggregation calculation of alarms.</p></div>
@@ -369,7 +370,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  await(adminAPI1.unshelve(alarmKey))
+  await(adminAPI.unshelve(alarmKey))
 }</code></pre></dd>
 </dl>
 <h2><a href="#reset" name="reset" class="anchor"><span class="anchor-link"></span></a>reset</h2>
@@ -378,7 +379,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  await(adminAPI1.reset(alarmKey))
+  await(adminAPI.reset(alarmKey))
 }</code></pre></dd>
 </dl>
 <h2><a href="#getmetadata" name="getmetadata" class="anchor"><span class="anchor-link"></span></a>getMetadata</h2>
@@ -401,7 +402,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  val metadata: AlarmMetadata = await(adminAPI1.getMetadata(alarmKey))
+  val metadata: AlarmMetadata = await(adminAPI.getMetadata(alarmKey))
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Inactive alarms will not be taking part in aggregation of severity or health. </p></div>
@@ -417,7 +418,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  val status: AlarmStatus = await(adminAPI1.getStatus(alarmKey))
+  val status: AlarmStatus = await(adminAPI.getStatus(alarmKey))
 }</code></pre></dd>
 </dl>
 <h2><a href="#getcurrentseverity" name="getcurrentseverity" class="anchor"><span class="anchor-link"></span></a>getCurrentSeverity</h2>
@@ -426,7 +427,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  val severity: FullAlarmSeverity = await(adminAPI1.getCurrentSeverity(alarmKey))
+  val severity: FullAlarmSeverity = await(adminAPI.getCurrentSeverity(alarmKey))
 }</code></pre></dd>
 </dl>
 <h2><a href="#getaggregatedseverity" name="getaggregatedseverity" class="anchor"><span class="anchor-link"></span></a>getAggregatedSeverity</h2>
@@ -435,7 +436,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  val aggregatedSeverity: FullAlarmSeverity = await(adminAPI1.getAggregatedSeverity(alarmKey))
+  val aggregatedSeverity: FullAlarmSeverity = await(adminAPI.getAggregatedSeverity(alarmKey))
 }</code></pre></dd>
 </dl>
 <h2><a href="#getaggregatedhealth" name="getaggregatedhealth" class="anchor"><span class="anchor-link"></span></a>getAggregatedHealth</h2>
@@ -444,7 +445,7 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">async {
-  val health: AlarmHealth = await(adminAPI1.getAggregatedHealth(alarmKey))
+  val health: AlarmHealth = await(adminAPI.getAggregatedHealth(alarmKey))
 }</code></pre></dd>
 </dl>
 <h2><a href="#subscribeaggregatedseveritycallback" name="subscribeaggregatedseveritycallback" class="anchor"><span class="anchor-link"></span></a>subscribeAggregatedSeverityCallback</h2>
@@ -452,28 +453,34 @@ private val jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jlocationServ
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">adminAPI1.subscribeAggregatedSeverityCallback(alarmKey, aggregatedSeverity ⇒ { /* do something*/ })</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">adminAPI.subscribeAggregatedSeverityCallback(
+  alarmKey,
+  aggregatedSeverity ⇒ { /* do something*/ }
+)</code></pre></dd>
 </dl>
 <h2><a href="#subscribeaggregatedseverityactorref" name="subscribeaggregatedseverityactorref" class="anchor"><span class="anchor-link"></span></a>subscribeAggregatedSeverityActorRef</h2>
 <p>Subscribes to the changes of aggregated severity for given alarm/component/subsystem/whole TMT system by providing an actor which will receive a message of aggregated severity on every change.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">adminAPI1.subscribeAggregatedSeverityActorRef(alarmKey, severityActorRef)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">adminAPI.subscribeAggregatedSeverityActorRef(alarmKey, severityActorRef)</code></pre></dd>
 </dl>
 <h2><a href="#subscribeaggregatedhealthcallback" name="subscribeaggregatedhealthcallback" class="anchor"><span class="anchor-link"></span></a>subscribeAggregatedHealthCallback</h2>
 <p>Subscribe to the changes of aggregated health for given alarm/component/subsystem/whole TMT system by providing a callback which gets executedfor every change.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">adminAPI1.subscribeAggregatedHealthCallback(alarmKey, aggregatedHealth ⇒ { /* do something*/ })</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">adminAPI.subscribeAggregatedHealthCallback(
+  alarmKey,
+  aggregatedHealth ⇒ { /* do something*/ }
+)</code></pre></dd>
 </dl>
 <h2><a href="#subscribeaggregatedhealthactorref" name="subscribeaggregatedhealthactorref" class="anchor"><span class="anchor-link"></span></a>subscribeAggregatedHealthActorRef</h2>
 <p>Subscribes to the changes of aggregated health for given alarm/component/subsystem/whole TMT system by providing an actor which will receive a message of aggregated severity on every change.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">adminAPI1.subscribeAggregatedHealthActorRef(alarmKey, healthActorRef)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">adminAPI.subscribeAggregatedHealthActorRef(alarmKey, healthActorRef)</code></pre></dd>
 </dl>
 </div>
 <div>
