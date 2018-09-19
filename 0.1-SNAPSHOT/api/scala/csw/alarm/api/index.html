@@ -193,10 +193,20 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../client/index.html"><span class="name">client</span></a>
+        <a title="This module implements an Alarm Service responsible for updating and managing alarms for a component." href="../client/index.html"><span class="name">client</span></a>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.alarm">alarm</a></dd></dl></div>
+      <p class="shortcomment cmt">This module implements an Alarm Service responsible for updating and managing alarms for a component.</p><div class="fullcomment"><div class="comment cmt"><h4> Alarm Service </h4><p>This module implements an Alarm Service responsible for updating and managing alarms for a component. Alarm service comes
+in two flavours. One provides admin level management like reset alarm, subscribe to alarm, etc. And other provides component
+level api e.g. set the severity of an alarm.</p><p>An alarm is uniquely identified within the component with <a href="models/Key$$AlarmKey.html" class="extype" name="csw.alarm.api.models.Key.AlarmKey">csw.alarm.api.models.Key.AlarmKey</a>. The alarm key is composed of
+a <a href="../../params/core/models/Subsystem.html" class="extype" name="csw.params.core.models.Subsystem">csw.params.core.models.Subsystem</a>, component name, alarm name.</p><h5> Example: Alarm Service </h5><pre><span class="kw">val</span> alarmServiceFactory                    = <span class="kw">new</span> AlarmServiceFactory()
+<span class="kw">val</span> alarmService: AlarmService             = alarmServiceFactory.makeClientApi(locationService)
+<span class="kw">val</span> alarmAdminService: AlarmAdminService   = alarmServiceFactory.makeAdminApi(locationService)</pre><p>Using above code, you can create instance of <a href="scaladsl/AlarmService.html" class="extype" name="csw.alarm.api.scaladsl.AlarmService">csw.alarm.api.scaladsl.AlarmService</a> or <a href="scaladsl/AlarmAdminService.html" class="extype" name="csw.alarm.api.scaladsl.AlarmAdminService">csw.alarm.api.scaladsl.AlarmAdminService</a>.</p><h5> Example: Alarm Service </h5><p>Alarm Service provides asynchronous API to set the severity of an alarm</p><pre><span class="kw">val</span> alarmKey = AlarmKey(NFIRAOS, <span class="lit">"trombone"</span>, <span class="lit">"tromboneAxisLowLimitAlarm"</span>)
+
+<span class="kw">val</span> foo: Future[Done] = async {
+   await(clientAPI1.setSeverity(alarmKey, Okay))
+}</pre><p>Complete guide of usage of different API's provided by EventService is available at:
+https://tmtsoftware.github.io/csw-prod/services/alarm.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.alarm">alarm</a></dd></dl></div>
     </li>
               </ul>
             </div>
