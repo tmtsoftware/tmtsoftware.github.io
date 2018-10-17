@@ -105,12 +105,12 @@ These handlers are executed under an Supervisor Actor: <span class="extype" name
 and TLA Actor (Top Level Actor): <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
 defined in the framework which handles the lifecycle and supervision of this component.</p><p>Components are controlled by a <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span> actor
 that intercepts common messages (ex. Shutdown, Restart) or lifecycle messages (ex. GoOffline or GoOnline)
-sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../../../command/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState.Running">csw.command.models.framework.SupervisorLifecycleState.Running</a> state, do not receive <span class="extype" name="csw.params.CommandMessage">csw.params.CommandMessage</span>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
-LocationService only when Component moves to <a href="../../../command/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState.Running">csw.command.models.framework.SupervisorLifecycleState.Running</a> state.
+sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../../../command/client/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState.Running">csw.command.client.models.framework.SupervisorLifecycleState.Running</a> state, do not receive <span class="extype" name="csw.params.CommandMessage">csw.params.CommandMessage</span>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
+LocationService only when Component moves to <a href="../../../command/client/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState.Running">csw.command.client.models.framework.SupervisorLifecycleState.Running</a> state.
 That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <span class="extype" name="params.CommandMessage">params.CommandMessage</span></p><h5> Important Actors in Framework </h5><p>- <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span>
-: Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../../exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../../exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a> based on the messages it receives.
-Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a>.
-For complete list of supported messages per <a href="../../../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
+: Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../../exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../../exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../../../command/client/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState">csw.command.client.models.framework.SupervisorLifecycleState</a> based on the messages it receives.
+Decision to handle external messages or not is taken by the supervisor based on its current <a href="../../../command/client/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState">csw.command.client.models.framework.SupervisorLifecycleState</a>.
+For complete list of supported messages per <a href="../../../command/client/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState">csw.command.client.models.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
 : Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
 And it also maintains its own state <span class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</span> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
 This is where framework code meets Component specific code.</p><p>- <span class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</span>
@@ -252,7 +252,7 @@ containers: [
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">FrameworkWiring</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>
+        <span class="name">FrameworkWiring</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>
       </span>
       </h4>
 
@@ -262,7 +262,7 @@ containers: [
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.7/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div></div>
         
 
@@ -346,7 +346,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -362,7 +362,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -378,7 +378,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -458,7 +458,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -470,26 +470,10 @@ containers: [
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="csw.framework.internal.wiring.FrameworkWiring#clusterSettings" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="clusterSettings:csw.location.commons.ClusterSettings"></a><a id="clusterSettings:ClusterSettings"></a>
-      <span class="permalink">
-      <a href="../../../../csw/framework/internal/wiring/FrameworkWiring.html#clusterSettings:csw.location.commons.ClusterSettings" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">clusterSettings</span><span class="result">: <a href="../../../location/commons/ClusterSettings.html" class="extype" name="csw.location.commons.ClusterSettings">ClusterSettings</a></span>
-      </span>
-      
-      
     </li><li name="csw.framework.internal.wiring.FrameworkWiring#commandResponseManagerFactory" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="commandResponseManagerFactory:csw.command.internal.CommandResponseManagerFactory"></a><a id="commandResponseManagerFactory:CommandResponseManagerFactory"></a>
+      <a id="commandResponseManagerFactory:csw.command.client.internal.CommandResponseManagerFactory"></a><a id="commandResponseManagerFactory:CommandResponseManagerFactory"></a>
       <span class="permalink">
-      <a href="../../../../csw/framework/internal/wiring/FrameworkWiring.html#commandResponseManagerFactory:csw.command.internal.CommandResponseManagerFactory" title="Permalink">
+      <a href="../../../../csw/framework/internal/wiring/FrameworkWiring.html#commandResponseManagerFactory:csw.command.client.internal.CommandResponseManagerFactory" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -498,7 +482,7 @@ containers: [
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">commandResponseManagerFactory</span><span class="result">: <span class="extype" name="csw.command.internal.CommandResponseManagerFactory">CommandResponseManagerFactory</span></span>
+        <span class="name">commandResponseManagerFactory</span><span class="result">: <span class="extype" name="csw.command.client.internal.CommandResponseManagerFactory">CommandResponseManagerFactory</span></span>
       </span>
       
       
@@ -546,7 +530,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -562,7 +546,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -594,7 +578,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -635,7 +619,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
@@ -654,7 +638,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -674,22 +658,6 @@ containers: [
       </span>
       
       
-    </li><li name="csw.framework.internal.wiring.FrameworkWiring#logAdminActorRef" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="logAdminActorRef:akka.actor.typed.ActorRef[csw.logging.messages.LogControlMessages]"></a><a id="logAdminActorRef:ActorRef[LogControlMessages]"></a>
-      <span class="permalink">
-      <a href="../../../../csw/framework/internal/wiring/FrameworkWiring.html#logAdminActorRef:akka.actor.typed.ActorRef[csw.logging.messages.LogControlMessages]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">logAdminActorRef</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.15/akka-actor-typed_2.12-2.5.15-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<a href="../../../logging/messages/LogControlMessages.html" class="extype" name="csw.logging.messages.LogControlMessages">LogControlMessages</a>]</span>
-      </span>
-      
-      
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -702,7 +670,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -718,7 +686,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -737,7 +705,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -761,9 +729,9 @@ containers: [
       
       
     </li><li name="csw.framework.internal.wiring.FrameworkWiring#registrationFactory" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="registrationFactory:csw.location.scaladsl.RegistrationFactory"></a><a id="registrationFactory:RegistrationFactory"></a>
+      <a id="registrationFactory:csw.framework.scaladsl.RegistrationFactory"></a><a id="registrationFactory:RegistrationFactory"></a>
       <span class="permalink">
-      <a href="../../../../csw/framework/internal/wiring/FrameworkWiring.html#registrationFactory:csw.location.scaladsl.RegistrationFactory" title="Permalink">
+      <a href="../../../../csw/framework/internal/wiring/FrameworkWiring.html#registrationFactory:csw.framework.scaladsl.RegistrationFactory" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -772,7 +740,7 @@ containers: [
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">registrationFactory</span><span class="result">: <a href="../../../location/scaladsl/RegistrationFactory.html" class="extype" name="csw.location.scaladsl.RegistrationFactory">RegistrationFactory</a></span>
+        <span class="name">registrationFactory</span><span class="result">: <a href="../../scaladsl/RegistrationFactory.html" class="extype" name="csw.framework.scaladsl.RegistrationFactory">RegistrationFactory</a></span>
       </span>
       
       
@@ -820,7 +788,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -842,7 +810,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -864,7 +832,7 @@ containers: [
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -887,9 +855,9 @@ containers: [
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>

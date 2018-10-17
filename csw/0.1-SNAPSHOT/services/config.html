@@ -84,7 +84,7 @@ Type to start searching
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
 <div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -92,7 +92,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -118,7 +118,7 @@ TMT Common Software (CSW)
 </a>
 </label>
 <div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -126,7 +126,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -167,7 +167,8 @@ tmtsoftware/csw-prod
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
+    <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
+    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -252,14 +253,14 @@ tmtsoftware/csw-prod
 <div class="md-content__searchable">
 <h1><a href="#configuration-service" name="configuration-service" class="anchor"><span class="anchor-link"></span></a>Configuration Service</h1>
 <p>The Configuration Service provides a centralized persistent store for any configuration file used in the TMT Software System. All versions of configuration files are retained, providing a historical record of each configuration file.</p>
-<p>Note that in order to use the APIs described here, the <a href="../services/location.html">Location Service</a> (<a href="../apps/cswclusterseed.html">csw-cluster-seed</a>) and <a href="../apps/cswonfigserverapp.html">Configuration Service Server</a> needs to be running somewhere in the local network and the necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s) for the Location Service seed nodes.</p>
+<p>Note that in order to use the APIs described here, the <a href="../services/location.html">Location Service</a> (<a href="../apps/cswlocationserver.html">csw-location-server</a>) and <a href="../apps/cswonfigserverapp.html">Configuration Service Server</a> needs to be running somewhere in the local network and the necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s) for the Location Service nodes.</p>
 <p>This service will be part of the observatory cluster and exposes Rest endpoints that can be accessed over HTTP. Component developers can use the csw-config-client library in their code. The library wraps the low level communication with Configuration Service Server and exposes simple to use methods to access and manage configuration files.</p>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the Configuration Service without using the framework, add this to your <code>build.sbt</code> file:</p>
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-config-client&quot; % &quot;0.1-SNAPSHOT&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-config-client&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
 </dl>
 <h2><a href="#rules-and-checks" name="rules-and-checks" class="anchor"><span class="anchor-link"></span></a>Rules and Checks</h2>
@@ -342,7 +343,7 @@ val doneF = async {
   await(adminApi.create(filePath, ConfigData.fromString(defaultStrConf), annex = false, &quot;First commit&quot;))
 
   val activeFile: Option[ConfigData] = await(clientApi.getActive(filePath))
-  await(activeFile.get.toStringF) shouldBe defaultStrConf
+  await(activeFile.get.toStringF(mat)) shouldBe defaultStrConf
 }
 Await.result(doneF, 5.seconds)</code></pre></dd>
   <dt>Java</dt>
@@ -473,7 +474,7 @@ Assert.assertEquals(adminApi.getLatest(unwantedFilePath).get(), Optional.empty()
 
   //validate
   val actualData = await(adminApi.getById(filePath, id)).get
-  await(actualData.toStringF) shouldBe defaultStrConf
+  await(actualData.toStringF(mat)) shouldBe defaultStrConf
 }
 Await.result(doneF, 2.seconds)</code></pre></dd>
   <dt>Java</dt>
@@ -502,7 +503,7 @@ Assert.assertEquals(defaultStrConf, actualData.toJStringF(mat).get());</code></p
   //get the latest file
   val newConfigData = await(adminApi.getLatest(filePath)).get
   //validate
-  await(newConfigData.toStringF) shouldBe newContent
+  await(newConfigData.toStringF(mat)) shouldBe newContent
 }
 Await.result(assertionF, 2.seconds)</code></pre></dd>
   <dt>Java</dt>
@@ -540,10 +541,10 @@ Assert.assertEquals(newConfigData.toJStringF(mat).get(), newContent);</code></pr
   await(adminApi.update(filePath, ConfigData.fromString(newContent), &quot;changed!!&quot;))
 
   val initialData: ConfigData = await(adminApi.getByTime(filePath, tInitial)).get
-  await(initialData.toStringF) shouldBe defaultStrConf
+  await(initialData.toStringF(mat)) shouldBe defaultStrConf
 
   val latestData = await(adminApi.getByTime(filePath, Instant.now())).get
-  await(latestData.toStringF) shouldBe newContent
+  await(latestData.toStringF(mat)) shouldBe newContent
 }
 Await.result(assertionF, 2.seconds)</code></pre></dd>
   <dt>Java</dt>
@@ -768,7 +769,7 @@ Assert.assertEquals(new ArrayList&lt;&gt;(Arrays.asList(id2, id1)),
 
   //get contents of active version at a specified instance
   val initialContents = await(adminApi.getActiveByTime(filePath, tBegin)).get
-  await(initialContents.toStringF) shouldBe defaultStrConf
+  await(initialContents.toStringF(mat)) shouldBe defaultStrConf
 }
 Await.result(assertionF, 5.seconds)</code></pre></dd>
   <dt>Java</dt>
@@ -850,12 +851,12 @@ Assert.assertNotEquals(metadata.repoPath(), &quot;&quot;);</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/scala/csw/config/ConfigClientExampleTest.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/test/java/csw/config/JConfigClientExampleTest.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/csw/config/ConfigClientExampleTest.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/csw/config/JConfigClientExampleTest.java">Java Example</a></li>
 </ul>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/config.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/services/config.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>

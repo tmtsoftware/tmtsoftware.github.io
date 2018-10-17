@@ -84,7 +84,7 @@ Type to start searching
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
 <div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -92,7 +92,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -118,7 +118,7 @@ TMT Common Software (CSW)
 </a>
 </label>
 <div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -126,7 +126,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -167,7 +167,8 @@ tmtsoftware/csw-prod
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
+    <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
+    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -232,12 +233,14 @@ tmtsoftware/csw-prod
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// after validation of the controlCommand, update its status of successful validation as Accepted
-commandResponseManager.addOrUpdateCommand(controlCommand.runId, Accepted(controlCommand.runId))</code></pre></dd>
+// TODO -- This isn&#39;t needed, but it must be part of docs
+// commandResponseManager.addOrUpdateCommand(controlCommand.runId, Started(controlCommand.runId))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// after validation of the controlCommand, update its status of successful validation as Accepted
 CommandResponse.Accepted accepted = new CommandResponse.Accepted(controlCommand.runId());
-commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);</code></pre></dd>
+// TODO - REALLY?
+//commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);</code></pre></dd>
 </dl>
 <h2><a href="#addsubcommand" name="addsubcommand" class="anchor"><span class="anchor-link"></span></a>addSubCommand</h2>
 <p>A received command can be often split into two or more sub-commands. The status of original command can then be derived from the status of the sub-commands. In order to achieve this, a component has to first add the sub-commands against in relation to the parent command using this method.</p>
@@ -263,7 +266,7 @@ commandResponseManager.addSubCommand(sc.runId(), subCommand2.runId());
   <dd>
   <pre class="prettyprint"><code class="language-scala">// An original command is split into sub-commands and sent to a component. The result of the command is
 // obtained by subscribing to the component with the sub command id.
-hcdComponent.subscribe(controlCommand.runId).map {
+hcdComponent.queryFinal(controlCommand.runId).map {
   case _: Completed ⇒
     controlCommand.runId match {
       case id if id == shortSetup.runId ⇒
@@ -284,10 +287,10 @@ hcdComponent.subscribe(controlCommand.runId).map {
   <dd>
   <pre class="prettyprint"><code class="language-java">// An original command is split into sub-commands and sent to a component. The result of the command is
 // obtained by subscribing to the component with the sub command id.
-JCommandService componentCommandService = runningHcds.get(componentInfo.getConnections().get(0)).get();
-componentCommandService.subscribe(subCommand2.runId(), Timeout.durationToTimeout(FiniteDuration.apply(5, TimeUnit.SECONDS)))
+ICommandService componentCommandService = runningHcds.get(componentInfo.getConnections().get(0)).get();
+componentCommandService.queryFinal(subCommand2.runId(), Timeout.durationToTimeout(FiniteDuration.apply(5, TimeUnit.SECONDS)))
         .thenAccept(commandResponse -&gt; {
-            if (commandResponse.resultType() instanceof CommandResponse.Completed) {
+            if (commandResponse instanceof CommandResponse.Completed) {
                 // As the commands get completed, the results are updated in the commandResponseManager
                 commandResponseManager.updateSubCommand(subCommand2.runId(), commandResponse);
             } else {
@@ -306,7 +309,9 @@ commandResponseManager
   .query(controlCommand.runId)
   .map(
     _ ⇒ () // may choose to publish current state to subscribers or do other operations
-  )</code></pre></dd>
+  )
+// Return response
+Started(controlCommand.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// query CommandResponseManager to get the current status of Command, for example: Accepted/Completed/Invalid etc.
@@ -338,7 +343,7 @@ commandResponseManager.subscribe(
   <pre class="prettyprint"><code class="language-java">// subscribe to the status of original command received and publish the state when its status changes to
 // Completed
 commandResponseManager.jSubscribe(subCommand.runId(), commandResponse -&gt; {
-    if (commandResponse.resultType() instanceof CommandResponse.Completed) {
+    if (commandResponse instanceof CommandResponse.Completed) {
         Key&lt;String&gt; stringKey = JKeyType.StringKey().make(&quot;sub-command-status&quot;);
         CurrentState currentState = new CurrentState(sc.source().prefix(), new StateName(&quot;testStateName&quot;));
         currentStatePublisher.publish(currentState.madd(stringKey.set(&quot;complete&quot;)));
@@ -349,7 +354,7 @@ commandResponseManager.jSubscribe(subCommand.runId(), commandResponse -&gt; {
 </dl>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/framework/managing-command-state.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/framework/managing-command-state.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>

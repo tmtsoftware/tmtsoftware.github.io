@@ -113,17 +113,10 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="This project defines the basic classes and traits for the Command Service." href="../command/index.html"><span class="name">command</span></a>
+        <a title="" href="../command/index.html"><span class="name">command</span></a>
       </span>
       
-      <p class="shortcomment cmt">This project defines the basic classes and traits for the <i>Command Service</i>.</p><div class="fullcomment"><div class="comment cmt"><h4> Command Service </h4><p>This project defines the basic classes and traits for the <i>Command Service</i>.</p><p>Related projects are:
-- <b>csw-messages</b>:</p><ul><li>This defines the types of command (Oneway/Submit etc.) and types of <i>configurations</i> (Setup/Observe/Wait etc.)</li><li>Complete usage of Messages is available at: https://tmtsoftware.github.io/csw-prod/services/messages.html</li></ul><p>- <b>framework</b>:</p><ul><li>This defines the Hcd and Assembly handlers, lifecycle manager and supervisor for components.</li><li>Framework allows component writer to override onValidation, onSubmit and onOneway handlers. (Note it allows overriding other handlers as well.)</li><li>On every command received by component, onValidation handler gets invoked where received command gets validated and validation response is returned.</li><li>Based on validation response and command type, onSubmit/onOneway hooks gets invoked where command gets processed.</li><li>Complete details of handling commands can be found here : https://tmtsoftware.github.io/csw-prod/framework/handling-lifecycle.html#handling-commands</li></ul><p>Important classes in this project are:</p><p>- <a href="../command/CommandResponseManager.html" class="extype" name="csw.command.CommandResponseManager">csw.command.CommandResponseManager</a></p><p>This class wraps CommandResponseManagerActor and provides helpers to interact with actor which is responsible for adding/updating/querying command result.
-Component writers will get handle to CommandResponseManager in their handlers.</p><p>- <span class="extype" name="csw.command.internal.CommandResponseManagerBehavior">csw.command.internal.CommandResponseManagerBehavior</span> maintains two states:</p><ul><li><span class="extype" name="csw.command.models.CommandResponseManagerState">csw.command.models.CommandResponseManagerState</span>:
-     It maintains <a href="core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> of Commands and their corresponding <span class="extype" name="csw.command.models.CommandState">csw.command.models.CommandState</span>.</li><li><span class="extype" name="csw.command.models.CommandCorrelation">csw.command.models.CommandCorrelation</span> :
-     It maintains commands <a href="core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> correlation between parent to child and child to parent.</li></ul><p>- <a href="../command/scaladsl/CommandService.html" class="extype" name="csw.command.scaladsl.CommandService">csw.command.scaladsl.CommandService</a></p><p>This class wraps the <a href="../location/api/models/AkkaLocation.html" class="extype" name="csw.location.api.models.AkkaLocation">csw.location.api.models.AkkaLocation</a> and provides helpers to send commands to component actor extracted from provided location.
-Normal component writers workflow would be to first resolve component using location service and then create CommandService instance using resolved location.</p><p>Using this instance, you can Submit Command/Commands to other component or query for command result or subscribe for long running command result.</p><p>- <a href="../command/scaladsl/CommandDistributor.html" class="extype" name="csw.command.scaladsl.CommandDistributor">csw.command.scaladsl.CommandDistributor</a></p><p>When you have multiple commands targeted to multiple components then you can use ConfigDistributor.
-Using CommandDistributor utility you can send all these commands in one go and get aggregated response.</p><p>Complete guide of usage of different API's provided by CommandService is available at:
-https://tmtsoftware.github.io/csw-prod/command.html</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.config" visbl="pub" class="indented2 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="config"></a><a id="config:config"></a>
       <span class="permalink">
@@ -176,12 +169,12 @@ These handlers are executed under an Supervisor Actor: <span class="extype" name
 and TLA Actor (Top Level Actor): <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
 defined in the framework which handles the lifecycle and supervision of this component.</p><p>Components are controlled by a <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span> actor
 that intercepts common messages (ex. Shutdown, Restart) or lifecycle messages (ex. GoOffline or GoOnline)
-sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../command/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState.Running">csw.command.models.framework.SupervisorLifecycleState.Running</a> state, do not receive <span class="extype" name="csw.params.CommandMessage">csw.params.CommandMessage</span>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
-LocationService only when Component moves to <a href="../command/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState.Running">csw.command.models.framework.SupervisorLifecycleState.Running</a> state.
+sent from external entities to determine the state of the component.</p><p>Components that are not in the <a href="../command/client/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState.Running">csw.command.client.models.framework.SupervisorLifecycleState.Running</a> state, do not receive <span class="extype" name="csw.params.CommandMessage">csw.params.CommandMessage</span>.</p><p>When Component is created using this framework, it guarantees that component (HCD/Assembly) is registered with
+LocationService only when Component moves to <a href="../command/client/models/framework/SupervisorLifecycleState$$Running$.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState.Running">csw.command.client.models.framework.SupervisorLifecycleState.Running</a> state.
 That means, one component can resolve other component only when its in <code><code>Running</code></code> state and ready to accept <span class="extype" name="params.CommandMessage">params.CommandMessage</span></p><h5> Important Actors in Framework </h5><p>- <span class="extype" name="csw.framework.internal.supervisor.SupervisorBehavior">csw.framework.internal.supervisor.SupervisorBehavior</span>
-: Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../framework/exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../framework/exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a> based on the messages it receives.
-Decision to handle external messages or not is taken by the supervisor based on its current <a href="../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a>.
-For complete list of supported messages per <a href="../command/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.models.framework.SupervisorLifecycleState">csw.command.models.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
+: Each component created by this framework is supervised by this actor.</p><p>Default strategy of supervisor is to stop child actor but depending on nature of the failure, the supervisor has a choice of the following two options:</p><ul><li><a href="../framework/exceptions/FailureRestart.html" class="extype" name="csw.framework.exceptions.FailureRestart">csw.framework.exceptions.FailureRestart</a> : Restart the child actor i.e. kill the current child actor that failed and create a new one in its place</li><li><a href="../framework/exceptions/FailureStop.html" class="extype" name="csw.framework.exceptions.FailureStop">csw.framework.exceptions.FailureStop</a> : Stop the child actor permanently</li></ul><p>Supervisor changes its <a href="../command/client/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState">csw.command.client.models.framework.SupervisorLifecycleState</a> based on the messages it receives.
+Decision to handle external messages or not is taken by the supervisor based on its current <a href="../command/client/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState">csw.command.client.models.framework.SupervisorLifecycleState</a>.
+For complete list of supported messages per <a href="../command/client/models/framework/SupervisorLifecycleState.html" class="extype" name="csw.command.client.models.framework.SupervisorLifecycleState">csw.command.client.models.framework.SupervisorLifecycleState</a>, see <code>csw-messages</code> project.</p><p>- <span class="extype" name="csw.framework.internal.component.ComponentBehavior">csw.framework.internal.component.ComponentBehavior</span>
 : Like Supervisor, evey component is associate with this actor which is known as TLA (Top Level Actor)
 And it also maintains its own state <span class="extype" name="csw.framework.internal.component.ComponentLifecycleState">csw.framework.internal.component.ComponentLifecycleState</span> based on messages it receives.</p><p>Main purpose of this actor is to invoke component specific code written in their corresponding handlers.
 This is where framework code meets Component specific code.</p><p>- <span class="extype" name="csw.framework.internal.pubsub.PubSubBehavior">csw.framework.internal.pubsub.PubSubBehavior</span>
@@ -270,24 +263,10 @@ containers: [
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data)." href="../location/index.html"><span class="name">location</span></a>
+        <a title="" href="../location/index.html"><span class="name">location</span></a>
       </span>
       
-      <p class="shortcomment cmt">The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data).</p><div class="fullcomment"><div class="comment cmt"><h4> Location Service </h4><p>The Location Service implemented in this project is based on CRDT (Conflict Free Replicated Data).
-The Location Service helps you resolve the hostname and port number for a service which can be used for further communication.
-In case of Akka connection, It helps you to resolve component reference with which you can send messages
-as well as other information for example, logAdminActorRef which is used to dynamically change the log level of component.</p><p>Location Service supports three types of services as follows: Akka, Tcp and HTTP based services.</p><p>Before calling LocationServiceFactory.make() to get an handle of LocationService,
-it is recommended to have below environment variables set to System global environments or system properties:</p><ul><li>interfaceName (The network interface where akka cluster is formed.) Ex. interfaceName=eth0 if not set, first inet4 interface by priority will be picked</li><li>clusterSeeds (The host address and port of the seedNodes of the cluster) Ex. clusterSeeds=&quot;192.168.121.10:3552, 192.168.121.11:3552&quot;</li><li>clusterPort (Specify port on which to start this service) Ex. clusterPort=3552 if this property is not set, service will start on random port.</li></ul><p>Location service make use of classes defined in <code>csw-messages</code> package, for example:
-- <a href="../location/api/models/Location.html" class="extype" name="csw.location.api.models.Location">csw.location.api.models.Location</a> :
- When you resolve component location using <a href="../location/api/scaladsl/LocationService.html" class="extype" name="csw.location.api.scaladsl.LocationService">csw.location.api.scaladsl.LocationService</a>, you get back this location.
- There are three types of Locations:</p><ul><li><a href="../location/api/models/AkkaLocation.html" class="extype" name="csw.location.api.models.AkkaLocation">csw.location.api.models.AkkaLocation</a>: holds hostname, port and actorRef which is ready to receive <a href="commands/Command.html" class="extype" name="csw.params.commands.Command">csw.params.commands.Command</a> from outside.</li><li><a href="../location/api/models/TcpLocation.html" class="extype" name="csw.location.api.models.TcpLocation">csw.location.api.models.TcpLocation</a>: holds hostname and port which can be used for further communication.</li><li><a href="../location/api/models/HttpLocation.html" class="extype" name="csw.location.api.models.HttpLocation">csw.location.api.models.HttpLocation</a>: holds hostname and port which can be used for further communication.</li></ul><p>- <a href="../location/api/models/Connection.html" class="extype" name="csw.location.api.models.Connection">csw.location.api.models.Connection</a>  :
- Connection holds the identity of component which includes <code>component name</code> and <a href="../location/api/models/ComponentType.html" class="extype" name="csw.location.api.models.ComponentType">csw.location.api.models.ComponentType</a>.
- Every component needs to register with location service using unique connection.
- There are three types of Connections:</p><ul><li><a href="../location/api/models/Connection$$AkkaConnection.html" class="extype" name="csw.location.api.models.Connection.AkkaConnection">csw.location.api.models.Connection.AkkaConnection</a></li><li><a href="../location/api/models/Connection$$TcpConnection.html" class="extype" name="csw.location.api.models.Connection.TcpConnection">csw.location.api.models.Connection.TcpConnection</a></li><li><a href="../location/api/models/Connection$$HttpConnection.html" class="extype" name="csw.location.api.models.Connection.HttpConnection">csw.location.api.models.Connection.HttpConnection</a></li></ul><p>Another important actor from LocationService is <code>DeathwatchActor</code> <span class="extype" name="csw.location.internal.DeathwatchActor">csw.location.internal.DeathwatchActor</span>
-which gets created with LocationService initialization. Job of this actor is to watch health of every component and on termination,
-unregister terminated component from LocationService.</p><p>Complete guide of usage of different API's provided by LocationService is available at:
-https://tmtsoftware.github.io/csw-prod/services/location.html
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.logging" visbl="pub" class="indented2 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logging"></a><a id="logging:logging"></a>
       <span class="permalink">
@@ -317,7 +296,7 @@ If enabled, then only log message gets forwarded to LogActor via MessageHandler.
    tromboneAssembly = error
 }</pre><p>̄
 Detailed documentation of Logging Service is available at:
-https://tmtsoftware.github.io/csw-prod/services/logging.html
+https://tmtsoftware.github.io/csw/services/logging.html
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.params" visbl="pub" class="indented2 current" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="params"></a><a id="params:params"></a>
@@ -372,9 +351,9 @@ of the given type.</p><p>Following <a href="core/generics/KeyType.html" class="e
 | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
 | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
 +--------------+-------------------------+---------------------------+</pre><p>Detailed information about creating Keys and Parameters can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/events.html
+ https://tmtsoftware.github.io/csw/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
+ https://tmtsoftware.github.io/csw/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
+ https://tmtsoftware.github.io/csw/services/messages/events.html
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw">csw</a></dd></dl></div>
     </li><li name="csw.params.commands" visbl="pub" class="indented3 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="commands"></a><a id="commands:commands"></a>
@@ -554,14 +533,14 @@ of the given type.</p><p>Following <a href="core/generics/KeyType.html" class="e
 | RaDec        | KeyType.RaDecKey        | JKeyTypes.RaDecKey        |
 | Struct       | KeyType.StructKey       | JKeyTypes.StructKey       |
 +--------------+-------------------------+---------------------------+</pre><p>Detailed information about creating Keys and Parameters can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
- https://tmtsoftware.github.io/csw-prod/services/messages/events.html
+ https://tmtsoftware.github.io/csw/services/messages/keys-parameters.html</p><p>Detailed information about creating commands can be found here:
+ https://tmtsoftware.github.io/csw/services/messages/commands.html</p><p>Detailed information about creating events can be found here:
+ https://tmtsoftware.github.io/csw/services/messages/events.html
 </p></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.12.7/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div></div>
         
 
@@ -584,9 +563,9 @@ of the given type.</p><p>Following <a href="core/generics/KeyType.html" class="e
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/AnyRef.html#scala.AnyRef" class="extype" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.6/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>

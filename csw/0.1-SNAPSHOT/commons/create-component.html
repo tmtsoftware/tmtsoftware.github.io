@@ -84,7 +84,7 @@ Type to start searching
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
 <div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -92,7 +92,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -118,7 +118,7 @@ TMT Common Software (CSW)
 </a>
 </label>
 <div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -126,7 +126,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -167,7 +167,8 @@ tmtsoftware/csw-prod
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
+    <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
+    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -257,10 +258,10 @@ tmtsoftware/csw-prod
   <li>Allow components outside of the Supervisor and TLA to monitor the lifecycle state of the TLA. This is particularly useful for testing. The test needs to know that the component is ready before it starts its test actions.</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
 <p>Because the Supervisor registers itself with location service, it serves as the gateway for all incoming communications from external components/entities.</p></div>
-<p>The source code of supervisor actor can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorBehavior.scala">here</a></p>
+<p>The source code of supervisor actor can be found <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorBehavior.scala">here</a></p>
 <h2><a href="#top-level-actor" name="top-level-actor" class="anchor"><span class="anchor-link"></span></a>Top level actor</h2>
 <p>While the Supervisor works as the external interface for the component and the manager of Lifecycle, the functional implementation of a component is implemented in a Top Level Actor (TLA), spawned by supervisor actor for any component. However, the developer is not expected to implement TLA code directly. Instead, the functionality of the TLA is added by implementing the <code>ComponentHandlers</code> abstract class, consisting of a list of a methods, or <code>hooks</code>, called by the TLA during specific lifecycle and command events (see <a href="#handlers">Handlers</a>). The <code>ComponentHandlers</code> implementation is specified during constructing using that factory (see <a href="#constructing-the-component">Constructing The Component</a>) </p>
-<p>The source code of the Top Level Actor can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/internal/component/ComponentBehavior.scala">here</a>.</p>
+<p>The source code of the Top Level Actor can be found <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/internal/component/ComponentBehavior.scala">here</a>.</p>
 <h2><a href="#handlers" name="handlers" class="anchor"><span class="anchor-link"></span></a>Handlers</h2>
 <p>The following hooks should be overridden in your ComponentHandlers implementation class:</p>
 <ul>
@@ -273,9 +274,9 @@ tmtsoftware/csw-prod
   <li><code>onLocationTrackingEvent</code>: called when a tracked dependency changes location state. (see <a href="multiple-components.html#tracking-dependencies">Tracking Dependencies</a>)</li>
   <li><code>onShutdown</code>: called when component is shutting down.</li>
 </ul>
-<p>The source code of <code>ComponentHandlers</code> can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentHandlers.scala">here</a>. </p>
+<p>The source code of <code>ComponentHandlers</code> can be found <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentHandlers.scala">here</a>. </p>
 <p>More details about handler significance and invocation can be found <a href="framework.html#handling-lifecycle">here</a></p><div class="callout note "><div class="callout-title">Note</div>
-<p>If the component developer wishes to write the handler implementation in java, then he/she needs to implement the java version of <code>ComponentHandlers</code> which is <code>JComponentHandlers</code>. The source code of <code>JComponentHandlers</code> can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-framework/src/main/scala/csw/framework/javadsl/JComponentHandlers.scala">here</a>. Any further reference to <code>ComponentHandlers</code> should implicitly also apply to <code>JComponentHandlers</code>.</p></div>
+<p>If the component developer wishes to write the handler implementation in java, then he/she needs to implement the java version of <code>ComponentHandlers</code> which is <code>JComponentHandlers</code>. The source code of <code>JComponentHandlers</code> can be found <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/javadsl/JComponentHandlers.scala">here</a>. Any further reference to <code>ComponentHandlers</code> should implicitly also apply to <code>JComponentHandlers</code>.</p></div>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
 <p>As seen in the <a href="getting-started.html">Getting Started</a> page, if you are using the giter8 template, handler classes for both the HCD and Assembly are written for you, with handler implementations stubbed out. We will walkthough filling them in below.</p>
 <h2><a href="#constructing-the-component" name="constructing-the-component" class="anchor"><span class="anchor-link"></span></a>Constructing the Component</h2>
@@ -290,14 +291,14 @@ tmtsoftware/csw-prod
   <dd>
   <pre class="prettyprint"><code class="language-conf">name = &quot;SampleHcd&quot;
 componentType = hcd
-behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
 prefix = &quot;nfiraos.samplehcd&quot;
 locationServiceUsage = RegisterOnly</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-conf">name = &quot;JSampleHcd&quot;
 componentType = hcd
-behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
 prefix = &quot;nfiraos.samplehcd&quot;
 locationServiceUsage = RegisterOnly</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
@@ -307,7 +308,7 @@ locationServiceUsage = RegisterOnly</code></pre></dd>
 <p>The configuration file is parsed to a <code>ComponentInfo</code> object and injected in the Supervisor actor. It is then injected in <code>ComponentHandlers</code> while spawning a component.</p>
 <p>The configuration can also contain a list of components and services it wishes to track as dependencies. See <a href="multiple-components.html#tracking-dependencies">Tracking Dependencies</a>.</p>
 <p>More details about <code>ComponentInfo</code> can be found <a href="framework.html#describing-components">here</a>.</p>
-<p>An additional sample configuration file can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-benchmark/src/main/resources/container.conf">here</a>.</p>
+<p>An additional sample configuration file can be found <a href="https://github.com/tmtsoftware/csw/tree/master/csw-benchmark/src/main/resources/container.conf">here</a>.</p>
 <h2><a href="#lifecycle" name="lifecycle" class="anchor"><span class="anchor-link"></span></a>Lifecycle</h2>
 <p>The Supervisor of a component manages its lifecycle state, which can be one of the following:</p>
 <ul>
@@ -409,17 +410,17 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): CommandResponse = {
+  <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): ValidateCommandResponse = {
   log.info(s&quot;Validating command: ${controlCommand.commandName.name}&quot;)
   controlCommand.commandName.name match {
-    case &quot;sleep&quot; =&gt; CommandResponse.Accepted(controlCommand.runId)
-    case x       =&gt; CommandResponse.Invalid(controlCommand.runId, CommandIssue.UnsupportedCommandIssue(s&quot;Command $x. not supported.&quot;))
+    case &quot;sleep&quot; =&gt; Accepted(controlCommand.runId)
+    case x       =&gt; Invalid(controlCommand.runId, CommandIssue.UnsupportedCommandIssue(s&quot;Command $x. not supported.&quot;))
   }
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
-public CommandResponse validateCommand(ControlCommand controlCommand) {
+public CommandResponse.ValidateCommandResponse validateCommand(ControlCommand controlCommand) {
     String commandName = controlCommand.commandName().name();
     log.info(() -&gt; &quot;Validating command: &quot; + commandName);
     if (commandName.equals(&quot;sleep&quot;)) {
@@ -441,16 +442,17 @@ public CommandResponse validateCommand(ControlCommand controlCommand) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = {
+  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): SubmitResponse = {
   log.info(s&quot;Handling command: ${controlCommand.commandName}&quot;)
 
   controlCommand match {
-    case setupCommand: Setup     =&gt; onSetup(setupCommand)
+    case setupCommand: Setup =&gt; onSetup(setupCommand)
     case observeCommand: Observe =&gt; // implement (or not)
+      Error(controlCommand.runId, &quot;Observe not supported&quot;)
   }
 }
 
-def onSetup(setup: Setup): Unit = {
+def onSetup(setup: Setup): SubmitResponse = {
   val sleepTimeKey: Key[Long] = KeyType.LongKey.make(&quot;SleepTime&quot;)
 
   // get param from the Parameter Set in the Setup
@@ -462,18 +464,22 @@ def onSetup(setup: Setup): Unit = {
   log.info(s&quot;command payload: ${sleepTimeParam.keyName} = $sleepTimeInMillis&quot;)
 
   workerActor ! Sleep(setup.runId, sleepTimeInMillis)
+
+  Started(setup.runId)
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
-public void onSubmit(ControlCommand controlCommand) {
+public CommandResponse.SubmitResponse onSubmit(ControlCommand controlCommand) {
     log.info(() -&gt; &quot;Handling command: &quot; + controlCommand.commandName());
 
     if (controlCommand instanceof Setup) {
         onSetup((Setup) controlCommand);
+        return new CommandResponse.Started(controlCommand.runId());
     } else if (controlCommand instanceof Observe) {
         // implement (or not)
     }
+    return new CommandResponse.Error(controlCommand.runId(), &quot;Observe command not supported&quot;);
 }
 
 private void onSetup(Setup setup) {
@@ -640,23 +646,23 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 }</code></pre></dd>
 </dl>
 <h2><a href="#building-and-running-component-in-standalone-mode" name="building-and-running-component-in-standalone-mode" class="anchor"><span class="anchor-link"></span></a>Building and Running component in standalone mode</h2>
-<p>Once the component is ready, it is started using the <code>ContainerCmd</code> object in standalone mode. The details about starting the <code>ContainerCmd</code> in standalone mode can be found <a href="https://tmtsoftware.github.io/csw-prod/framework/deploying-components.html">here</a>.</p>
+<p>Once the component is ready, it is started using the <code>ContainerCmd</code> object in standalone mode. The details about starting the <code>ContainerCmd</code> in standalone mode can be found <a href="../framework/deploying-components.html">here</a>.</p>
 <p>There are various ways to build and run the project. A simple way during development is to to use sbt to run it. The sbt command <code>runMain</code> can be used to specify an application with a main method and run it with arguments specified at the command line. When this command is executed, sbt will take care of any downloading of dependencies, compiling, or building necessary to run your application. </p>
 <p>Our template includes a wrapper application around ContainerCmd that we can use in the deployment module. To run our HCD in standalone mode, go to the project root directory and type <code>sbt &quot;&lt;deploy-module&gt;/runMain &lt;mainClass&gt; --local --standalone &lt;path-to-config-file&gt;&quot;</code>, where</p>
 <ul>
   <li><code>&lt;deploy-module&gt;</code> is the name of the deployment module created by the template (<code>sample-deploy</code> if using defaults)</li>
-  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;prefix&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt run</code> and it will prompt you the possibilities.</li>
+  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;prefix&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt run</code> and it will prompt you the possibilities.</li>
   <li><code>&lt;path-to-config-file&gt;</code> is the filename, which can be an absolute path or relative to the directory of the deployment module. If using defaults, this would be <code>src/main/resources/SampleHcdStandalone.conf</code> for Scala, and <code>src/main/resources/JSampleHcdStandalone.conf</code> for Java.</li>
 </ul>
 <p>So if using the template defaults, the full command would be </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/SampleHcdStandalone.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain nfiraos.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/SampleHcdStandalone.conf&quot;
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/JSampleHcdStandalone.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain nfiraos.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/JSampleHcdStandalone.conf&quot;
 </code></pre></dd>
 </dl>
 <p>To run the component using the deployment package, perform the following steps:</p>
@@ -666,10 +672,10 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
   <li>Run the <code>./&lt;project&gt;-cmd-app --local --standalone &lt;path-to-local-config-file-to-start-the-component&gt;</code></li>
 </ul>
 <p>Alternatively, you can run <code>sbt stage</code>, which installs the application under target/universal/stage/bin.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>CSW Location Service cluster seed must be running, and appropriate environment variables set to run apps. See <a href="../apps/cswclusterseed.html">CSW Cluster Seed</a>.</p></div>
+<p>CSW HTTP Location server must be running, and appropriate environment variables set to run apps. See <a href="../apps/cswlocationserver.html">CSW Location Server</a>.</p></div>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/commons/create-component.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/commons/create-component.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>

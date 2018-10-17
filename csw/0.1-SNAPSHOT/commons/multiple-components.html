@@ -84,7 +84,7 @@ Type to start searching
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
 <div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -92,7 +92,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -118,7 +118,7 @@ TMT Common Software (CSW)
 </a>
 </label>
 <div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -126,7 +126,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -167,7 +167,8 @@ tmtsoftware/csw-prod
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
+    <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
+    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -281,7 +282,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
   <dd>
   <pre><code>name = &quot;SampleAssembly&quot;
 componentType = assembly
-behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
 prefix = &quot;nfiraos.sample&quot;
 locationServiceUsage = RegisterAndTrackServices
 connections = [
@@ -296,7 +297,7 @@ connections = [
   <dd>
   <pre><code>name = &quot;JSampleAssembly&quot;
 componentType = assembly
-behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
 prefix = &quot;nfiraos.sample&quot;
 locationServiceUsage = RegisterAndTrackServices
 connections = [
@@ -318,7 +319,7 @@ components: [
   {
     name = &quot;SampleAssembly&quot;
     componentType = assembly
-    behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
+    behaviorFactoryClassName = &quot;nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
     prefix = &quot;nfiraos.sample&quot;
     locationServiceUsage = RegisterAndTrackServices
     connections = [
@@ -332,7 +333,7 @@ components: [
   {
     name = &quot;SampleHcd&quot;
     componentType = hcd
-    behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
+    behaviorFactoryClassName = &quot;nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
     prefix = &quot;nfiraos.samplehcd&quot;
     locationServiceUsage = RegisterOnly
   }
@@ -344,7 +345,7 @@ components: [
   {
     name = &quot;JSampleAssembly&quot;
     componentType = assembly
-    behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
+    behaviorFactoryClassName = &quot;nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
     prefix = &quot;nfiraos.sample&quot;
     locationServiceUsage = RegisterAndTrackServices
     connections = [
@@ -358,14 +359,14 @@ components: [
   {
     name = &quot;JSampleHcd&quot;
     componentType = hcd
-    behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
+    behaviorFactoryClassName = &quot;nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
     prefix = &quot;nfiraos.samplehcd&quot;
     locationServiceUsage = RegisterOnly
   }
 ]</code></pre></dd>
 </dl>
 <p>More details about each configuration and its significance can be found <a href="create-component.html#component-configuration-componentinfo-">here</a>.</p>
-<p>Another sample container configuration file can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-benchmark/src/main/resources/container.conf">here</a>. </p>
+<p>Another sample container configuration file can be found <a href="https://github.com/tmtsoftware/csw/tree/master/csw-benchmark/src/main/resources/container.conf">here</a>. </p>
 <h2><a href="#tracking-dependencies" name="tracking-dependencies" class="anchor"><span class="anchor-link"></span></a>Tracking Dependencies</h2>
 <p>The connections that are defined in the configuration file for an assembly will be tracked by the <code>csw-framework</code>. For each connection the following details are configured:</p>
 <dl>
@@ -411,7 +412,7 @@ connectionType: akka
   log.debug(s&quot;onLocationTrackingEvent called: $trackingEvent&quot;)
   trackingEvent match {
     case LocationUpdated(location) =&gt;
-      val hcd = new CommandService(location.asInstanceOf[AkkaLocation])(ctx.system)
+      val hcd = CommandServiceFactory.make(location.asInstanceOf[AkkaLocation])(ctx.system)
       commandSender ! SendCommand(hcd)
     case LocationRemoved(_) =&gt; log.info(&quot;HCD no longer available&quot;)
   }
@@ -424,7 +425,7 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
     if (trackingEvent instanceof LocationUpdated) {
         LocationUpdated updated = (LocationUpdated) trackingEvent;
         Location location = updated.location();
-        JCommandService hcd = new JCommandService((AkkaLocation) (location), actorContext.getSystem());
+        ICommandService hcd = CommandServiceFactory.jMake((AkkaLocation) (location), actorContext.getSystem());
         commandSender.tell(new SendCommand(hcd));
     } else if (trackingEvent instanceof LocationRemoved) {
         log.info(&quot;HCD no longer available&quot;);
@@ -443,7 +444,7 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 
 val eventualCommandService: Future[CommandService] =
   cswCtx.locationService.resolve(hcdConnection.of[AkkaLocation], 5.seconds).map {
-    case Some(hcdLocation: AkkaLocation) =&gt; new CommandService(hcdLocation)
+    case Some(hcdLocation: AkkaLocation) =&gt; CommandServiceFactory.make(hcdLocation)
     case _                               =&gt; throw HcdNotFoundException()
   }
 
@@ -454,9 +455,9 @@ eventualCommandService.foreach { commandService ⇒
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolvedHcdLocation = locationService.resolve(hcdConnection, Duration.ofSeconds(5));
 
-CompletableFuture&lt;JCommandService&gt; eventualCommandService = resolvedHcdLocation.thenApply((Optional&lt;AkkaLocation&gt; hcdLocation) -&gt; {
+CompletableFuture&lt;ICommandService&gt; eventualCommandService = resolvedHcdLocation.thenApply((Optional&lt;AkkaLocation&gt; hcdLocation) -&gt; {
     if (hcdLocation.isPresent())
-        return new JCommandService(hcdLocation.get(), ctx.getSystem());
+        return CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem());
     else
         throw new HcdNotFoundException();
 });
@@ -501,11 +502,11 @@ def handle(hcd: CommandService): Unit = {
   val setupCommand                    = Setup(componentInfo.prefix, CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam)
 
   // Submit command, and handle validation response. Final response is returned as a Future
-  val submitCommandResponseF: Future[CommandResponse] = hcd.submit(setupCommand).flatMap {
-    case _: Accepted =&gt;
+  val submitCommandResponseF: Future[SubmitResponse] = hcd.submit(setupCommand).flatMap {
+    case _: Started =&gt;
       // If valid, subscribe to the HCD&#39;s CommandResponseManager
       // This explicit timeout indicates how long to wait for completion
-      hcd.subscribe(setupCommand.runId)(10000.seconds)
+      hcd.queryFinal(setupCommand.runId)(10000.seconds)
     case x =&gt;
       log.error(&quot;Sleep command invalid&quot;)
       Future(x)
@@ -524,9 +525,9 @@ def handle(hcd: CommandService): Unit = {
 }
 
 private static final class SendCommand implements WorkerCommand {
-    private final JCommandService hcd;
+    private final ICommandService hcd;
 
-    private SendCommand(JCommandService hcd) {
+    private SendCommand(ICommandService hcd) {
         this.hcd = hcd;
     }
 }
@@ -547,7 +548,7 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
     );
 }
 
-private void handle(JCommandService hcd) {
+private void handle(ICommandService hcd) {
 
     // Construct Setup command
     Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;);
@@ -559,10 +560,10 @@ private void handle(JCommandService hcd) {
     Timeout commandResponseTimeout = new Timeout(10, TimeUnit.SECONDS);
 
     // Submit command, and handle validation response. Final response is returned as a Future
-    CompletableFuture&lt;CommandResponse&gt; submitCommandResponseF = hcd.submit(setupCommand, submitTimeout)
+    CompletableFuture&lt;CommandResponse.SubmitResponse&gt; submitCommandResponseF = hcd.submit(setupCommand, submitTimeout)
             .thenCompose(commandResponse -&gt; {
-                if (commandResponse instanceof CommandResponse.Accepted) {
-                    return hcd.subscribe(commandResponse.runId(), commandResponseTimeout);
+                if (commandResponse instanceof CommandResponse.Started) {
+                    return hcd.queryFinal(commandResponse.runId(), commandResponseTimeout);
                 } else {
                     log.error(&quot;Sleep command invalid&quot;);
                     return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;test error&quot;));
@@ -693,18 +694,18 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <p>Go to the project root directory and type <code>sbt &quot;&lt;deploy-module&gt;/runMain &lt;mainClass&gt; --local &lt;path-to-config-file&gt;&quot;</code>, where</p>
 <ul>
   <li><code>&lt;deploy-module&gt;</code> is the name of the deployment module created by the template (<code>sample-deploy</code> if using defaults)</li>
-  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;prefix&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt run</code> and it will prompt you the possibilities.</li>
+  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;prefix&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt run</code> and it will prompt you the possibilities.</li>
   <li><code>&lt;path-to-config-file&gt;</code> is the filename, which can be an absolute path or relative to the directory of the deployment module. If using defaults, this would be <code>src/main/resources/SampleContainer.conf</code> for Scala, and <code>src/main/resources/JSampleContainer.conf</code> for Java.</li>
 </ul>
 <p>So if using the template defaults, the full command would be </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/SampleContainer.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/SampleContainer.conf&quot;
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/JSampleContainer.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/JSampleContainer.conf&quot;
 </code></pre></dd>
 </dl>
 <p>Like with the HCD, the <code>sbt stage</code> command can also be used to create binaries in the <code>target/universal/stage/bin</code> directories of the root project.</p>
@@ -718,10 +719,10 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
   <li>Example to run container: <code>./sample-container-cmd-app --local ../../../../sample-deploy/src/main/resources/SampleContainer.conf</code></li>
   <li>Example to run host config: <code>./sample-host-config-app --local ../../../../sample-deploy/src/main/resources/SampleHostConfig.conf -s ./sample-container-cmd-app</code></li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
-<p>The CSW Location Service cluster seed must be running and appropriate environment variables set to run the apps. See <a href="../apps/cswclusterseed.html">CSW Cluster Seed</a>.</p></div>
+<p>The CSW HTTP Location server must be running and appropriate environment variables set to run the apps. See <a href="../apps/cswlocationserver.html">CSW Location Server</a>.</p></div>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/commons/multiple-components.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/commons/multiple-components.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>

@@ -84,7 +84,7 @@ Type to start searching
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
 <div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -92,7 +92,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -118,7 +118,7 @@ TMT Common Software (CSW)
 </a>
 </label>
 <div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -126,7 +126,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -167,7 +167,8 @@ tmtsoftware/csw-prod
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
+    <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
+    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -186,7 +187,6 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../services/location.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../services/location.html#create-location-service" class="header">Create Location Service</a></li>
-    <li><a href="../services/location.html#shutdown-location-service" class="header">Shutdown Location Service</a></li>
     <li><a href="../services/location.html#creating-components-connections-and-registrations" class="header">Creating Components, Connections and Registrations</a></li>
     <li><a href="../services/location.html#creating-actorref-for-registration" class="header">Creating ActorRef for Registration</a></li>
     <li><a href="../services/location.html#resolving-connections" class="header">Resolving Connections</a></li>
@@ -216,7 +216,6 @@ tmtsoftware/csw-prod
   <ul>
     <li><a href="../services/location.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../services/location.html#create-location-service" class="header">Create Location Service</a></li>
-    <li><a href="../services/location.html#shutdown-location-service" class="header">Shutdown Location Service</a></li>
     <li><a href="../services/location.html#creating-components-connections-and-registrations" class="header">Creating Components, Connections and Registrations</a></li>
     <li><a href="../services/location.html#creating-actorref-for-registration" class="header">Creating ActorRef for Registration</a></li>
     <li><a href="../services/location.html#resolving-connections" class="header">Resolving Connections</a></li>
@@ -236,7 +235,7 @@ tmtsoftware/csw-prod
 <div class="md-content__searchable">
 <h1><a href="#location-service" name="location-service" class="anchor"><span class="anchor-link"></span></a>Location Service</h1>
 <p>The Location Service handles component (i.e., Applications, Sequencers, Assemblies, HCDs, and Services) registration and discovery in the distributed TMT software system.</p>
-<p>CSW Location Service cluster seed must be running, and appropriate environment variables set to run apps. See <a href="../apps/cswclusterseed.html">CSW Cluster Seed</a>.</p>
+<p>CSW Location Service cluster must be running, and appropriate environment variables set to run apps. See <a href="../apps/cswlocationserver.html">CSW Location Server</a>.</p>
 <p>A component’s location information can be used by other components and services to connect to it and use it. An example of location information is:</p>
 <ul>
   <li>host address/port pairs</li>
@@ -257,31 +256,21 @@ tmtsoftware/csw-prod
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;org.tmt&quot; %% &quot;csw-location&quot; % &quot;0.1-SNAPSHOT&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-location-server&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
 </dl>
 <h2><a href="#create-location-service" name="create-location-service" class="anchor"><span class="anchor-link"></span></a>Create Location Service</h2>
-<p>Note that before using this API, the <a href="../apps/cswclusterseed.html">csw-cluster-seed</a> application (the main seed node for the location service cluster) should be running at a known location in the network (or at multiple locations) and the necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s).</p>
-<p><code>LocationServiceFactory</code> provides a make method to create an instance of the LocationService API. This call will look for configuration or environment variable settings as described here: <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/location/commons/ClusterSettings.html">ClusterSettings</a>.</p>
+<p>Note that before using this API, the <a href="../apps/cswlocationserver.html">csw-location-server</a> application should be running at a known location in the network (or at multiple locations) and the necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s).</p>
+<p><code>LocationServiceFactory</code> provides a make method to create an instance of the LocationService API. This call will look for configuration or environment variable settings as described here: <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/location/commons/ClusterSettings.html">ClusterSettings</a>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">private val locationService = LocationServiceFactory.make()</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">private val locationService = HttpLocationServiceFactory.makeLocalClient(actorSystem, mat)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">private ILocationService locationService = JLocationServiceFactory.make();</code></pre></dd>
-</dl>
-<h2><a href="#shutdown-location-service" name="shutdown-location-service" class="anchor"><span class="anchor-link"></span></a>Shutdown Location Service</h2>
-<p>This example demonstrates how to disconnect from the Location Service. <code>Shutdown</code> will terminate the application&rsquo;s ActorSystem leave the cluster. </p>
-<p><strong>Note:</strong> All the services registered via this instance of LocationService will continue to be available for other cluster members. </p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">// Only call this once per application
-Await.result(locationService.shutdown(ActorTerminatedReason), 20.seconds)</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">locationService.shutdown(CoordinatedShutdownReasons.actorTerminatedReason()).get();</code></pre></dd>
+  <pre class="prettyprint"><code class="language-java">private ActorSystem system = context().system();
+private ActorMaterializer mat = ActorMaterializer.create(system);
+private ILocationService locationService = JHttpLocationServiceFactory.makeLocalClient(system, mat);</code></pre></dd>
 </dl>
 <h2><a href="#creating-components-connections-and-registrations" name="creating-components-connections-and-registrations" class="anchor"><span class="anchor-link"></span></a>Creating Components, Connections and Registrations</h2>
 <p>An Application, Sequencer, Assembly, HCD, or Service component may need to be used by another component as part of normal observatory operations. It must register its location information with Location Service so that other components can find it. A location information comprises of:</p>
@@ -304,23 +293,17 @@ Await.result(locationService.shutdown(ActorTerminatedReason), 20.seconds)</code>
   <li>ConfigServer-service-http</li>
   <li>EventService-service-tcp</li>
 </ul>
-<p>The <code>register</code> API takes a <code>Registration</code> parameter and returns a future registration result. If registration fails for some reason, the returned future will fail with an exception. (Registration will fail if the <code>csw-cluster-seed</code> application is not running or could not be found or if the given component name was already registered.)</p>
+<p>The <code>register</code> API takes a <code>Registration</code> parameter and returns a future registration result. If registration fails for some reason, the returned future will fail with an exception. (Registration will fail if the <code>csw-location-server</code> application is not running or could not be found or if the given component name was already registered.)</p>
 <p>The following example shows registration of both UnTyped ActorRef and Typed ActorRef:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala"><br/>// logAdminActorRef handles dynamically setting/getting log level of the component
-private val logAdminActorRef: ActorRef[LogControlMessages] =
-  LogAdminActorFactory.make(context.system)
-
-private val registrationFactory = new RegistrationFactory(logAdminActorRef)
-
-// add some dummy registrations for illustrative purposes
+  <pre class="prettyprint"><code class="language-scala"><br/>// add some dummy registrations for illustrative purposes
 
 // dummy http connection
 val httpPort                          = 8080
 val httpConnection                    = HttpConnection(ComponentId(&quot;configuration&quot;, ComponentType.Service))
-val httpRegistration                  = HttpRegistration(httpConnection, httpPort, &quot;path123&quot;, logAdminActorRef)
+val httpRegistration                  = HttpRegistration(httpConnection, httpPort, &quot;path123&quot;)
 val httpRegResult: RegistrationResult = Await.result(locationService.register(httpRegistration), 2.seconds)
 
 // ************************************************************************************************************
@@ -330,7 +313,7 @@ import akka.actor.typed.scaladsl.adapter._
 
 // dummy HCD connection
 val hcdConnection = AkkaConnection(ComponentId(&quot;hcd1&quot;, ComponentType.HCD))
-val hcdRegistration: AkkaRegistration = registrationFactory.akkaTyped(
+val hcdRegistration: AkkaRegistration = AkkaRegistration(
   hcdConnection,
   Prefix(&quot;nfiraos.ncc.tromboneHcd&quot;),
   context.actorOf(Props(new akka.actor.Actor {
@@ -347,7 +330,9 @@ val hcdRegResult: RegistrationResult = Await.result(locationService.register(hcd
 // ************************************************************************************************************
 
 def behavior(): Behavior[String] = Behaviors.setup { ctx =&gt;
-  Behaviors.same
+  Behaviors.receiveMessage { msg =&gt;
+    Behaviors.same
+  }
 }
 val typedActorRef: ActorRef[String] = context.system.spawn(behavior(), &quot;typed-actor-ref&quot;)
 
@@ -355,17 +340,14 @@ val assemblyConnection = AkkaConnection(ComponentId(&quot;assembly1&quot;, Compo
 
 // Register Typed ActorRef[String] with Location Service
 val assemblyRegistration: AkkaRegistration =
-  registrationFactory.akkaTyped(assemblyConnection, Prefix(&quot;nfiraos.ncc.tromboneAssembly&quot;), typedActorRef)
+  AkkaRegistration(assemblyConnection, Prefix(&quot;nfiraos.ncc.tromboneAssembly&quot;), typedActorRef)
 
 val assemblyRegResult: RegistrationResult = Await.result(locationService.register(assemblyRegistration), 2.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java"><br/>// logAdminActorRef handles dynamically setting/getting log level of the component
-akka.actor.typed.ActorRef&lt;LogControlMessages&gt; logAdminActorRef = LogAdminActorFactory.make(context().system());
-
-// dummy http connection
+  <pre class="prettyprint"><code class="language-java"><br/>// dummy http connection
 HttpConnection httpConnection = new HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
-HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;, logAdminActorRef);
+HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;);
 httpRegResult = locationService.register(httpRegistration).get();
 
 // ************************************************************************************************************
@@ -381,11 +363,9 @@ ActorRef actorRef = getContext().actorOf(Props.create(AbstractActor.class, () -&
         &quot;my-actor-1&quot;
 );
 
-RegistrationFactory registrationFactory = new RegistrationFactory(logAdminActorRef);
-
 // Register UnTyped ActorRef with Location service. Use javadsl Adapter to convert UnTyped ActorRefs
 // to Typed ActorRef[Nothing]
-AkkaRegistration hcdRegistration = registrationFactory.akkaTyped(hcdConnection, new Prefix(&quot;nfiraos.ncc.tromboneHcd&quot;), Adapter.toTyped(actorRef));
+AkkaRegistration hcdRegistration = AkkaRegistration.apply(hcdConnection, new Prefix(&quot;nfiraos.ncc.tromboneHcd&quot;), Adapter.toTyped(actorRef));
 hcdRegResult = locationService.register(hcdRegistration).get();
 
 // ************************************************************************************************************
@@ -398,10 +378,11 @@ akka.actor.typed.ActorRef&lt;String&gt; typedActorRef = Adapter.spawn(context(),
 AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(&quot;assembly1&quot;, JComponentType.Assembly));
 
 // Register Typed ActorRef[String] with Location Service
-AkkaRegistration assemblyRegistration = registrationFactory.akkaTyped(assemblyConnection, new Prefix(&quot;nfiraos.ncc.tromboneAssembly&quot;), typedActorRef);
+AkkaRegistration assemblyRegistration = new RegistrationFactory().akkaTyped(assemblyConnection, new Prefix(&quot;nfiraos.ncc.tromboneAssembly&quot;), typedActorRef);
+
+
 assemblyRegResult = locationService.register(assemblyRegistration).get();</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>Notice the <code>logAdminActorRef</code> that is used while registering any connection. It is used to dynamically change the log level of a component. For an application, make sure there is only one <code>logAdminActorRef</code> used for all registrations. The source code of <code>LogAdminActor</code> can be found <a href="https://github.com/tmtsoftware/csw-prod/blob/master/csw-logging/src/main/scala/csw/logging/internal/LogAdminActor.scala">here</a>. </p></div><div class="callout note "><div class="callout-title">Note</div>
 <p>The <code>AkkaRegistration</code> api takes only Typed ActorRefs. Hence, to register an UnTyped ActorRef for an akka connection, it needs to be adapted to Typed <code>ActorRef[Nothing]</code>. This can be achieved using adapter provided for scaladsl and javadsl. The usage of adapter is shown in above snippet for scala and java both. </p>
 <p>Also, note that for components, the registration will be taken care of via <code>csw-framework</code>. Hence, component developers won&rsquo;t register any connections during their development. So, above demonstration of registering connections is for explanatory and testing purpose only. </p></div>
 <h2><a href="#creating-actorref-for-registration" name="creating-actorref-for-registration" class="anchor"><span class="anchor-link"></span></a>Creating ActorRef for Registration</h2>
@@ -409,8 +390,7 @@ assemblyRegResult = locationService.register(assemblyRegistration).get();</code>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">implicit val system: ActorSystem =
-  ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">implicit val actorSystem: ActorSystem = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">ActorSystem actorSystem = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;);</code></pre></dd>
@@ -717,12 +697,12 @@ assemblyRegResult.unregister();</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/scala/csw/location/LocationServiceExampleClientApp.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw-prod/tree/master/examples/src/main/java/csw/location/JLocationServiceExampleClient.java">JavaBlocking Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/location/LocationServiceExampleClientApp.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/location/JLocationServiceExampleClient.java">JavaBlocking Example</a></li>
 </ul>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/services/location.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/services/location.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>

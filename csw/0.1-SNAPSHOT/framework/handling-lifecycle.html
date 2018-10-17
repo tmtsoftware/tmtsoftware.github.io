@@ -84,7 +84,7 @@ Type to start searching
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
 <div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -92,7 +92,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -118,7 +118,7 @@ TMT Common Software (CSW)
 </a>
 </label>
 <div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw-prod"
+<a href="https://github.com/tmtsoftware/csw"
 title="Go to repository"
 class="md-source"
 data-md-source="github">
@@ -126,7 +126,7 @@ data-md-source="github">
 <i class="fa fa-github"></i>
 </div>
 <div class="md-source__repository">
-tmtsoftware/csw-prod
+tmtsoftware/csw
 </div>
 </a>
 
@@ -167,7 +167,8 @@ tmtsoftware/csw-prod
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../apps/cswclusterseed.html" class="page">csw-cluster-seed</a></li>
+    <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
+    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -223,7 +224,7 @@ tmtsoftware/csw-prod
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#component-handlers" name="component-handlers" class="anchor"><span class="anchor-link"></span></a>Component Handlers</h1>
-<p>A component developer creates a Top Level Actor (TLA) by inheriting from an abstract class <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/scala/csw/framework/scaladsl/ComponentHandlers.html">ComponentHandlers</a> or <a href="https://tmtsoftware.github.io/csw-prod/0.1-SNAPSHOT/api/java/?csw/framework/javadsl/JComponentHandlers.html">JComponentHandlers</a> for Scala or Java, respectively. Each of these abstract classes provides several <strong>handler</strong> methods that can be overridden by the developer to provide component-specific code as described below. </p>
+<p>A component developer creates a Top Level Actor (TLA) by inheriting from an abstract class <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/framework/scaladsl/ComponentHandlers.html">ComponentHandlers</a> or <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/java/?csw/framework/javadsl/JComponentHandlers.html">JComponentHandlers</a> for Scala or Java, respectively. Each of these abstract classes provides several <strong>handler</strong> methods that can be overridden by the developer to provide component-specific code as described below. </p>
 <h2><a href="#component-lifecycle" name="component-lifecycle" class="anchor"><span class="anchor-link"></span></a>Component Lifecycle</h2>
 <p>For each component, the CSW framework creates a <code>Supervisor</code> that creates the TLA, and along with the abstract behavior class provided by the framework, it starts up and intiailizes the component in a standardized way. At the conclusion of the startup of the component, it is ready to receive commands from the outside world. The following figure is used to describe the startup lifecycle interactions between the framework and the TLA.</p>
 <p><img src="../images/framework/Lifecycle.png" alt="lifecycle" /></p>
@@ -257,7 +258,7 @@ tmtsoftware/csw-prod
     case Some(_) ⇒
       resolveHcd().map {
         case Some(hcd) ⇒
-          runningHcds = runningHcds.updated(maybeConnection.get, Some(new CommandService(hcd)(ctx.system)))
+          runningHcds = runningHcds.updated(maybeConnection.get, Some(CommandServiceFactory.make(hcd)(ctx.system)))
           diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.make(runningHcds(maybeConnection.get).get, worker))
           commandHandler = ctx.spawnAnonymous(CommandHandler.make(calculationConfig, runningHcds(maybeConnection.get)))
         case None ⇒ // do something
@@ -284,14 +285,15 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
             .findFirst();
 
     // If an Hcd is found as a connection, resolve its location from location service and create other
+    // required worker actors required by this assembly, also subscribe to HCD&#39;s filter wheel event stream
     return mayBeConnection.map(connection -&gt;
             worker.thenAcceptBoth(resolveHcd(), (workerActor, hcdLocation) -&gt; {
                 if (!hcdLocation.isPresent())
                     throw new HcdNotFoundException();
                 else {
-                    runningHcds.put(connection, Optional.of(new JCommandService(hcdLocation.get(), ctx.getSystem())));
+                    runningHcds.put(connection, Optional.of(CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem())));
                 }
-                diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisherFactory.make(new JCommandService(hcdLocation.get(), ctx.getSystem()), workerActor));
+                diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisherFactory.make(CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem()), workerActor));
             })).get();
 
 }</code></pre></dd>
@@ -440,19 +442,20 @@ public void onGoOnline() {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): CommandResponse = controlCommand match {
+  <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): ValidateCommandResponse = controlCommand match {
   case _: Setup   ⇒ Accepted(controlCommand.runId) // validation for setup goes here
   case _: Observe ⇒ Accepted(controlCommand.runId) // validation for observe goes here
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
-public CommandResponse validateCommand(ControlCommand controlCommand) {
+public CommandResponse.ValidateCommandResponse validateCommand(ControlCommand controlCommand) {
     if (controlCommand instanceof Setup) {
         // validation for setup goes here
         // after validation of the controlCommand, update its status of successful validation as Accepted
         CommandResponse.Accepted accepted = new CommandResponse.Accepted(controlCommand.runId());
-        commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);
+        // TODO - REALLY?
+        //commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);
         return new CommandResponse.Accepted(controlCommand.runId());
     } else if (controlCommand instanceof Observe) {
         // validation for observe goes here
@@ -463,14 +466,14 @@ public CommandResponse validateCommand(ControlCommand controlCommand) {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): CommandResponse = controlCommand match {
+  <pre class="prettyprint"><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): ValidateCommandResponse = controlCommand match {
   case _: Setup   ⇒ Accepted(controlCommand.runId) // validation for setup goes here
   case _: Observe ⇒ Accepted(controlCommand.runId) // validation for observe goes here
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
-public CommandResponse validateCommand(ControlCommand controlCommand) {
+public CommandResponse.ValidateCommandResponse validateCommand(ControlCommand controlCommand) {
     if (controlCommand instanceof Setup) {
         // validation for setup goes here
         return new CommandResponse.Accepted(controlCommand.runId());
@@ -478,7 +481,7 @@ public CommandResponse validateCommand(ControlCommand controlCommand) {
         // validation for observe goes here
         return new CommandResponse.Accepted(controlCommand.runId());
     } else {
-        return new CommandResponse.CommandNotAvailable(controlCommand.runId());
+        return new CommandResponse.Invalid(controlCommand.runId(), new CommandIssue.UnsupportedCommandIssue(controlCommand.commandName().name()));
     }
 }</code></pre></dd>
 </dl>
@@ -488,33 +491,36 @@ public CommandResponse validateCommand(ControlCommand controlCommand) {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = controlCommand match {
+  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): SubmitResponse = controlCommand match {
   case setup: Setup     ⇒ submitSetup(setup) // includes logic to handle Submit with Setup config command
   case observe: Observe ⇒ submitObserve(observe) // includes logic to handle Submit with Observe config command
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
-public void onSubmit(ControlCommand controlCommand) {
+public CommandResponse.SubmitResponse onSubmit(ControlCommand controlCommand) {
     if (controlCommand instanceof Setup)
-        submitSetup((Setup) controlCommand); // includes logic to handle Submit with Setup config command
+        return submitSetup((Setup) controlCommand); // includes logic to handle Submit with Setup config command
     else if (controlCommand instanceof Observe)
-        submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command
+        return submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command
+    else return new CommandResponse.Error(controlCommand.runId(), &quot;Submitted command not supported: &quot; + controlCommand.commandName().name());
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): Unit = controlCommand match {
+  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): SubmitResponse = controlCommand match {
   case setup: Setup     ⇒ submitSetup(setup) // includes logic to handle Submit with Setup config command
   case observe: Observe ⇒ submitObserve(observe) // includes logic to handle Submit with Observe config command
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">@Override
-public void onSubmit(ControlCommand controlCommand) {
+public CommandResponse.SubmitResponse onSubmit(ControlCommand controlCommand) {
     if (controlCommand instanceof Setup)
-        submitSetup((Setup) controlCommand); // includes logic to handle Submit with Setup config command
+        return submitSetup((Setup) controlCommand); // includes logic to handle Submit with Setup config command
     else if (controlCommand instanceof Observe)
-        submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command
+        return submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command&quot;
+    else
+        return new CommandResponse.Error(controlCommand.runId(), &quot;Unknown command: &quot; + controlCommand.commandName().name());
 }</code></pre></dd>
 </dl>
 <h3><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h3>
@@ -553,7 +559,7 @@ public void onOneway(ControlCommand controlCommand) {
 </dl>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/csw-prod/tree/master/docs/src/main/framework/handling-lifecycle.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/framework/handling-lifecycle.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
