@@ -503,13 +503,11 @@ def handle(hcd: CommandService): Unit = {
 
   // Submit command, and handle validation response. Final response is returned as a Future
   val submitCommandResponseF: Future[SubmitResponse] = hcd.submit(setupCommand).flatMap {
-    case _: Started =&gt;
-      // If valid, subscribe to the HCD&#39;s CommandResponseManager
-      // This explicit timeout indicates how long to wait for completion
-      hcd.queryFinal(setupCommand.runId)(10000.seconds)
-    case x =&gt;
+    case x @ (Invalid(_, _) | Locked(_)) =&gt;
       log.error(&quot;Sleep command invalid&quot;)
       Future(x)
+    case x =&gt;
+      Future.successful(x)
   }
 
   // Wait for final response, and log result
@@ -562,8 +560,8 @@ private void handle(ICommandService hcd) {
     // Submit command, and handle validation response. Final response is returned as a Future
     CompletableFuture&lt;CommandResponse.SubmitResponse&gt; submitCommandResponseF = hcd.submit(setupCommand, submitTimeout)
             .thenCompose(commandResponse -&gt; {
-                if (commandResponse instanceof CommandResponse.Started) {
-                    return hcd.queryFinal(commandResponse.runId(), commandResponseTimeout);
+                if (! (commandResponse instanceof CommandResponse.Invalid || commandResponse instanceof CommandResponse.Locked)) {
+                    return CompletableFuture.completedFuture(commandResponse);
                 } else {
                     log.error(&quot;Sleep command invalid&quot;);
                     return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;test error&quot;));

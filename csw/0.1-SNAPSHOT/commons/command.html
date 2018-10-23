@@ -189,7 +189,6 @@ tmtsoftware/csw
     <li><a href="../commons/command.html#command-based-communication-between-components" class="header">Command-based Communication Between Components</a></li>
     <li><a href="../commons/command.html#commandservice" class="header">CommandService</a></li>
     <li><a href="../commons/command.html#matching-state-for-command-completion" class="header">Matching state for command completion</a></li>
-    <li><a href="../commons/command.html#distributing-commands" class="header">Distributing commands</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -214,7 +213,6 @@ tmtsoftware/csw
     <li><a href="../commons/command.html#command-based-communication-between-components" class="header">Command-based Communication Between Components</a></li>
     <li><a href="../commons/command.html#commandservice" class="header">CommandService</a></li>
     <li><a href="../commons/command.html#matching-state-for-command-completion" class="header">Matching state for command completion</a></li>
-    <li><a href="../commons/command.html#distributing-commands" class="header">Distributing commands</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -306,13 +304,13 @@ tmtsoftware/csw
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val setupForQuery = Setup(prefix, longRunning, Some(obsId))
-assemblyCommandService.submit(setupForQuery)
+val finalResponse = assemblyCommandService.submit(setupForQuery)
 
 //do some work before querying for the result of above command as needed
 val eventualResponse: Future[QueryResponse] = assemblyCommandService.query(setupForQuery.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">hcdCmdService.submit(controlCommand, timeout);
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; submitResponseFuture = hcdCmdService.submit(controlCommand, timeout);
 
 // do some work before querying for the result of above command as needed
 CompletableFuture&lt;CommandResponse.QueryResponse&gt; queryResponseFuture = hcdCmdService.query(controlCommand.runId(), timeout);
@@ -324,10 +322,9 @@ CompletableFuture&lt;CommandResponse.QueryResponse&gt; queryResponseFuture = hcd
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyCommandService.submit(setup).flatMap {
-  case _: Started ⇒
-    assemblyCommandService.queryFinal(setup.runId)
-  case _ ⇒ Future(Error(setup.runId, &quot;&quot;))
+  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyCommandService.submit(assemblyLongSetup).map {
+  case Invalid(runId, _) ⇒ Error(runId, &quot;&quot;)
+  case x: SubmitResponse ⇒ x
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -335,10 +332,10 @@ CompletableFuture&lt;CommandResponse.QueryResponse&gt; queryResponseFuture = hcd
         hcdCmdService
                 .submit(controlCommand, timeout)
                 .thenCompose(commandResponse -&gt; {
-                    if (commandResponse instanceof CommandResponse.Started) {
-                        return hcdCmdService.queryFinal(commandResponse.runId(), timeout);
-                    } else {
+                    if (commandResponse instanceof CommandResponse.Invalid) {
                         return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;tests error&quot;));
+                    } else {
+                        return CompletableFuture.completedFuture(commandResponse);
                     }
                 });</code></pre></dd>
 </dl>
@@ -396,16 +393,18 @@ val submitCommandResponseF: Future[Unit] = async {
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture submitCommandResponseF = hcdCmdService
         .submit(setup, timeout)
-        .thenAccept(initialCommandResponse -&gt; {
-            if (initialCommandResponse instanceof CommandResponse.Started) {
+        .thenAccept(submitResponse -&gt; {
+            if (submitResponse instanceof CommandResponse.Completed) {
                 //do something
-            } else if (initialCommandResponse instanceof CommandResponse.Invalid) {
+            } else if (submitResponse instanceof CommandResponse.Error) {
                 //do something
-            } else {
+            } else if (submitResponse instanceof CommandResponse.Invalid){
                 //do something
             }
         });
-</code></pre></dd>
+
+CompletableFuture&lt;CommandResponse.SubmitResponse&gt; finalResponseCompletableFuture = hcdCmdService.submit(failureResCommand1, timeout);
+CommandResponse.SubmitResponse actualValidationResponse = finalResponseCompletableFuture.get();</code></pre></dd>
 </dl>
 <h3><a href="#oneway" name="oneway" class="anchor"><span class="anchor-link"></span></a>oneway</h3>
 <p>Send a command as a Oneway and get a <code>CommandResponse</code> as a Future. The CommandResponse can be a response of validation (Accepted, Invalid) or a final Response.</p>
@@ -416,7 +415,7 @@ val submitCommandResponseF: Future[Unit] = async {
 // using matcher
 // Note this and the next two don&#39;t do anything useful
 val onewayCommandResponseF: Future[Unit] = async {
-  val initialResponse: OnewayResponse = await(assemblyComponent.send(setupWithTimeoutMatcher))
+  val initialResponse: OnewayResponse = await(assemblyComponent.oneway(setupWithTimeoutMatcher))
   initialResponse match {
     case accepted: Accepted ⇒
     // do Something
@@ -429,7 +428,7 @@ val onewayCommandResponseF: Future[Unit] = async {
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">CompletableFuture onewayCommandResponseF = hcdCmdService
-        .send(setup, timeout)
+        .oneway(setup, timeout)
         .thenAccept(initialCommandResponse -&gt; {
             if (initialCommandResponse instanceof CommandResponse.Accepted) {
                 //do something
@@ -446,10 +445,9 @@ val onewayCommandResponseF: Future[Unit] = async {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyCommandService.submit(setup).flatMap {
-  case _: Started ⇒
-    assemblyCommandService.queryFinal(setup.runId)
-  case _ ⇒ Future(Error(setup.runId, &quot;&quot;))
+  <pre class="prettyprint"><code class="language-scala">val eventualCommandResponse = assemblyCommandService.submit(assemblyLongSetup).map {
+  case Invalid(runId, _) ⇒ Error(runId, &quot;&quot;)
+  case x: SubmitResponse ⇒ x
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -457,10 +455,10 @@ val onewayCommandResponseF: Future[Unit] = async {
         hcdCmdService
                 .submit(controlCommand, timeout)
                 .thenCompose(commandResponse -&gt; {
-                    if (commandResponse instanceof CommandResponse.Started) {
-                        return hcdCmdService.queryFinal(commandResponse.runId(), timeout);
-                    } else {
+                    if (commandResponse instanceof CommandResponse.Invalid) {
                         return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;tests error&quot;));
+                    } else {
+                        return CompletableFuture.completedFuture(commandResponse);
                     }
                 });</code></pre></dd>
 </dl>
@@ -470,28 +468,40 @@ val onewayCommandResponseF: Future[Unit] = async {
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val setupForQuery = Setup(prefix, longRunning, Some(obsId))
-assemblyCommandService.submit(setupForQuery)
+val finalResponse = assemblyCommandService.submit(setupForQuery)
 
 //do some work before querying for the result of above command as needed
 val eventualResponse: Future[QueryResponse] = assemblyCommandService.query(setupForQuery.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">hcdCmdService.submit(controlCommand, timeout);
+  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; submitResponseFuture = hcdCmdService.submit(controlCommand, timeout);
 
 // do some work before querying for the result of above command as needed
 CompletableFuture&lt;CommandResponse.QueryResponse&gt; queryResponseFuture = hcdCmdService.query(controlCommand.runId(), timeout);
 </code></pre></dd>
 </dl>
-<h3><a href="#submitandsubscribe" name="submitandsubscribe" class="anchor"><span class="anchor-link"></span></a>submitAndSubscribe</h3>
+<h3><a href="#submit" name="submit" class="anchor"><span class="anchor-link"></span></a>submit</h3>
 <p>Submit a command and Subscribe for the result if it was successfully validated as <code>Accepted</code> to get a final <code>CommandResponse</code> as a Future.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">val setupForSubscribe = Setup(prefix, longRunning, Some(obsId))
-val response          = assemblyCommandService.submitAndComplete(setupForSubscribe)</code></pre></dd>
+val response          = assemblyCommandService.submit(setupForSubscribe)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; finalResponseCompletableFuture = hcdCmdService.submitAndComplete(failureResCommand1, timeout);
+  <pre class="prettyprint"><code class="language-java">CompletableFuture submitCommandResponseF = hcdCmdService
+        .submit(setup, timeout)
+        .thenAccept(submitResponse -&gt; {
+            if (submitResponse instanceof CommandResponse.Completed) {
+                //do something
+            } else if (submitResponse instanceof CommandResponse.Error) {
+                //do something
+            } else if (submitResponse instanceof CommandResponse.Invalid){
+                //do something
+            }
+        });
+
+CompletableFuture&lt;CommandResponse.SubmitResponse&gt; finalResponseCompletableFuture = hcdCmdService.submit(failureResCommand1, timeout);
 CommandResponse.SubmitResponse actualValidationResponse = finalResponseCompletableFuture.get();</code></pre></dd>
 </dl>
 <h3><a href="#onewayandmatch" name="onewayandmatch" class="anchor"><span class="anchor-link"></span></a>onewayAndMatch</h3>
@@ -499,7 +509,7 @@ CommandResponse.SubmitResponse actualValidationResponse = finalResponseCompletab
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val eventualResponse1: Future[MatchingResponse] = assemblyComponent.sendAndMatch(setupWithMatcher, demandMatcher)</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">val eventualResponse1: Future[MatchingResponse] = assemblyComponent.onewayAndMatch(setupWithMatcher, demandMatcher)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java"><br/>// create a DemandMatcher which specifies the desired state to be matched.
@@ -512,56 +522,27 @@ Matcher matcher1 = new Matcher(AkkaLocationExt.RichAkkaLocation(hcdLocation).com
 CompletableFuture&lt;MatcherResponse&gt; matcherResponse = matcher1.jStart();
 
 CompletableFuture&lt;CommandResponse.MatchingResponse&gt; matchedCommandResponse =
-        hcdCmdService.sendAndMatch(setup, stateMatcher, timeout);
+        hcdCmdService.onewayAndMatch(setup, stateMatcher, timeout);
 </code></pre></dd>
 </dl>
-<h3><a href="#submitallandgetresponse" name="submitallandgetresponse" class="anchor"><span class="anchor-link"></span></a>submitAllAndGetResponse</h3>
-<p>Submit multiple commands and get one CommandResponse as a Future of <code>CommandResponse</code> for all commands. If all the commands were successful, a CommandResponse as <code>Completed</code> will be returned. If any one of the command fails, an <code>Error</code> will be returned.</p>
+<h3><a href="#submitall" name="submitall" class="anchor"><span class="anchor-link"></span></a>submitAll</h3>
+<p>Submit multiple commands and get list of SubmitResponse for each of the submitted command.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">/*
-val responseOfMultipleCommands = hcdComponent.submitAllAndGetResponse(Set(setupHcd1, setupHcd2))
-</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">val assemblyInitSetup = Setup(prefix, initCmd, Some(obsId))
+val assemblyMoveSetup = Setup(prefix, moveCmd, Some(obsId))
+
+val multiResponse1: Future[List[SubmitResponse]] =
+  assemblyCommandService.submitAll(List(assemblyInitSetup, assemblyMoveSetup))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">Setup setupHcd1 = new Setup(prefix(), shortRunning(), Optional.empty()).add(encoderParam);
 Setup setupHcd2 = new Setup(prefix(), mediumRunning(), Optional.empty()).add(encoderParam);
 
-HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt; componentsToCommands = new HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt;() {
-    {
-        put(hcdCmdService, new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)));
-    }
-};
-
-CompletableFuture&lt;CommandResponse.SubmitResponse&gt; commandResponse = hcdCmdService
-        .submitAllAndGetResponse(
-                new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)),
-                timeout
-        );</code></pre></dd>
-</dl>
-<h3><a href="#submitallandgetfinalresponse" name="submitallandgetfinalresponse" class="anchor"><span class="anchor-link"></span></a>submitAllAndGetFinalResponse</h3>
-<p>Submit multiple commands and get final CommandResponse for all as one CommandResponse. If all the commands were successful, a CommandResponse as <code>Completed</code> will be returned. If any one of the command fails, an <code>Error</code> will be returned. For long running commands, it will subscribe for the result of those which were successfully validated as <code>Accepted</code> and get the final CommandResponse.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">/*
-val finalResponseOfMultipleCommands = hcdComponent.submitAllAndGetFinalResponse(Set(setupHcd1, setupHcd2))
-</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">Setup setupHcd1 = new Setup(prefix(), shortRunning(), Optional.empty()).add(encoderParam);
-Setup setupHcd2 = new Setup(prefix(), mediumRunning(), Optional.empty()).add(encoderParam);
-
-HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt; componentsToCommands = new HashMap&lt;JCommandService, Set&lt;ControlCommand&gt;&gt;() {
-    {
-        put(hcdCmdService, new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)));
-    }
-};
-
-CompletableFuture&lt;CommandResponse.SubmitResponse&gt; finalCommandResponse = hcdCmdService
-        .submitAllAndGetFinalResponse(
-                new HashSet&lt;ControlCommand&gt;(Arrays.asList(setupHcd1, setupHcd2)),
+CompletableFuture&lt;List&lt;CommandResponse.SubmitResponse&gt;&gt; finalCommandResponse = hcdCmdService
+        .submitAll(
+                Arrays.asList(setupHcd1, setupHcd2),
                 timeout
         );</code></pre></dd>
 </dl>
@@ -595,7 +576,7 @@ val matcherResponseF: Future[MatcherResponse] = matcher.start
 
 // submit command and if the command is successfully validated, check for matching of demand state against current state
 val eventualCommandResponse: Future[MatchingResponse] = async {
-  val initialResponse = await(assemblyComponent.send(setupWithMatcher))
+  val initialResponse = await(assemblyComponent.oneway(setupWithMatcher))
   initialResponse match {
     case _: Accepted ⇒
       val matcherResponse = await(matcherResponseF)
@@ -629,7 +610,7 @@ CompletableFuture&lt;MatcherResponse&gt; matcherResponseFuture = matcher.jStart(
 
 // submit command and if the command is successfully validated, check for matching of demand state against current state
 CompletableFuture&lt;CommandResponse.MatchingResponse&gt; commandResponseToBeMatched = hcdCmdService
-        .send(setup, timeout)
+        .oneway(setup, timeout)
         .thenCompose(initialCommandResponse -&gt; {
             if (initialCommandResponse instanceof CommandResponse.Accepted) {
 
@@ -649,36 +630,6 @@ CompletableFuture&lt;CommandResponse.MatchingResponse&gt; commandResponseToBeMat
         });
 
 CommandResponse.MatchingResponse actualResponse = commandResponseToBeMatched.get();</code></pre></dd>
-</dl>
-<h2><a href="#distributing-commands" name="distributing-commands" class="anchor"><span class="anchor-link"></span></a>Distributing commands</h2>
-<p><code>CommandDistributor</code> is a utility for distributing commands to multiple components and get an aggregated response. </p>
-<h3><a href="#aggregated-validation-response" name="aggregated-validation-response" class="anchor"><span class="anchor-link"></span></a>aggregated validation response</h3>
-<p>A component can send one or more commands to one or more components using a <code>Map[ComponentRef, Set[ControlCommand]</code>, and get an aggregated response of validation as <code>Accepted</code> if all the commands were successfully validated. An <code>Error</code> response is returned otherwise</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val aggregatedValidationResponse = CommandDistributor(
-  Map(assemblyCommandService → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
-).aggregatedValidationResponse()</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; cmdValidationResponseF =
-        new JCommandDistributor(componentsToCommands).
-                aggregatedValidationResponse(timeout, ec, mat);</code></pre></dd>
-</dl>
-<h3><a href="#aggregated-completion-response" name="aggregated-completion-response" class="anchor"><span class="anchor-link"></span></a>aggregated completion response</h3>
-<p>A component can send one or more commands to one or more components using a <code>Map[ComponentRef, Set[ControlCommand]</code>. The utility handles subscribing for final completion result for all the commands post successful validation and get an aggregated response of completion as <code>Completed</code> if all the commands were successfully completed. An <code>Error</code> response is returned otherwise.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">val aggregatedResponse = CommandDistributor(
-  Map(assemblyCommandService → Set(setupAssembly1, setupAssembly2), hcdComponent → Set(setupHcd1, setupHcd2))
-).aggregatedCompletionResponse()</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; cmdCompletionResponseF =
-        new JCommandDistributor(componentsToCommands).
-                aggregatedCompletionResponse(timeout, ec, mat);</code></pre></dd>
 </dl>
 </div>
 <div>
