@@ -135,6 +135,7 @@ tmtsoftware/csw
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
+  <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/messages.html" class="page">Messages</a>
   <ul>
     <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
@@ -283,7 +284,7 @@ val ds5: DemandState = ds3.add(timestampKey.set(Instant.now().minusSeconds(3600)
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//prefix
-String prefix = &quot;wfos.prog.cloudcover&quot;;
+Prefix prefix = new Prefix(&quot;wfos.prog.cloudcover&quot;);
 
 //keys
 Key&lt;Character&gt; charKey = JKeyType.CharKey().make(&quot;charKey&quot;);
@@ -383,7 +384,7 @@ val cs5 = cs3.add(timestampKey.set(Instant.now().minusSeconds(3600)))
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">//prefix
-String prefix = &quot;wfos.prog.cloudcover&quot;;
+Prefix prefix = new Prefix(&quot;wfos.prog.cloudcover&quot;);
 
 //keys
 Key&lt;Character&gt; charKey = JKeyType.CharKey().make(&quot;charKey&quot;);
@@ -478,8 +479,8 @@ MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
 Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
 
 //state variables
-DemandState ds = new DemandState(&quot;wfos.blue.filter&quot;, new StateName(&quot;testStateName&quot;)).add(i1);
-CurrentState cs = new CurrentState(&quot;wfos.blue.filter&quot;, new StateName(&quot;testStateName&quot;)).add(i1);
+DemandState ds = new DemandState(new Prefix(&quot;wfos.blue.filter&quot;), new StateName(&quot;testStateName&quot;)).add(i1);
+CurrentState cs = new CurrentState(new Prefix(&quot;wfos.blue.filter&quot;), new StateName(&quot;testStateName&quot;)).add(i1);
 
 //json support - write
 JsValue dsJson = JavaJsonSupport.writeStateVariable(ds);
@@ -553,7 +554,7 @@ Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
 
 //prefix
-String prefix = &quot;wfos.blue.filter&quot;;
+Prefix prefix = new Prefix(&quot;wfos.blue.filter&quot;);
 
 //params
 Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);

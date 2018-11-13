@@ -135,6 +135,7 @@ tmtsoftware/csw
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
   <li><a href="../commons/multiple-components.html" class="active page">Multiple Components</a></li>
+  <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/messages.html" class="page">Messages</a>
   <ul>
     <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
@@ -274,7 +275,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
     return CompletableFuture.runAsync(() -&gt; log.info(&quot;Assembly is shutting down.&quot;));
 }</code></pre></dd>
 </dl>
-<p>Once again, ingore the code about setting up the subscription. This will be covered later when we discuss subscribing to events.</p>
+<p>Once again, ignore the code about setting up the subscription. This will be covered later when we discuss subscribing to events.</p>
 <h2><a href="#component-configuration-componentinfo-" name="component-configuration-componentinfo-" class="anchor"><span class="anchor-link"></span></a>Component Configuration (ComponentInfo)</h2>
 <p>Also similar to the HCD, we will need to create a ComponentInfo file for the Assembly. The following shows an example of ComponentInfo file for an Assembly:</p>
 <dl>
@@ -282,7 +283,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
   <dd>
   <pre><code>name = &quot;SampleAssembly&quot;
 componentType = assembly
-behaviorFactoryClassName = &quot;nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
 prefix = &quot;nfiraos.sample&quot;
 locationServiceUsage = RegisterAndTrackServices
 connections = [
@@ -297,7 +298,7 @@ connections = [
   <dd>
   <pre><code>name = &quot;JSampleAssembly&quot;
 componentType = assembly
-behaviorFactoryClassName = &quot;nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
 prefix = &quot;nfiraos.sample&quot;
 locationServiceUsage = RegisterAndTrackServices
 connections = [
@@ -319,7 +320,7 @@ components: [
   {
     name = &quot;SampleAssembly&quot;
     componentType = assembly
-    behaviorFactoryClassName = &quot;nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
+    behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
     prefix = &quot;nfiraos.sample&quot;
     locationServiceUsage = RegisterAndTrackServices
     connections = [
@@ -333,7 +334,7 @@ components: [
   {
     name = &quot;SampleHcd&quot;
     componentType = hcd
-    behaviorFactoryClassName = &quot;nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
+    behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
     prefix = &quot;nfiraos.samplehcd&quot;
     locationServiceUsage = RegisterOnly
   }
@@ -345,7 +346,7 @@ components: [
   {
     name = &quot;JSampleAssembly&quot;
     componentType = assembly
-    behaviorFactoryClassName = &quot;nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
+    behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
     prefix = &quot;nfiraos.sample&quot;
     locationServiceUsage = RegisterAndTrackServices
     connections = [
@@ -359,7 +360,7 @@ components: [
   {
     name = &quot;JSampleHcd&quot;
     componentType = hcd
-    behaviorFactoryClassName = &quot;nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
+    behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
     prefix = &quot;nfiraos.samplehcd&quot;
     locationServiceUsage = RegisterOnly
   }
@@ -465,18 +466,14 @@ CompletableFuture&lt;ICommandService&gt; eventualCommandService = resolvedHcdLoc
 eventualCommandService.thenAccept((jcommandService) -&gt; hcd = jcommandService);</code></pre></dd>
 </dl>
 <p>If a component wants to send a command to another component, it uses a <code>CommandService</code> instance. The creation of a<code>CommandService</code> instance and its usage can be found <a href="command.html#commandservice">here</a>.</p>
-<p>If a component wants to send multiple commands in response to a single received command, then it can use a <code>CommandDistributor</code> instance. The CommandDistributor will help in getting the aggregated response of multiple commands sent to other components. The component developer can use the aggregated response to update the <code>CommandResponseManager</code> with the appropriate status if the received command was in a <code>Submit</code> wrapper.</p>
-<p>More details about creating a <code>CommandDistributor</code> instance and its usage can be found <a href="command.html#distributing-commands">here</a>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p><code>CommandDistributor</code> can be used to get an aggregated response only if the multiple commands sent to other components are all wrapped in a <code>Submit</code> wrapper.</p></div>
 <h2><a href="#tracking-long-running-commands" name="tracking-long-running-commands" class="anchor"><span class="anchor-link"></span></a>Tracking Long Running Commands</h2>
-<p>A command sent in a <code>Submit</code> wrapper that receives an <code>Accepted</code> response in return is considered as a long running command.</p>
-<p>When a component sends a long running command to another component, it may be interested in knowing the status of the command and take decisions based on that. In order to subscribe to the changes in command status, the sender component will have to use the <code>subscribe</code> method after <code>submit</code> or use <code>submitAndSubscribe</code> in <code>CommandService</code>.</p>
+<p>The <code>submit</code> method has been written so that it will return a Future response encapsulating a <code>SubmitResponse</code> type. If the Future completes, no matter whether the command has an immediate response or is long-running, is invalid, or encounters an error at any point, the Future completes with the final response. If there is an exception, which may occur if the <code>submit</code> times out, that must be handled explicity using Future exception handling (this can be done many ways; an example is given below).</p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an Assembly</em></h4>
 <p>We use our worker actor to submit the command to the HCD, and then subscribe to the HCD&rsquo;s <code>CommandResponseManager</code> for command completion.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">sealed trait WorkerCommand
+  <pre class="prettyprint"><code class="language-scala">sealed trait WorkerCommand                  extends TMTSerializable
 case class SendCommand(hcd: CommandService) extends WorkerCommand
 
 private val commandSender =
@@ -493,7 +490,8 @@ private val commandSender =
     &quot;CommandSender&quot;
   )
 
-private implicit val submitTimeout: Timeout = Timeout(1000.millis)
+import scala.concurrent.duration._
+private implicit val sleepCommandTimeout: Timeout = Timeout(10000.millis)
 def handle(hcd: CommandService): Unit = {
 
   // Construct Setup command
@@ -501,25 +499,23 @@ def handle(hcd: CommandService): Unit = {
   val sleepTimeParam: Parameter[Long] = sleepTimeKey.set(5000).withUnits(Units.millisecond)
   val setupCommand                    = Setup(componentInfo.prefix, CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam)
 
-  // Submit command, and handle validation response. Final response is returned as a Future
-  val submitCommandResponseF: Future[SubmitResponse] = hcd.submit(setupCommand).flatMap {
-    case x @ (Invalid(_, _) | Locked(_)) =&gt;
-      log.error(&quot;Sleep command invalid&quot;)
-      Future(x)
-    case x =&gt;
-      Future.successful(x)
-  }
-
-  // Wait for final response, and log result
-  submitCommandResponseF.foreach {
-    case _: CommandResponse.Completed =&gt; log.info(&quot;Command completed successfully&quot;)
-    case x: CommandResponse.Error     =&gt; log.error(s&quot;Command Completed with error: ${x.message}&quot;)
-    case _                            =&gt; log.error(&quot;Command failed&quot;)
+  // submit command and handle response
+  hcd.submit(setupCommand).onComplete {
+    case scala.util.Success(value) =&gt;
+      value match {
+        case _: CommandResponse.Locked =&gt; log.error(&quot;Sleedp command failed: HCD is locked.&quot;)
+        case inv: CommandResponse.Invalid =&gt;
+          log.error(s&quot;Command is invalid: (${inv.issue.getClass.getSimpleName}): ${inv.issue.reason}&quot;)
+        case x: CommandResponse.Error     =&gt; log.error(s&quot;Command Completed with error: ${x.message}&quot;)
+        case _: CommandResponse.Completed =&gt; log.info(&quot;Command completed successfully&quot;)
+        case _                            =&gt; log.error(&quot;Command failed&quot;)
+      }
+    case scala.util.Failure(ex) =&gt; log.error(s&quot;Exception occured when sending command: ${ex.getMessage}&quot;)
   }
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">private interface WorkerCommand {
+  <pre class="prettyprint"><code class="language-java">private interface WorkerCommand extends TMTSerializable {
 }
 
 private static final class SendCommand implements WorkerCommand {
@@ -552,34 +548,28 @@ private void handle(ICommandService hcd) {
     Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;);
     Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L).withUnits(JUnits.millisecond);
 
-    Setup setupCommand = new Setup(componentInfo.prefix(), new CommandName(&quot;sleep&quot;), Optional.of(new ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam);
+    Setup setupCommand = new Setup(cswCtx.componentInfo().prefix(), new CommandName(&quot;sleep&quot;), Optional.of(new ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam);
 
-    Timeout submitTimeout = new Timeout(1, TimeUnit.SECONDS);
     Timeout commandResponseTimeout = new Timeout(10, TimeUnit.SECONDS);
 
-    // Submit command, and handle validation response. Final response is returned as a Future
-    CompletableFuture&lt;CommandResponse.SubmitResponse&gt; submitCommandResponseF = hcd.submit(setupCommand, submitTimeout)
-            .thenCompose(commandResponse -&gt; {
-                if (! (commandResponse instanceof CommandResponse.Invalid || commandResponse instanceof CommandResponse.Locked)) {
-                    return CompletableFuture.completedFuture(commandResponse);
+    // Submit command and handle response
+    hcd.submit(setupCommand, commandResponseTimeout)
+            .exceptionally(ex -&gt; new CommandResponse.Error(setupCommand.runId(), &quot;Exception occurred when sending command: &quot; + ex.getMessage()))
+            .thenAccept(commandResponse -&gt; {
+                if (commandResponse instanceof CommandResponse.Locked) {
+                    log.error(&quot;Sleed command failed: HCD is locked&quot;);
+                } else if (commandResponse instanceof CommandResponse.Invalid) {
+                    CommandResponse.Invalid inv = (CommandResponse.Invalid) commandResponse;
+                    log.error(&quot;Sleep command invalid (&quot; + inv.issue().getClass().getSimpleName() + &quot;): &quot; + inv.issue().reason());
+                } else if (commandResponse instanceof CommandResponse.Error) {
+                    CommandResponse.Error x = (CommandResponse.Error) commandResponse;
+                    log.error(() -&gt; &quot;Command Completed with error: &quot; + x.message());
+                } else if (commandResponse instanceof CommandResponse.Completed) {
+                    log.info(&quot;Command completed successfully&quot;);
                 } else {
-                    log.error(&quot;Sleep command invalid&quot;);
-                    return CompletableFuture.completedFuture(new CommandResponse.Error(commandResponse.runId(), &quot;test error&quot;));
+                    log.error(&quot;Command failed: &quot;);
                 }
             });
-
-
-    // Wait for final response, and log result
-    submitCommandResponseF.toCompletableFuture().thenAccept(commandResponse -&gt; {
-        if (commandResponse instanceof CommandResponse.Completed) {
-            log.info(&quot;Command completed successfully&quot;);
-        } else if (commandResponse instanceof CommandResponse.Error) {
-            CommandResponse.Error x = (CommandResponse.Error) commandResponse;
-            log.error(() -&gt; &quot;Command Completed with error: &quot; + x.message());
-        } else {
-            log.error(&quot;Command failed&quot;);
-        }
-    });
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>If the component developer creates new set of messages for worker actor then it is mandatory that those messages extend <code>TMTSerializable</code> which will enable messages to serialize on wire.</p></div>
@@ -588,7 +578,7 @@ private void handle(ICommandService hcd) {
 <p>More details on how to use <code>Matcher</code> can be found <a href="command.html#matching-state-for-command-completion">here</a>. </p>
 <h2><a href="#pubsub-connection" name="pubsub-connection" class="anchor"><span class="anchor-link"></span></a>PubSub Connection</h2>
 <p>A component might need to subscribe to the current state of any other component provided it knows the location of that component. In order to subscribe to current state, it may use the <code>subscribeCurrentState</code> method of the <code>CommandService</code>. More details about the usage of <code>subscribeCurrentState</code> can ber found <a href="command.html#subscribecurrentstate">here</a>.</p>
-<p>If a component wants to publish its current state then it can use the <code>currentStatePublisher</code> provided by <code>csw-framework</code> in <code>ComponentHandlers</code>. More details about the usage of <code>currentStatePublisher</code> can ber found <a href="../framework/publishing-state.html">here</a>.</p>
+<p>If a component wants to publish its current state then it can use the <code>currentStatePublisher</code> provided by <code>csw-framework</code> in the <code>CswContext</code> object passed into <code>ComponentHandlers</code>. More details about the usage of <code>currentStatePublisher</code> can be found <a href="../framework/publishing-state.html">here</a>.</p>
 <h2><a href="#subscribing-to-events" name="subscribing-to-events" class="anchor"><span class="anchor-link"></span></a>Subscribing to Events</h2>
 <p>To subscribe to events, a subscriber is accessed done in a similar way to publishing. Typically a <code>defaultSubscriber</code> is obtained, but additional subscribers with their own connection can be created.</p>
 <p>The subscribe API specifies a set of <code>Events</code> to subscribe to and then specifies how the events should be handled. This can be a callback, an Actor reference to receive the <code>Event</code> as a message, or as a stream to allow flow operations to be applied. </p>
@@ -605,8 +595,10 @@ private def processEvent(event: Event): Unit = {
   event match {
     case e: SystemEvent =&gt;
       e.eventKey match {
-        case `counterEventKey` =&gt; log.info(s&quot;Counter = ${e(hcdCounterKey).head}&quot;)
-        case _                 =&gt; log.warn(&quot;Unexpected event received.&quot;)
+        case `counterEventKey` =&gt;
+          val counter = e(hcdCounterKey).head
+          log.info(s&quot;Counter = $counter&quot;)
+        case _ =&gt; log.warn(&quot;Unexpected event received.&quot;)
       }
     case e: ObserveEvent =&gt; log.warn(&quot;Unexpected ObserveEvent received.&quot;) // not expected
   }
@@ -631,7 +623,8 @@ private void processEvent(Event event) {
     if (event instanceof SystemEvent) {
         SystemEvent sysEvent = (SystemEvent)event;
         if (event.eventKey().equals(counterEventKey)) {
-            log.info(&quot;Counter = &quot; + sysEvent.parameter(hcdCounterKey).head());
+            int counter = sysEvent.parameter(hcdCounterKey).head();
+            log.info(&quot;Counter = &quot; + counter);
         } else {
             log.warn(&quot;Unexpected event received.&quot;);
         }
@@ -643,7 +636,7 @@ private void processEvent(Event event) {
 
 private IEventSubscription subscribeToHcd() {
     log.info(&quot;Starting subscription.&quot;);
-    return eventService.defaultSubscriber().subscribeCallback(Collections.singleton(counterEventKey), this::processEvent);
+    return cswCtx.eventService().defaultSubscriber().subscribeCallback(Collections.singleton(counterEventKey), this::processEvent);
 }
 
 private void unsubscribeHcd() {
@@ -651,7 +644,6 @@ private void unsubscribeHcd() {
     maybeEventSubscription.ifPresent(IEventSubscription::unsubscribe);
 }</code></pre></dd>
 </dl>
-<p>Again, in Java, you must save a reference to the <code>IEventService</code> passed into the constructor as a member variable. We use the name <code>eventService</code> (not shown here).</p>
 <p>We use the <code>subscribeCallback</code> method from the API and specify the method <code>processEvent</code> as our callback, in which we unpack the event and log the counter value. The subscribe methods in the API return a <code>EventSubscription</code> object, which can be used to stop the subscription, as demonstrated in the <code>unsubscribeHCD</code> method (which again, is not called in our tutorial).</p>
 <p>Again, we return to our <code>initialize</code> method to show how subscription is started, and the reference to the subscription is stored for later use.</p>
 <dl>
@@ -692,18 +684,18 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <p>Go to the project root directory and type <code>sbt &quot;&lt;deploy-module&gt;/runMain &lt;mainClass&gt; --local &lt;path-to-config-file&gt;&quot;</code>, where</p>
 <ul>
   <li><code>&lt;deploy-module&gt;</code> is the name of the deployment module created by the template (<code>sample-deploy</code> if using defaults)</li>
-  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;prefix&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt run</code> and it will prompt you the possibilities.</li>
+  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;package&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt &lt;deploy-module&gt;/run</code> and it will prompt you the possibilities.</li>
   <li><code>&lt;path-to-config-file&gt;</code> is the filename, which can be an absolute path or relative to the directory of the deployment module. If using defaults, this would be <code>src/main/resources/SampleContainer.conf</code> for Scala, and <code>src/main/resources/JSampleContainer.conf</code> for Java.</li>
 </ul>
 <p>So if using the template defaults, the full command would be </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/SampleContainer.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/SampleContainer.conf&quot;
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/JSampleContainer.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local src/main/resources/JSampleContainer.conf&quot;
 </code></pre></dd>
 </dl>
 <p>Like with the HCD, the <code>sbt stage</code> command can also be used to create binaries in the <code>target/universal/stage/bin</code> directories of the root project.</p>
@@ -717,7 +709,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
   <li>Example to run container: <code>./sample-container-cmd-app --local ../../../../sample-deploy/src/main/resources/SampleContainer.conf</code></li>
   <li>Example to run host config: <code>./sample-host-config-app --local ../../../../sample-deploy/src/main/resources/SampleHostConfig.conf -s ./sample-container-cmd-app</code></li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
-<p>The CSW HTTP Location server must be running and appropriate environment variables set to run the apps. See <a href="../apps/cswlocationserver.html">CSW Location Server</a>.</p></div>
+<p>This assumes you still have the CSW Services running using the <code>csw-services.sh</code> script as described in the <a href="create-component.html#starting-csw-services">Create a Component</a> tutorial page.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/commons/multiple-components.md" title="Edit this page" class="md-source-file md-edit">
@@ -749,13 +741,13 @@ Creating a Component
 </span>
 </div>
 </a>
-<a href="../commons/messages.html" title="Messages" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../commons/using-alarms.html" title="Using Alarms" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Messages
+Using Alarms
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

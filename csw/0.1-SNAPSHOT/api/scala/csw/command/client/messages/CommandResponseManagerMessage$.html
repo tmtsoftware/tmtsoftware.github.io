@@ -118,7 +118,7 @@
       
       <p class="shortcomment cmt">This project defines the basic classes and traits for the <i>Command Service</i>.</p><div class="fullcomment"><div class="comment cmt"><h4> Command Service </h4><p>This project defines the basic classes and traits for the <i>Command Service</i>.</p><p>Related projects are:
 - <b>csw-messages</b>:</p><ul><li>This defines the types of command (Oneway/Submit etc.) and types of <i>configurations</i> (Setup/Observe/Wait etc.)</li><li>Complete usage of Messages is available at: https://tmtsoftware.github.io/csw/services/messages.html</li></ul><p>- <b>framework</b>:</p><ul><li>This defines the Hcd and Assembly handlers, lifecycle manager and supervisor for components.</li><li>Framework allows component writer to override onValidation, onSubmit and onOneway handlers. (Note it allows overriding other handlers as well.)</li><li>On every command received by component, onValidation handler gets invoked where received command gets validated and validation response is returned.</li><li>Based on validation response and command type, onSubmit/onOneway hooks gets invoked where command gets processed.</li><li>Complete details of handling commands can be found here : https://tmtsoftware.github.io/csw/framework/handling-lifecycle.html#handling-commands</li></ul><p>Important classes in this project are:</p><p>- <a href="../CommandResponseManager.html" class="extype" name="csw.command.client.CommandResponseManager">csw.command.client.CommandResponseManager</a></p><p>This class wraps CommandResponseManagerActor and provides helpers to interact with actor which is responsible for adding/updating/querying command result.
-Component writers will get handle to CommandResponseManager in their handlers.</p><p>- <span class="extype" name="csw.command.client.internal.CommandResponseManagerBehavior">csw.command.client.internal.CommandResponseManagerBehavior</span> maintains two states:</p><ul><li><span class="extype" name="csw.command.client.internal.CommandResponseManagerState">csw.command.client.internal.CommandResponseManagerState</span>:
+Component writers will get handle to CommandResponseManager in their handlers.</p><p>- <span class="extype" name="csw.command.client.internal.CommandResponseManagerBehavior">csw.command.client.internal.CommandResponseManagerBehavior</span> maintains two states:</p><ul><li><span class="extype" name="csw.command.client.internal.CommandResponseState">csw.command.client.internal.CommandResponseState</span>:
      It maintains <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> of Commands and their corresponding <span class="extype" name="csw.command.client.internal.CommandState">csw.command.client.internal.CommandState</span>.</li><li><span class="extype" name="csw.command.client.internal.CommandCorrelation">csw.command.client.internal.CommandCorrelation</span> :
      It maintains commands <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> correlation between parent to child and child to parent.</li></ul><p>- <a href="../../api/scaladsl/CommandService.html" class="extype" name="csw.command.api.scaladsl.CommandService">csw.command.api.scaladsl.CommandService</a></p><p>This class wraps the <a href="../../../location/api/models/AkkaLocation.html" class="extype" name="csw.location.api.models.AkkaLocation">csw.location.api.models.AkkaLocation</a> and provides helpers to send commands to component actor extracted from provided location.
 Normal component writers workflow would be to first resolve component using location service and then create CommandService instance using resolved location.</p><p>Using this instance, you can Submit Command/Commands to other component or query for command result or subscribe for long running command result.</p><p>When you have multiple commands targeted to multiple components then you can use ConfigDistributor.
@@ -282,7 +282,87 @@ https://tmtsoftware.github.io/csw/command.html</p></div><dl class="attributes bl
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="csw.command.client.messages.CommandResponseManagerMessage.Query" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="csw.command.client.messages.CommandResponseManagerMessage.AddOrUpdateCommand" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AddOrUpdateCommandextendsCommandResponseManagerMessagewithProductwithSerializable"></a><a id="AddOrUpdateCommand:AddOrUpdateCommand"></a>
+      <span class="permalink">
+      <a href="../../../../csw/command/client/messages/CommandResponseManagerMessage$.html#AddOrUpdateCommandextendsCommandResponseManagerMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage$$AddOrUpdateCommand.html"><span class="name">AddOrUpdateCommand</span></a><span class="params">(<span name="commandResponse">commandResponse: <a href="../../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">SubmitResponse</a></span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.command.client.messages.CommandResponseManagerMessage.AddSubCommand" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AddSubCommandextendsCommandResponseManagerMessagewithProductwithSerializable"></a><a id="AddSubCommand:AddSubCommand"></a>
+      <span class="permalink">
+      <a href="../../../../csw/command/client/messages/CommandResponseManagerMessage$.html#AddSubCommandextendsCommandResponseManagerMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage$$AddSubCommand.html"><span class="name">AddSubCommand</span></a><span class="params">(<span name="runId">runId: <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">Id</a></span>, <span name="subCommandId">subCommandId: <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">Id</a></span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.command.client.messages.CommandResponseManagerMessage.GetCommandCorrelation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GetCommandCorrelationextendsCommandResponseManagerMessagewithProductwithSerializable"></a><a id="GetCommandCorrelation:GetCommandCorrelation"></a>
+      <span class="permalink">
+      <a href="../../../../csw/command/client/messages/CommandResponseManagerMessage$.html#GetCommandCorrelationextendsCommandResponseManagerMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage$$GetCommandCorrelation.html"><span class="name">GetCommandCorrelation</span></a><span class="params">(<span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.18/akka-actor-typed_2.12-2.5.18-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<span class="extype" name="csw.command.client.internal.CommandCorrelation">CommandCorrelation</span>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.command.client.messages.CommandResponseManagerMessage.GetCommandResponseState" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GetCommandResponseStateextendsCommandResponseManagerMessagewithProductwithSerializable"></a><a id="GetCommandResponseState:GetCommandResponseState"></a>
+      <span class="permalink">
+      <a href="../../../../csw/command/client/messages/CommandResponseManagerMessage$.html#GetCommandResponseStateextendsCommandResponseManagerMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage$$GetCommandResponseState.html"><span class="name">GetCommandResponseState</span></a><span class="params">(<span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.18/akka-actor-typed_2.12-2.5.18-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<span class="extype" name="csw.command.client.internal.CommandResponseState">CommandResponseState</span>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.command.client.messages.CommandResponseManagerMessage.GetCommandSubscribersState" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GetCommandSubscribersStateextendsCommandResponseManagerMessagewithProductwithSerializable"></a><a id="GetCommandSubscribersState:GetCommandSubscribersState"></a>
+      <span class="permalink">
+      <a href="../../../../csw/command/client/messages/CommandResponseManagerMessage$.html#GetCommandSubscribersStateextendsCommandResponseManagerMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage$$GetCommandSubscribersState.html"><span class="name">GetCommandSubscribersState</span></a><span class="params">(<span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.18/akka-actor-typed_2.12-2.5.18-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<span class="extype" name="csw.command.client.internal.CommandSubscribersState">CommandSubscribersState</span>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.command.client.messages.CommandResponseManagerMessage.Query" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="QueryextendsCommandResponseManagerMessagewithSupervisorLockMessagewithProductwithSerializable"></a><a id="Query:Query"></a>
       <span class="permalink">
       <a href="../../../../csw/command/client/messages/CommandResponseManagerMessage$.html#QueryextendsCommandResponseManagerMessagewithSupervisorLockMessagewithProductwithSerializable" title="Permalink">
@@ -294,7 +374,7 @@ https://tmtsoftware.github.io/csw/command.html</p></div><dl class="attributes bl
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Represents a message to query the command status of a command running on some component" href="CommandResponseManagerMessage$$Query.html"><span class="name">Query</span></a><span class="params">(<span name="runId">runId: <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">Id</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.15/akka-actor-typed_2.12-2.5.15-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<a href="../../../params/commands/CommandResponse$$QueryResponse.html" class="extype" name="csw.params.commands.CommandResponse.QueryResponse">QueryResponse</a>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="SupervisorLockMessage.html" class="extype" name="csw.command.client.messages.SupervisorLockMessage">SupervisorLockMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a message to query the command status of a command running on some component" href="CommandResponseManagerMessage$$Query.html"><span class="name">Query</span></a><span class="params">(<span name="runId">runId: <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">Id</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.18/akka-actor-typed_2.12-2.5.18-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<a href="../../../params/commands/CommandResponse$$QueryResponse.html" class="extype" name="csw.params.commands.CommandResponse.QueryResponse">QueryResponse</a>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="SupervisorLockMessage.html" class="extype" name="csw.command.client.messages.SupervisorLockMessage">SupervisorLockMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Represents a message to query the command status of a command running on some component
@@ -312,12 +392,28 @@ https://tmtsoftware.github.io/csw/command.html</p></div><dl class="attributes bl
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Represents a message to subscribe to change in command status of a command running on some component" href="CommandResponseManagerMessage$$Subscribe.html"><span class="name">Subscribe</span></a><span class="params">(<span name="runId">runId: <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">Id</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.15/akka-actor-typed_2.12-2.5.15-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<a href="../../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">SubmitResponse</a>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="SupervisorLockMessage.html" class="extype" name="csw.command.client.messages.SupervisorLockMessage">SupervisorLockMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a message to subscribe to change in command status of a command running on some component" href="CommandResponseManagerMessage$$Subscribe.html"><span class="name">Subscribe</span></a><span class="params">(<span name="runId">runId: <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">Id</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.18/akka-actor-typed_2.12-2.5.18-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<a href="../../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">SubmitResponse</a>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="SupervisorLockMessage.html" class="extype" name="csw.command.client.messages.SupervisorLockMessage">SupervisorLockMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Represents a message to subscribe to change in command status of a command running on some component
 </p><div class="fullcomment"><div class="comment cmt"><p>Represents a message to subscribe to change in command status of a command running on some component
 </p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>represents an unique identifier of command</p></dd><dt class="param">replyTo</dt><dd class="cmt"><p>represents the actor that will receive the notification of change in command status</p></dd></dl></div>
+    </li><li name="csw.command.client.messages.CommandResponseManagerMessage.SubscriberTerminated" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SubscriberTerminatedextendsCommandResponseManagerMessagewithProductwithSerializable"></a><a id="SubscriberTerminated:SubscriberTerminated"></a>
+      <span class="permalink">
+      <a href="../../../../csw/command/client/messages/CommandResponseManagerMessage$.html#SubscriberTerminatedextendsCommandResponseManagerMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage$$SubscriberTerminated.html"><span class="name">SubscriberTerminated</span></a><span class="params">(<span name="terminated">terminated: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.18/akka-actor-typed_2.12-2.5.18-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<a href="../../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">SubmitResponse</a>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
     </li><li name="csw.command.client.messages.CommandResponseManagerMessage.Unsubscribe" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="UnsubscribeextendsCommandResponseManagerMessagewithSupervisorLockMessagewithProductwithSerializable"></a><a id="Unsubscribe:Unsubscribe"></a>
       <span class="permalink">
@@ -330,12 +426,28 @@ https://tmtsoftware.github.io/csw/command.html</p></div><dl class="attributes bl
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Represents a message to un-subscribe to change in command status of a command running on some component" href="CommandResponseManagerMessage$$Unsubscribe.html"><span class="name">Unsubscribe</span></a><span class="params">(<span name="runId">runId: <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">Id</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.15/akka-actor-typed_2.12-2.5.15-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<a href="../../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">SubmitResponse</a>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="SupervisorLockMessage.html" class="extype" name="csw.command.client.messages.SupervisorLockMessage">SupervisorLockMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+        <a title="Represents a message to un-subscribe to change in command status of a command running on some component" href="CommandResponseManagerMessage$$Unsubscribe.html"><span class="name">Unsubscribe</span></a><span class="params">(<span name="runId">runId: <a href="../../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">Id</a></span>, <span name="replyTo">replyTo: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/akka/akka-actor-typed_2.12/2.5.18/akka-actor-typed_2.12-2.5.18-javadoc.jar/!/akka/actor/typed/ActorRef.html#akka.actor.typed.ActorRef" class="extype" name="akka.actor.typed.ActorRef">ActorRef</a>[<a href="../../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">SubmitResponse</a>]</span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="SupervisorLockMessage.html" class="extype" name="csw.command.client.messages.SupervisorLockMessage">SupervisorLockMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">Represents a message to un-subscribe to change in command status of a command running on some component
 </p><div class="fullcomment"><div class="comment cmt"><p>Represents a message to un-subscribe to change in command status of a command running on some component
 </p></div><dl class="paramcmts block"><dt class="param">runId</dt><dd class="cmt"><p>represents an unique identifier of command</p></dd><dt class="param">replyTo</dt><dd class="cmt"><p>represents the actor that will be stop receiving notification of change in command status</p></dd></dl></div>
+    </li><li name="csw.command.client.messages.CommandResponseManagerMessage.UpdateSubCommand" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="UpdateSubCommandextendsCommandResponseManagerMessagewithProductwithSerializable"></a><a id="UpdateSubCommand:UpdateSubCommand"></a>
+      <span class="permalink">
+      <a href="../../../../csw/command/client/messages/CommandResponseManagerMessage$.html#UpdateSubCommandextendsCommandResponseManagerMessagewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandResponseManagerMessage$$UpdateSubCommand.html"><span class="name">UpdateSubCommand</span></a><span class="params">(<span name="commandResponse">commandResponse: <a href="../../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">SubmitResponse</a></span>)</span><span class="result"> extends <a href="CommandResponseManagerMessage.html" class="extype" name="csw.command.client.messages.CommandResponseManagerMessage">CommandResponseManagerMessage</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.7/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
     </li></ol>
             </div>
 

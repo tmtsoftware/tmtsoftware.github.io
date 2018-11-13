@@ -135,6 +135,7 @@ tmtsoftware/csw
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
+  <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/messages.html" class="page">Messages</a>
   <ul>
     <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
@@ -272,15 +273,15 @@ case _: Completed ⇒
       currentStatePublisher
         .publish(CurrentState(shortSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(shortCmdCompleted))))
       // As the commands get completed, the results are updated in the commandResponseManager
-      commandResponseManager.updateSubCommand(id, Completed(id))
+      commandResponseManager.updateSubCommand(Completed(id))
     case id if id == mediumSetup.runId ⇒
       currentStatePublisher
         .publish(CurrentState(mediumSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(mediumCmdCompleted))))
-      commandResponseManager.updateSubCommand(id, Completed(id))
+      commandResponseManager.updateSubCommand(Completed(id))
     case id if id == longSetup.runId ⇒
       currentStatePublisher
         .publish(CurrentState(longSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(longCmdCompleted))))
-      commandResponseManager.updateSubCommand(id, Completed(id))
+      commandResponseManager.updateSubCommand(Completed(id))
   }</code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -291,7 +292,7 @@ componentCommandService.submit(subCommand2, Timeout.durationToTimeout(FiniteDura
         .thenAccept(commandResponse -&gt; {
             if (commandResponse instanceof CommandResponse.Completed) {
                 // As the commands get completed, the results are updated in the commandResponseManager
-                commandResponseManager.updateSubCommand(subCommand2.runId(), commandResponse);
+                commandResponseManager.updateSubCommand(commandResponse);
             } else {
                 // do something
             }
@@ -326,30 +327,32 @@ commandResponseManager
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">// subscribe to the status of original command received and publish the state when its status changes to
+  <pre class="prettyprint"><code class="language-scala">// query the status of original command received and publish the state when its status changes to
 // Completed
-commandResponseManager.subscribe(
-  controlCommand.runId, {
+commandResponseManager
+  .queryFinal(controlCommand.runId)
+  .foreach {
     case Completed(_) ⇒
       currentStatePublisher.publish(
         CurrentState(controlCommand.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(longRunningCmdCompleted)))
       )
     case _ ⇒
-  }
-)</code></pre></dd>
+  }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// subscribe to the status of original command received and publish the state when its status changes to
 // Completed
-commandResponseManager.jSubscribe(subCommand.runId(), commandResponse -&gt; {
-    if (commandResponse instanceof CommandResponse.Completed) {
-        Key&lt;String&gt; stringKey = JKeyType.StringKey().make(&quot;sub-command-status&quot;);
-        CurrentState currentState = new CurrentState(sc.source().prefix(), new StateName(&quot;testStateName&quot;));
-        currentStatePublisher.publish(currentState.madd(stringKey.set(&quot;complete&quot;)));
-    } else {
-        // do something
-    }
-});</code></pre></dd>
+CommandResponse.SubmitResponse submitResponse = commandResponseManager
+        .jQueryFinal(subCommand.runId(), Timeout.create(Duration.ofSeconds(10)))
+        .join();
+
+if (submitResponse instanceof CommandResponse.Completed) {
+    Key&lt;String&gt; stringKey = JKeyType.StringKey().make(&quot;sub-command-status&quot;);
+    CurrentState currentState = new CurrentState(sc.source(), new StateName(&quot;testStateName&quot;));
+    currentStatePublisher.publish(currentState.madd(stringKey.set(&quot;complete&quot;)));
+} else {
+    // do something
+}</code></pre></dd>
 </dl>
 </div>
 <div>

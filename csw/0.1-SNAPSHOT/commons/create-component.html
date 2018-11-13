@@ -135,6 +135,7 @@ tmtsoftware/csw
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="active page">Creating a Component</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
+  <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/messages.html" class="page">Messages</a>
   <ul>
     <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
@@ -193,11 +194,13 @@ tmtsoftware/csw
     <li><a href="../commons/create-component.html#constructing-the-component" class="header">Constructing the Component</a></li>
     <li><a href="../commons/create-component.html#component-configuration-componentinfo-" class="header">Component Configuration (ComponentInfo)</a></li>
     <li><a href="../commons/create-component.html#lifecycle" class="header">Lifecycle</a></li>
+    <li><a href="../commons/create-component.html#csw-services-injection" class="header">CSW Services Injection</a></li>
     <li><a href="../commons/create-component.html#logging" class="header">Logging</a></li>
     <li><a href="../commons/create-component.html#receiving-commands" class="header">Receiving Commands</a></li>
     <li><a href="../commons/create-component.html#validation" class="header">Validation</a></li>
     <li><a href="../commons/create-component.html#command-response" class="header">Command Response</a></li>
     <li><a href="../commons/create-component.html#events" class="header">Events</a></li>
+    <li><a href="../commons/create-component.html#starting-csw-services" class="header">Starting CSW Services</a></li>
     <li><a href="../commons/create-component.html#building-and-running-component-in-standalone-mode" class="header">Building and Running component in standalone mode</a></li>
   </ul></li>
 </ul>
@@ -227,11 +230,13 @@ tmtsoftware/csw
     <li><a href="../commons/create-component.html#constructing-the-component" class="header">Constructing the Component</a></li>
     <li><a href="../commons/create-component.html#component-configuration-componentinfo-" class="header">Component Configuration (ComponentInfo)</a></li>
     <li><a href="../commons/create-component.html#lifecycle" class="header">Lifecycle</a></li>
+    <li><a href="../commons/create-component.html#csw-services-injection" class="header">CSW Services Injection</a></li>
     <li><a href="../commons/create-component.html#logging" class="header">Logging</a></li>
     <li><a href="../commons/create-component.html#receiving-commands" class="header">Receiving Commands</a></li>
     <li><a href="../commons/create-component.html#validation" class="header">Validation</a></li>
     <li><a href="../commons/create-component.html#command-response" class="header">Command Response</a></li>
     <li><a href="../commons/create-component.html#events" class="header">Events</a></li>
+    <li><a href="../commons/create-component.html#starting-csw-services" class="header">Starting CSW Services</a></li>
     <li><a href="../commons/create-component.html#building-and-running-component-in-standalone-mode" class="header">Building and Running component in standalone mode</a></li>
   </ul></li>
 </ul>
@@ -280,7 +285,7 @@ tmtsoftware/csw
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
 <p>As seen in the <a href="getting-started.html">Getting Started</a> page, if you are using the giter8 template, handler classes for both the HCD and Assembly are written for you, with handler implementations stubbed out. We will walkthough filling them in below.</p>
 <h2><a href="#constructing-the-component" name="constructing-the-component" class="anchor"><span class="anchor-link"></span></a>Constructing the Component</h2>
-<p>After writing the handlers, component developer needs to wire it up with framework. In order to do this, developer needs to implement a <code>ComponentBehaviorFactory</code>. This factory should to be configured in configuration file for the component (see example below). The <code>csw-framework</code> then picks up the full path of <code>ComponentBehaviorFactory</code> from configuration file and spawns the component handlers using this factory as a process of booting a component. The factory is instantiated using java reflection.</p>
+<p>After writing the handlers, component developer needs to wire it up with framework. In order to do this, developer needs to implement a <code>ComponentBehaviorFactory</code>. This factory should to be configured in configuration file for the component (see example below). The <code>csw-framework</code> then picks up the full path of <code>ComponentBehaviorFactory</code> from configuration file and spawns the component handlers using this factory as a process of booting a component. The factory is instantiated using Java reflection.</p>
 <p>Additional sample code to implement the <code>ComponentBehaviorFactory</code> can be found <a href="framework.html#creating-components">here</a> </p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
 <p>As seen in the <a href="getting-started.html">Getting Started</a> page, if using the template, this factory class will be implemented for you.</p>
@@ -291,14 +296,14 @@ tmtsoftware/csw
   <dd>
   <pre class="prettyprint"><code class="language-conf">name = &quot;SampleHcd&quot;
 componentType = hcd
-behaviorFactoryClassName = &quot;nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
 prefix = &quot;nfiraos.samplehcd&quot;
 locationServiceUsage = RegisterOnly</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-conf">name = &quot;JSampleHcd&quot;
 componentType = hcd
-behaviorFactoryClassName = &quot;nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
 prefix = &quot;nfiraos.samplehcd&quot;
 locationServiceUsage = RegisterOnly</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
@@ -341,11 +346,27 @@ locationServiceUsage = RegisterOnly</code></pre></dd>
 <p>When the Supervisor actor receives a <code>Lock</code> message, it transitions the component to the <code>Lock</code> state. Upon locking, the Supervisor will only accept the commands received from the component that locked the component and ignore all others.</p>
 <p>In the <code>Lock</code> state, messages like <code>Shutdown</code> and <code>Restart</code> will also be ignored. A component must first be unlocked to accept these commands.</p>
 <p><code>Lock</code> messages are constructed with a duration value specified. When this duration expires, the component will automatically be unlocked. A component can be manually unlocked by sending an <code>Unlock</code> message.</p>
+<h2><a href="#csw-services-injection" name="csw-services-injection" class="anchor"><span class="anchor-link"></span></a>CSW Services Injection</h2>
+<p>To provide access to CSW Services, they are injected into the <code>ComponentHandlers</code> class in the constructor in a <code>CswContext</code> object. This object provides the following services:</p>
+<ul>
+  <li>Location Service</li>
+  <li>Event Service</li>
+  <li>Alarm Service (Client API)</li>
+  <li>Configuration Service (Client API)</li>
+  <li>Logging Service (Logger Factory)</li>
+</ul>
+<p>And the following utilities:</p>
+<ul>
+  <li>Component Configuration (ComponentInfo)</li>
+  <li>Command Service Command Response Manager</li>
+  <li>Current State Publisher Actor (intended for HCDs)</li>
+</ul>
 <h2><a href="#logging" name="logging" class="anchor"><span class="anchor-link"></span></a>Logging</h2>
-<p><code>csw-framework</code> will provide a <code>LoggerFactory</code> as dependency injection in constructor of <code>ComponentHandlers</code>. The <code>LoggerFactory</code> will have the component&rsquo;s name predefined in it. The component developer is expected to use this factory to log statements.</p>
+<p><code>csw-framework</code> will provide a <code>LoggerFactory</code> in the <code>CswContext</code> injected in constructor of <code>ComponentHandlers</code>. The <code>LoggerFactory</code> will have the component&rsquo;s name predefined in it. The component developer is expected to use this factory to log statements.</p>
 <p>Logging works much like other popular loggers such as <em>log4j</em>. However, with the development of log management tools such as <em>logstash</em>, the emphasis on log message formatting has been to write messages in JSON format, so that they can easily be ingested. Plain text writing to stdout is still supported. More details on how to use logging can be found <a href="../services/logging.html#log-statements">here</a>. </p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
-<p>Let&rsquo;s use logging to flesh out some of our command handlers. Add some simple log messages in the <code>initialize</code> and <code>onShutdown</code> hooks, and to the <code>onLocationTrackingEvent</code> hook as well, although we won&rsquo;t be using it for this HCD:</p>
+<p>Let&rsquo;s use logging to flesh out some of our command handlers. The template will instantiate a logger for you to use by constructing one from the <code>LoggerFactory</code> from in the <code>CswContext</code> passed in the constructor, instantiated as a <code>log</code> object.</p>
+<p>Add some simple log messages in the <code>initialize</code> and <code>onShutdown</code> hooks, and to the <code>onLocationTrackingEvent</code> hook as well, although we won&rsquo;t be using it for this HCD:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -435,7 +456,7 @@ public CommandResponse.ValidateCommandResponse validateCommand(ControlCommand co
 <p>In case the command received by a component a <code>Oneway</code>, the response is not added to the <code>CommandResponseManager</code>, and the <code>onOneway</code> hook of <code>ComponentHandlers</code> is called.</p>
 <p>The <code>CommandResponseManager</code> is responsible for managing and bookkeeping the command status of long running submit commands. The sender of the command (and any component, really) can query the command statuses or subscribe to changes in command statuses using <code>CommandService</code>. </p>
 <p>The <code>CommandService</code> class provides helper methods for communicating with other components, and should be a component&rsquo;s primary means of sending commands to other components. This will be described in the next tutorial section, <a href="multiple-components.html#sending-commands">Sending Commands</a>.</p>
-<p>When the <code>onSubmit</code> hook is called, it is the responsibility of component developers to update the status of the received command in the <code>CommandResponseManager</code> as it changes. The instance of commandResponseManager is provided in <code>ComponentHandlers</code> which should be injected in any worker actor or other actor/class created for the component. </p>
+<p>When the <code>onSubmit</code> hook is called, it is the responsibility of component developers to update the status of the received command in the <code>CommandResponseManager</code> as it changes. The instance of commandResponseManager is provided in the <code>CswContext</code> object in <code>ComponentHandlers</code> and should be injected in any worker actor or other actor/class created for the component. </p>
 <p>More details on methods available in <code>CommandResponseManager</code> can be found <a href="framework.html#managing-command-state">here</a>.</p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
 <p>We will implement command handling in the <code>onSubmit</code> hook. Note that this hook actually receives a <code>ControlCommand</code> as an argument, which can be either a <code>Setup</code> or an <code>Observe</code>. We will use pattern matching to handle the command if it is a <code>Setup</code> and forward to an <code>onSetup</code> handling method. <code>Observe</code> commands will be ignored. </p>
@@ -501,10 +522,11 @@ private void onSetup(Setup setup) {
 </dl>
 <p>In our example, the <code>sleep</code> command has one parameter called <code>SleepTime</code>. We retrieve this parameter from the <code>Setup</code> by creating a <code>Key</code> to this parameter using the name and type, and then calling an <code>apply</code> method on the <code>Setup</code> (the <code>setup(longkey)</code> shorthand) which finds the matching <code>Parameter</code> in the <code>Setup</code>&rsquo;s <code>ParameterSet</code> (use the <code>Setup.jget()</code> method in Java). By doing this, the <code>Parameter</code> is returned with the proper typing, and so the values retrieved from the <code>Parameter</code> are typed as well. Note, all values are stored as an array, so we get our single value for <code>SleepTime</code> by using the <code>head</code> method available as a convenience method on <code>ParameterSet</code>.</p>
 <p>At this point, to prevent our HCD from blocking while handling the command, we pass it off to a worker actor, which we will specify somewhere in this class. This could be defined in a separate class, but writing it as an internal class allows us to use the logging facility and <code>CommandResponseManager</code> without having to inject them into our new Actor class.</p>
+<p>Note that our <code>onSetup</code> command handling logic returns a <code>Started</code> response. This indicates that the command is a long-running command and will be finished after some time, and that the final result will be posted to the <code>CommandResponseManager</code>. The <code>submit</code> command in the CommandService is implemented such that when it receives the <code>Started</code> response, it automatically starts a subscription to the <code>CommandResponseManager</code> for the final response, and when it is published, the Future returned by <code>submit</code> command is completed with this value.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">sealed trait WorkerCommand
+  <pre class="prettyprint"><code class="language-scala">sealed trait WorkerCommand                      extends TMTSerializable
 case class Sleep(runId: Id, timeInMillis: Long) extends WorkerCommand
 
 private val workerActor =
@@ -515,7 +537,7 @@ private val workerActor =
           log.trace(s&quot;WorkerActor received sleep command with time of ${sleep.timeInMillis} ms&quot;)
           // simulate long running command
           Thread.sleep(sleep.timeInMillis)
-          commandResponseManager.addOrUpdateCommand(sleep.runId, CommandResponse.Completed(sleep.runId))
+          commandResponseManager.addOrUpdateCommand(CommandResponse.Completed(sleep.runId))
         case _ =&gt; log.error(&quot;Unsupported message type&quot;)
       }
       Behaviors.same
@@ -524,7 +546,7 @@ private val workerActor =
   )</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">private interface WorkerCommand {
+  <pre class="prettyprint"><code class="language-java">private interface WorkerCommand extends TMTSerializable {
 }
 
 private static final class Sleep implements WorkerCommand {
@@ -545,7 +567,7 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
                     log.trace(() -&gt; &quot;WorkerActor received sleep command with time of &quot; + sleep.timeInMillis + &quot; ms&quot;);
                     // simulate long running command
                     Thread.sleep(sleep.timeInMillis);
-                    commandResponseManager.addOrUpdateCommand(sleep.runId, new CommandResponse.Completed(sleep.runId));
+                    cswCtx.commandResponseManager().addOrUpdateCommand(new CommandResponse.Completed(sleep.runId));
                 } else {
                     log.error(&quot;Unsupported message type&quot;);
                 }
@@ -560,14 +582,15 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
 <h2><a href="#events" name="events" class="anchor"><span class="anchor-link"></span></a>Events</h2>
 <p>CSW <code>Events</code> have a similar structure to commands, in that along with a name and a prefix (used to represent the source of the event), they include data represented in the <code>Event</code> in a set of parameters. </p>
 <p>More details about events can be found <a href="../messages/events.html">here</a>.</p>
-<p>Access to the Event Service is passed in to the handlers class in the constructor. The Event Service provides a factory method to create a &ldquo;default&rdquo; publisher and subscriber, which can be accessed in various parts of your code to reuse a single connection to the service. In most cases, reusing this connection will provide the performance needed.<br/>But if you prefer to create new connections, custom publishers and subscribers can be constructed. See the manual on the <a href="../services/event.html">Event Service</a> for more information.</p>
+<p>Access to the Event Service is in the <code>CswContext</code> object passed in to the handlers class in the constructor. The Event Service provides a factory method to create a &ldquo;default&rdquo; publisher and subscriber, which can be accessed in various parts of your code to reuse a single connection to the service. In most cases, reusing this connection will provide the performance needed.<br/>But if you prefer to create new connections, custom publishers and subscribers can be constructed. See the manual on the <a href="../services/event.html">Event Service</a> for more information.</p>
 <p>Publishers have an API that allows the publishing of a single event, a stream of events, or periodic events created by an <code>EventGenerator</code>, which is simply a function that returns an event. </p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
 <p>Let&rsquo;s add a publisher to our component. We will use the default publisher that will periodically publish events generated by an <code>EventGenerator</code>. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">private def publishCounter(): Cancellable = {
+  <pre class="prettyprint"><code class="language-scala">import scala.concurrent.duration._
+private def publishCounter(): Cancellable = {
   var counter = 0
   def incrementCounterEvent() = {
     counter += 1
@@ -576,7 +599,7 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
   }
 
   log.info(&quot;Starting publish stream.&quot;)
-  eventService.defaultPublisher.publish(incrementCounterEvent(), 5.second, err =&gt; log.error(err.getMessage, ex = err))
+  eventService.defaultPublisher.publish(incrementCounterEvent(), 2.second, err =&gt; log.error(err.getMessage, ex = err))
 }
 
 private def stopPublishingGenerator(): Unit = {
@@ -589,12 +612,12 @@ private def stopPublishingGenerator(): Unit = {
 private Event incrementCounterEvent() {
     counter += 1;
     Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;counter&quot;).set(counter);
-    return new SystemEvent(componentInfo.prefix(), new EventName(&quot;HcdCounter&quot;)).add(param);
+    return new SystemEvent(cswCtx.componentInfo().prefix(), new EventName(&quot;HcdCounter&quot;)).add(param);
 }
 
 private Cancellable publishCounter() {
     log.info(&quot;Starting publish stream.&quot;);
-    return eventService.defaultPublisher().publish(this::incrementCounterEvent, Duration.ofSeconds(5));
+    return cswCtx.eventService().defaultPublisher().publish(this::incrementCounterEvent, java.time.Duration.ofSeconds(2));
 }
 
 private void stopPublishingGenerator() {
@@ -602,8 +625,7 @@ private void stopPublishingGenerator() {
     maybePublishingGenerator.ifPresent(Cancellable::cancel);
 }</code></pre></dd>
 </dl>
-<p>In Java, you must save a reference to the <code>IEventService</code> passed into the constructor as a member variable. We use the name <code>eventService</code> (not shown here).</p>
-<p>We encapsulate the starting of the publishing in our method <code>publishCounter</code>. Our <code>EventGenerator</code> is the <code>incrementCounterEvent</code> method which increments our integer variable <code>counter</code> and stores it in the <code>ParameterSet</code> of a new <code>SystemEvent</code> and returns it. Once our <code>defaultPublisher</code> is resolved, we pass in a reference to <code>incrementCounterEvent</code> and specify a period of 5 seconds. We log a message when publishing the event so that it can be observed when running the component.</p>
+<p>We encapsulate the starting of the publishing in our method <code>publishCounter</code>. Our <code>EventGenerator</code> is the <code>incrementCounterEvent</code> method which increments our integer variable <code>counter</code> and stores it in the <code>ParameterSet</code> of a new <code>SystemEvent</code> and returns it. Once our <code>defaultPublisher</code> is resolved, we pass in a reference to <code>incrementCounterEvent</code> and specify a period of 2 seconds. We log a message when publishing the event so that it can be observed when running the component.</p>
 <p>The <code>publish</code> method returns a <code>Cancellable</code> type in a future. When the publishing is set up, the <code>Cancellable</code> can be used to stop the event generator. We demonstrate its usage in the <code>stopPublishingGenerator</code> method, although this method is not called in our tutorial.</p>
 <p>We will start this publishing when our component initializes, so we return to our <code>initialize</code> method and add a call to our <code>publishCounter</code> method. We save a reference to the <code>Cancellable</code> object for future use in our <code>stopPublishingGenerator</code> method. </p>
 <dl>
@@ -645,24 +667,35 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
     return CompletableFuture.runAsync(() -&gt; log.info(&quot;HCD is shutting down&quot;));
 }</code></pre></dd>
 </dl>
+<h2><a href="#starting-csw-services" name="starting-csw-services" class="anchor"><span class="anchor-link"></span></a>Starting CSW Services</h2>
+<p>Before we run our application, we must first start the Location Service and the Event Service. A script has been provided to simplify the starting and stopping of CSW services, and is included in the application bundle that comes with each release. The application bundle is called </p>
+<p>csw-apps-0.1-SNAPSHOT.zip </p>
+<p>and the script is named <code>csw-services.sh</code>.</p>
+<p>The <code>csw-services.sh</code> script has two basic commands: <code>start</code> and <code>stop</code>. The start command can start specific services using passed in flags, or all services without any. Services are started on default ports but those ports can be overridden using command line arguments. It is important to pass in a network interface name that is appropriate for your system. These can be obtained using <code>ifconfig</code> on Linux and Mac computers. <code>en0</code> typically works for most machines.</p>
+<p>To get information on the arguments for the tool, use <code>csw-services.sh --help</code>.</p>
+<h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
+<p>Let&rsquo;s go ahead and start our CSW Services using the script. Go to the <a href="https://github.com/tmtsoftware/csw/releases">release page</a> and download and unpack the CSW application bundle. Then go into the <code>bin</code> directory and enter the command</p>
+<pre><code>./csw-services.sh start -i &lt;iname&gt;
+</code></pre>
+<p>where <code>&lt;iname&gt;</code> is your interface name (e.g. <code>en0</code>).</p>
 <h2><a href="#building-and-running-component-in-standalone-mode" name="building-and-running-component-in-standalone-mode" class="anchor"><span class="anchor-link"></span></a>Building and Running component in standalone mode</h2>
 <p>Once the component is ready, it is started using the <code>ContainerCmd</code> object in standalone mode. The details about starting the <code>ContainerCmd</code> in standalone mode can be found <a href="../framework/deploying-components.html">here</a>.</p>
 <p>There are various ways to build and run the project. A simple way during development is to to use sbt to run it. The sbt command <code>runMain</code> can be used to specify an application with a main method and run it with arguments specified at the command line. When this command is executed, sbt will take care of any downloading of dependencies, compiling, or building necessary to run your application. </p>
 <p>Our template includes a wrapper application around ContainerCmd that we can use in the deployment module. To run our HCD in standalone mode, go to the project root directory and type <code>sbt &quot;&lt;deploy-module&gt;/runMain &lt;mainClass&gt; --local --standalone &lt;path-to-config-file&gt;&quot;</code>, where</p>
 <ul>
   <li><code>&lt;deploy-module&gt;</code> is the name of the deployment module created by the template (<code>sample-deploy</code> if using defaults)</li>
-  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;prefix&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt run</code> and it will prompt you the possibilities.</li>
+  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;package&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt &lt;deploy-module&gt;/run</code> and it will prompt you the possibilities.</li>
   <li><code>&lt;path-to-config-file&gt;</code> is the filename, which can be an absolute path or relative to the directory of the deployment module. If using defaults, this would be <code>src/main/resources/SampleHcdStandalone.conf</code> for Scala, and <code>src/main/resources/JSampleHcdStandalone.conf</code> for Java.</li>
 </ul>
 <p>So if using the template defaults, the full command would be </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain nfiraos.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/SampleHcdStandalone.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/SampleHcdStandalone.conf&quot;
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain nfiraos.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/JSampleHcdStandalone.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.nfiraos.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/JSampleHcdStandalone.conf&quot;
 </code></pre></dd>
 </dl>
 <p>To run the component using the deployment package, perform the following steps:</p>
@@ -671,8 +704,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
   <li>Unzip generated zip file and enter into bin directory</li>
   <li>Run the <code>./&lt;project&gt;-cmd-app --local --standalone &lt;path-to-local-config-file-to-start-the-component&gt;</code></li>
 </ul>
-<p>Alternatively, you can run <code>sbt stage</code>, which installs the application under target/universal/stage/bin.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>CSW HTTP Location server must be running, and appropriate environment variables set to run apps. See <a href="../apps/cswlocationserver.html">CSW Location Server</a>.</p></div>
+<p>Alternatively, you can run <code>sbt stage</code>, which installs the application under target/universal/stage/bin.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/commons/create-component.md" title="Edit this page" class="md-source-file md-edit">
