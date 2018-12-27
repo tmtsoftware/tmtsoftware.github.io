@@ -136,6 +136,7 @@ tmtsoftware/csw
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
+  <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
   <li><a href="../commons/messages.html" class="page">Messages</a>
   <ul>
     <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
@@ -165,6 +166,7 @@ tmtsoftware/csw
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
     <li><a href="../services/alarm.html" class="active page">Alarm Service</a></li>
+    <li><a href="../services/database.html" class="page">Database Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -193,6 +195,7 @@ tmtsoftware/csw
     <li><a href="../services/alarm.html#model-classes" class="header">Model Classes</a></li>
     <li><a href="../services/alarm.html#client-api" class="header">Client API</a></li>
     <li><a href="../services/alarm.html#admin-api" class="header">Admin API</a></li>
+    <li><a href="../services/alarm.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -220,6 +223,7 @@ tmtsoftware/csw
     <li><a href="../services/alarm.html#model-classes" class="header">Model Classes</a></li>
     <li><a href="../services/alarm.html#client-api" class="header">Client API</a></li>
     <li><a href="../services/alarm.html#admin-api" class="header">Admin API</a></li>
+    <li><a href="../services/alarm.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -242,7 +246,7 @@ tmtsoftware/csw
 </code></pre></dd>
 </dl>
 <h2><a href="#api-flavors" name="api-flavors" class="anchor"><span class="anchor-link"></span></a>API Flavors</h2>
-<p>There are two APIs provided in the Alarm Service: a client API, and an administrative (admin) API. The client API is the API used by component developers to set the severity of an alarm. This is the only functionality needed by component developers. As per TMT policy, the severity of an alarm must be set periodically (within some time limit) in order to maintain the integrity of the alarm status. If an alarm severity is not refreshed within the time limit, currently set at TBD seconds, the severity is set to <code>Disconnected</code> by the Alarm Service, which indicates to the operator that there is some problem with the component&rsquo;s ability to evaluate the alarm status.</p>
+<p>There are two APIs provided in the Alarm Service: a client API, and an administrative (admin) API. The client API is the API used by component developers to set the severity of an alarm. This is the only functionality needed by component developers. As per TMT policy, the severity of an alarm must be set periodically (within some time limit) in order to maintain the integrity of the alarm status. If an alarm severity is not refreshed within the time limit, currently set at 9 seconds, the severity is set to <code>Disconnected</code> by the Alarm Service, which indicates to the operator that there is some problem with the component&rsquo;s ability to evaluate the alarm status.</p>
 <p>The admin API provides all of the functions needed manage the alarm store, as well as providing access to monitor alarms for use by an operator or instrument specialist. The admin API provides the ability to load alarm data into alarm store, set severity of an alarm, acknowledge alarms, shelve or unshelve alarms, reset a latched alarm, get the metadata/status/severity of an alarm, and get or subscribe to aggregations of severity and health of the alarm, a component&rsquo;s alarms, a subsystem&rsquo;s alarms, or the alarms of the whole TMT System. </p>
 <p>A command line tool is provided as part of the Alarm Service that implements this API can provides low level control over the Alarm Service. More details about alarm CLI can be found here: <a href="../apps/cswalarmcli.html">CSW Alarm Client CLI application</a></p>
 <p>Eventually, operators will use Graphical User Interfaces that access the admin API through a UI gateway. This will be delivered as part of the ESW HCMS package.</p><div class="callout note "><div class="callout-title">Note</div>
@@ -551,6 +555,11 @@ val alarmSubscription4: AlarmSubscription = adminAPI.subscribeAggregatedHealthAc
 // to unsubscribe
 val unsubscribe4F: Future[Done] = alarmSubscription4.unsubscribe()</code></pre></dd>
 </dl>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/alarm/AlarmServiceClientExampleApp.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/alarm/JAlarmServiceClientExampleApp.java">Java Example</a></li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/services/alarm.md" title="Edit this page" class="md-source-file md-edit">
@@ -582,13 +591,13 @@ Event Service
 </span>
 </div>
 </a>
-<a href="../commons/apps.html" title="Applications" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../services/database.html" title="Database Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Applications
+Database Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

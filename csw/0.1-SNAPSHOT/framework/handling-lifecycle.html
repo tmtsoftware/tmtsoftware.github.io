@@ -136,6 +136,7 @@ tmtsoftware/csw
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
+  <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
   <li><a href="../commons/messages.html" class="page">Messages</a>
   <ul>
     <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
@@ -165,6 +166,7 @@ tmtsoftware/csw
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
     <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
+    <li><a href="../services/database.html" class="page">Database Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -325,10 +327,10 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
     worker = ctx.spawnAnonymous(WorkerActor.make(hcdConfig));
 
     // initialise some state by using the worker actor created above
-    CompletionStage&lt;Integer&gt; askCurrent = AskPattern.ask(worker, WorkerActorMsgs.JInitialState::new, new Timeout(5, TimeUnit.SECONDS), ctx.getSystem().scheduler());
+    CompletionStage&lt;Integer&gt; askCurrent = AskPattern.ask(worker, WorkerActorMsgs.JInitialState::new, Duration.ofSeconds(5), ctx.getSystem().scheduler());
     CompletableFuture&lt;Void&gt; currentFuture = askCurrent.thenAccept(c -&gt; current = c).toCompletableFuture();
 
-    CompletionStage&lt;Integer&gt; askStats = AskPattern.ask(worker, WorkerActorMsgs.JInitialState::new, new Timeout(5, TimeUnit.SECONDS), ctx.getSystem().scheduler());
+    CompletionStage&lt;Integer&gt; askStats = AskPattern.ask(worker, WorkerActorMsgs.JInitialState::new, Duration.ofSeconds(5), ctx.getSystem().scheduler());
     CompletableFuture&lt;Void&gt; statsFuture = askStats.thenAccept(s -&gt; stats = s).toCompletableFuture();
 
     return CompletableFuture.allOf(currentFuture, statsFuture);
@@ -438,8 +440,8 @@ public void onGoOnline() {
 <h2><a href="#handling-commands" name="handling-commands" class="anchor"><span class="anchor-link"></span></a>Handling commands</h2>
 <p>The remaining handlers are associated with handling incoming commands. There is a handler for submit commands called <code>onSubmit</code> and a handler for oneway called <code>onOneway</code>.</p>
 <h3><a href="#validatecommand" name="validatecommand" class="anchor"><span class="anchor-link"></span></a>validateCommand</h3>
-<p>Whenever a command is received by a component it is first validated. The component should inspect the command and its parameters to determine if the actions related to the command can be executed or started.</p>
-<p>A command can be sent as a <code>Submit</code> or <code>Oneway</code> message to the component. If a command can be completed immediately, a <code>CommandResponse</code> indicating the final response for the command can be returned. If a command requires time for processing, the component is required to validate the <code>ControlCommand</code> received and return a validation result as <code>Accepted</code> or <code>Invalid</code>. The final response for a command sent as <code>Submit</code> can be obtained by the sender command by querying or subscribing for this response to the component as described here. </p>
+<p>Whenever a command is received by a component it is first validated. The component should inspect the command and its parameters to determine if the actions related to the command can be executed or started. For instance, if an Assembly or HCD can only handle one command at a time, <code>validateCommand</code> should return an return <code>Invalid</code> if a second command is received.</p>
+<p>A command can be sent as a <code>Submit</code> or <code>Oneway</code> message to the component. The <code>onSubmit</code> and <code>onOneway</code> handlers are only called if <code>validateCommand</code> returns <code>Accepted</code>. <code>Oneway</code> messages return their validation response or indicate the component is currently locked as a <code>OnewayResponse</code>. The <code>onSubmit</code> handler can complete the actions immediately by returning a <code>SubmitResponse</code> indicating the final response (<code>Completed</code>, <code>CompletedWithResult</code>, <code>Error</code>). If the command actions require time for processing, the <code>onSubmit</code> handler returns <code>Started</code> indicating to the framework that there are long-running actions. More information about sending commands using <code>CommandService</code> is <a href="../commons/command.html">here</a></p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -453,10 +455,6 @@ public void onGoOnline() {
 public CommandResponse.ValidateCommandResponse validateCommand(ControlCommand controlCommand) {
     if (controlCommand instanceof Setup) {
         // validation for setup goes here
-        // after validation of the controlCommand, update its status of successful validation as Accepted
-        CommandResponse.Accepted accepted = new CommandResponse.Accepted(controlCommand.runId());
-        // TODO - REALLY?
-        //commandResponseManager.addOrUpdateCommand(controlCommand.runId(), accepted);
         return new CommandResponse.Accepted(controlCommand.runId());
     } else if (controlCommand instanceof Observe) {
         // validation for observe goes here
@@ -488,7 +486,7 @@ public CommandResponse.ValidateCommandResponse validateCommand(ControlCommand co
 </dl>
 <p>If a response can be provided immediately, a final <code>CommandResponse</code> such as <code>CommandCompleted</code> or <code>Error</code> can be sent from this handler.</p>
 <h3><a href="#onsubmit" name="onsubmit" class="anchor"><span class="anchor-link"></span></a>onSubmit</h3>
-<p>On receiving a command as <code>Submit</code>, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. In case a command is received as a submit, the command response should be updated in the <code>CommandResponseManager</code>, which is an actor (A reference to it is passed to the component handler constructor). </p>
+<p>On receiving a command sent using the <code>submit</code> message, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. The <code>onSubmit</code> handler returns a <code>SubmitResponse</code> indicating if the command is completed immediately, or if it is long-running by returning a <code>Started</code> response. The example shows one way to process <code>Setup</code> and <code>Observe</code> commands separately.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -507,26 +505,9 @@ public CommandResponse.SubmitResponse onSubmit(ControlCommand controlCommand) {
     else
         return new CommandResponse.Error(controlCommand.runId(), &quot;Submitted command not supported: &quot; + controlCommand.commandName().name());
 }</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): SubmitResponse = controlCommand match {
-  case setup: Setup     ⇒ submitSetup(setup) // includes logic to handle Submit with Setup config command
-  case observe: Observe ⇒ submitObserve(observe) // includes logic to handle Submit with Observe config command
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public CommandResponse.SubmitResponse onSubmit(ControlCommand controlCommand) {
-    if (controlCommand instanceof Setup)
-        return submitSetup((Setup) controlCommand); // includes logic to handle Submit with Setup config command
-    else if (controlCommand instanceof Observe)
-        return submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command&quot;
-    else
-        return new CommandResponse.Error(controlCommand.runId(), &quot;Unknown command: &quot; + controlCommand.commandName().name());
-}</code></pre></dd>
 </dl>
 <h3><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h3>
-<p>On receiving a command as <code>Oneway</code>, the <code>onOneway</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>.In case a command is received as a oneway, command response should not be provided to the sender.</p>
+<p>On receiving a command as <code>oneway</code>, the <code>onOneway</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. The <code>onOneway</code> handler does not return a value and a command submitted with the <code>oneway</code> does not track completion of actions. </p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -543,22 +524,8 @@ public void onOneway(ControlCommand controlCommand) {
     else if (controlCommand instanceof Observe)
         onewayObserve((Observe) controlCommand); // includes logic to handle Oneway with Observe config command
 }</code></pre></dd>
-  <dt>Hcd/Scala</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = controlCommand match {
-  case setup: Setup     ⇒ onewaySetup(setup) // includes logic to handle Oneway with Setup config command
-  case observe: Observe ⇒ onewayObserve(observe) // includes logic to handle Oneway with Setup config command
-}</code></pre></dd>
-  <dt>Hcd/Java</dt>
-  <dd>
-  <pre class="prettyprint"><code class="language-java">@Override
-public void onOneway(ControlCommand controlCommand) {
-    if (controlCommand instanceof Setup)
-        onewaySetup((Setup) controlCommand); // includes logic to handle Oneway with Setup config command
-    else if (controlCommand instanceof Observe)
-        onewayObserve((Observe) controlCommand); // includes logic to handle Oneway with Observe config command
-}</code></pre></dd>
 </dl>
+<p>More information on handling commands is provided <a href="../commons/command.html">here</a>.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/framework/handling-lifecycle.md" title="Edit this page" class="md-source-file md-edit">
