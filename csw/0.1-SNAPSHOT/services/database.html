@@ -189,6 +189,7 @@ tmtsoftware/csw
   <li><a href="../services/database.html#database-service" class="header">Database Service</a>
   <ul>
     <li><a href="../services/database.html#dependencies" class="header">Dependencies</a></li>
+    <li><a href="../services/database.html#accessing-database-service" class="header">Accessing Database Service</a></li>
     <li><a href="../services/database.html#database-service-factory" class="header">Database Service Factory</a></li>
     <li><a href="../services/database.html#using-dslcontext" class="header">Using DSLContext</a></li>
     <li><a href="../services/database.html#source-code-for-examples" class="header">Source code for examples</a></li>
@@ -213,6 +214,7 @@ tmtsoftware/csw
   <li><a href="../services/database.html#database-service" class="header">Database Service</a>
   <ul>
     <li><a href="../services/database.html#dependencies" class="header">Dependencies</a></li>
+    <li><a href="../services/database.html#accessing-database-service" class="header">Accessing Database Service</a></li>
     <li><a href="../services/database.html#database-service-factory" class="header">Database Service Factory</a></li>
     <li><a href="../services/database.html#using-dslcontext" class="header">Using DSLContext</a></li>
     <li><a href="../services/database.html#source-code-for-examples" class="header">Source code for examples</a></li>
@@ -227,7 +229,7 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#database-service" name="database-service" class="anchor"><span class="anchor-link"></span></a>Database Service</h1>
-<p>The Database Service provides API to manage database connections and access data in the TMT software system. The service expects <code>Postgres</code> as database server. It uses <code>Jooq</code> library underneath to manage database access, connection pooling, etc. To describe <code>JOOQ</code> briefly, it is a java library that provides api for accessing data i.e. DDL support, DML support, fetch, batch execution, prepared statements, etc. safety against sql injection connection pooling, etc. To know more about JOOQ and it&rsquo;s features please refer this <a href="https://www.jooq.org/learn/">link</a>.</p>
+<p>The Database Service provides API to manage database connections and access data in the TMT software system. The service expects <code>Postgres</code> as database server. It uses <code>Jooq</code> library underneath to manage database access, connection pooling, etc. To describe <code>Jooq</code> briefly, it is a java library that provides api for accessing data i.e. DDL support, DML support, fetch, batch execution, prepared statements, etc. safety against sql injection, connection pooling, etc. To know more about Jooq and it&rsquo;s features please refer this <a href="https://www.jooq.org/learn/">link</a>.</p>
 <!-- introduction to the service -->
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the Database service, add this to your <code>build.sbt</code> file:</p>
@@ -237,6 +239,9 @@ tmtsoftware/csw
   <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-database-client&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
 </dl>
+<h2><a href="#accessing-database-service" name="accessing-database-service" class="anchor"><span class="anchor-link"></span></a>Accessing Database Service</h2>
+<p>Database service is different from any other csw services in a way that it is not passed in through <code>CswContext/JCswContext</code> in ComponentHandlers. So, to access database service, it is expected from developers to create <code>DatabaseServiceFactory</code>. DatabaseServiceFactory can be created from anywhere using an <code>ActorSystem</code> and it&rsquo;s creation is explained in next section. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>Creating a new DatabaseServiceFactory does not mean a new connection will be created to postgres server. Hence, creating multiple DatabaseServiceFactory per component can be considered pretty cheap and harmless.</p></div>
 <h2><a href="#database-service-factory" name="database-service-factory" class="anchor"><span class="anchor-link"></span></a>Database Service Factory</h2>
 <p>Database service requires <code>postgres</code> server to be running on the machine. To start the postgres server for development and testing purposes, refer <a href="../commons/apps.html#starting-apps-for-development">Starting apps for development</a>.</p>
 <p>Once the postgres is up and running, database service can be used to connect and access the data. It is assumed that there will be more than one user types registered with postgres i.e. for read access, for write access, for admin access, etc.</p>
@@ -246,17 +251,19 @@ tmtsoftware/csw
   <dd>
   <pre class="prettyprint"><code class="language-scala">val dbFactory = new DatabaseServiceFactory(ctx.system)
 
-dsl = await(dbFactory.makeDsl(locationService, &quot;postgres&quot;))</code></pre></dd>
+dbFactory
+  .makeDsl(locationService, &quot;postgres&quot;) // postgres is dbName
+  .foreach((dsl: DSLContext) ⇒ this.dsl = dsl)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">dbFactory = new DatabaseServiceFactory(ctx.getSystem());
 
 dbFactory
-        .jMakeDsl(cswCtx.locationService(), &quot;postgres&quot;)
-        .thenAccept(dsl -&gt; this.dsl = dsl);</code></pre></dd>
+        .jMakeDsl(cswCtx.locationService(), &quot;postgres&quot;) // postgres is dbName
+        .thenAccept((DSLContext dsl) -&gt; this.dsl = dsl);</code></pre></dd>
 </dl>
 <p><code>makeDsl</code>/<code>jMakeDsl</code> takes <code>locationService</code> to locate the postgres server running and connect to it. It connects to the database by the provided <code>dbName</code>. It picks username and password for read access profile from environment variables i.e. it looks at <code>dbReadUsername</code> for username and <code>dbReadPassword</code> for password, hence it is expected from developers to set these environment variables prior to using <code>DatabaseServiceFactory</code>. </p>
-<p><code>makeDsl</code>/<code>jMakeDsl</code> returns a <code>JOOQ</code> type <code>DSLContext</code>. DSLContext provides mechanism to access the data stored in postgres using JDBC driver underneath. The usage of DSLContext in component development will be explained in later sections. </p><div class="callout note "><div class="callout-title">Note</div>
+<p><code>makeDsl</code>/<code>jMakeDsl</code> returns a <code>Jooq</code> type <code>DSLContext</code>. DSLContext provides mechanism to access the data stored in postgres using JDBC driver underneath. The usage of DSLContext in component development will be explained in later sections. </p><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>Any exception encountered while connecting to postgres server will be wrapped in <code>DatabaseException</code>.</li>
 </ul></div>
@@ -265,25 +272,29 @@ dbFactory
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">dsl = await(dbFactory.makeDsl(locationService, &quot;postgres&quot;, &quot;dbWriteUsername&quot;, &quot;dbWritePassword&quot;))</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">dbFactory
+  .makeDsl(locationService, &quot;postgres&quot;, &quot;dbWriteUsername&quot;, &quot;dbWritePassword&quot;)
+  .foreach((dsl: DSLContext) ⇒ this.dsl = dsl)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">dbFactory
         .jMakeDsl(cswCtx.locationService(), &quot;postgres&quot;, &quot;dbWriteUsername&quot;, &quot;dbWritePassword&quot;)
-        .thenAccept(dsl -&gt; this.dsl = dsl);</code></pre></dd>
+        .thenAccept((DSLContext dsl) -&gt; this.dsl = dsl);</code></pre></dd>
 </dl>
-<p>Here the username is picked from <code>dbWriteUsername</code> and password is picked from <code>dbWritePassword</code> environment variables. Hence, it is expected from developers to set environment variables prior to using these method. </p>
+<p>Here the username is picked from <code>dbWriteUsername</code> and password is picked from <code>dbWritePassword</code> environment variables. Hence, it is expected from developers to set environment variables prior to using this method. </p>
 <h3><a href="#connect-for-development-or-testing" name="connect-for-development-or-testing" class="anchor"><span class="anchor-link"></span></a>Connect for development or testing</h3>
-<p>For development and testing purposes, all database connection properties can be provided from <code>application.conf</code> including username and password. This will not require to set environment variables for credentials as described in previous section. In order to do so, use the <code>DatabaseServiceFactory</code> as shown below:</p>
+<p>For development and testing purposes, all database connection properties can be provided from <code>application.conf</code> including username and password. This will not require to set environment variables for credentials as described in previous sections. In order to do so, use the <code>DatabaseServiceFactory</code> as shown below:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">dsl = await(dbFactory.makeDsl())</code></pre></dd>
+  <pre class="prettyprint"><code class="language-scala">dbFactory
+  .makeDsl()
+  .foreach((dsl: DSLContext) ⇒ this.dsl = dsl)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">dbFactory
         .jMakeDsl()
-        .thenAccept(dsl -&gt; this.dsl = dsl);</code></pre></dd>
+        .thenAccept((DSLContext dsl) -&gt; this.dsl = dsl);</code></pre></dd>
 </dl>
 <p>The reference for providing database properties is shown below:</p>
 <dl>
@@ -324,7 +335,7 @@ dbFactory
 <p>By default csw configures <code>HikariCP</code> connection pool for managing connections with postgres server. To know more about <code>HikariCP</code> please refer this <a href="http://brettwooldridge.github.io/HikariCP/">link</a>. </p></div>
 <h2><a href="#using-dslcontext" name="using-dslcontext" class="anchor"><span class="anchor-link"></span></a>Using DSLContext</h2>
 <p>Once the DSLContext is returned from <code>makeDsl/jMakeDsl</code>, it can be used to provide plain SQL to database service and get it executed on postgres server. </p>
-<h3><a href="#create" name="create" class="anchor"><span class="anchor-link"></span></a>CREATE</h3>
+<h3><a href="#create" name="create" class="anchor"><span class="anchor-link"></span></a>Create</h3>
 <p>To create a table, use the DSLContext as follows:</p>
 <dl>
   <dt>Scala</dt>
@@ -340,7 +351,7 @@ createResultF.foreach(result ⇒ println(s&quot;Films table created with $result
 CompletionStage&lt;Integer&gt; createResultF = createQuery.executeAsync();
 createResultF.thenAccept(result -&gt; System.out.println(&quot;Films table created with &quot; + result));</code></pre></dd>
 </dl>
-<h3><a href="#insert" name="insert" class="anchor"><span class="anchor-link"></span></a>INSERT</h3>
+<h3><a href="#insert" name="insert" class="anchor"><span class="anchor-link"></span></a>Insert</h3>
 <p>To insert data in batch, use the DSLContext as follows:</p>
 <dl>
   <dt>Scala</dt>
@@ -369,11 +380,11 @@ batchResultF.thenAccept(results -&gt;
         System.out.println(&quot;executed queries [&quot; + queries + &quot;] with results [&quot; + Arrays.toString(results) + &quot;]&quot;));</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <ul>
-  <li>The insert statements above gets mapped to prepared statements underneath at jdbc layer and values like <code>movie_1</code>,  <code>movie_2</code> and <code>2</code> from the example are bound to the dynamic parameters of these generated prepared statements.</li>
+  <li>The insert statements above gets mapped to prepared statements underneath at JDBC layer and values like <code>movie_1</code>,  <code>movie_2</code> and <code>2</code> from the example are bound to the dynamic parameters of these generated prepared statements.</li>
   <li>As prepared statements provide safety against SQL injection, it is recommended to use prepared statements instead of static  SQL statements whenever there is a need to dynamically bind values.</li>
-  <li>In the above example, two insert statements are batched together and sent to postgres server in a single call.  <code>executeBatchAsync/executeBatch</code> maps to batch statements underneath at jdbc layer.</li>
+  <li>In the above example, two insert statements are batched together and sent to postgres server in a single call.  <code>executeBatchAsync/executeBatch</code> maps to batch statements underneath at JDBC layer.</li>
 </ul></div>
-<h3><a href="#select" name="select" class="anchor"><span class="anchor-link"></span></a>SELECT</h3>
+<h3><a href="#select" name="select" class="anchor"><span class="anchor-link"></span></a>Select</h3>
 <p>To select data from table, use the DSLContext as follows:</p>
 <dl>
   <dt>Scala</dt>
@@ -389,7 +400,7 @@ selectResultF.foreach(names ⇒ s&quot;Fetched names of films $names&quot;)</cod
 CompletableFuture&lt;List&lt;String&gt;&gt; selectResultF = JooqHelper.fetchAsync(selectQuery, String.class);
 selectResultF.thenAccept(names -&gt; System.out.println(&quot;Fetched names of films &quot; + names));</code></pre></dd>
 </dl>
-<h3><a href="#stored-function" name="stored-function" class="anchor"><span class="anchor-link"></span></a>STORED FUNCTION</h3>
+<h3><a href="#stored-function" name="stored-function" class="anchor"><span class="anchor-link"></span></a>Stored Function</h3>
 <p>To create a stored function, use the DSLContext as follows:</p>
 <dl>
   <dt>Scala</dt>
@@ -419,9 +430,7 @@ CompletionStage&lt;Integer&gt; functionResultF = functionQuery.executeAsync();
 functionResultF.thenAccept(result -&gt; System.out.println(&quot;Function inc created with  &quot; + result));</code></pre></dd>
 </dl>
 <p>Similarly, any SQL queries can be written with the help of DSLContext including stored procedures.</p><div class="callout note "><div class="callout-title">Note</div>
-<ul>
-  <li>If there is a syntax error in SQL queries the <code>Future/CompletableFuture</code> returned will fail with <code>CompletionException</code> and  <code>CompletionStage</code> will fail with <code>ExecutionException</code>. But both <code>CompletionException</code> and <code>ExecutionException</code> will have  Jooq&rsquo;s <code>DataAccessException</code> underneath as cause.</li>
-</ul></div>
+<p>If there is a syntax error in SQL queries the <code>Future/CompletableFuture</code> returned will fail with <code>CompletionException</code> and <code>CompletionStage</code> will fail with <code>ExecutionException</code>. But both <code>CompletionException</code> and <code>ExecutionException</code> will have Jooq&rsquo;s <code>DataAccessException</code> underneath as cause. </p></div>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/database/AssemblyComponentHandlers.scala">Scala Example</a></li>
