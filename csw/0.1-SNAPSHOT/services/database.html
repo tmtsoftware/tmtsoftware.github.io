@@ -389,17 +389,29 @@ batchResultF.thenAccept(results -&gt;
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">val selectQuery = dsl.resultQuery(&quot;SELECT name FROM films WHERE id = ?&quot;, &quot;1&quot;)
+  <pre class="prettyprint"><code class="language-scala">// domain model
+case class Films(id: Int, name: String) // variable name and type should be same as column&#39;s name and type in database
+
+// fetch data from table and map it to Films class
+val selectQuery = dsl.resultQuery(&quot;SELECT id, name FROM films WHERE id = ?&quot;, &quot;1&quot;)
 
 import csw.database.client.scaladsl.JooqExtentions.RichResultQuery
-val selectResultF: Future[List[String]] = selectQuery.fetchAsyncScala[String]
+val selectResultF: Future[List[Films]] = selectQuery.fetchAsyncScala[Films]
 selectResultF.foreach(names ⇒ s&quot;Fetched names of films $names&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-java">ResultQuery&lt;Record&gt; selectQuery = dsl.resultQuery(&quot;SELECT name FROM films WHERE id = ?&quot;, 1);
-CompletableFuture&lt;List&lt;String&gt;&gt; selectResultF = JooqHelper.fetchAsync(selectQuery, String.class);
+  <pre class="prettyprint"><code class="language-java">// domain model
+class Films {
+    private Integer id;  // variable name (id) and type (Integer) should be same as column&#39;s name and type in database
+    private String name; // variable name (name) and type (String) should be same as column&#39;s name and type in database
+};
+
+// fetch data from table and map it to Films class
+ResultQuery&lt;Record&gt; selectQuery = dsl.resultQuery(&quot;SELECT id, name FROM films WHERE id = ?&quot;, 1);
+CompletableFuture&lt;List&lt;Films&gt;&gt; selectResultF = JooqHelper.fetchAsync(selectQuery, Films.class);
 selectResultF.thenAccept(names -&gt; System.out.println(&quot;Fetched names of films &quot; + names));</code></pre></dd>
-</dl>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>Make sure that variable name and type of Films class is same as column&rsquo;s name and type in database. This is necessary for successful mapping of table fields to domain model class.</p></div>
 <h3><a href="#stored-function" name="stored-function" class="anchor"><span class="anchor-link"></span></a>Stored Function</h3>
 <p>To create a stored function, use the DSLContext as follows:</p>
 <dl>
