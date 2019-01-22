@@ -235,7 +235,7 @@ tmtsoftware/csw
 <h1><a href="#time-service" name="time-service" class="anchor"><span class="anchor-link"></span></a>Time Service</h1>
 <p>The Time Service provides various APIs to access time in Coordinated Universal Time (UTC) and International Atomic Time (TAI) time scales with nano second precision. It also provides APIs for scheduling periodic and non-periodic tasks in future which are optimised for scheduling at upto 1KHz frequency.</p>
 <p>TMT has standardised on the use of <a href="https://en.wikipedia.org/wiki/Precision_Time_Protocol">Precision Time Protocol (PTP)</a> as the basis of observatory time to achieve sub-microsecond accuracy and precision. The Time Service provides access to time synchronized by PTP. The Global Positioning System (GPS) provides the absolute time base called Observatory Time. The PTP grand master clock (a hardware device) is synchronized to Observatory Time. Each computer system participating in the PTP system synchronizes to Observatory Time using the PTP protocol. For higher accuracy in time measurements hardware time stamping is recommended and the systems should be fitted with PTP capable Network Interface Cards (NIC).</p>
-<p>In order to read the time with high precision, the Time Service relies on making native calls to the Linux Kernel libraries, since java 8 supports only millisecond precision. [Java Native Access (JNA)](<a href="https://github.com/java-native-acc">https://github.com/java-native-acc</a> ess/jna) is used internally in time service to make native calls. The implementation of time service scheduler is based on the <a href="https://doc.akka.io/docs/akka/current/scheduler.html">Akka Scheduler</a> which is designed for high-throughput tasks rather than long-term scheduling.</p>
+<p>In order to read the time with high precision, the Time Service relies on making native calls to the Linux Kernel libraries, since java 8 supports only millisecond precision. <a href="https://github.com/java-native-access/jna">Java Native Access (JNA)</a> is used internally in time service to make native calls. The implementation of time service scheduler is based on the <a href="https://doc.akka.io/docs/akka/current/scheduler.html">Akka Scheduler</a> which is designed for high-throughput tasks rather than long-term scheduling.</p>
 <!-- introduction to the service -->
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>The Time Service comes bundled with the Framework, no additional dependency needs to be added to your <code>build.sbt</code>  file if using it. To use the Time service without using the framework, add this to your <code>build.sbt</code> file:</p>
@@ -266,7 +266,12 @@ private val scheduler: TimeServiceScheduler = TimeServiceSchedulerFactory.make()
 TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);</code></pre></dd>
 </dl>
 <h2><a href="#tmttime-api" name="tmttime-api" class="anchor"><span class="anchor-link"></span></a>TMTTime API</h2>
-<p>TMTTime represents an instantaneous point in time with nanosecond precision. Its a wrapper around Instant and provides additional information about the timescale of the instant. It supports two timescales  * Coordinated Universal Time <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/models/UTCTime.html">UTCTime</a>  * International Atomic Time <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/models/TAITime.html">TAITime</a></p>
+<p>TMTTime represents an instantaneous point in time with nanosecond precision. Its a wrapper around Instant and provides additional information about the timescale of the instant. </p>
+<p>It supports two timescales:</p>
+<ul>
+  <li>Coordinated Universal Time <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/models/UTCTime.html">UTCTime</a></li>
+  <li>International Atomic Time <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/models/TAITime.html">TAITime</a></li>
+</ul>
 <h3><a href="#get-current-time" name="get-current-time" class="anchor"><span class="anchor-link"></span></a>Get Current Time</h3>
 <p>Gets the current UTC/TAI time with nanosecond precision. </p>
 <dl>
