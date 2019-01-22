@@ -166,7 +166,9 @@ tmtsoftware/csw
     <li><a href="../services/logging.html" class="active page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
     <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
+    <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
+    <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -252,7 +254,7 @@ tmtsoftware/csw
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-logging&quot; % &quot;0.1-SNAPSHOT&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-logging-client&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
 </dl>
 <h2><a href="#configuration" name="configuration" class="anchor"><span class="anchor-link"></span></a>Configuration</h2>
@@ -265,10 +267,10 @@ tmtsoftware/csw
 
     # Default appender and is recommended only for dev setup.
     # To use multiple appenders give comma separated list of appenders.
-    appenders = [&quot;csw.logging.appenders.StdOutAppender$&quot;]
+    appenders = [&quot;csw.logging.client.appenders.StdOutAppender$&quot;]
 
     # Recommended for production setup - Uncomment below line and comment above to enable FileAppender
-    #appenders = [&quot;csw.logging.appenders.FileAppender$&quot;]
+    #appenders = [&quot;csw.logging.client.appenders.FileAppender$&quot;]
 
     component-log-levels {
       # By default each compoent will use log level specified by `csw-logging.logLevel`. If required, this block allows
@@ -336,10 +338,10 @@ tmtsoftware/csw
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
 <p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> is the name of component that will be registered with <code>LocationService</code>, which is the <code>name</code> field in the ComponentInfo file (see <a href="../framework/deploying-components.html">DeployingComponents</a>). By default, all components will log at level specified by <code>csw-logging.logLevel</code>. </p></div>
 <p>The library provides <code>StdOutAppender</code> as default logging appender. To use <code>FileAppender</code> or some custom appender along-with <code>StdOutAppender</code>, override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
-<pre><code><br/>appenders = [&quot;csw.logging.appenders.FileAppender$&quot;, &quot;csw.logging.appenders.StdOutAppender$&quot;]
+<pre><code><br/>appenders = [&quot;csw.logging.client.appenders.FileAppender$&quot;, &quot;csw.logging.client.appenders.StdOutAppender$&quot;]
 
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>Make sure to provide full path of the appender since it will be spawned using java reflection. In csw code base, a working example of custom appender can be found at: <a href="https://github.com/tmtsoftware/csw/tree/master/csw-logging/src/test/scala/csw/logging/appenders/CustomAppenderTest.scala">Custom Appender</a></p></div>
+<p>Make sure to provide full path of the appender since it will be spawned using java reflection. In csw code base, a working example of custom appender can be found at: <a href="https://github.com/tmtsoftware/csw/tree/master/csw-logging/csw-logging-client/src/test/scala/csw/logging/client/appenders/CustomAppenderTest.scala">Custom Appender</a></p></div>
 <p>For <code>StdOutAppender</code> specify the format of log statements in <code>csw-logging.stdout</code> via <code>csw-logging.stdout.pretty</code> and <code>csw-logging.stdout.oneLine</code>. </p>
 <p>Turning <code>pretty</code> <strong>on</strong> or <strong>off</strong> will produce log statements in following format:</p>
 <dl>
@@ -753,7 +755,7 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <li>JDK: 1.8.0_121</li>
 </ul>
 <h3><a href="#scala-logging-appenders-throughput" name="scala-logging-appenders-throughput" class="anchor"><span class="anchor-link"></span></a>Scala Logging : Appender&rsquo;s Throughput</h3>
-<p><img src="../images/logging-perf/logging-appenders-perf-results.png" alt="Logging Appenders Throughput" /></p>
+<p><img src="../images/logging-perf/logging-appenders-perf-results-play-json.png" alt="Logging Appenders Throughput" /></p>
 <p>Above graph includes the throughput results for File and StdOut appender&rsquo;s using scala&rsquo;s logging API. Java&rsquo;s logging API throughput results are included further down this page.<br/>As shown in the above graph, experiment was carried out for 1, 2, 4, 8 and 16 threads. That means, multiple threads are logging messages concurrently. </p><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>Numbers indicated in the graph does not mean that those number of messages are actually written to file or console. These are the number of logging messages sent to LogActor asynchronously for the period of one second.</li>
@@ -766,7 +768,7 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <li><strong>Log Level Enabled</strong> : Results are obtained for <code>log.info</code> when default log level was set to info, that means the logging messages were sent to LogActor for writing it to file.</li>
   <li><strong>Log Level Disabled</strong> : Results are obtained for <code>log.trace</code> when default log level was set to info, that means the logging messages were not written to file.</li>
 </ul></div>
-<p><img src="../images/logging-perf/java-scala-logging-throughput-comparision.png" alt="Java Scala Throughput Comparision" /></p>
+<p><img src="../images/logging-perf/java-scala-logging-throughput-comparision-play-json.png" alt="Java Scala Throughput Comparision" /></p>
 <p>This graph is produced based on the result generated by <a href="https://github.com/tmtsoftware/csw/tree/master/csw-benchmark/src/main/java/csw/logging/perf/jmh/JE2ELoggingBenchmark.java">JE2ELoggingBenchmark</a> and <a href="https://github.com/tmtsoftware/csw/tree/master/csw-benchmark/src/main/scala/csw/logging/perf/jmh/E2ELoggingBenchmark.scala">E2ELoggingBenchmark</a></p><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>As you can see in the above graph, Supplier version of Java log API and by name of scala API is very efficient and throughput is much higher than String version. It is recommended to use Supplier API by java developers.</li>

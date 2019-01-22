@@ -166,7 +166,9 @@ tmtsoftware/csw
     <li><a href="../services/logging.html" class="page">Logging Service</a></li>
     <li><a href="../services/event.html" class="page">Event Service</a></li>
     <li><a href="../services/alarm.html" class="page">Alarm Service</a></li>
+    <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="active page">Database Service</a></li>
+    <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -236,7 +238,7 @@ tmtsoftware/csw
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-database-client&quot; % &quot;0.1-SNAPSHOT&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-database&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
 </dl>
 <h2><a href="#accessing-database-service" name="accessing-database-service" class="anchor"><span class="anchor-link"></span></a>Accessing Database Service</h2>
@@ -342,7 +344,7 @@ dbFactory
   <dd>
   <pre class="prettyprint"><code class="language-scala">val createQuery: Query = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;)
 
-import csw.database.client.scaladsl.JooqExtentions.RichQuery
+import csw.database.scaladsl.JooqExtentions.RichQuery
 val createResultF: Future[Integer] = createQuery.executeAsyncScala()
 createResultF.foreach(result ⇒ println(s&quot;Films table created with $result&quot;))</code></pre></dd>
   <dt>Java</dt>
@@ -363,7 +365,7 @@ val queries = dsl.queries(
   dsl.query(&quot;INSERT INTO films(id, name) VALUES (?, ?)&quot;, &quot;2&quot;, movie_2)
 )
 
-import csw.database.client.scaladsl.JooqExtentions.RichQueries
+import csw.database.scaladsl.JooqExtentions.RichQueries
 val batchResultF: Future[List[Int]] = queries.executeBatchAsync()
 batchResultF.foreach(results ⇒ println(s&quot;executed queries [$queries] with results [$results]&quot;))</code></pre></dd>
   <dt>Java</dt>
@@ -395,7 +397,7 @@ case class Films(id: Int, name: String) // variable name and type should be same
 // fetch data from table and map it to Films class
 val selectQuery = dsl.resultQuery(&quot;SELECT id, name FROM films WHERE id = ?&quot;, &quot;1&quot;)
 
-import csw.database.client.scaladsl.JooqExtentions.RichResultQuery
+import csw.database.scaladsl.JooqExtentions.RichResultQuery
 val selectResultF: Future[List[Films]] = selectQuery.fetchAsyncScala[Films]
 selectResultF.foreach(names ⇒ s&quot;Fetched names of films $names&quot;)</code></pre></dd>
   <dt>Java</dt>
@@ -466,7 +468,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../services/alarm.html" title="Alarm Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../services/time.html" title="Time Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -475,17 +477,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Alarm Service
+Time Service
 </span>
 </div>
 </a>
-<a href="../commons/apps.html" title="Applications" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../services/aas.html" title="Authentication and Authorization Service (AAS)" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Applications
+Authentication and Authorization Service (AAS)
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
