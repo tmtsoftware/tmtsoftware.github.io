@@ -196,6 +196,8 @@ tmtsoftware/csw
     <li><a href="../services/time.html#tmttime-api" class="header">TMTTime API</a></li>
     <li><a href="../services/time.html#tmttimehelper-api" class="header">TMTTimeHelper API</a></li>
     <li><a href="../services/time.html#scheduler-api" class="header">Scheduler API</a></li>
+    <li><a href="../services/time.html#source-code-for-tmttime-examples" class="header">Source code for TMTTime examples</a></li>
+    <li><a href="../services/time.html#source-code-for-scheduler-examples" class="header">Source code for Scheduler examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -222,6 +224,8 @@ tmtsoftware/csw
     <li><a href="../services/time.html#tmttime-api" class="header">TMTTime API</a></li>
     <li><a href="../services/time.html#tmttimehelper-api" class="header">TMTTimeHelper API</a></li>
     <li><a href="../services/time.html#scheduler-api" class="header">Scheduler API</a></li>
+    <li><a href="../services/time.html#source-code-for-tmttime-examples" class="header">Source code for TMTTime examples</a></li>
+    <li><a href="../services/time.html#source-code-for-scheduler-examples" class="header">Source code for Scheduler examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -259,18 +263,20 @@ tmtsoftware/csw
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><code class="language-scala">// create time service scheduler using the factory method
-private val scheduler: TimeServiceScheduler = TimeServiceSchedulerFactory.make()</code></pre></dd>
+implicit val actorSystem: ActorSystem       = ctx.system.toUntyped
+private val scheduler: TimeServiceScheduler = TimeServiceSchedulerFactory.make()(actorSystem)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><code class="language-java">// create time service scheduler using the factory method
+ActorSystem actorSystem = Adapter.toUntyped(ctx.asJava().getSystem());
 TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);</code></pre></dd>
 </dl>
 <h2><a href="#tmttime-api" name="tmttime-api" class="anchor"><span class="anchor-link"></span></a>TMTTime API</h2>
 <p>TMTTime represents an instantaneous point in time with nanosecond precision. Its a wrapper around Instant and provides additional information about the timescale of the instant. </p>
 <p>It supports two timescales:</p>
 <ul>
-  <li>Coordinated Universal Time <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/models/UTCTime.html">UTCTime</a></li>
-  <li>International Atomic Time <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/models/TAITime.html">TAITime</a></li>
+  <li>Coordinated Universal Time ( <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/models/UTCTime.html">UTCTime</a> )</li>
+  <li>International Atomic Time ( <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/models/TAITime.html">TAITime</a> )</li>
 </ul>
 <h3><a href="#get-current-time" name="get-current-time" class="anchor"><span class="anchor-link"></span></a>Get Current Time</h3>
 <p>Gets the current UTC/TAI time with nanosecond precision. </p>
@@ -434,6 +440,16 @@ scheduler.schedulePeriodically(Duration.ofMillis(50), task);</code></pre></dd>
   <pre class="prettyprint"><code class="language-java">Runnable task = () -&gt; {/* do something*/};
 scheduler.schedulePeriodically(utcTime, Duration.ofMillis(50), task);</code></pre></dd>
 </dl>
+<h2><a href="#source-code-for-tmttime-examples" name="source-code-for-tmttime-examples" class="anchor"><span class="anchor-link"></span></a>Source code for TMTTime examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/time/TMTTimeExamples.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/time/JTMTTimeExamples.java">Java Example</a></li>
+</ul>
+<h2><a href="#source-code-for-scheduler-examples" name="source-code-for-scheduler-examples" class="anchor"><span class="anchor-link"></span></a>Source code for Scheduler examples</h2>
+<ul>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/time/SchedulerExamples.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/time/JSchedulerExamples.java">Java Example</a></li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/services/time.md" title="Edit this page" class="md-source-file md-edit">
