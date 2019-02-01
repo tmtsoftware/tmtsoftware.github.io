@@ -194,6 +194,8 @@ tmtsoftware/csw
   <li><a href="../apps/cswconfigcli.html#csw-config-cli" class="header">csw-config-cli</a>
   <ul>
     <li><a href="../apps/cswconfigcli.html#supported-commands" class="header">Supported Commands</a></li>
+    <li><a href="../apps/cswconfigcli.html#login" class="header">login</a></li>
+    <li><a href="../apps/cswconfigcli.html#logout" class="header">logout</a></li>
     <li><a href="../apps/cswconfigcli.html#admin-api" class="header">Admin API</a></li>
     <li><a href="../apps/cswconfigcli.html#client-api" class="header">Client API</a></li>
     <li><a href="../apps/cswconfigcli.html#about-this-application" class="header">About this application</a></li>
@@ -221,6 +223,8 @@ tmtsoftware/csw
   <li><a href="../apps/cswconfigcli.html#csw-config-cli" class="header">csw-config-cli</a>
   <ul>
     <li><a href="../apps/cswconfigcli.html#supported-commands" class="header">Supported Commands</a></li>
+    <li><a href="../apps/cswconfigcli.html#login" class="header">login</a></li>
+    <li><a href="../apps/cswconfigcli.html#logout" class="header">logout</a></li>
     <li><a href="../apps/cswconfigcli.html#admin-api" class="header">Admin API</a></li>
     <li><a href="../apps/cswconfigcli.html#client-api" class="header">Client API</a></li>
     <li><a href="../apps/cswconfigcli.html#about-this-application" class="header">About this application</a></li>
@@ -238,6 +242,8 @@ tmtsoftware/csw
 <p>A command line application that facilitates interaction with Configuration Service. It accepts various commands to store, retrieve, list and manage configuration files.</p>
 <h2><a href="#supported-commands" name="supported-commands" class="anchor"><span class="anchor-link"></span></a>Supported Commands</h2>
 <ul>
+  <li>login</li>
+  <li>logout</li>
   <li>create</li>
   <li>update</li>
   <li>get</li>
@@ -252,6 +258,25 @@ tmtsoftware/csw
   <li>exists</li>
   <li>getActive</li>
 </ul>
+<h2><a href="#login" name="login" class="anchor"><span class="anchor-link"></span></a>login</h2>
+<p><code>create, update, delete, setActiveVersion &amp; resetActiveVersion</code> commands are admin protected. In order to use those, you need to login first. You need to have valid user name and password to login which has admin role assigned to it.</p>
+<h3><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h3>
+<ol>
+  <li>
+  <p>
+  <pre><code>csw-config-cli login&quot;
+</code></pre>This opens up default browser on your machine and asks to provide username and password. Once you provide valid credentials, auth server will respond with access token, refresh token etc. which gets stored in local filesystem. So next time when you use any of the above admin protected commands, this access token gets retrieved from local filesystem and implicitly passed in a request sent to config server.</p></li>
+  <li>
+  <pre><code>csw-config-cli login --consoleLogin&quot;
+</code></pre>
+  <p>Instead of opening default browser on your machine, this will prompt for username and password on the console. (You do not need to leave console in this case.)</p></li>
+</ol>
+<h2><a href="#logout" name="logout" class="anchor"><span class="anchor-link"></span></a>logout</h2>
+<p>Use this command to logout if you are already logged in or you want to re-login with different credentials.</p>
+<h3><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h3>
+<pre><code>csw-config-cli logout&quot;
+</code></pre>
+<p>This command will delete all the tokens stored in local filesystem.</p>
 <h2><a href="#admin-api" name="admin-api" class="anchor"><span class="anchor-link"></span></a>Admin API</h2>
 <p>The commands listed below will be used by administrators and maintainers of Configuration Service.</p>
 <h3><a href="#create" name="create" class="anchor"><span class="anchor-link"></span></a>create</h3>

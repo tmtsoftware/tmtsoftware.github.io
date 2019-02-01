@@ -210,6 +210,7 @@ tmtsoftware/csw
     <li><a href="../services/config.html#history" class="header">history</a></li>
     <li><a href="../services/config.html#managing-active-versions" class="header">Managing active versions</a></li>
     <li><a href="../services/config.html#getmetadata" class="header">getMetaData</a></li>
+    <li><a href="../services/config.html#admin-protected-routes" class="header">Admin Protected Routes</a></li>
     <li><a href="../services/config.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
@@ -251,6 +252,7 @@ tmtsoftware/csw
     <li><a href="../services/config.html#history" class="header">history</a></li>
     <li><a href="../services/config.html#managing-active-versions" class="header">Managing active versions</a></li>
     <li><a href="../services/config.html#getmetadata" class="header">getMetaData</a></li>
+    <li><a href="../services/config.html#admin-protected-routes" class="header">Admin Protected Routes</a></li>
     <li><a href="../services/config.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
@@ -264,8 +266,8 @@ tmtsoftware/csw
 <div class="md-content__searchable">
 <h1><a href="#configuration-service" name="configuration-service" class="anchor"><span class="anchor-link"></span></a>Configuration Service</h1>
 <p>The Configuration Service provides a centralized persistent store for any configuration file used in the TMT Software System. All versions of configuration files are retained, providing a historical record of each configuration file.</p>
-<p>Note that in order to use the APIs described here, the <a href="../services/location.html">Location Service</a> (<a href="../apps/cswlocationserver.html">csw-location-server</a>) and <a href="../apps/cswonfigserverapp.html">Configuration Service Server</a> needs to be running somewhere in the local network and the necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s) for the Location Service nodes.</p>
-<p>This service will be part of the observatory cluster and exposes Rest endpoints that can be accessed over HTTP. Component developers can use the csw-config-client library in their code. The library wraps the low level communication with Configuration Service Server and exposes simple to use methods to access and manage configuration files.</p>
+<p>Note that in order to use the APIs described here, the <a href="location.html">Location Service</a> (<a href="../apps/cswlocationserver.html">csw-location-server</a>) and <a href="../apps/cswonfigserverapp.html">Configuration Service Server</a> needs to be running somewhere in the local network and the necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s) for the Location Service nodes.</p>
+<p>This service will be part of the observatory cluster and exposes Rest endpoints that can be accessed over HTTP. Component developers can use the <code>csw-config-client</code> library in their code. The library wraps the low level communication with Configuration Service Server and exposes simple to use methods to access and manage configuration files.</p>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the Configuration Service without using the framework, add this to your <code>build.sbt</code> file:</p>
 <dl>
@@ -313,7 +315,8 @@ val adminApi: ConfigService = ConfigClientFactory.adminApi(actorSystem, location
 IConfigClientService clientApi = JConfigClientFactory.clientApi(actorSystem, clientLocationService);
 //config admin API
 IConfigService adminApi = JConfigClientFactory.adminApi(actorSystem, clientLocationService, mocks.factory());</code></pre></dd>
-</dl>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>Creating <code>adminAPI</code> requires instance of <code>TokenFactory</code>. <code>TokenFactory</code> has <code>getToken</code> method which returns raw access token string which is used by config client to insert it into auth header of http request before sending to config server. For more details, refer bottom section on <a href="config.html#admin-protected-routes">Admin Protected Routes</a></p></div>
 <h2><a href="#exists" name="exists" class="anchor"><span class="anchor-link"></span></a>exists</h2>
 <p>Function checks if the file exists at specified path in the repository. If it exists it returns Future of Boolean</p>
 <dl>
@@ -860,6 +863,17 @@ Await.result(assertF, 2.seconds)</code></pre></dd>
 //repository path must not be empty
 Assert.assertNotEquals(metadata.repoPath(), &quot;&quot;);</code></pre></dd>
 </dl>
+<h2><a href="#admin-protected-routes" name="admin-protected-routes" class="anchor"><span class="anchor-link"></span></a>Admin Protected Routes</h2>
+<p>Following config server routes are <code>Admin Protected</code>. To use these routes, you need to get yourself authenticated and authorized.</p>
+<ul>
+  <li>create</li>
+  <li>update</li>
+  <li>delete</li>
+  <li>setActiveVersion</li>
+  <li>resetActiveVersion</li>
+</ul>
+<p><code>csw-config-client</code> provides factory to create admin config service which allows you to access these protected routes. This requires you to implement <a href="https://github.com/tmtsoftware/csw/tree/master/csw-config/csw-config-api/src/main/scala/csw/config/api/TokenFactory.scala">TokenFactory</a> interface. Currently <code>csw-config-cli</code> is the only user of config service admin api. You can refer <a href="https://github.com/tmtsoftware/csw/tree/master/csw-config/csw-config-cli/src/main/scala/csw/config/cli/CliTokenFactory.scala">CliTokenFactory</a> which implements <code>TokenFactory</code> interface.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Refer <a href="aas.html">csw-aas</a> docs to know more about how you can authenticate and authorize with auth server and get access token.</p></div>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/csw/config/ConfigClientExampleTest.scala">Scala Example</a></li>
