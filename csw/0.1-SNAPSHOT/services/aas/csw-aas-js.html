@@ -195,7 +195,7 @@ tmtsoftware/csw
   <ul>
     <li><a href="../../services/aas/csw-aas-js.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../../services/aas/csw-aas-js.html#components" class="header">Components</a></li>
-    <li><a href="../../services/aas/csw-aas-js.html#tmtauthcontextprovider" class="header">TMTAuthContextProvider</a></li>
+    <li><a href="../../services/aas/csw-aas-js.html#authcontextprovider" class="header">AuthContextProvider</a></li>
     <li><a href="../../services/aas/csw-aas-js.html#consumer" class="header">Consumer</a></li>
     <li><a href="../../services/aas/csw-aas-js.html#login" class="header">Login</a></li>
     <li><a href="../../services/aas/csw-aas-js.html#logout" class="header">Logout</a></li>
@@ -227,7 +227,7 @@ tmtsoftware/csw
   <ul>
     <li><a href="../../services/aas/csw-aas-js.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../../services/aas/csw-aas-js.html#components" class="header">Components</a></li>
-    <li><a href="../../services/aas/csw-aas-js.html#tmtauthcontextprovider" class="header">TMTAuthContextProvider</a></li>
+    <li><a href="../../services/aas/csw-aas-js.html#authcontextprovider" class="header">AuthContextProvider</a></li>
     <li><a href="../../services/aas/csw-aas-js.html#consumer" class="header">Consumer</a></li>
     <li><a href="../../services/aas/csw-aas-js.html#login" class="header">Login</a></li>
     <li><a href="../../services/aas/csw-aas-js.html#logout" class="header">Logout</a></li>
@@ -264,14 +264,15 @@ tmtsoftware/csw
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/src/aas.js#L10-L18" target="_blank" title="Go to snippet source"></a><code class="language-js">export {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/src/aas.js#L10-L19" target="_blank" title="Go to snippet source"></a><code class="language-js">export {
   Logout,
   Login,
   CheckLogin,
   RealmRole,
   ClientRole,
-  TMTAuthContextProvider,
+  AuthContextProvider,
   Consumer,
+  AuthContext
 }</code></pre></dd>
 </dl>
 <p>Importing and usage of those components is explained below:</p>
@@ -284,7 +285,7 @@ tmtsoftware/csw
 </dl>
 <p>csw-aas-js exposes following react components: </p>
 <ul>
-  <li><a href="#TMTAuthContextProvider">TMTAuthContextProvider</a></li>
+  <li><a href="#AuthContextProvider">AuthContextProvider</a></li>
   <li><a href="#consumer">Consumer</a></li>
   <li><a href="#login">Login</a></li>
   <li><a href="#logout">Logout</a></li>
@@ -292,12 +293,12 @@ tmtsoftware/csw
   <li><a href="#realmrole">RealmRole</a></li>
   <li><a href="#clientrole">ClientRole</a></li>
 </ul>
-<h2><a href="#tmtauthcontextprovider" name="tmtauthcontextprovider" class="anchor"><span class="anchor-link"></span></a>TMTAuthContextProvider</h2>
-<p>TMTAuthContextProvider is wrapper over provider from react context API. It expects config json to be passed. This config json is UI application specific AAS server configuration e.g. clientId, realm. When user loges in AAS Server is instantiated by merging UI application specific config and predefined configuration. UI application can choose to override predefined json configuration. Once AAS sever is instantiated, tmtAuth object is updated with needed attributes and apis. This tmtAuth is available to all react componets . tmtAuth Context is designed to share data that can be considered “global” for a tree of React components and is available via Consumer. All consumers that are descendants of a Provider will re-render whenever the TMTAuthContextProvider’s state changes i.e tmtAuth. Recommended way is use TMTAuthContextProvider to wrap entire application so that data can be shared anywhere in application via Consumer. </p>
+<h2><a href="#authcontextprovider" name="authcontextprovider" class="anchor"><span class="anchor-link"></span></a>AuthContextProvider</h2>
+<p>AuthContextProvider is wrapper over provider from react context API. It expects config json to be passed. This config json is UI application specific AAS server configuration e.g. clientId, realm. When user loges in AAS Server is instantiated by merging UI application specific config and predefined configuration. UI application can choose to override predefined json configuration. Once AAS sever is instantiated, auth object is updated with needed attributes and apis. This auth is available to all react components. Auth Context is designed to share data that can be considered “global” for a tree of React components and is available via Consumer. All consumers that are descendants of a Provider will re-render whenever the AuthContextProvider’s state changes i.e auth. Recommended way is use AuthContextProvider to wrap entire application so that data can be shared anywhere in application via Consumer. </p>
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/example/src/components/ExampleApp.jsx#L25-L62" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;TMTAuthContextProvider config={config}&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/example/src/components/ExampleApp.jsx#L25-L62" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;AuthContextProvider config={config}&gt;
   &lt;BrowserRouter&gt;
     &lt;div&gt;
       &lt;NavComponent /&gt;
@@ -328,21 +329,21 @@ tmtsoftware/csw
     &lt;/ClientRole&gt;
   }
 
-&lt;/TMTAuthContextProvider&gt;</code></pre></dd>
+&lt;/AuthContextProvider&gt;</code></pre></dd>
 </dl>
 <h3><a href="#source-code-for-realmrole-component" name="source-code-for-realmrole-component" class="anchor"><span class="anchor-link"></span></a>Source code for RealmRole component</h3>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/src/components/context/TMTAuthContextProvider.jsx">TMTAuthContextProvider Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/src/components/context/AuthContextProvider.jsx">AuthContextProvider Component</a></li>
 </ul>
 <h2><a href="#consumer" name="consumer" class="anchor"><span class="anchor-link"></span></a>Consumer</h2>
-<p>Consumer is similar to consumer from react context api. tmtAuth can be accessed using Consumer component </p>
+<p>Consumer is similar to consumer from react context api. auth can be accessed using Consumer component </p>
 <dl>
   <dt>Javascript</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/example/src/components/Read.jsx#L6-L21" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;Consumer&gt;
-  { ({tmtAuth}) =&gt; {
+  { ({auth}) =&gt; {
     return &lt;div className=&#39;nav-wrapper&#39;&gt;
-      { (tmtAuth &amp;&amp; tmtAuth.isAuthenticated()) ? &lt;div&gt;
+      { (auth &amp;&amp; auth.isAuthenticated()) ? &lt;div&gt;
           Hello, you are logged in
         &lt;div&gt;Open functionality&lt;/div&gt;
       &lt;/div&gt;
@@ -358,10 +359,10 @@ tmtsoftware/csw
 </dl>
 <h3><a href="#source-code-for-realmrole-component" name="source-code-for-realmrole-component" class="anchor"><span class="anchor-link"></span></a>Source code for RealmRole component</h3>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/src/components/context/TMTAuthContext.jsx">Consumer Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/src/components/context/AuthContext.jsx">Consumer Component</a></li>
 </ul>
 <h2><a href="#login" name="login" class="anchor"><span class="anchor-link"></span></a>Login</h2>
-<p>Login component instantiate AAS server with configurations provided. It redirects to AAS server login page for user to login. After login tmtAuth in context is updated with appropriate values e.g. token, realm &amp; client roles etc.</p>
+<p>Login component instantiate AAS server with configurations provided. It redirects to AAS server login page for user to login. After login auth in context is updated with appropriate values e.g. token, realm &amp; client roles etc.</p>
 <dl>
   <dt>Javascript</dt>
   <dd>
@@ -372,7 +373,7 @@ tmtsoftware/csw
   <li><a href="https://github.com/tmtsoftware/csw/tree/master/csw-aas/csw-aas-js/src/components/Login.jsx">Login Component</a></li>
 </ul>
 <h2><a href="#logout" name="logout" class="anchor"><span class="anchor-link"></span></a>Logout</h2>
-<p>Logout component logs out user from AAS server. It clears tmtAuth stored in context.</p>
+<p>Logout component logs out user from AAS server. It clears auth stored in context.</p>
 <dl>
   <dt>Javascript</dt>
   <dd>
@@ -455,13 +456,13 @@ Akka HTTP Adapter (csw-aas-http)
 </span>
 </div>
 </a>
-<a href="../../commons/apps.html" title="Applications" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../services/aas/csw-aas-installed.html" title="Installed Auth Adapter (csw-aas-installed)" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Applications
+Installed Auth Adapter (csw-aas-installed)
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

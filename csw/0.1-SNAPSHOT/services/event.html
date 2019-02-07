@@ -270,14 +270,14 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventPublishExamples.scala#L21-L25" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventPublishExamples.scala#L21-L25" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val publisher = eventService.defaultPublisher
   val event     = SystemEvent(componentInfo.prefix, EventName(&quot;filter_wheel&quot;))
   publisher.publish(event)
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventPublishExamples.java#L30-L31" target="_blank" title="Go to snippet source"></a><code class="language-java">Event event = new SystemEvent(componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L30-L31" target="_blank" title="Go to snippet source"></a><code class="language-java">Event event = new SystemEvent(componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;));
 eventService.defaultPublisher().publish(event);</code></pre></dd>
 </dl>
 <h3><a href="#with-generator" name="with-generator" class="anchor"><span class="anchor-link"></span></a>With Generator</h3>
@@ -285,7 +285,7 @@ eventService.defaultPublisher().publish(event);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventPublishExamples.scala#L47-L59" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventPublishExamples.scala#L47-L59" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val publisher        = eventService.defaultPublisher
   val baseEvent: Event = SystemEvent(componentInfo.prefix, EventName(&quot;filter_wheel&quot;))
   val interval         = 100.millis
@@ -300,7 +300,7 @@ eventService.defaultPublisher().publish(event);</code></pre></dd>
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventPublishExamples.java#L53-L62" target="_blank" title="Go to snippet source"></a><code class="language-java">private Cancellable startPublishingEvents(ComponentInfo componentInfo) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L53-L62" target="_blank" title="Go to snippet source"></a><code class="language-java">private Cancellable startPublishingEvents(ComponentInfo componentInfo) {
     Event baseEvent = new SystemEvent(componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;));
     return eventService.defaultPublisher().publish(() -&gt; eventGenerator(baseEvent), Duration.ofMillis(100));
 }
@@ -316,7 +316,7 @@ private Event eventGenerator(Event baseEvent) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventPublishExamples.scala#L33-L41" target="_blank" title="Go to snippet source"></a><code class="language-scala">def onError(publishFailure: PublishFailure): Unit =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventPublishExamples.scala#L33-L41" target="_blank" title="Go to snippet source"></a><code class="language-scala">def onError(publishFailure: PublishFailure): Unit =
   log.error(s&quot;Publish failed for event: [${publishFailure.event}]&quot;, ex = publishFailure.cause)
 
 val publisher = eventService.defaultPublisher
@@ -327,7 +327,7 @@ val eventStream: Source[Event, Future[Done]] = Source(1 to n)
 publisher.publish(eventStream, failure ⇒ onError(failure))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventPublishExamples.java#L43-L48" target="_blank" title="Go to snippet source"></a><code class="language-java">Source&lt;Event, CompletionStage&lt;Done&gt;&gt; eventStream = Source
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L43-L48" target="_blank" title="Go to snippet source"></a><code class="language-java">Source&lt;Event, CompletionStage&lt;Done&gt;&gt; eventStream = Source
         .range(1, n)
         .map(id -&gt; makeEvent(id, componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;)))
         .watchTermination(Keep.right());
@@ -347,7 +347,7 @@ return eventService.defaultPublisher().&lt;CompletionStage&lt;Done&gt;&gt;publis
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventSubscribeExamples.scala#L20-L27" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L20-L27" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val subscriber = eventService.defaultSubscriber
 
   subscriber.subscribeCallback(
@@ -357,7 +357,7 @@ return eventService.defaultPublisher().&lt;CompletionStage&lt;Done&gt;&gt;publis
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventSubscribeExamples.java#L40-L45" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L40-L45" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
 EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
 return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /*do something*/ });
@@ -368,7 +368,7 @@ return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), 
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventSubscribeExamples.scala#L31-L39" target="_blank" title="Go to snippet source"></a><code class="language-scala">def subscribe(): EventSubscription = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L31-L39" target="_blank" title="Go to snippet source"></a><code class="language-scala">def subscribe(): EventSubscription = {
   val subscriber = eventService.defaultSubscriber
   subscriber.subscribeAsync(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))), callback)
 }
@@ -379,7 +379,7 @@ private def callback(event: Event): Future[String] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventSubscribeExamples.java#L50-L60" target="_blank" title="Go to snippet source"></a><code class="language-java">public IEventSubscription subscribe() {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L50-L60" target="_blank" title="Go to snippet source"></a><code class="language-java">public IEventSubscription subscribe() {
     IEventSubscriber subscriber = eventService.defaultSubscriber();
 
     EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
@@ -396,7 +396,7 @@ private CompletableFuture&lt;String&gt; callback(Event event) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventSubscribeExamples.scala#L43-L59" target="_blank" title="Go to snippet source"></a><code class="language-scala">def subscribe(ctx: ActorContext[TopLevelActorMessage]): EventSubscription = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L43-L59" target="_blank" title="Go to snippet source"></a><code class="language-scala">def subscribe(ctx: ActorContext[TopLevelActorMessage]): EventSubscription = {
   val subscriber                    = eventService.defaultSubscriber
   val eventHandler: ActorRef[Event] = ctx.spawnAnonymous(EventHandler.make())
 
@@ -415,7 +415,7 @@ class EventHandler(ctx: ActorContext[Event]) extends AbstractBehavior[Event] {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventSubscribeExamples.java#L64-L91" target="_blank" title="Go to snippet source"></a><code class="language-java">public IEventSubscription subscribe(ActorContext&lt;TopLevelActorMessage&gt; ctx) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L64-L91" target="_blank" title="Go to snippet source"></a><code class="language-java">public IEventSubscription subscribe(ActorContext&lt;TopLevelActorMessage&gt; ctx) {
 
     IEventSubscriber subscriber = eventService.defaultSubscriber();
     ActorRef&lt;Event&gt; eventHandler = ctx.spawnAnonymous(new JEventHandlerFactory().make());
@@ -449,7 +449,7 @@ public class JEventHandler extends AbstractBehavior&lt;Event&gt; {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventSubscribeExamples.scala#L64-L72" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L64-L72" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val subscriber = eventService.defaultSubscriber
 
   subscriber
@@ -460,7 +460,7 @@ public class JEventHandler extends AbstractBehavior&lt;Event&gt; {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventSubscribeExamples.java#L97-L102" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L97-L102" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
 EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
 return subscriber.subscribe(Collections.singleton(filterWheelEventKey)).to(Sink.foreach(event -&gt; { /*do something*/ })).run(mat);
@@ -472,7 +472,7 @@ return subscriber.subscribe(Collections.singleton(filterWheelEventKey)).to(Sink.
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventSubscribeExamples.scala#L77-L86" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L77-L86" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val subscriber = eventService.defaultSubscriber
 
   subscriber.subscribeCallback(
@@ -484,7 +484,7 @@ return subscriber.subscribe(Collections.singleton(filterWheelEventKey)).to(Sink.
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventSubscribeExamples.java#L108-L113" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L108-L113" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
 EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
 return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /* do something*/ }, Duration.ofMillis(1000), SubscriptionModes.jRateAdapterMode());
@@ -501,13 +501,13 @@ return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), 
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventSubscribeExamples.scala#L91-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L91-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val subscriber = eventService.defaultSubscriber
   subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event ⇒ { /*do something*/ })
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventSubscribeExamples.java#L120-L123" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L120-L123" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event -&gt; { /* do something*/ });
 </code></pre></dd>
 </dl><div class="callout warning "><div class="callout-title">Warning</div>
@@ -531,14 +531,14 @@ subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event -&gt; { /* do some
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventServiceCreationExamples.scala#L21-L25" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create event service using location service
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventServiceCreationExamples.scala#L21-L25" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create event service using location service
 val eventService1: EventService = new EventServiceFactory().make(locationService)
 
 // create event service using host and port of event server.
 val eventService2: EventService = new EventServiceFactory().make(&quot;localhost&quot;, 26379)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventServiceCreationExamples.java#L23-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">// create event service using host and port of event server.
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventServiceCreationExamples.java#L23-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">// create event service using host and port of event server.
 IEventService eventService1 = new EventServiceFactory().jMake(locationService, actorSystem);
 
 // create event service using host and port of event server.
@@ -550,7 +550,7 @@ IEventService eventService2 = new EventServiceFactory().jMake(&quot;localhost&qu
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventServiceCreationExamples.scala#L31-L40" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>val clientOptions = ClientOptions.builder().disconnectedBehavior(DisconnectedBehavior.REJECT_COMMANDS).build
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventServiceCreationExamples.scala#L31-L40" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>val clientOptions = ClientOptions.builder().disconnectedBehavior(DisconnectedBehavior.REJECT_COMMANDS).build
 val redisClient   = RedisClient.create()
 redisClient.setOptions(clientOptions)
 
@@ -561,7 +561,7 @@ val eventService1: EventService = new EventServiceFactory(RedisStore(redisClient
 val eventService2: EventService = new EventServiceFactory(RedisStore(redisClient)).make(&quot;localhost&quot;, 26379)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventServiceCreationExamples.java#L34-L43" target="_blank" title="Go to snippet source"></a><code class="language-java">ClientOptions clientOptions = ClientOptions.builder().disconnectedBehavior(ClientOptions.DisconnectedBehavior.REJECT_COMMANDS).build();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventServiceCreationExamples.java#L34-L43" target="_blank" title="Go to snippet source"></a><code class="language-java">ClientOptions clientOptions = ClientOptions.builder().disconnectedBehavior(ClientOptions.DisconnectedBehavior.REJECT_COMMANDS).build();
 RedisClient redisClient   = RedisClient.create();
 redisClient.setOptions(clientOptions);
 
@@ -574,18 +574,18 @@ IEventService eventService2 = new EventServiceFactory(redisStore).jMake(&quot;lo
 </dl>
 <h2><a href="#source-code-for-examples-of-creation" name="source-code-for-examples-of-creation" class="anchor"><span class="anchor-link"></span></a>Source code for examples of creation</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventServiceCreationExamples.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventServiceCreationExamples.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventServiceCreationExamples.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventServiceCreationExamples.java">Java Example</a></li>
 </ul>
 <h2><a href="#source-code-for-examples-of-publishing" name="source-code-for-examples-of-publishing" class="anchor"><span class="anchor-link"></span></a>Source code for examples of publishing</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventPublishExamples.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventPublishExamples.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventPublishExamples.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java">Java Example</a></li>
 </ul>
 <h2><a href="#source-code-for-examples-of-subscribing" name="source-code-for-examples-of-subscribing" class="anchor"><span class="anchor-link"></span></a>Source code for examples of subscribing</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/csw/event/EventSubscribeExamples.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/csw/event/JEventSubscribeExamples.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java">Java Example</a></li>
 </ul>
 </div>
 <div>
