@@ -237,7 +237,7 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#installed-auth-adapter-csw-aas-installed-" name="installed-auth-adapter-csw-aas-installed-" class="anchor"><span class="anchor-link"></span></a>Installed Auth Adapter (csw-aas-installed)</h1>
-<p>csw-aas-installed is the adapter you will use if you want to build an that executes on user&rsquo;s machine &amp; talks to auth-protected web service application. Examples of such applications could be a CLI app that is installed on end users machine.</p>
+<p><code>csw-aas-installed</code> is the adapter you will use if you want to build an application that executes on user&rsquo;s machine &amp; talks to auth-protected web service application. Examples of such applications could be a CLI app that is installed on end users machine.</p>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the Akka HTTP Adapter (csw-aas-installed), add this to your <code>build.sbt</code> file:</p>
 <dl>
@@ -253,7 +253,7 @@ tmtsoftware/csw
   <li>Keycloak instance running and registered with location service</li>
   <li>protected http server running</li>
 </ul>
-<p>All of these can be running on different machines. To start location service &amp; keycloak server on a local machine, you make make use of csw-services.sh script.</p>
+<p>All of these can be running on different machines. To start location service &amp; keycloak server on a local machine, you can make use of <code>csw-services.sh</code> script.</p>
 <h2><a href="#application-configurations" name="application-configurations" class="anchor"><span class="anchor-link"></span></a>Application Configurations</h2>
 <p>All auth related configurations go inside <code>auth-config</code> block. There are two configurations applicable for a public cli client application i.e. <code>realm</code> &amp; <code>client-id</code>.</p>
 <p><code>realm</code> has a default value of <code>TMT</code> if not specified. Ideally all apps in TMT should not have to override this, however it might be useful to override this while testing your app.</p>
@@ -356,9 +356,13 @@ val routes: Route =
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/commands/CommandFactory.scala#L7-L20" target="_blank" title="Go to snippet source"></a><code class="language-scala">object CommandFactory {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/commands/CommandFactory.scala#L7-L24" target="_blank" title="Go to snippet source"></a><code class="language-scala">object CommandFactory {
   def makeCommand(adapter: InstalledAppAuthAdapter,
                   args: Array[String])(implicit actorSystem: ActorSystem): Option[AppCommand] = {
+
+    // ============ NOTE ============
+    // We are doing hand parsing of command line arguments here for the demonstration purpose to keep things simple.
+    // However, we strongly recommend that you use one of the existing CLI libraries. CSW makes extensive use of scopt.
     args match {
       case Array(&quot;login&quot;)          =&gt; Some(new LoginCommand(adapter))
       case Array(&quot;logout&quot;)         =&gt; Some(new LogoutCommand(adapter))

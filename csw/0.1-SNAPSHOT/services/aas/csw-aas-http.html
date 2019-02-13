@@ -247,8 +247,8 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#akka-http-adapter-csw-aas-http-" name="akka-http-adapter-csw-aas-http-" class="anchor"><span class="anchor-link"></span></a>Akka HTTP Adapter (csw-aas-http)</h1>
-<p>This library is a security adapter for akka-http server applications. csw-aas uses <a href="https://openid.net/connect/">OpenId Connect</a> for authentication and authorization. The authentication server used by aas is <a href="https://www.keycloak.org/">keycloak</a>. we recommend that you get familiar with keycloak&rsquo;s documentation and configurations to fully leverage this adapters features.</p>
-<p>This adapter provides authentication via security directives such as sGet, sPost, sPut, etc. For authorization, these secure directives accept a wide range of policy expressions.</p>
+<p>This library is a security adapter for akka-http server applications. <code>csw-aas</code> uses <a href="https://openid.net/connect/">OpenId Connect</a> for authentication and authorization. The authentication server used by aas is <a href="https://www.keycloak.org/">keycloak</a>. we recommend that you get familiar with keycloak&rsquo;s documentation and configurations to fully leverage this adapters features.</p>
+<p>This adapter provides authentication via security directives such as <code>sGet</code>, <code>sPost</code>, <code>sPut</code>, etc. For authorization, these secure directives accept a wide range of policy expressions.</p>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the Akka HTTP Adapter (csw-aas-http), add this to your <code>build.sbt</code> file:</p>
 <dl>
@@ -265,9 +265,9 @@ tmtsoftware/csw
 </ul>
 <p>Location service and keycloak can be running on different machines. To start location service &amp; keycloak server on a local machine, you make make use of csw-services.sh script.</p>
 <h2><a href="#application-configurations" name="application-configurations" class="anchor"><span class="anchor-link"></span></a>Application Configurations</h2>
-<p>All auth related configurations go inside <code>auth-config</code> block. There are tree configurations applicable for a akka-http server application i.e. <code>realm</code>, <code>client-id</code> &amp; <code>enable-permissions</code>. </p>
+<p>All auth related configurations go inside <code>auth-config</code> block. There are three configurations applicable for a akka-http server application i.e. <code>realm</code>, <code>client-id</code> &amp; <code>enable-permissions</code>. </p>
 <p><code>realm</code> has a default value of <code>TMT</code> if not specified. Ideally all apps in TMT should not have to override this, however it might be useful to override this while testing your app.</p>
-<p><code>enable-permissions</code> is optional config with a default value of false. If your akka-http server application uses permission based authorization policies, this config needs to set to true.</p>
+<p><code>enable-permissions</code> is optional config with a default value of <code>false</code>. If your akka-http server application uses permission based authorization policies, this config needs to be set to true.</p>
 <p><code>client-id</code> is a mandatory configuration which specifies the client id of the app as per registration in keycloak.</p>
 <pre class="prettyprint"><code class="language-hocon">auth-config {
   realm = TMT # DEFAULT
@@ -283,7 +283,7 @@ tmtsoftware/csw
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L184-L207" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SampleHttpApp extends HttpApp with App {
 
   implicit val actorSystem: ActorSystem = ActorSystem()
-  implicit val ec: ExecutionContext     = ExecutionContext.global
+  implicit val ec: ExecutionContext     = actorSystem.dispatcher
   implicit val mat: ActorMaterializer   = ActorMaterializer()
 
   val locationService = HttpLocationServiceFactory.makeLocalClient
@@ -306,7 +306,13 @@ tmtsoftware/csw
 }</code></pre></dd>
 </dl>
 <p>Importing everything from security directives is recommended as it imports some implicit methods along with all security directives.</p>
-<p>In the above example, <code>GET http://localhost:9003/api</code> does not use any security directive and hence is accessible to all. <code>POST http://localhost:9003/api</code> uses <code>sPost</code> which is secure directive. This directive takes care of authentication (access token signature &amp; expiration validation). For authorization it needs an <a href="#authorization-policies">authorization policy</a>. Authorizing policy specifies one or more conditions for request validation. </p>
+<p>In the above example, </p>
+<ul>
+  <li>
+  <p><code>GET http://localhost:9003/api</code> does not use any security directive and hence is accessible to all.</p></li>
+  <li>
+  <p><code>POST http://localhost:9003/api</code> uses <code>sPost</code> which is secure directive. This directive takes care of authentication (access token signature &amp; expiration validation). For authorization it needs an <a href="#authorization-policies">authorization policy</a>. Authorizing policy specifies one or more conditions for request validation. </p></li>
+</ul>
 <p>In this instance, <code>sPost</code> directive has been given <code>RealmRolePolicy</code> policy with parameter value <code>admin</code>.</p>
 <p>This results into following sequence of actions when a request arrives for a secure directive route</p>
 <ol>
@@ -315,7 +321,7 @@ tmtsoftware/csw
   <li>Check the token for roles and validate that it has <code>admin</code> <a href="https://www.keycloak.org/docs/latest/server_admin/index.html#realm-roles">realm role</a></li>
   <li>After all the above checks/validations pass, execute the route logic</li>
 </ol>
-<p>If any of the validations fails, an appropriate http status code is returned to the requester. For authentication failure 401 is sent and for authorization failure 403 is sent.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>If any of the validations fails, an appropriate http status code is returned to the requester. For authentication failure <code>401</code> is sent and for authorization failure <code>403</code> is sent.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>To know more about realm roles, check out <a href="https://www.keycloak.org/docs/latest/server_admin/index.html#realm-roles">keycloak documentation</a></p></div>
 <h2><a href="#authorization-policies" name="authorization-policies" class="anchor"><span class="anchor-link"></span></a>Authorization Policies</h2>
 <p>An authorization policy is a way to provide filter incoming HTTP requests based on standard rules. Following policies can be applied to protect routes.</p>
@@ -353,7 +359,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L152-L154" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithPermissions = sDelete(PermissionPolicy(&quot;delete&quot;, &quot;account&quot;)) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L152-L154" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithPermissions: Route = sDelete(PermissionPolicy(&quot;delete&quot;, &quot;account&quot;)) {
   complete(&quot;OK&quot;)
 }</code></pre></dd>
 </dl>
@@ -394,7 +400,7 @@ val route: Route =
   }</code></pre></dd>
 </dl>
 <h2><a href="#security-directives" name="security-directives" class="anchor"><span class="anchor-link"></span></a>Security Directives</h2>
-<p>csw-aas-http adapter supports following secure HTTP verbs:</p>
+<p><code>csw-aas-http</code> adapter supports following secure HTTP verbs:</p>
 <table>
   <thead>
     <tr>
