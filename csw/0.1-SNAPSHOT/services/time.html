@@ -187,6 +187,18 @@ tmtsoftware/csw
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
+  <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
+  <ul>
+    <li><a href="../technical/framework/framework.html" class="page">CSW Framework Design Description</a></li>
+    <li><a href="../technical/location/location.html" class="page">Location Service Technical Description</a></li>
+    <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service Technical Description</a></li>
+    <li><a href="../technical/logging/logging.html" class="page">Logging Service Technical Description</a></li>
+    <li><a href="../technical/event/event.html" class="page">Event Service Technical Description</a></li>
+    <li><a href="../technical/alarm/alarm.html" class="page">Alarm Service Technical Description</a></li>
+    <li><a href="../technical/time/time.html" class="page">Time Service Technical Description</a></li>
+    <li><a href="../technical/database/database.html" class="page">Database Service Technical Description</a></li>
+    <li><a href="../technical/aas/aas.html" class="page">Authentication and Authorization Service Technical Description</a></li>
+  </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
@@ -195,6 +207,7 @@ tmtsoftware/csw
   <ul>
     <li><a href="../services/time.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../services/time.html#time-service-api-flavors" class="header">Time Service API Flavors</a></li>
+    <li><a href="../services/time.html#technical-description" class="header">Technical Description</a></li>
     <li><a href="../services/time.html#source-code-for-tmttime-examples" class="header">Source code for TMTTime examples</a></li>
     <li><a href="../services/time.html#source-code-for-scheduler-examples" class="header">Source code for Scheduler examples</a></li>
   </ul></li>
@@ -222,6 +235,7 @@ tmtsoftware/csw
   <ul>
     <li><a href="../services/time.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../services/time.html#time-service-api-flavors" class="header">Time Service API Flavors</a></li>
+    <li><a href="../services/time.html#technical-description" class="header">Technical Description</a></li>
     <li><a href="../services/time.html#source-code-for-tmttime-examples" class="header">Source code for TMTTime examples</a></li>
     <li><a href="../services/time.html#source-code-for-scheduler-examples" class="header">Source code for Scheduler examples</a></li>
   </ul></li>
@@ -245,7 +259,7 @@ tmtsoftware/csw
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-time-client&quot; % &quot;0.1-SNAPSHOT&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-time-scheduler&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre></dd>
 </dl>
 <h2><a href="#time-service-api-flavors" name="time-service-api-flavors" class="anchor"><span class="anchor-link"></span></a>Time Service API Flavors</h2>
@@ -357,8 +371,8 @@ ZonedDateTime taiKolkataTime = TMTTimeHelper.atZone(taiTime, ZoneId.of(&quot;Asi
 </dl>
 <h3><a href="#scheduler-api" name="scheduler-api" class="anchor"><span class="anchor-link"></span></a>Scheduler API</h3>
 <p>This API provides various methods to schedule periodic or non-periodic, one-shot tasks in the future. </p>
-<p>For component developers, the scheduler API is provided as a <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/TimeServiceScheduler.html">TimeServiceScheduler</a> object in the <code>CswContext</code> object injected into the ComponentHandlers class provided by the framework. </p>
-<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/api/TimeServiceScheduler.html">TimeServiceScheduler</a> using <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/client/TimeServiceSchedulerFactory.html">TimeServiceSchedulerFactory</a> as follows.</p>
+<p>For component developers, the scheduler API is provided as a <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/TimeServiceScheduler.html">TimeServiceScheduler</a> object in the <code>CswContext</code> object injected into the ComponentHandlers class provided by the framework. </p>
+<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/TimeServiceScheduler.html">TimeServiceScheduler</a> using <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/TimeServiceSchedulerFactory.html">TimeServiceSchedulerFactory</a> as follows.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -369,7 +383,7 @@ private val scheduler: TimeServiceScheduler = TimeServiceSchedulerFactory.make()
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L26-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">// create time service scheduler using the factory method
 TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);</code></pre></dd>
 </dl>
-<p>For all scheduler calls, an instance of <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/client/api/Cancellable.html">Cancellable</a> is returned which can be used to cancel the execution of the future tasks.</p>
+<p>For all scheduler calls, an instance of <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/Cancellable.html">Cancellable</a> is returned which can be used to cancel the execution of the future tasks.</p>
 <h4><a href="#schedule-once" name="schedule-once" class="anchor"><span class="anchor-link"></span></a>Schedule Once</h4>
 <p>Schedules a task to execute once at the given start time. The <code>startTime</code> is a TMTTime and can be either a UTCTime or TAITime.</p>
 <dl>
@@ -441,6 +455,8 @@ scheduler.schedulePeriodically(Duration.ofMillis(50), task);</code></pre></dd>
 scheduler.schedulePeriodically(utcTime, Duration.ofMillis(50), task);</code></pre></dd>
 </dl>
 <p>As with the schedule once API, there is also a periodic schedule API that takes a message and ActorRef.</p>
+<h2><a href="#technical-description" name="technical-description" class="anchor"><span class="anchor-link"></span></a>Technical Description</h2>
+<p>See <a href="../technical/time/time.html">Time Service Technical Description</a>.</p>
 <h2><a href="#source-code-for-tmttime-examples" name="source-code-for-tmttime-examples" class="anchor"><span class="anchor-link"></span></a>Source code for TMTTime examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala">Scala Example</a></li>
