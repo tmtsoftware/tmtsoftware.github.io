@@ -614,7 +614,7 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/samplehcd/SampleHcdHandlers.scala#L71-L87" target="_blank" title="Go to snippet source"></a><code class="language-scala">import scala.concurrent.duration._
 private def publishCounter(): Cancellable = {
   var counter = 0
-  def incrementCounterEvent() = {
+  def incrementCounterEvent() = Option {
     counter += 1
     val param: Parameter[Int] = KeyType.IntKey.make(&quot;counter&quot;).set(counter)
     SystemEvent(componentInfo.prefix, EventName(&quot;HcdCounter&quot;)).add(param)
@@ -631,10 +631,10 @@ private def stopPublishingGenerator(): Unit = {
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/samplehcd/JSampleHcdHandlers.java#L105-L120" target="_blank" title="Go to snippet source"></a><code class="language-java">private int counter = 0;
-private Event incrementCounterEvent() {
+private Optional&lt;Event&gt; incrementCounterEvent() {
     counter += 1;
     Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;counter&quot;).set(counter);
-    return new SystemEvent(cswCtx.componentInfo().prefix(), new EventName(&quot;HcdCounter&quot;)).add(param);
+    return Optional.of(new SystemEvent(cswCtx.componentInfo().prefix(), new EventName(&quot;HcdCounter&quot;)).add(param));
 }
 
 private Cancellable publishCounter() {

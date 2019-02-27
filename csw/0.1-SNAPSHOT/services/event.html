@@ -291,7 +291,7 @@ tmtsoftware/csw
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L30-L31" target="_blank" title="Go to snippet source"></a><code class="language-java">Event event = new SystemEvent(componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L31-L32" target="_blank" title="Go to snippet source"></a><code class="language-java">Event event = new SystemEvent(componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;));
 eventService.defaultPublisher().publish(event);</code></pre></dd>
 </dl>
 <h3><a href="#with-generator" name="with-generator" class="anchor"><span class="anchor-link"></span></a>With Generator</h3>
@@ -305,24 +305,24 @@ eventService.defaultPublisher().publish(event);</code></pre></dd>
   val interval         = 100.millis
 
   // this holds the logic for event generation, could be based on some computation or current state of HCD
-  def eventGenerator(): Event = baseEvent match {
-    case e: SystemEvent  ⇒ e.copy(eventId = Id(), eventTime = UTCTime.now())
-    case e: ObserveEvent ⇒ e.copy(eventId = Id(), eventTime = UTCTime.now())
+  def eventGenerator(): Option[Event] = baseEvent match {
+    case e: SystemEvent  ⇒ Some(e.copy(eventId = Id(), eventTime = UTCTime.now()))
+    case e: ObserveEvent ⇒ Some(e.copy(eventId = Id(), eventTime = UTCTime.now()))
   }
 
   publisher.publish(eventGenerator(), interval)
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L53-L62" target="_blank" title="Go to snippet source"></a><code class="language-java">private Cancellable startPublishingEvents(ComponentInfo componentInfo) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L54-L63" target="_blank" title="Go to snippet source"></a><code class="language-java">private Cancellable startPublishingEvents(ComponentInfo componentInfo) {
     Event baseEvent = new SystemEvent(componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;));
     return eventService.defaultPublisher().publish(() -&gt; eventGenerator(baseEvent), Duration.ofMillis(100));
 }
 
 // this holds the logic for event generation, could be based on some computation or current state of HCD
-private Event eventGenerator(Event baseEvent) {
+private Optional&lt;Event&gt; eventGenerator(Event baseEvent) {
     // add logic here to create a new event and return the same
-    return baseEvent;
+    return Optional.ofNullable(baseEvent);
 }</code></pre></dd>
 </dl>
 <h3><a href="#with-event-stream" name="with-event-stream" class="anchor"><span class="anchor-link"></span></a>With Event Stream</h3>
@@ -341,7 +341,7 @@ val eventStream: Source[Event, Future[Done]] = Source(1 to n)
 publisher.publish(eventStream, failure ⇒ onError(failure))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L43-L48" target="_blank" title="Go to snippet source"></a><code class="language-java">Source&lt;Event, CompletionStage&lt;Done&gt;&gt; eventStream = Source
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L44-L49" target="_blank" title="Go to snippet source"></a><code class="language-java">Source&lt;Event, CompletionStage&lt;Done&gt;&gt; eventStream = Source
         .range(1, n)
         .map(id -&gt; makeEvent(id, componentInfo.prefix(), new EventName(&quot;filter_wheel&quot;)))
         .watchTermination(Keep.right());
