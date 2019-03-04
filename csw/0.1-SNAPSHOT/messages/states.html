@@ -257,28 +257,28 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/messages/StateVariablesTest.scala#L19-L64" target="_blank" title="Go to snippet source"></a><code class="language-scala">//prefix
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/messages/StateVariablesTest.scala#L18-L63" target="_blank" title="Go to snippet source"></a><code class="language-scala">//prefix
 val prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)
 
 //key
-val charKey: Key[Char]         = KeyType.CharKey.make(&quot;charKey&quot;)
-val intKey: Key[Int]           = KeyType.IntKey.make(&quot;intKey&quot;)
-val booleanKey: Key[Boolean]   = KeyType.BooleanKey.make(&quot;booleanKey&quot;)
-val timestampKey: Key[Instant] = KeyType.TimestampKey.make(&quot;timestampKey&quot;)
-val notUsedKey: Key[String]    = KeyType.StringKey.make(&quot;notUsed&quot;)
+val charKey: Key[Char]       = KeyType.CharKey.make(&quot;charKey&quot;)
+val intKey: Key[Int]         = KeyType.IntKey.make(&quot;intKey&quot;)
+val booleanKey: Key[Boolean] = KeyType.BooleanKey.make(&quot;booleanKey&quot;)
+val utcTimeKey: Key[UTCTime] = KeyType.UTCTimeKey.make(&quot;utcTimeKey&quot;)
+val notUsedKey: Key[String]  = KeyType.StringKey.make(&quot;notUsed&quot;)
 
 //parameters
 val charParam: Parameter[Char]       = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits)
 val intParam: Parameter[Int]         = intKey.set(1, 2, 3).withUnits(meter)
 val booleanParam: Parameter[Boolean] = booleanKey.set(true, false)
-val timestamp: Parameter[Instant]    = timestampKey.set(Instant.now)
+val utcTime: Parameter[UTCTime]      = utcTimeKey.set(UTCTime.now())
 
 //create DemandState and use sequential add
 val ds1: DemandState = DemandState(prefix, StateName(&quot;testStateName&quot;)).add(charParam).add(intParam)
 //create DemandState and add more than one Parameters using madd
 val ds2: DemandState = DemandState(prefix, StateName(&quot;testStateName&quot;)).madd(intParam, booleanParam)
 //create DemandState using apply
-val ds3: DemandState = DemandState(prefix, StateName(&quot;testStateName&quot;), Set(timestamp))
+val ds3: DemandState = DemandState(prefix, StateName(&quot;testStateName&quot;), Set(utcTime))
 
 //access keys
 val charKeyExists: Boolean = ds1.exists(charKey) //true
@@ -293,26 +293,26 @@ val missingKeys: Set[String] = ds3.missingKeys(
   charKey,
   intKey,
   booleanKey,
-  timestampKey,
+  utcTimeKey,
   notUsedKey
 )
 
 //remove keys
-val ds4: DemandState = ds3.remove(timestampKey)
+val ds4: DemandState = ds3.remove(utcTimeKey)
 
 //update existing keys - set it back by an hour
-val ds5: DemandState = ds3.add(timestampKey.set(Instant.now().minusSeconds(3600)))
+val ds5: DemandState = ds3.add(utcTimeKey.set(UTCTime(UTCTime.now().value.minusSeconds(3600))))
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JStateVariablesTest.java#L31-L77" target="_blank" title="Go to snippet source"></a><code class="language-java">//prefix
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JStateVariablesTest.java#L32-L78" target="_blank" title="Go to snippet source"></a><code class="language-java">//prefix
 Prefix prefix = new Prefix(&quot;wfos.prog.cloudcover&quot;);
 
 //keys
 Key&lt;Character&gt; charKey = JKeyType.CharKey().make(&quot;charKey&quot;);
 Key&lt;Integer&gt; intKey = JKeyType.IntKey().make(&quot;intKey&quot;);
 Key&lt;Boolean&gt; booleanKey = JKeyType.BooleanKey().make(&quot;booleanKey&quot;);
-Key&lt;Instant&gt; timestampKey = JKeyType.TimestampKey().make(&quot;timestampKey&quot;);
+Key&lt;UTCTime&gt; utcTimeKey = JKeyType.UTCTimeKey().make(&quot;utcTimeKey&quot;);
 Key&lt;String&gt; notUsedKey = JKeyType.StringKey().make(&quot;notUsed&quot;);
 
 
@@ -322,7 +322,7 @@ ObsId obsId = new ObsId(&quot;Obs001&quot;);
 Parameter&lt;Character&gt; charParam = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits);
 Parameter&lt;Integer&gt; intParam = intKey.set(1, 2, 3).withUnits(meter);
 Parameter&lt;Boolean&gt; booleanParam = booleanKey.set(true, false);
-Parameter&lt;Instant&gt; timestamp = timestampKey.set(Instant.now());
+Parameter&lt;UTCTime&gt; timestamp = utcTimeKey.set(UTCTime.now());
 
 //create DemandState and use sequential add
 DemandState ds1 = new DemandState(prefix, new StateName(&quot;testStateName&quot;)).add(charParam).add(intParam);
@@ -343,42 +343,42 @@ List&lt;Boolean&gt; v2 = ds2.parameter(booleanKey).jValues();
 Set&lt;String&gt; missingKeys = ds3.jMissingKeys(charKey,
         intKey,
         booleanKey,
-        timestampKey,
+        utcTimeKey,
         notUsedKey);
 
 //remove keys
-DemandState ds4 = ds3.remove(timestampKey);
+DemandState ds4 = ds3.remove(utcTimeKey);
 
 //update existing keys - set it back by an hour
-DemandState ds5 = ds3.add(timestampKey.set(Instant.now().minusSeconds(3600)));</code></pre></dd>
+DemandState ds5 = ds3.add(utcTimeKey.set(new UTCTime(UTCTime.now().value().minusSeconds(3600))));</code></pre></dd>
 </dl>
 <h2><a href="#currentstate" name="currentstate" class="anchor"><span class="anchor-link"></span></a>CurrentState</h2>
 <p>A state variable that is published by a component that describes its internal state. Used by Assemblies to determine command completion in Command Service.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/messages/StateVariablesTest.scala#L79-L125" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>//prefix
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/messages/StateVariablesTest.scala#L78-L124" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>//prefix
 val prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)
 
 //key
-val charKey      = KeyType.CharKey.make(&quot;charKey&quot;)
-val intKey       = KeyType.IntKey.make(&quot;intKey&quot;)
-val booleanKey   = KeyType.BooleanKey.make(&quot;booleanKey&quot;)
-val timestampKey = KeyType.TimestampKey.make(&quot;timestampKey&quot;)
-val notUsedKey   = KeyType.StringKey.make(&quot;notUsed&quot;)
+val charKey    = KeyType.CharKey.make(&quot;charKey&quot;)
+val intKey     = KeyType.IntKey.make(&quot;intKey&quot;)
+val booleanKey = KeyType.BooleanKey.make(&quot;booleanKey&quot;)
+val utcTimeKey = KeyType.UTCTimeKey.make(&quot;utcTimeKey&quot;)
+val notUsedKey = KeyType.StringKey.make(&quot;notUsed&quot;)
 
 //parameters
 val charParam    = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits)
 val intParam     = intKey.set(1, 2, 3).withUnits(meter)
 val booleanParam = booleanKey.set(true, false)
-val timestamp    = timestampKey.set(Instant.now)
+val utcTime      = utcTimeKey.set(UTCTime.now)
 
 //create CurrentState and use sequential add
 val cs1 = CurrentState(prefix, StateName(&quot;testStateName&quot;)).add(charParam).add(intParam)
 //create CurrentState and add more than one Parameters using madd
 val cs2 = CurrentState(prefix, StateName(&quot;testStateName&quot;)).madd(intParam, booleanParam)
 //create CurrentState using apply
-val cs3 = CurrentState(prefix, StateName(&quot;testStateName&quot;), Set(timestamp))
+val cs3 = CurrentState(prefix, StateName(&quot;testStateName&quot;), Set(utcTime))
 
 //access keys
 val charKeyExists = cs1.exists(charKey) //true
@@ -393,26 +393,26 @@ val missingKeys: Set[String] = cs3.missingKeys(
   charKey,
   intKey,
   booleanKey,
-  timestampKey,
+  utcTimeKey,
   notUsedKey
 )
 
 //remove keys
-val cs4 = cs3.remove(timestampKey)
+val cs4 = cs3.remove(utcTimeKey)
 
 //update existing keys - set it back by an hour
-val cs5 = cs3.add(timestampKey.set(Instant.now().minusSeconds(3600)))
+val cs5 = cs3.add(utcTimeKey.set(UTCTime(UTCTime.now().value.minusSeconds(3600))))
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JStateVariablesTest.java#L93-L139" target="_blank" title="Go to snippet source"></a><code class="language-java">//prefix
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JStateVariablesTest.java#L94-L140" target="_blank" title="Go to snippet source"></a><code class="language-java">//prefix
 Prefix prefix = new Prefix(&quot;wfos.prog.cloudcover&quot;);
 
 //keys
 Key&lt;Character&gt; charKey = JKeyType.CharKey().make(&quot;charKey&quot;);
 Key&lt;Integer&gt; intKey = JKeyType.IntKey().make(&quot;intKey&quot;);
 Key&lt;Boolean&gt; booleanKey = JKeyType.BooleanKey().make(&quot;booleanKey&quot;);
-Key&lt;Instant&gt; timestampKey = JKeyType.TimestampKey().make(&quot;timestampKey&quot;);
+Key&lt;UTCTime&gt; timestampKey = JKeyType.UTCTimeKey().make(&quot;timestampKey&quot;);
 Key&lt;String&gt; notUsedKey = JKeyType.StringKey().make(&quot;notUsed&quot;);
 
 
@@ -422,7 +422,7 @@ ObsId obsId = new ObsId(&quot;Obs001&quot;);
 Parameter&lt;Character&gt; charParam = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits);
 Parameter&lt;Integer&gt; intParam = intKey.set(1, 2, 3).withUnits(meter);
 Parameter&lt;Boolean&gt; booleanParam = booleanKey.set(true, false);
-Parameter&lt;Instant&gt; timestamp = timestampKey.set(Instant.now());
+Parameter&lt;UTCTime&gt; timestamp = timestampKey.set(UTCTime.now());
 
 //create CurrentState and use sequential add
 CurrentState cs1 = new CurrentState(prefix, new StateName(&quot;testStateName&quot;)).add(charParam).add(intParam);
@@ -450,14 +450,14 @@ Set&lt;String&gt; missingKeys = cs3.jMissingKeys(charKey,
 CurrentState cs4 = cs3.remove(timestampKey);
 
 //update existing keys - set it back by an hour
-CurrentState cs5 = cs3.add(timestampKey.set(Instant.now().minusSeconds(3600)));</code></pre></dd>
+CurrentState cs5 = cs3.add(timestampKey.set(new UTCTime(UTCTime.now().value().minusSeconds(3600))));</code></pre></dd>
 </dl>
 <h2><a href="#json-serialization" name="json-serialization" class="anchor"><span class="anchor-link"></span></a>JSON Serialization</h2>
 <p>State variables can be serialized to JSON. The library has provided <strong>JsonSupport</strong> helper class and methods to serialize DemandState and CurrentState.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/messages/StateVariablesTest.scala#L142-L172" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/messages/StateVariablesTest.scala#L141-L171" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
 
 //key
 val k1: Key[MatrixData[Double]] = DoubleMatrixKey.make(&quot;myMatrix&quot;)
@@ -490,7 +490,7 @@ val ds1: DemandState  = JsonSupport.readStateVariable[DemandState](dsJson)
 val cs1: CurrentState = JsonSupport.readStateVariable[CurrentState](csJson)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JStateVariablesTest.java#L155-L181" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JStateVariablesTest.java#L156-L182" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
 Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyType.DoubleMatrixKey().make(&quot;myMatrix&quot;);
 
 //values
@@ -525,7 +525,7 @@ CurrentState cs1 = JavaJsonSupport.readStateVariable(csJson);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/messages/StateVariablesTest.scala#L186-L228" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/messages/StateVariablesTest.scala#L185-L227" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val encoderKey: Key[Int] = KeyType.IntKey.make(&quot;encoder&quot;)
 val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc.&quot;)
@@ -570,7 +570,7 @@ val finalStatusEvent = statusEvent.madd(Set(miscParam1, encParam1))
 val uniqueKeys3 = finalStatusEvent.paramSet.toList.map(_.keyName)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JStateVariablesTest.java#L193-L231" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JStateVariablesTest.java#L194-L232" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);

@@ -324,7 +324,8 @@ private Optional&lt;Event&gt; eventGenerator(Event baseEvent) {
     // add logic here to create a new event and return the same
     return Optional.ofNullable(baseEvent);
 }</code></pre></dd>
-</dl>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>Callbacks like <code>eventGenerator</code> are not thread-safe on the JVM. If you are doing side effects/mutations inside the callback, you should ensure that it is done in a thread-safe way inside an actor. Here is an <a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/ConcurrencyInCallbacksExample.scala">example</a> of how it can be done.</p></div>
 <h3><a href="#with-event-stream" name="with-event-stream" class="anchor"><span class="anchor-link"></span></a>With Event Stream</h3>
 <p>In order to publish a continuous stream of events, this stream-based API can also be used. If an infinite stream is provided, shutdown of the stream needs to be taken care by the users. (Note that streams discussed here are an Akka feature that is supported in event publisher and subscriber APIs. See <a href="https://doc.akka.io/docs/akka/current/stream/index.html?language=scala">Akka stream documentation.</a>)</p>
 <dl>
@@ -348,7 +349,7 @@ publisher.publish(eventStream, failure ⇒ onError(failure))</code></pre></dd>
 
 return eventService.defaultPublisher().&lt;CompletionStage&lt;Done&gt;&gt;publish(eventStream, failure -&gt; { /*do something*/ });</code></pre></dd>
 </dl>
-<p>This API also demonstrates the usage of onError callback which can be used to be alerted to and handle events that failed while being published. The <code>eventGenerator</code> API showed just above also demonstrates the use of the <code>onError</code> callback.</p>
+<p>This API also demonstrates the usage of onError callback which can be used to be alerted to and handle events that failed while being published. </p>
 <p>You can find complete list of APIs supported by <code>EventPublisher</code> and <code>IEventPublisher</code> with detailed description of each API here: </p>
 <ul>
   <li><a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventPublisher.html">EventPublisher</a></li>
@@ -376,7 +377,8 @@ return eventService.defaultPublisher().&lt;CompletionStage&lt;Done&gt;&gt;publis
 EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
 return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /*do something*/ });
 </code></pre></dd>
-</dl>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>Callbacks are not thread-safe on the JVM. If you need to do side effects/mutations, prefer using <code>subscribeActorRef</code> API.</p></div>
 <h3><a href="#with-asynchronous-callback" name="with-asynchronous-callback" class="anchor"><span class="anchor-link"></span></a>With Asynchronous Callback</h3>
 <p>This API is useful when you want to subscribe to events with a callback that has an asynchronous behavior. The callback is of type event =&gt; future and it ensures that the event callbacks are called sequentially in such a way that the subsequent execution will start only after the prior one finishes. This API gives the guarantee of ordered execution of the asynchronous callbacks.</p>
 <dl>
