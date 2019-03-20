@@ -137,6 +137,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -268,7 +269,7 @@ tmtsoftware/csw
   val calculationConfig = await(getAssemblyConfig)
 
   // 2. create a worker actor which is used by this assembly
-  val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.make(calculationConfig))
+  val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.behavior(calculationConfig))
 
   // 3. find a Hcd connection from the connections provided in componentInfo
   val maybeConnection =
@@ -282,8 +283,8 @@ tmtsoftware/csw
       resolveHcd().map {
         case Some(hcd) ⇒
           runningHcds = runningHcds.updated(maybeConnection.get, Some(CommandServiceFactory.make(hcd)(ctx.system)))
-          diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.make(runningHcds(maybeConnection.get).get, worker))
-          commandHandler = ctx.spawnAnonymous(CommandHandler.make(calculationConfig, runningHcds(maybeConnection.get)))
+          diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.behavior(runningHcds(maybeConnection.get).get, worker))
+          commandHandler = ctx.spawnAnonymous(CommandHandler.behavior(calculationConfig, runningHcds(maybeConnection.get)))
         case None ⇒ // do something
       }
     case None ⇒ Future.successful(Unit)
@@ -300,7 +301,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 
     // create a worker actor which is used by this assembly
     CompletableFuture&lt;ActorRef&lt;WorkerActorMsg&gt;&gt; worker =
-            configDataCompletableFuture.thenApply(config -&gt; ctx.spawnAnonymous(WorkerActor.make(config)));
+            configDataCompletableFuture.thenApply(config -&gt; ctx.spawnAnonymous(WorkerActor.behavior(config)));
 
     // find a Hcd connection from the connections provided in componentInfo
     Optional&lt;Connection&gt; mayBeConnection = componentInfo.getConnections().stream()
@@ -316,7 +317,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
                 else {
                     runningHcds.put(connection, Optional.of(CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem())));
                 }
-                diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisherFactory.make(CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem()), workerActor));
+                diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisher.behavior(CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem()), workerActor));
             })).get();
 
 }</code></pre></dd>
@@ -328,7 +329,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
   val hcdConfig = await(getHcdConfig)
 
   // create a worker actor which is used by this hcd
-  val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.make(hcdConfig))
+  val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.behavior(hcdConfig))
 
   // initialise some state by using the worker actor created above
   current = await(worker ? InitialState)
@@ -344,7 +345,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
     getConfig().thenAccept(config -&gt; hcdConfig = config);
 
     // create a worker actor which is used by this hcd
-    worker = ctx.spawnAnonymous(WorkerActor.make(hcdConfig));
+    worker = ctx.spawnAnonymous(WorkerActor.behavior(hcdConfig));
 
     // initialise some state by using the worker actor created above
     CompletionStage&lt;Integer&gt; askCurrent = AskPattern.ask(worker, WorkerActorMsgs.JInitialState::new, Duration.ofSeconds(5), ctx.getSystem().scheduler());

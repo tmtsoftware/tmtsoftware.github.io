@@ -137,6 +137,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -418,7 +419,7 @@ val immediateCommandF = async {
   <dt>Java/submit w/immediate-response
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L126-L138" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; immediateCommandF =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L125-L137" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; immediateCommandF =
         hcdCmdService
                 .submit(immediateCmd, timeout)
                 .thenApply(
@@ -451,7 +452,7 @@ async {
 }</code></pre></dd>
   <dt>Java/submit w/invalid response</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L145-L158" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup invalidSetup = new Setup(prefix(), invalidCmd(), Optional.empty()).add(intParameter2);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L144-L157" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup invalidSetup = new Setup(prefix(), invalidCmd(), Optional.empty()).add(intParameter2);
 CompletableFuture&lt;CommandResponse.SubmitResponse&gt; invalidCommandF =
         hcdCmdService.submit(invalidSetup, timeout).thenApply(
                 response -&gt; {
@@ -484,7 +485,7 @@ val longRunningResultF = async {
 }</code></pre></dd>
   <dt>Java/submit long running</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L169-L184" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup1 = new Setup(prefix(), longRunningCmd(), Optional.empty()).add(intParameter1);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L168-L183" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup1 = new Setup(prefix(), longRunningCmd(), Optional.empty()).add(intParameter1);
 Key&lt;Integer&gt; encoder = JKeyType.IntKey().make(&quot;encoder&quot;);
 CompletableFuture&lt;Optional&lt;Integer&gt;&gt; longRunningResultF =
         hcdCmdService.submit(longRunningSetup1, timeout)
@@ -531,7 +532,7 @@ val longRunningQueryResultF = async {
 Await.result(longRunningQueryResultF, timeout.duration) shouldBe Some(20)</code></pre></dd>
   <dt>Java/submit long running/query</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L191-L218" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup2 = longRunningSetup1.cloneCommand();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L190-L217" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup2 = longRunningSetup1.cloneCommand();
 CompletableFuture&lt;CommandResponse.SubmitResponse&gt; longRunningQueryResultF =
         hcdCmdService.submit(longRunningSetup2, timeout);
 
@@ -582,7 +583,7 @@ val queryFinalF = async {
 Await.result(queryFinalF, timeout.duration) shouldBe Some(20)</code></pre></dd>
   <dt>Java/submit long running/queryFinal</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L222-L237" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup3 = longRunningSetup1.cloneCommand();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L221-L236" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup3 = longRunningSetup1.cloneCommand();
 hcdCmdService.submit(longRunningSetup3, timeout);
 
 CompletableFuture&lt;Optional&lt;Integer&gt;&gt; int3F =
@@ -618,7 +619,7 @@ val oneWayF = async {
 Await.ready(oneWayF, timeout.duration)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L241-L250" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup onewaySetup = new Setup(prefix(), onewayCmd(), Optional.empty()).add(intParameter1);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L240-L249" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup onewaySetup = new Setup(prefix(), onewayCmd(), Optional.empty()).add(intParameter1);
 CompletableFuture onewayF = hcdCmdService
         .oneway(onewaySetup, timeout)
         .thenAccept(onewayResponse -&gt; {
@@ -647,7 +648,7 @@ CompletableFuture onewayF = hcdCmdService
 Await.result(validateCommandF, timeout.duration) shouldBe true</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L241-L250" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup onewaySetup = new Setup(prefix(), onewayCmd(), Optional.empty()).add(intParameter1);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L240-L249" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup onewaySetup = new Setup(prefix(), onewayCmd(), Optional.empty()).add(intParameter1);
 CompletableFuture onewayF = hcdCmdService
         .oneway(onewaySetup, timeout)
         .thenAccept(onewayResponse -&gt; {
@@ -669,7 +670,7 @@ val queryValue = Await.result(assemblyCmdService.query(longRunningSetup2.runId),
 queryValue shouldBe a[CompletedWithResult]</code></pre></dd>
   <dt>Java/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L277-L278" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;CommandResponse.QueryResponse&gt; queryResponseF2 = hcdCmdService.query(longRunningSetup2.runId(), timeout);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L276-L277" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;CommandResponse.QueryResponse&gt; queryResponseF2 = hcdCmdService.query(longRunningSetup2.runId(), timeout);
 Assert.assertTrue(queryResponseF2.get() instanceof CommandResponse.CompletedWithResult);</code></pre></dd>
 </dl>
 <h3><a href="#submitall" name="submitall" class="anchor"><span class="anchor-link"></span></a>submitAll</h3>
@@ -687,13 +688,13 @@ submitAllResponse(1) shouldBe a[CompletedWithResult]
 submitAllResponse(2) shouldBe a[Invalid]</code></pre></dd>
   <dt>Java/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L284-L298" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup submitAllSetup1 = new Setup(prefix(), immediateCmd(), Optional.empty()).add(encoderParam);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L283-L297" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup submitAllSetup1 = new Setup(prefix(), immediateCmd(), Optional.empty()).add(encoderParam);
 Setup submitAllSetup2 = new Setup(prefix(), longRunningCmd(), Optional.empty()).add(encoderParam);
 Setup submitAllSetup3 = new Setup(prefix(), invalidCmd(), Optional.empty()).add(encoderParam);
 
 CompletableFuture&lt;List&lt;CommandResponse.SubmitResponse&gt;&gt; submitAllF = hcdCmdService
         .submitAll(
-                Arrays.asList(submitAllSetup1, submitAllSetup2, submitAllSetup3),
+                List.of(submitAllSetup1, submitAllSetup2, submitAllSetup3),
                 timeout
         );
 
@@ -717,9 +718,9 @@ submitAllResponse2(0) shouldBe a[Completed]
 submitAllResponse2(1) shouldBe a[Invalid]</code></pre></dd>
   <dt>Java/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L302-L311" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;List&lt;CommandResponse.SubmitResponse&gt;&gt; submitAllF2 = hcdCmdService
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L301-L310" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;List&lt;CommandResponse.SubmitResponse&gt;&gt; submitAllF2 = hcdCmdService
         .submitAll(
-                Arrays.asList(submitAllSetup1, submitAllSetup3, submitAllSetup2),
+                List.of(submitAllSetup1, submitAllSetup3, submitAllSetup2),
                 timeout
         );
 
@@ -730,7 +731,9 @@ Assert.assertTrue(submitAllResponse2.get(1) instanceof CommandResponse.Invalid);
 </dl>
 <p>In this case, the returned list is of length 2 rather than 3.</p>
 <h3><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>subscribeCurrentState</h3>
-<p>This method provided by <code>CommandService</code> can be used to subscribe to the <a href="../messages/states.html">CurrentState</a> of a component by providing a callback that is called with the arrival of every <code>CurrentState</code> item.  <code>SubscribeCurrentState</code> returns a handle of <code>CurrentStateSubscription</code> which should be used to unsubscribe the subscription.</p>
+<p>This method provided by <code>CommandService</code> can be used to subscribe to the <a href="../messages/states.html">CurrentState</a> of a component by providing a callback that is called with the arrival of every <code>CurrentState</code> item.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Callbacks are not thread-safe on the JVM. If you are doing side effects/mutations inside the callback, you should ensure that it is done in a thread-safe way inside an actor. Here is an <a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/ConcurrencyInCallbacksExample.scala">example</a> of how it can be done.</p></div>
+<p><code>SubscribeCurrentState</code> returns a handle of <code>CurrentStateSubscription</code> which should be used to unsubscribe the subscription.</p>
 <p>The following example code shows an Assembly that subscribes to all <code>CurrentState</code> of an HCD. The example sends a <code>Setup</code> with an encoder parameter value to the HCD as a <code>oneway</code> message.</p>
 <dl>
   <dt>Scala</dt>
@@ -754,7 +757,7 @@ cstate(encoder).head shouldBe expectedEncoderValue
 subscription.unsubscribe()</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L315-L481" target="_blank" title="Go to snippet source"></a><code class="language-java">// Subscriber code
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L314-L480" target="_blank" title="Go to snippet source"></a><code class="language-java">// Subscriber code
 int expectedEncoderValue = 234;
 Setup currStateSetup = new Setup(prefix(), hcdCurrentStateCmd(), Optional.empty()).add(encoder.set(expectedEncoderValue));
 // Setup a callback response to CurrentState - use AtomicInteger to capture final value
@@ -843,7 +846,7 @@ val commandResponse = Await.result(matchResponseF, timeout.duration)
 commandResponse shouldBe Completed(setupWithMatcher.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L341-L374" target="_blank" title="Go to snippet source"></a><code class="language-java">Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;encoder&quot;).set(100);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L340-L373" target="_blank" title="Go to snippet source"></a><code class="language-java">Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;encoder&quot;).set(100);
 Setup setupWithMatcher = new Setup(prefix(), matcherCmd(), Optional.empty()).add(param);
 
 // create a StateMatcher which specifies the desired algorithm and state to be matched.
@@ -907,7 +910,7 @@ Assert.assertEquals(expectedResponse, actualResponse);</code></pre></dd>
 Await.result(onewayMatchF, timeout.duration) shouldBe Completed(setupWithMatcher.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L378-L389" target="_blank" title="Go to snippet source"></a><code class="language-java"> // create a DemandMatcher which specifies the desired state to be matched.
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L377-L388" target="_blank" title="Go to snippet source"></a><code class="language-java"> // create a DemandMatcher which specifies the desired state to be matched.
  StateMatcher stateMatcher = new DemandMatcher(new DemandState(prefix(), new StateName(&quot;testStateName&quot;)).add(param), false, timeout);
 
  // create matcher instance

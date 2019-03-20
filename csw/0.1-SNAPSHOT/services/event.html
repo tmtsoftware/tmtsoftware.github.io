@@ -137,6 +137,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -372,10 +373,10 @@ return eventService.defaultPublisher().&lt;CompletionStage&lt;Done&gt;&gt;publis
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L40-L45" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L37-L42" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
 EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /*do something*/ });
+return subscriber.subscribeCallback(Set.of(filterWheelEventKey), event -&gt; { /*do something*/ });
 </code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Callbacks are not thread-safe on the JVM. If you need to do side effects/mutations, prefer using <code>subscribeActorRef</code> API.</p></div>
@@ -395,11 +396,11 @@ private def callback(event: Event): Future[String] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L50-L60" target="_blank" title="Go to snippet source"></a><code class="language-java">public IEventSubscription subscribe() {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L47-L57" target="_blank" title="Go to snippet source"></a><code class="language-java">public IEventSubscription subscribe() {
     IEventSubscriber subscriber = eventService.defaultSubscriber();
 
     EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-    return subscriber.subscribeAsync(Collections.singleton(filterWheelEventKey), this::callback);
+    return subscriber.subscribeAsync(Set.of(filterWheelEventKey), this::callback);
 }
 
 private CompletableFuture&lt;String&gt; callback(Event event) {
@@ -414,47 +415,35 @@ private CompletableFuture&lt;String&gt; callback(Event event) {
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L43-L59" target="_blank" title="Go to snippet source"></a><code class="language-scala">def subscribe(ctx: ActorContext[TopLevelActorMessage]): EventSubscription = {
   val subscriber                    = eventService.defaultSubscriber
-  val eventHandler: ActorRef[Event] = ctx.spawnAnonymous(EventHandler.make())
+  val eventHandler: ActorRef[Event] = ctx.spawnAnonymous(EventHandler.behavior)
 
   subscriber.subscribeActorRef(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))), eventHandler)
 }
 
 object EventHandler {
-  def make(): Behavior[Event] = Behaviors.setup(ctx ⇒ new EventHandler(ctx))
-}
+  val behavior: Behavior[Event] = Behaviors.setup { ctx ⇒
+    //setup required for the actor
 
-class EventHandler(ctx: ActorContext[Event]) extends AbstractBehavior[Event] {
-  override def onMessage(msg: Event): Behavior[Event] = {
-    // handle messages
-    Behaviors.same
+    Behaviors.receiveMessage {
+      case _ ⇒ //handle messages and return new behavior with changed state
+        Behaviors.same
+    }
   }
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L64-L91" target="_blank" title="Go to snippet source"></a><code class="language-java">public IEventSubscription subscribe(ActorContext&lt;TopLevelActorMessage&gt; ctx) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L61-L76" target="_blank" title="Go to snippet source"></a><code class="language-java">public IEventSubscription subscribe(ActorContext&lt;TopLevelActorMessage&gt; ctx) {
 
     IEventSubscriber subscriber = eventService.defaultSubscriber();
-    ActorRef&lt;Event&gt; eventHandler = ctx.spawnAnonymous(new JEventHandlerFactory().make());
+    ActorRef&lt;Event&gt; eventHandler = ctx.spawnAnonymous(JEventHandler.behavior());
 
     EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-    return subscriber.subscribeActorRef(Collections.singleton(filterWheelEventKey), eventHandler);
+    return subscriber.subscribeActorRef(Set.of(filterWheelEventKey), eventHandler);
 }
 
-public class JEventHandlerFactory {
-    public Behavior&lt;Event&gt; make() {
-        return Behaviors.setup(JEventHandler::new);
-    }
-}
+public static class JEventHandler {
 
-public class JEventHandler extends AbstractBehavior&lt;Event&gt; {
-    private ActorContext&lt;Event&gt; ctx;
-
-    JEventHandler(ActorContext&lt;Event&gt; context) {
-        ctx = context;
-    }
-
-    @Override
-    public Receive&lt;Event&gt; createReceive() {
+    public static Behavior&lt;Event&gt; behavior() {
         // handle messages
         return null;
     }
@@ -476,10 +465,10 @@ public class JEventHandler extends AbstractBehavior&lt;Event&gt; {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L97-L102" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L82-L87" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
 EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-return subscriber.subscribe(Collections.singleton(filterWheelEventKey)).to(Sink.foreach(event -&gt; { /*do something*/ })).run(mat);
+return subscriber.subscribe(Set.of(filterWheelEventKey)).to(Sink.foreach(event -&gt; { /*do something*/ })).run(mat);
 </code></pre></dd>
 </dl>
 <h3><a href="#controlling-subscription-rate" name="controlling-subscription-rate" class="anchor"><span class="anchor-link"></span></a>Controlling Subscription Rate</h3>
@@ -500,10 +489,10 @@ return subscriber.subscribe(Collections.singleton(filterWheelEventKey)).to(Sink.
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L108-L113" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L93-L98" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 
 EventKey filterWheelEventKey = new EventKey(hcdLocation.prefix(), new EventName(&quot;filter_wheel&quot;));
-return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), event -&gt; { /* do something*/ }, Duration.ofMillis(1000), SubscriptionModes.jRateAdapterMode());
+return subscriber.subscribeCallback(Set.of(filterWheelEventKey), event -&gt; { /* do something*/ }, Duration.ofMillis(1000), SubscriptionModes.jRateAdapterMode());
 </code></pre></dd>
 </dl>
 <p>There are two types of Subscription modes:</p>
@@ -523,7 +512,7 @@ return subscriber.subscribeCallback(Collections.singleton(filterWheelEventKey), 
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L120-L123" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventSubscribeExamples.java#L105-L108" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>IEventSubscriber subscriber = eventService.defaultSubscriber();
 subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event -&gt; { /* do something*/ });
 </code></pre></dd>
 </dl><div class="callout warning "><div class="callout-title">Warning</div>

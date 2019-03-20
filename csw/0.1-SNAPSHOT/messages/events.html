@@ -137,6 +137,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -427,7 +428,7 @@ val se4: ObserveEvent = se3.remove(k3)
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JEventsTest.java#L107-L144" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JEventsTest.java#L106-L143" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; k1 = JKeyType.IntKey().make(&quot;readoutsCompleted&quot;);
 Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;coaddsCompleted&quot;);
 Key&lt;String&gt; k3 = JKeyType.StringKey().make(&quot;fileID&quot;);
@@ -506,7 +507,7 @@ val observeEvent1: ObserveEvent = JsonSupport.readEvent[ObserveEvent](observeJso
 val systemEvent1: SystemEvent   = JsonSupport.readEvent[SystemEvent](systemJson)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JEventsTest.java#L158-L189" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JEventsTest.java#L156-L187" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
 Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyType.DoubleMatrixKey().make(&quot;myMatrix&quot;);
 
 //prefixes
@@ -590,7 +591,7 @@ val finalStatusEvent = systemEvent.madd(Set(miscParam1, encParam1))
 val uniqueKeys3 = finalStatusEvent.paramSet.toList.map(_.keyName)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JEventsTest.java#L201-L240" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JEventsTest.java#L199-L238" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc&quot;);
@@ -619,17 +620,17 @@ SystemEvent event = new SystemEvent(prefix1, name1).madd(
         filterParam2,
         filterParam3);
 //four duplicate keys are removed; now contains one Encoder and one Filter key
-List&lt;String&gt; uniqueKeys1 = event.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+Set&lt;String&gt; uniqueKeys1 = event.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toUnmodifiableSet());
 
 //try adding duplicate keys via add + madd
 SystemEvent changedEvent = event.add(encParam3).madd(filterParam1, filterParam2, filterParam3);
 //duplicate keys will not be added. Should contain one Encoder and one Filter key
-List&lt;String&gt; uniqueKeys2 = changedEvent.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+Set&lt;String&gt; uniqueKeys2 = changedEvent.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toUnmodifiableSet());
 
 //miscKey(unique) will be added; encoderKey(duplicate) will not be added
 SystemEvent finalEvent = changedEvent.madd(miscParam1, encParam1);
 //now contains encoderKey, filterKey, miscKey
-List&lt;String&gt; uniqueKeys3 = finalEvent.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
+Set&lt;String&gt; uniqueKeys3 = finalEvent.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toUnmodifiableSet());</code></pre></dd>
 </dl>
 <h2><a href="#protobuf" name="protobuf" class="anchor"><span class="anchor-link"></span></a>Protobuf</h2>
 <p>Protobuf aka Protocol buffers, are a language-neutral, platform-neutral extensible mechanism for serializing structured data. For more, visit <a href="https://developers.google.com/protocol-buffers/">Protobuf home page</a></p>
@@ -669,7 +670,7 @@ val pbSystemEvent1: SystemEvent  = PbConverter.fromPbEvent(byteArray3)
 val pbSystemEvent2: SystemEvent  = PbConverter.fromPbEvent(byteArray4)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JEventsTest.java#L252-L282" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>//prefixes
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/messages/JEventsTest.java#L250-L280" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>//prefixes
 Prefix prefix1 = new Prefix(&quot;tcs.pk&quot;);
 EventName name1 = new EventName(&quot;targetCoords&quot;);
 Prefix prefix2 = new Prefix(&quot;tcs.cm&quot;);

@@ -137,6 +137,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -283,7 +284,7 @@ tmtsoftware/csw
   <dt>logging.conf
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-logging/csw-logging-client/src/main/resources/logging.conf#L22-L83" target="_blank" title="Go to snippet source"></a><code class="language-conf">csw-logging {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-logging/csw-logging-client/src/main/resources/logging.conf#L22-L85" target="_blank" title="Go to snippet source"></a><code class="language-conf">csw-logging {
 
     # Default appender and is recommended only for dev setup.
     # To use multiple appenders give comma separated list of appenders.
@@ -306,8 +307,10 @@ tmtsoftware/csw
         fullHeaders = true
         # Sort the fields in Json objects
         sorted = true
-        # Directory to hold log files under base path $HOME/tmt/logs (if $HOME env var is not set then logs are stored under
-        # /tmp/tmt/logs)
+        # Base path directory to hold log files from tmt apps. The value is picked from env var `TMT_LOG_HOME`. It is necessary
+        # to have `TMT_LOG_HOME` set as env var otherwise an exception will be thrown when FileAppender gets initialized.
+        baseLogPath = ${?TMT_LOG_HOME}
+        # Directory to hold log files under base path $TMT_LOG_HOME i.e. basePath/logPath
         logPath = &quot;&quot;
         # Common log messages below this level are removed, none removed when set to trace
         logLevelLimit = trace
@@ -380,7 +383,7 @@ tmtsoftware/csw
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;@version&quot;:&quot;0.1&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,
+   &quot;akka://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,
  &quot;class&quot;:&quot;csw.location.LocationServiceExampleClient&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
  &quot;line&quot;:149,
@@ -390,7 +393,7 @@ tmtsoftware/csw
 </code></pre></dd>
   <dt>pretty=false</dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,&quot;@host&quot;:&quot;INsaloni.local&quot;,&quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,&quot;@severity&quot;:&quot;INFO&quot;,&quot;@version&quot;:&quot;0.1&quot;,&quot;actor&quot;:&quot;akka.tcp://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,&quot;class&quot;:&quot;csw.location.LocationServiceExampleClient&quot;,&quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,&quot;line&quot;:149,&quot;message&quot;:&quot;Result of the find call: None&quot;,&quot;timestamp&quot;:&quot;2017-11-24T04:16:42.108Z&quot;}
+  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,&quot;@host&quot;:&quot;INsaloni.local&quot;,&quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,&quot;@severity&quot;:&quot;INFO&quot;,&quot;@version&quot;:&quot;0.1&quot;,&quot;actor&quot;:&quot;akka://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,&quot;class&quot;:&quot;csw.location.LocationServiceExampleClient&quot;,&quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,&quot;line&quot;:149,&quot;message&quot;:&quot;Result of the find call: None&quot;,&quot;timestamp&quot;:&quot;2017-11-24T04:16:42.108Z&quot;}
 </code></pre></dd>
 </dl>
 <p>Similarly, turning <code>oneLine</code> on will produce log statements in following format:</p>
@@ -502,7 +505,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala Class</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/genericlogger/loggers.scala#L9-L12" target="_blank" title="Go to snippet source"></a><code class="language-scala">class GenericClass {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/genericlogger/loggers.scala#L10-L13" target="_blank" title="Go to snippet source"></a><code class="language-scala">class GenericClass {
 
   val log: Logger = GenericLoggerFactory.getLogger
 }</code></pre></dd>
@@ -516,12 +519,17 @@ tmtsoftware/csw
 <dl>
   <dt>Scala Actor</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/genericlogger/loggers.scala#L16-L22" target="_blank" title="Go to snippet source"></a><code class="language-scala">class GenericActor extends akka.actor.AbstractActor {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/genericlogger/loggers.scala#L17-L28" target="_blank" title="Go to snippet source"></a><code class="language-scala">object GenericActor {
 
-  //context is available from akka.actor.Actor
-  val log: Logger = GenericLoggerFactory.getLogger(context)
+  def behavior[T]: Behavior[T] = Behaviors.setup[T] { context ⇒
+    val log: Logger = GenericLoggerFactory.getLogger(context)
+    // actor setup
 
-  override def createReceive() = ???
+    Behaviors.receiveMessage {
+      case _ ⇒ // handle messages and return new behavior
+        Behaviors.same
+    }
+  }
 }</code></pre></dd>
   <dt>Java Actor</dt>
   <dd>
@@ -539,7 +547,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala Typed Actor</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/genericlogger/loggers.scala#L26-L29" target="_blank" title="Go to snippet source"></a><code class="language-scala">class GenericTypedActor(ctx: ActorContext[ComponentMessage]) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/genericlogger/loggers.scala#L32-L35" target="_blank" title="Go to snippet source"></a><code class="language-scala">class GenericTypedActor(ctx: ActorContext[ComponentMessage]) {
 
   val log: Logger = GenericLoggerFactory.getLogger(ctx)
 }</code></pre></dd>
@@ -562,11 +570,11 @@ tmtsoftware/csw
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L154" target="_blank" title="Go to snippet source"></a><code class="language-scala">log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L156" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Find result: &quot; + connectionInfo(findResult.get().connection()));</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L153" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Find result: &quot; + connectionInfo(findResult.get().connection()));</code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L189" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.get().connection()));</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L184" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.get().connection()));</code></pre></dd>
 </dl>
 <p>The output of log statement will be:</p>
 <dl>
@@ -578,7 +586,7 @@ tmtsoftware/csw
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;@version&quot;:&quot;0.1&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,
+   &quot;akka://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,
  &quot;class&quot;:&quot;csw.location.LocationServiceExampleClient&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
  &quot;line&quot;:149,
@@ -594,7 +602,7 @@ tmtsoftware/csw
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;@version&quot;:&quot;0.1&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.23.195:53625/user/LocationServiceExampleClient&quot;,
+   &quot;akka://csw-examples-locationServiceClient@10.131.23.195:53625/user/LocationServiceExampleClient&quot;,
  &quot;class&quot;:&quot;csw.location.JLocationServiceExampleClient&quot;,
  &quot;message&quot;:&quot;Result of the find call : None&quot;,
  &quot;timestamp&quot;:&quot;2017-11-30T11:02:54.691Z&quot;
@@ -608,7 +616,7 @@ tmtsoftware/csw
  &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.23.195:53625/user/LocationServiceExampleClient&quot;,
+   &quot;akka://csw-examples-locationServiceClient@10.131.23.195:53625/user/LocationServiceExampleClient&quot;,
  &quot;class&quot;:&quot;csw.location.JLocationServiceExampleClient&quot;,
  &quot;message&quot;:
    &quot;Resolve result: LocationServiceExampleComponent-assembly-akka, component type=Assembly, connection type=AkkaType&quot;,
@@ -624,20 +632,18 @@ tmtsoftware/csw
          Map(Keys.OBS_ID → &quot;foo_obs_id&quot;, &quot;exampleConnection&quot; → exampleConnection.name))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L146-L150" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Attempting to find &quot; + exampleConnection,
-        new HashMap&lt;String, Object&gt;() {{
-            put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
-            put(&quot;exampleConnection&quot;, exampleConnection.name());
-        }});</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L143-L147" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Attempting to find &quot; + exampleConnection,
+        Map.of(
+            JKeys.OBS_ID, &quot;foo_obs_id&quot;,
+            &quot;exampleConnection&quot;, exampleConnection.name()
+        ));</code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L178-L183" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; {
-    Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
-    map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
-    map.put(&quot;exampleConnection&quot;, exampleConnection.name());
-    return map;
-});</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L175-L178" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; Map.of(
+    JKeys.OBS_ID, &quot;foo_obs_id&quot;,
+    &quot;exampleConnection&quot;, exampleConnection.name()
+));</code></pre></dd>
 </dl>
 <p>The output of log statement will be: </p>
 <dl>
@@ -649,7 +655,7 @@ tmtsoftware/csw
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;@version&quot;:&quot;0.1&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,
+   &quot;akka://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,
  &quot;class&quot;:&quot;csw.location.LocationServiceExampleClient&quot;,
  &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
  &quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,
@@ -668,7 +674,7 @@ tmtsoftware/csw
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;@version&quot;:&quot;0.1&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.23.195:53625/user/LocationServiceExampleClient&quot;,
+   &quot;akka://csw-examples-locationServiceClient@10.131.23.195:53625/user/LocationServiceExampleClient&quot;,
  &quot;class&quot;:&quot;csw.location.JLocationServiceExampleClient&quot;,
  &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
  &quot;message&quot;:
@@ -686,7 +692,7 @@ tmtsoftware/csw
  &quot;@severity&quot;:&quot;INFO&quot;,
  &quot;@version&quot;:&quot;0.1&quot;,
  &quot;actor&quot;:
-   &quot;akka.tcp://csw-examples-locationServiceClient@10.131.23.195:53625/user/LocationServiceExampleClient&quot;,
+   &quot;akka://csw-examples-locationServiceClient@10.131.23.195:53625/user/LocationServiceExampleClient&quot;,
  &quot;class&quot;:&quot;csw.location.JLocationServiceExampleClient&quot;,
  &quot;exampleConnection&quot;:&quot;LocationServiceExampleComponent-assembly-akka&quot;,
  &quot;message&quot;:
@@ -704,14 +710,14 @@ tmtsoftware/csw
 log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L289-L292" target="_blank" title="Go to snippet source"></a><code class="language-java">} catch (InterruptedException | ExecutionException ex) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L284-L287" target="_blank" title="Go to snippet source"></a><code class="language-java">} catch (InterruptedException | ExecutionException ex) {
     log.info(ex.getMessage(), ex);
     throw ex;
 }</code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L316-L317" target="_blank" title="Go to snippet source"></a><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L311-L312" target="_blank" title="Go to snippet source"></a><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
 log.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
 </dl>
 <h2><a href="#create-loggerfactory" name="create-loggerfactory" class="anchor"><span class="anchor-link"></span></a>Create LoggerFactory</h2><div class="callout note "><div class="callout-title">Note</div>
@@ -742,7 +748,7 @@ LoggerFactory loggerFactory = jLoggerFactory.asScala();</code></pre></dd>
 val loggingSystem: LoggingSystem = LoggingSystemFactory.start(&quot;LocationServiceExampleClient&quot;, &quot;0.1&quot;, host, actorSystem)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L334-L335" target="_blank" title="Go to snippet source"></a><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L329-L330" target="_blank" title="Go to snippet source"></a><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
 loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&quot;, &quot;0.1&quot;, host, actorSystem);</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <ul>
@@ -758,7 +764,7 @@ loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&
 Await.result(loggingSystem.stop, 30.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L297-L298" target="_blank" title="Go to snippet source"></a><code class="language-java">// Only call this once per application
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L292-L293" target="_blank" title="Go to snippet source"></a><code class="language-java">// Only call this once per application
 loggingSystem.javaStop().get();</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>

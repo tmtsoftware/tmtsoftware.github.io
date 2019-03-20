@@ -137,6 +137,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -380,7 +381,7 @@ ZonedDateTime taiKolkataTime = TMTTimeHelper.atZone(taiTime, ZoneId.of(&quot;Asi
 private val scheduler: TimeServiceScheduler = TimeServiceSchedulerFactory.make()(actorSystem)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L26-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">// create time service scheduler using the factory method
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L24-L25" target="_blank" title="Go to snippet source"></a><code class="language-java">// create time service scheduler using the factory method
 TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);</code></pre></dd>
 </dl>
 <p>For all scheduler calls, an instance of <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/Cancellable.html">Cancellable</a> is returned which can be used to cancel the execution of the future tasks.</p>
@@ -394,7 +395,7 @@ TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);<
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L38-L39" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L36-L37" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
 scheduler.scheduleOnce(utcTime, task);</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Warning</div>
 <p>Note that callbacks are asynchronous and can be potentially executed in an unknown thread. Therefore, if there is a need to mutate state when the time expires, it is recommended to send a message to an Actor, and keep any mutable state within the actor where it can be managed safely. This is true for any CSW API with a callback. The schedule once with ActorRef can often be used in this scenario.</p></div>
@@ -403,31 +404,33 @@ scheduler.scheduleOnce(utcTime, task);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L30-L41" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SchedulingHandler(ctx: ActorContext[UTCTime]) extends AbstractBehavior[UTCTime] {
-  override def onMessage(msg: UTCTime): Behavior[UTCTime] = {
-    // handle the message to execute the task on scheduled time
-    Behaviors.same
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L30-L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SchedulingHandler {
+  def behavior: Behavior[UTCTime] = Behaviors.setup { ctx ⇒
+    //setup required for the actor
+
+    Behaviors.receiveMessage {
+      case _ ⇒ // handle the message to execute the task on scheduled time and return new behavior
+        Behaviors.same
+    }
   }
 }
 
-private val behavior: Behavior[UTCTime] = Behaviors.setup(ctx ⇒ new SchedulingHandler(ctx))
-private val actorRef: ActorRef          = ctx.spawnAnonymous(behavior).toUntyped
+private val actorRef: ActorRef = ctx.spawnAnonymous(SchedulingHandler.behavior).toUntyped
 
 scheduler.scheduleOnce(utcTime, actorRef, UTCTime.now())
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L44-L57" target="_blank" title="Go to snippet source"></a><code class="language-java">class SchedulingHandler extends AbstractBehavior&lt;UTCTime&gt; {
-    @Override
-    public Receive&lt;UTCTime&gt; createReceive() {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L42-L54" target="_blank" title="Go to snippet source"></a><code class="language-java">static class SchedulingHandler {
+
+    public static Behavior&lt;UTCTime&gt; behavior() {
         // handle the message to execute the task on scheduled time
         return null;
     }
 }
 
 Cancellable schedule() {
-    Behavior&lt;UTCTime&gt; behavior = Behaviors.setup(ctx -&gt; new SchedulingHandler());
-    ActorRef actorRef = Adapter.toUntyped(ctx.asJava().spawnAnonymous(behavior));
+    ActorRef actorRef = Adapter.toUntyped(ctx.asJava().spawnAnonymous(SchedulingHandler.behavior()));
 
     return scheduler.scheduleOnce(utcTime, actorRef, UTCTime.now());
 }</code></pre></dd>
@@ -437,10 +440,10 @@ Cancellable schedule() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L45" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.schedulePeriodically(Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.schedulePeriodically(Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L63-L65" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L60-L62" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
 scheduler.schedulePeriodically(Duration.ofMillis(50), task);</code></pre></dd>
 </dl>
 <h4><a href="#schedule-periodically-with-start-time" name="schedule-periodically-with-start-time" class="anchor"><span class="anchor-link"></span></a>Schedule Periodically with Start Time</h4>
@@ -448,10 +451,10 @@ scheduler.schedulePeriodically(Duration.ofMillis(50), task);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L49" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.schedulePeriodically(utcTime, Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.schedulePeriodically(utcTime, Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L63-L70" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L60-L67" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
 scheduler.schedulePeriodically(utcTime, Duration.ofMillis(50), task);</code></pre></dd>
 </dl>
 <p>As with the schedule once API, there is also a periodic schedule API that takes a message and ActorRef.</p>

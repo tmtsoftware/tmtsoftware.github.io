@@ -137,6 +137,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -293,7 +294,7 @@ tmtsoftware/csw
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L46" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val locationService = HttpLocationServiceFactory.makeLocalClient(actorSystem, mat)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L60-L62" target="_blank" title="Go to snippet source"></a><code class="language-java">private ActorSystem system = context().system();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L57-L59" target="_blank" title="Go to snippet source"></a><code class="language-java">private ActorSystem system = context().system();
 private ActorMaterializer mat = ActorMaterializer.create(system);
 private ILocationService locationService = JHttpLocationServiceFactory.makeLocalClient(system, mat);</code></pre></dd>
 </dl>
@@ -370,7 +371,7 @@ val assemblyRegistration: AkkaRegistration =
 val assemblyRegResult: RegistrationResult = Await.result(locationService.register(assemblyRegistration), 2.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L98-L135" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>// dummy http connection
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L95-L132" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>// dummy http connection
 HttpConnection httpConnection = new HttpConnection(new ComponentId(&quot;configuration&quot;, JComponentType.Service));
 HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;);
 httpRegResult = locationService.register(httpRegistration).get();
@@ -418,7 +419,7 @@ assemblyRegResult = locationService.register(assemblyRegistration).get();</code>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L40" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val actorSystem: ActorSystem = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L330" target="_blank" title="Go to snippet source"></a><code class="language-java">ActorSystem actorSystem = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;);</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L325" target="_blank" title="Go to snippet source"></a><code class="language-java">ActorSystem actorSystem = ActorSystemFactory.remote(&quot;csw-examples-locationServiceClient&quot;);</code></pre></dd>
 </dl>
 <p>This is required to start a remote ActorSystem on the same network interface where the csw-cluster is running. All the ActorRefs created using this ActorSystem will be available for communication from other components that are part of csw-cluster.</p>
 <h2><a href="#resolving-connections" name="resolving-connections" class="anchor"><span class="anchor-link"></span></a>Resolving Connections</h2>
@@ -440,14 +441,14 @@ val findResult: Option[AkkaLocation] = Await.result(locationService.find(example
 log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L142-L160" target="_blank" title="Go to snippet source"></a><code class="language-java">// find connection to LocationServiceExampleComponent in location service
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L139-L157" target="_blank" title="Go to snippet source"></a><code class="language-java">// find connection to LocationServiceExampleComponent in location service
 // [do this before starting LocationServiceExampleComponent.  this should return Future[None]]
 
 log.info(&quot;Attempting to find &quot; + exampleConnection,
-        new HashMap&lt;String, Object&gt;() {{
-            put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
-            put(&quot;exampleConnection&quot;, exampleConnection.name());
-        }});
+        Map.of(
+            JKeys.OBS_ID, &quot;foo_obs_id&quot;,
+            &quot;exampleConnection&quot;, exampleConnection.name()
+        ));
 
 Optional&lt;AkkaLocation&gt; findResult = locationService.find(exampleConnection).get();
 if (findResult.isPresent()) {
@@ -478,16 +479,14 @@ resolveResult match {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L173-L193" target="_blank" title="Go to snippet source"></a><code class="language-java">// resolve connection to LocationServiceExampleComponent
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L170-L188" target="_blank" title="Go to snippet source"></a><code class="language-java">// resolve connection to LocationServiceExampleComponent
 // [start LocationServiceExampleComponent after this command but before timeout]
 Duration waitForResolveLimit = Duration.ofSeconds(30);
 
-log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; {
-    Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
-    map.put(JKeys.OBS_ID, &quot;foo_obs_id&quot;);
-    map.put(&quot;exampleConnection&quot;, exampleConnection.name());
-    return map;
-});
+log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; Map.of(
+    JKeys.OBS_ID, &quot;foo_obs_id&quot;,
+    &quot;exampleConnection&quot;, exampleConnection.name()
+));
 
 Optional&lt;AkkaLocation&gt; resolveResult = locationService.resolve(exampleConnection, waitForResolveLimit).get();
 if (resolveResult.isPresent()) {
@@ -516,7 +515,7 @@ val typedComponentRef: ActorRef[ComponentMessage] = akkaLocation.componentRef
 val typedContainerRef: ActorRef[ContainerMessage] = akkaLocation.containerRef</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L165-L169" target="_blank" title="Go to snippet source"></a><code class="language-java">// If the component type is HCD or Assembly, use this to get the correct ActorRef
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L162-L166" target="_blank" title="Go to snippet source"></a><code class="language-java">// If the component type is HCD or Assembly, use this to get the correct ActorRef
 akka.actor.typed.ActorRef&lt;ComponentMessage&gt; typedComponentRef = AkkaLocationExt.RichAkkaLocation(akkaLocation).componentRef();
 
 // If the component type is Container, use this to get the correct ActorRef
@@ -533,7 +532,7 @@ log.info(&quot;All Registered Connections:&quot;)
 connectionList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L206-L211" target="_blank" title="Go to snippet source"></a><code class="language-java">// list connections in location service
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L201-L206" target="_blank" title="Go to snippet source"></a><code class="language-java">// list connections in location service
 List&lt;Location&gt; connectionList = locationService.list().get();
 log.info(&quot;All Registered Connections:&quot;);
 for (Location loc : connectionList) {
@@ -559,7 +558,7 @@ log.info(&quot;Registered Assemblies:&quot;)
 componentList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L215-L220" target="_blank" title="Go to snippet source"></a><code class="language-java">// filter connections based on component type
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L210-L215" target="_blank" title="Go to snippet source"></a><code class="language-java">// filter connections based on component type
 List&lt;Location&gt; componentList = locationService.list(JComponentType.Assembly).get();
 log.info(&quot;Registered Assemblies:&quot;);
 for (Location loc : componentList) {
@@ -581,7 +580,7 @@ log.info(&quot;Registered Akka connections:&quot;)
 akkaList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L225-L230" target="_blank" title="Go to snippet source"></a><code class="language-java">// filter connections based on connection type
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L220-L225" target="_blank" title="Go to snippet source"></a><code class="language-java">// filter connections based on connection type
 List&lt;Location&gt; akkaList = locationService.list(JConnectionType.AkkaType).get();
 log.info(&quot;Registered Akka connections:&quot;);
 for (Location loc : akkaList) {
@@ -604,7 +603,7 @@ log.info(&quot;Registered akka locations for nfiraos.ncc&quot;)
 akkaLocations.foreach(c ⇒ log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L234-L238" target="_blank" title="Go to snippet source"></a><code class="language-java">List&lt;AkkaLocation&gt; akkaLocations = locationService.listByPrefix(&quot;nfiraos.ncc&quot;).get();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L229-L233" target="_blank" title="Go to snippet source"></a><code class="language-java">List&lt;AkkaLocation&gt; akkaLocations = locationService.listByPrefix(&quot;nfiraos.ncc&quot;).get();
 log.info(&quot;Registered akka locations for nfiraos.ncc&quot;);
 for (Location loc : akkaLocations) {
     log.info(&quot;--- &quot; + connectionInfo(loc.connection()));
@@ -618,12 +617,13 @@ for (Location loc : akkaLocations) {
 <h2><a href="#tracking-and-subscribing" name="tracking-and-subscribing" class="anchor"><span class="anchor-link"></span></a>Tracking and Subscribing</h2>
 <p>The lifecycle of a connection of interest can be followed using either the <code>track</code> API or the <code>subscribe</code> API. </p>
 <p>These methods take a <code>Connection</code> instance as a parameter. <strong>A <code>Connection</code> need not already be registered with Location Service.</strong> It&rsquo;s alright to track connections that will be registered in future. </p>
-<p>A <code>track</code> API returns two values:<br/>* A <strong>source</strong> that will emit a stream of <code>TrackingEvents</code> for the connection.<br/>* A <strong>Killswitch</strong> to turn off the stream when no longer needed. </p>
+<p>A <code>track</code> API returns two values:<br/>* A <strong>source</strong> that will emit a stream of <code>TrackingEvents</code> for the connection.<br/>* A <strong>KillSwitch</strong> to turn off the stream when no longer needed. </p>
 <p>The Akka stream API provides many building blocks to process this stream, such as Flow and Sink. In the example below, <code>Sink.actorRef</code> is used to forward any location messages received to the current actor (self).</p>
-<p>A consumer can shut down the stream using the Killswitch.</p>
+<p>A consumer can shut down the stream using the KillSwitch.</p>
 <p>The <code>subscribe</code> API allows the caller to track a connection and receive the TrackingEvent notifications via a callback. </p>
-<p>The API expects following parameters :<br/>* An existing connection or a connection to be registered in the future.<br/>* A callback that implements <code>Consumer</code>, receives the TrackEvent as a parameter. </p>
-<p>In return it gives a Killswitch that can be used to turn off the event notifications and release the supplied callback, if required.</p>
+<p>The API expects following parameters :<br/>* An existing connection or a connection to be registered in the future.<br/>* A callback that implements <code>Consumer</code>, receives the TrackEvent as a parameter. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>Callbacks are not thread-safe on the JVM. If you are doing side effects/mutations inside the callback, you should ensure that it is done in a thread-safe way inside an actor. Here is an <a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/ConcurrencyInCallbacksExample.scala">example</a> of how it can be done.</p></div>
+<p>This API returns a KillSwitch that can be used to turn off the event notifications and release the supplied callback, if required.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -660,7 +660,7 @@ locationService.subscribe(
 )</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L244-L266" target="_blank" title="Go to snippet source"></a><code class="language-java">// the following two methods are examples of two ways to track a connection.
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L239-L261" target="_blank" title="Go to snippet source"></a><code class="language-java">// the following two methods are examples of two ways to track a connection.
 // both are implemented but only one is really needed.
 
 // track connection to LocationServiceExampleComponent
@@ -716,7 +716,7 @@ locationService.subscribe(exampleConnection, trackingEvent -&gt; {
 Await.result(unregisterF, 5.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L281-L283" target="_blank" title="Go to snippet source"></a><code class="language-java">httpRegResult.unregister();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L276-L278" target="_blank" title="Go to snippet source"></a><code class="language-java">httpRegResult.unregister();
 hcdRegResult.unregister();
 assemblyRegResult.unregister();</code></pre></dd>
 </dl>

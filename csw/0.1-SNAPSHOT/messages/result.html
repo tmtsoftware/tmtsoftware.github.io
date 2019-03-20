@@ -137,6 +137,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
+  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -469,17 +470,17 @@ Parameter&lt;Integer&gt; miscParam1 = miscKey.set(100);
 //Setup command with duplicate key via madd
 Result result = new Result(prefix).madd(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3);
 //four duplicate keys are removed; now contains one Encoder and one Filter key
-List&lt;String&gt; uniqueKeys1 = result.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+Set&lt;String&gt; uniqueKeys1 = result.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toUnmodifiableSet());
 
 //try adding duplicate keys via add + madd
 Result changedResult = result.add(encParam3).madd(filterParam1, filterParam2, filterParam3);
 //duplicate keys will not be added. Should contain one Encoder and one Filter key
-List&lt;String&gt; uniqueKeys2 = changedResult.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());
+Set&lt;String&gt; uniqueKeys2 = changedResult.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toUnmodifiableSet());
 
 //miscKey(unique) will be added; encoderKey(duplicate) will not be added
 Result finalResult = result.madd(miscParam1, encParam1);
 //now contains encoderKey, filterKey, miscKey
-List&lt;String&gt; uniqueKeys3 = finalResult.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
+Set&lt;String&gt; uniqueKeys3 = finalResult.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toUnmodifiableSet());</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h2>
 <ul>
