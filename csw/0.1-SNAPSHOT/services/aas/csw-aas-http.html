@@ -204,14 +204,14 @@ tmtsoftware/csw
 <p>To run an akka-http server app, which uses this adapter, we need</p>
 <ul>
   <li>Location Service running</li>
-  <li>Keycloak instance running and registered with Location Service</li>
+  <li>AAS instance running and registered with Location Service</li>
 </ul>
-<p>Location Service and Keycloak can be running on different machines. To start Location Service and Keycloak server on a local machine, you make make use of csw-services.sh script.</p>
+<p>Location Service and AAS can be running on different machines. To start Location Service and AAS server on a local machine, you can make use of the csw-services.sh script.</p>
 <h2><a href="#application-configurations" name="application-configurations" class="anchor"><span class="anchor-link"></span></a>Application Configurations</h2>
 <p>All auth related configurations go inside an <code>auth-config</code> block. There are three configurations applicable for a akka-http server application i.e. <code>realm</code>, <code>client-id</code> &amp; <code>enable-permissions</code>. </p>
 <p><code>realm</code> has a default value of <code>TMT</code> if not specified. Ideally all apps in TMT should not have to override this, however it might be useful to override this while testing your app.</p>
 <p><code>enable-permissions</code> is optional config with a default value of <code>false</code>. Typically, roles are used for authorization and specific permissions is not needed. However, if your akka-http server application uses permission based authorization policies, this config needs to be set to true.</p>
-<p><code>client-id</code> is a mandatory configuration which specifies the client id of the app as per registration in keycloak.</p>
+<p><code>client-id</code> is a mandatory configuration which specifies the client id of the app as per registration in AAS.</p>
 <pre class="prettyprint"><code class="language-hocon">auth-config {
   realm = TMT # DEFAULT
   enable-permissions = false # DEFAULT
@@ -297,8 +297,8 @@ tmtsoftware/csw
 }</code></pre></dd>
 </dl>
 <h3><a href="#permissionpolicy" name="permissionpolicy" class="anchor"><span class="anchor-link"></span></a>PermissionPolicy</h3>
-<p>This policy filters requests based on permissions. It expects name of scope and name of resource on which permission is created in keycloak. </p>
-<p>In the following example policy will authorize request if user has appropriate permission associated in keycloak which specifies <code>delete</code> scope for <code>account</code> resource.</p>
+<p>This policy filters requests based on permissions. It expects name of scope and name of resource on which permission is created in AAS. </p>
+<p>In the following example policy will authorize request if user has appropriate permission associated in AAS which specifies <code>delete</code> scope for <code>account</code> resource.</p>
 <dl>
   <dt>Scala</dt>
   <dd>

@@ -137,7 +137,6 @@ tmtsoftware/csw
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
-  <li><a href="../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -184,6 +183,10 @@ tmtsoftware/csw
     <li><a href="../apps/csweventcli.html" class="page">csw-event-cli</a></li>
     <li><a href="../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../apps/hostconfig.html" class="page">csw-host-config</a></li>
+  </ul></li>
+  <li><a href="../commons/deployment.html" class="page">Deployment</a>
+  <ul>
+    <li><a href="../deployment/env-vars.html" class="page">Environment variables</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
@@ -493,7 +496,7 @@ CompletableFuture&lt;Optional&lt;Integer&gt;&gt; longRunningResultF =
                     if (response instanceof CommandResponse.CompletedWithResult) {
                         // This extracts and returns the the first value of parameter encoder
                         Result result = ((CommandResponse.CompletedWithResult) response).result();
-                        Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).get().head());
+                        Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
                         return CompletableFuture.completedFuture(rvalue);
                     } else {
                         // For some other response, return empty
@@ -552,7 +555,7 @@ CompletableFuture&lt;Optional&lt;Integer&gt;&gt; intF =
     if (response instanceof CommandResponse.CompletedWithResult) {
         // This extracts and returns the the first value of parameter encoder
         Result result = ((CommandResponse.CompletedWithResult) response).result();
-        Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).get().head());
+        Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
         return CompletableFuture.completedFuture(rvalue);
     } else {
         // For some other response, return empty
@@ -591,7 +594,7 @@ CompletableFuture&lt;Optional&lt;Integer&gt;&gt; int3F =
             if (response instanceof CommandResponse.CompletedWithResult) {
                 // This extracts and returns the the first value of parameter encoder
                 Result result = ((CommandResponse.CompletedWithResult) response).result();
-                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).get().head());
+                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
                 return CompletableFuture.completedFuture(rvalue);
             } else {
                 // For some other response, return empty
@@ -764,7 +767,7 @@ Setup currStateSetup = new Setup(prefix(), hcdCurrentStateCmd(), Optional.empty(
 final AtomicInteger cstate = new AtomicInteger((1));
 CurrentStateSubscription subscription = hcdCmdService.subscribeCurrentState(cs -&gt; {
     // Example sets variable outside scope of closure
-    cstate.set(cs.jGet(encoder).get().head());
+    cstate.set(cs.jGet(encoder).orElseThrow().head());
 });
 // Send a oneway to the HCD that will cause a publish of a CurrentState with the encoder value
 // in the command parameter &quot;encoder&quot;
@@ -790,7 +793,7 @@ cswCtx.currentStatePublisher.publish(currentState)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L157-L161" target="_blank" title="Go to snippet source"></a><code class="language-java">Key&lt;Integer&gt; encoder = JKeyType.IntKey().make(&quot;encoder&quot;);
-int expectedEncoderValue = setup.jGet(encoder).get().head();
+int expectedEncoderValue = setup.jGet(encoder).orElseThrow().head();
 
 CurrentState currentState = new CurrentState(prefix(), new StateName(&quot;HCDState&quot;)).add(encoder().set(expectedEncoderValue));
 currentStatePublisher.publish(currentState);</code></pre></dd>

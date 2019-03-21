@@ -180,9 +180,10 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#installed-auth-adapter-csw-aas-installed-" name="installed-auth-adapter-csw-aas-installed-" class="anchor"><span class="anchor-link"></span></a>Installed Auth Adapter (csw-aas-installed)</h1>
-<p><code>csw-aas-installed</code> is the adapter you will use if you want to build an application that executes on a user&rsquo;s machine and talks to an AAS-protected web service application. Examples of such applications could be a CLI app that is installed on end users machine. The Configuration Service client makes use of this library.</p>
+<p><code>csw-aas-installed</code> is the adapter you will use if you want to build a client application that executes on a user&rsquo;s machine and talks to an AAS-protected web service application, such as a CLI application. The <a href="../config.html">Configuration Service Admin API</a> makes use of this library.</p>
+<p>This is as opposed to building a web application that runs in a browser. To do that, use the <a href="csw-aas-http.html">csw-aas-http</a> library.</p>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
-<p>To use the Akka HTTP Adapter (csw-aas-installed), add this to your <code>build.sbt</code> file:</p>
+<p>To use the Akka HTTP Adapter (csw-aas-installed), add the following to your <code>build.sbt</code> file:</p>
 <dl>
   <dt>sbt</dt>
   <dd>
@@ -190,17 +191,17 @@ tmtsoftware/csw
 </code></pre></dd>
 </dl>
 <h2><a href="#prerequisites" name="prerequisites" class="anchor"><span class="anchor-link"></span></a>Prerequisites</h2>
-<p>To run a client app that is installed on user&rsquo;s machine, which needs to talk to a protected HTTP server, we need</p>
+<p>To run a client app with AAS access, we need</p>
 <ul>
   <li>CSW Location Service running</li>
-  <li>Keycloak instance running and registered with Location Service</li>
+  <li>AAS instance running and registered with Location Service</li>
   <li>protected HTTP server running</li>
 </ul>
-<p>All of these can be running on different machines. To start Location Service and Keycloak server on a local machine, you can make use of <code>csw-services.sh</code> script.</p>
+<p>All of these can be running on different machines. To start a Location Service and AAS server on a local machine, you can make use of the<code>csw-services.sh</code> script.</p>
 <h2><a href="#application-configurations" name="application-configurations" class="anchor"><span class="anchor-link"></span></a>Application Configurations</h2>
-<p>All AAS related configurations go inside <code>auth-config</code> block. There are two configurations applicable for a public CLI client application: <code>realm</code> and <code>client-id</code>.</p>
+<p>All AAS related configurations go inside an <code>auth-config</code> block in your <code>application.conf</code> file. There are two configurations applicable for a public client application: <code>realm</code> and <code>client-id</code>.</p>
 <p><code>realm</code> has a default value of <code>TMT</code> if not specified. Normally, all apps in TMT should not have to override this, however it might be useful to override this while testing your app.</p>
-<p><code>client-id</code> is a mandatory configuration which specifies the client ID of the app as per its registration in Keycloak.</p>
+<p><code>client-id</code> is a mandatory configuration which specifies the client ID of the app as per its registration in AAS.</p>
 <pre class="prettyprint"><code class="language-hocon">auth-config {
   realm = TMT # DEFAULT
   client-id = demo-cli # REQUIRED
@@ -276,8 +277,8 @@ val routes: Route =
   }
 }</code></pre></dd>
 </dl>
-<p>The statement <code>LocationServerStatus.requireUpLocally()</code> ensures that location service is up and running before proceeding further. If location service is not running, it will throw an exception and exit the application.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>In a real application, you would ideally want to use <code>LocationServerStatus.requireUp</code> which takes <code>locationHost: String</code> parameter instead of looking for location service on localhost. </p></div>
+<p>The statement <code>LocationServerStatus.requireUpLocally()</code> ensures that the Location Service is up and running before proceeding further. If it is not running, an exception will be thrown and the application will exit.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>In a real application, you would ideally want to use <code>LocationServerStatus.requireUp</code> which takes <code>locationHost: String</code> parameter instead of looking for the Location Service on the localhost. </p></div>
 <p>Next, we will instantiate <code>InstalledAppAuthAdapter</code>. There is a factory already available to create the required instance. We will create a small factory on top this factory to keep our Main.scala clean.</p>
 <dl>
   <dt>Scala</dt>
@@ -292,9 +293,9 @@ val routes: Route =
   }
 }</code></pre></dd>
 </dl>
-<p>Note the the internal factory overload we have used, requires two parameters, i.e. location service &amp; authStore. It needs location service to resolve keycloak server. FileAuthStore is just a storage for tokens for it to save access tokens &amp; refresh tokens in file system. </p><div class="callout warning "><div class="callout-title">Warning</div>
-<p>In this case we have configured it to store all tokens in &ldquo;/tmp/demo-cli/auth&rdquo; directory but ideally you want this location to be somewhere in user&rsquo;s home directory. This will ensure that different users don&rsquo;t have access to each other&rsquo;s tokens.</p></div>
-<p>Coming back to Main.scala, now we need to find out which command user wants to execute. To parse user input arguments, we will create a small utility.</p>
+<p>Note the the internal factory method we have used requires two parameters: a reference to the Location Service to resolve the AAS Server, and <code>authStore</code>, which is a file-based access token storage system.</p><div class="callout warning "><div class="callout-title">Warning</div>
+<p>In this case we have configured it to store all tokens in the &ldquo;/tmp/demo-cli/auth&rdquo; directory, but ideally you want this location to be somewhere in the user&rsquo;s home directory. This will ensure that different users don&rsquo;t have access to each other&rsquo;s tokens.</p></div>
+<p>Coming back to Main.scala, now we need to find out which command the user wants to execute. To parse the user input arguments, we will create a small utility.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -317,16 +318,17 @@ val routes: Route =
   }
 }</code></pre></dd>
 </dl>
-<p>All of these commands extend from a simple trait - <code>AppCommand</code></p>
+<p>All of these commands extend from a simple trait - <code>AppCommand</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/commands/AppCommand.scala#L4-L6" target="_blank" title="Go to snippet source"></a><code class="language-scala">trait AppCommand {
   def run(): Unit
 }</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p>We could have used a command line parser library here to parse the command names and options/arguments, but since our requirements are simple and this is a demonstration, we will keep things simple. However, we strongly recommend that you use one of the existing libraries. CSW makes extensive use of <a href="https://github.com/scopt/scopt">scopt</a>. There are other libraries which are equally good and easy to use</p></div>
-<p>Let&rsquo;s go through each command one by one </p>
+</dl>
+<p>Its single method <code>run</code> is executed in our application once the arguments are parsed into an <code>AppCommand</code>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>We could have used a command line parser library here to parse the command names and options/arguments, but since our requirements are simple and this is a demonstration, we will keep things simple. However, we strongly recommend that you use one of the existing libraries. CSW makes extensive use of <a href="https://github.com/scopt/scopt">scopt</a>. There are other libraries which are equally good and easy to use.</p></div>
+<p>Let&rsquo;s go through each command one by one:</p>
 <h3><a href="#login" name="login" class="anchor"><span class="anchor-link"></span></a>Login</h3>
 <dl>
   <dt>Scala</dt>
@@ -338,8 +340,8 @@ val routes: Route =
   }
 }</code></pre></dd>
 </dl>
-<p>Here the constructor takes InstalledAppAuthAdapter as a parameter and in the run method, it calls <code>installedAppAuthAdapter.login()</code>. This method, opens a browser and redirects user to TMT login screen (served by keycloak). In the background, it starts an HTTP server on a random port. Once the user submits correct credentials on the login screen, keycloak redirects user to <code>http://localhost:[SomePort]</code> with the access and refresh tokens in query string. The InstalledAppAuthAdapter will then save these token in file system using FileAuthStore. After this, InstalledAppAuthAdapter will shut down the local server since its purpose is served. Now, user can close the browser.</p>
-<p>If you want to develop an CLI app that is not dependent on browser, you can call <code>loginCommandLine()</code> method instead of <code>login()</code>. This will prompt credentials in CLI instead of opening a browser.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Here the constructor takes an <code>InstalledAppAuthAdapter</code> as a parameter and in the <code>run</code> method, it calls <code>installedAppAuthAdapter.login()</code>. This method opens a browser and redirects the user to a TMT login screen (served by AAS). In the background, it starts an HTTP server on a random port. Once the user submits the correct credentials on the login screen, AAS redirects the user to <code>http://localhost:[SomePort]</code> with the access and refresh tokens in a query string. The <code>InstalledAppAuthAdapter</code> will then save these tokens to the file system using <code>FileAuthStore</code>. After this, <code>InstalledAppAuthAdapter</code> will shut down the local server since it is no longer needed. The user can then close the browser.</p>
+<p>If you want to develop a CLI app that is not dependent on a browser, you can call <code>loginCommandLine()</code> method instead of <code>login()</code>. This will prompt the user to provide credentials in the CLI instead of opening a browser.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>While the <code>loginCommandLine()</code> method is available, a browser is generally more user-friendly since it can store cookies and remember passwords.</p></div>
 <h3><a href="#logout" name="logout" class="anchor"><span class="anchor-link"></span></a>Logout</h3>
 <dl>
@@ -352,7 +354,7 @@ val routes: Route =
   }
 }</code></pre></dd>
 </dl>
-<p>The structure here is very similar to login command. <code>installedAppAuthAdapter.logout()</code> clears all the tokens from file system via <code>FileAuthStore</code>.</p>
+<p>The structure here is very similar to the <code>login</code> command. <code>installedAppAuthAdapter.logout()</code> clears all the tokens from the file system via <code>FileAuthStore</code>.</p>
 <h3><a href="#read" name="read" class="anchor"><span class="anchor-link"></span></a>Read</h3>
 <dl>
   <dt>Scala</dt>
@@ -365,7 +367,7 @@ val routes: Route =
   }
 }</code></pre></dd>
 </dl>
-<p>Since the get route is not protected by any authentication or authorization in the our example server, read command simply sends a get request and prints the response.</p>
+<p>Since the get route is not protected by any authentication or authorization in the our example server, the <code>read</code> command simply sends a get request and prints the response.</p>
 <h3><a href="#write" name="write" class="anchor"><span class="anchor-link"></span></a>Write</h3>
 <dl>
   <dt>Scala</dt>
@@ -404,11 +406,11 @@ val routes: Route =
   }
 }</code></pre></dd>
 </dl>
-<p>The WriteCommand constructor takes InstalledAppAuthAdapter and a string value. This string value is expected from the CLI input. Since the post route is protected by a realm role policy in our example server, we need to pass bearer token in the request header. </p>
-<p><code>installedAppAuthAdapter.getAccessTokenString()</code> returns an <code>Option[String]</code>. If it is <code>None</code>, it means that user has not logged in and so we display an error message stating so. If it returns a token string, we pass it in the header.</p>
-<p>If the response status code is 200, it means authentication and authorization were successful. In this case authorization required that the user had <code>admin</code> role. </p>
-<p>If the response is 401, it indicates that there was something wrong with the token. It could indicate that token has expired or does not have valid signature. <code>InstalledAppAuthAdapter</code> ensures that you don&rsquo;t send a request with an expired token. If the access token is expired, it refreshes the access token with the help of a <code>refresh</code> token. If the refresh token has also expired, it returns <code>None</code> which means that user has to log in again.</p>
-<p>If the response is 403, it indicates that token was valid but the token is not authorized to perform certain action. In this case if the token belonged to a user who does not have <code>admin</code> role, server will return 403.</p>
+<p>The WriteCommand constructor takes an <code>InstalledAppAuthAdapter</code> and a string value, passed in at the command line. Since the post route is protected by a realm role policy in our example server, we need to pass a bearer token in the request header. </p>
+<p><code>installedAppAuthAdapter.getAccessTokenString()</code> checks the <code>FileAuthStore</code> and returns an <code>Option[String]</code>. If the Option is <code>None</code>, it means that user has not logged in and an error message is displayed. If the token is found, the bearer token is obtained and passed in the header of the request to the HTTP server. The HTTP server uses this token to determine whether the client has the proper permissions to perform the request.</p>
+<p>If the response status code is 200, it means authentication and authorization were successful. In our example, authorization required that the user had <code>admin</code> role. </p>
+<p>If the response is 401 (<code>StatusCodes.Unauthorized</code>), there is something wrong with the token. It could indicate that token has expired or does not have a valid signature. <code>InstalledAppAuthAdapter</code> ensures that you don&rsquo;t send a request with an expired token. If the access token is expired, it refreshes the access token with the help of a <code>refresh</code> token. If the refresh token has also expired, it returns <code>None</code> which means that user has to log in again.</p>
+<p>If the response is 403 (<code>StatusCodes.Forbidden</code>), the token is valid but the token is not authorized to perform that action. In our example, this would occur if the user does not have the <code>admin</code> role.</p>
 <h2><a href="#source-code-for-above-examples" name="source-code-for-above-examples" class="anchor"><span class="anchor-link"></span></a>Source code for above examples</h2>
 <p><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed">Example</a></p>
 </div>

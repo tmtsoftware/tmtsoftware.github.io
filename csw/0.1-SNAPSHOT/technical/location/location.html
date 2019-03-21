@@ -137,7 +137,6 @@ tmtsoftware/csw
 <ul>
   <li><a href="../../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../../commons/create-component.html" class="page">Creating a Component</a></li>
-  <li><a href="../../commons/env-vars.html" class="page">Environment variables</a></li>
   <li><a href="../../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
@@ -185,6 +184,10 @@ tmtsoftware/csw
     <li><a href="../../apps/cswalarmcli.html" class="page">csw-alarm-cli</a></li>
     <li><a href="../../apps/hostconfig.html" class="page">csw-host-config</a></li>
   </ul></li>
+  <li><a href="../../commons/deployment.html" class="page">Deployment</a>
+  <ul>
+    <li><a href="../../deployment/env-vars.html" class="page">Environment variables</a></li>
+  </ul></li>
   <li><a href="../../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../../commons/manuals.html" class="page">Manuals</a></li>
@@ -202,6 +205,13 @@ tmtsoftware/csw
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../technical/location/location.html#location-service-technical-description" class="header">Location Service Technical Description</a>
+  <ul>
+    <li><a href="../../technical/location/location.html#location-service-implementation" class="header">Location Service Implementation</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </nav>
@@ -215,11 +225,44 @@ tmtsoftware/csw
 </div>
 </div>
 </div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../technical/location/location.html#location-service-technical-description" class="header">Location Service Technical Description</a>
+  <ul>
+    <li><a href="../../technical/location/location.html#location-service-implementation" class="header">Location Service Implementation</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#location-service-technical-description" name="location-service-technical-description" class="anchor"><span class="anchor-link"></span></a>Location Service Technical Description</h1>
-<p>This is a test</p>
+<p>The Location Service is used to register and find CSW services in the local network. A service can be an Akka actor (including CSW components, such as assemblies and HCDs), an HTTP server or a server running on some TCP host and port.</p>
+<p>For information on <em>using</em> the Location Service, see these sections:</p>
+<ul>
+  <li><a href="../../services/location.html">CSW Location Service</a></li>
+  <li><a href="../../apps/cswlocationserver.html">CSW Location Server</a></li>
+  <li><a href="../../apps/cswlocationagent.html">CSW Location Agent</a></li>
+</ul>
+<h2><a href="#location-service-implementation" name="location-service-implementation" class="anchor"><span class="anchor-link"></span></a>Location Service Implementation</h2>
+<p>The core feature of the Location Service is an <a href="https://akka.io/">Akka</a> cluster that uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html">Conflict Free Replicated Datasets (CRDTs)</a> to share location information in the network. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>See <a href="https://medium.com/@unmeshvjoshi/service-discovery-with-crdts-fb02bb48cfff">here</a> for some background on how the choice was made to use an Akka cluster with CRDTs.</p></div>
+<p>When a CSW component or service starts up, it registers with the Location Service by posting a message to an HTTP API that talks to one of the actors in the cluster - typically one running on the local host. The location information is shared in the cluster and clients anywhere in the network can use the HTTP API to locate the service.</p>
+<p>The implementation of the Location Service is split into four subprojects:</p>
+<ul>
+  <li><a href="location-server.html">csw-location-server</a> - the main implementation, including the cluster actor and HTTP server</li>
+  <li><a href="location-client.html">csw-location-client</a> - a wrapper for the HTTP API, used by clients</li>
+  <li><a href="location-api.html">csw-location-api</a> - common API implemented by the csw-location-server and csw-location-client</li>
+  <li><a href="location-agent.html">csw-location-agent</a> - an application used to register non-csw services</li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/location/location.md" title="Edit this page" class="md-source-file md-edit">
