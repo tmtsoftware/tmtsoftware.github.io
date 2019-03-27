@@ -162,6 +162,7 @@ tmtsoftware/csw
     <li><a href="../../framework/deploying-components.html" class="page">Deploying Components</a></li>
   </ul></li>
   <li><a href="../../commons/command.html" class="page">Communication using Commands</a></li>
+  <li><a href="../../commons/logging_aggregator.html" class="page">Logging Aggregator</a></li>
   <li><a href="../../commons/services.html" class="page">Services</a>
   <ul>
     <li><a href="../../services/location.html" class="page">Location Service</a></li>
@@ -205,6 +206,15 @@ tmtsoftware/csw
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../technical/framework/framework.html#csw-framework-design-description" class="header">CSW Framework Design Description</a>
+  <ul>
+    <li><a href="../../technical/framework/framework.html#entry-points" class="header">Entry Points</a></li>
+    <li><a href="../../technical/framework/framework.html#component-creation" class="header">Component Creation</a></li>
+    <li><a href="../../technical/framework/framework.html#component-initialization-and-lifecycle" class="header">Component Initialization and Lifecycle</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </nav>
@@ -218,11 +228,41 @@ tmtsoftware/csw
 </div>
 </div>
 </div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../technical/framework/framework.html#csw-framework-design-description" class="header">CSW Framework Design Description</a>
+  <ul>
+    <li><a href="../../technical/framework/framework.html#entry-points" class="header">Entry Points</a></li>
+    <li><a href="../../technical/framework/framework.html#component-creation" class="header">Component Creation</a></li>
+    <li><a href="../../technical/framework/framework.html#component-initialization-and-lifecycle" class="header">Component Initialization and Lifecycle</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#csw-framework-design-description" name="csw-framework-design-description" class="anchor"><span class="anchor-link"></span></a>CSW Framework Design Description</h1>
-<p>Some framework text</p>
+<p>The <em>CSW Framework</em> provides the APIs used to talk to components, such as HCDs and assemblies. The framework, which is based on Akka <a href="https://doc.akka.io/docs/akka/current/typed/index.html">typed actors</a>, creates an actor for each component, along with a <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorBehavior.scala">supervisor</a> and some related actors. For simplicity, component developers only need to implement a set of <a href="../../framework/handling-lifecycle.html">handlers</a> (the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentHandlers.scala">ComponentHandlers</a> trait for Scala, the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/javadsl/JComponentHandlers.scala">JComponentHandlers</a> interface for Java) which define how a component will behave.</p>
+<p>See <a href="../../commons/framework.html">here</a> for information on <em>using</em> the CSW framework to develop HCD and assembly components.</p>
+<p>The <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/framework/index.html">framework packge documentation</a> also contains an overview of the core classes that make up the CSW framework.</p>
+<h2><a href="#entry-points" name="entry-points" class="anchor"><span class="anchor-link"></span></a>Entry Points</h2>
+<p>In order to start an assembly or HCD component, you first need a <a href="../../framework/describing-components.html">descriptor file</a> (or object) called <a href="https://github.com/tmtsoftware/csw/tree/master/csw-command/csw-command-client/src/main/scala/csw/command/client/models/framework/ComponentInfo.scala">ComponentInfo</a>.</p>
+<p>The name of the component info file can be passed as a command line argument to an application based on the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/deploy/containercmd/ContainerCmd.scala">ContainerCmd</a> class to <a href="../../framework/deploying-components.html">deploy</a> the component.</p>
+<p>In a production environment, it is planned that components will be started at boot time using a <a href="../../apps/hostconfig.html">HostConfig</a> based application. </p>
+<h2><a href="#component-creation" name="component-creation" class="anchor"><span class="anchor-link"></span></a>Component Creation</h2>
+<p>Components can be created in <a href="../../commons/multiple-components.html">standalone or container</a> mode. When an HCD or assembly is <a href="../../framework/creating-components.html">created</a>, depending on the mode, either the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/internal/container/ContainerBehaviorFactory.scala">ContainerBehaviorFactory</a> or the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorBehaviorFactory.scala">SupervisorBehaviorFactory</a> class is used to create the initial actor behavior. In container mode, a supervisor actor is created for each component and a single <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/internal/container/ContainerBehavior.scala">container actor</a> accepts control messages for the container (subtypes of <code>ContainerActorMessage</code>).</p>
+<p>Each supervisor then creates and watches its component and determines what to do when something goes wrong. It uses an instance of <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentBehaviorFactory.scala">ComponentBehaviorFactory</a> that is created via reflection from an entry in the  <a href="../../framework/describing-components.html">component info file</a>  file to create the component.</p>
+<p>The top level actor (TLA) representing the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/internal/component/ComponentBehavior.scala">component&rsquo;s behavior</a> uses the instance of <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentHandlers.scala">ComponentHandlers</a> returned from the supplied ComponentBehaviorFactory to handle incoming messages and commands for the component.</p>
+<h2><a href="#component-initialization-and-lifecycle" name="component-initialization-and-lifecycle" class="anchor"><span class="anchor-link"></span></a>Component Initialization and Lifecycle</h2>
+<p>The framework manages a component&rsquo;s <a href="../../framework/handling-lifecycle.html">lifecycle</a> so that it only receives commands once it has signaled that it has completed the initialization process. This includes <a href="../../framework/tracking-connections.html">tracking any connections</a> listed in the component info file. Once the component is in the running state, it can be discovered using the <a href="../location/location.html">Location Service</a> and other components can start sending <a href="../../commons/messages.html">command messages</a> to it.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/framework/framework.md" title="Edit this page" class="md-source-file md-edit">

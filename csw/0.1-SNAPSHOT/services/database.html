@@ -162,6 +162,7 @@ tmtsoftware/csw
     <li><a href="../framework/deploying-components.html" class="page">Deploying Components</a></li>
   </ul></li>
   <li><a href="../commons/command.html" class="page">Communication using Commands</a></li>
+  <li><a href="../commons/logging_aggregator.html" class="page">Logging Aggregator</a></li>
   <li><a href="../commons/services.html" class="page">Services</a>
   <ul>
     <li><a href="../services/location.html" class="page">Location Service</a></li>
@@ -289,7 +290,7 @@ dbFactory
         .jMakeDsl(cswCtx.locationService(), &quot;postgres&quot;) // postgres is dbName
         .thenAccept((DSLContext dsl) -&gt; this.dsl = dsl);        // save the returned dsl to a local variable</code></pre></dd>
 </dl>
-<p>The underlying database server is registered with the Location Service. <code>makeDsl</code>/<code>jMakeDsl</code> takes <code>locationService</code> to locate the PostgreSQL server running and connect to it. It connects to the database by the provided <code>dbName</code>. It picks the database username and password for read access profile from TMT-standard environment variables called <code>dbReadUsername</code> for username and <code>dbReadPassword</code> for password, hence it is expected that developers will set these environment variables prior to using <code>DatabaseServiceFactory</code>. PostgreSQL should also be initialized with a read-only user and password that agrees with the values in the environment variables. This approach is used to keep from putting database login information in the source code. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>The underlying database server is registered with the Location Service. <code>makeDsl</code>/<code>jMakeDsl</code> takes <code>locationService</code> to locate the PostgreSQL server running and connect to it. It connects to the database by the provided <code>dbName</code>. It picks the database username and password for read access profile from TMT-standard environment variables called <code>DB_READ_USERNAME</code> for username and <code>DB_READ_PASSWORD</code> for password, hence it is expected that developers will set these environment variables prior to using <code>DatabaseServiceFactory</code>. PostgreSQL should also be initialized with a read-only user and password that agrees with the values in the environment variables. This approach is used to keep from putting database login information in the source code. </p><div class="callout note "><div class="callout-title">Note</div>
 <p>See the <a href="https://www.postgresql.org/docs/8.0/sql-createuser.html">PostgreSQL docs</a> or <a href="https://www.a2hosting.com/kb/developer-corner/postgresql/managing-postgresql-databases-and-users-from-the-command-line">this site</a> for help with creating users, passwords, and roles in PostgreSQL.</p>
 <p>The <a href="https://www.postgresql.org/docs/current/app-psql.html">psql interactive CLI client</a> is provided with PostgreSQL. It can be used to connect to PostgreSQL and create users (as well as many other maintenance commands). If Database Service is started with csw-services.sh, the database server is started on port <em>5432</em>.</p>
 <p>Eventually, all TMT user logins will all have these environment variables set with the agreed upon read-only user and password. </p></div>
@@ -303,15 +304,15 @@ dbFactory
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L34-L36" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
-  .makeDsl(locationService, &quot;postgres&quot;, &quot;dbWriteUsername&quot;, &quot;dbWritePassword&quot;)
+  .makeDsl(locationService, &quot;postgres&quot;, &quot;DB_WRITE_USERNAME&quot;, &quot;DB_WRITE_PASSWORD&quot;)
   .foreach((dsl: DSLContext) ⇒ this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L45-L47" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory
-        .jMakeDsl(cswCtx.locationService(), &quot;postgres&quot;, &quot;dbWriteUsername&quot;, &quot;dbWritePassword&quot;)
+        .jMakeDsl(cswCtx.locationService(), &quot;postgres&quot;, &quot;DB_WRITE_USERNAME&quot;, &quot;DB_WRITE_PASSWORD&quot;)
         .thenAccept((DSLContext dsl) -&gt; this.dsl = dsl);        // save the returned dsl to a local variable</code></pre></dd>
 </dl>
-<p>Here the username is picked from <code>dbWriteUsername</code> and password is picked from <code>dbWritePassword</code> environment variables. Hence, it is expected from developers to set environment variables prior to using this method with the user name and password to use for write access. </p>
+<p>Here the username is picked from <code>DB_WRITE_USERNAME</code> and password is picked from <code>DB_WRITE_PASSWORD</code> environment variables. Hence, it is expected from developers to set environment variables prior to using this method with the user name and password to use for write access. </p>
 <h4><a href="#connect-for-development-or-testing" name="connect-for-development-or-testing" class="anchor"><span class="anchor-link"></span></a>Connect for Development or Testing</h4>
 <p>For development and testing purposes, all database connection properties can be provided from <code>application.conf</code> including username and password. This will not require setting any environment variables for credentials as described in previous sections. In order to do so, use the <code>DatabaseServiceFactory</code> as shown below:</p>
 <dl>

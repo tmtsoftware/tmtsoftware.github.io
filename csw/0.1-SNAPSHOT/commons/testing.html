@@ -162,6 +162,7 @@ tmtsoftware/csw
     <li><a href="../framework/deploying-components.html" class="page">Deploying Components</a></li>
   </ul></li>
   <li><a href="../commons/command.html" class="page">Communication using Commands</a></li>
+  <li><a href="../commons/logging_aggregator.html" class="page">Logging Aggregator</a></li>
   <li><a href="../commons/services.html" class="page">Services</a>
   <ul>
     <li><a href="../services/location.html" class="page">Location Service</a></li>
@@ -423,12 +424,12 @@ public class JUnitIntegrationExampleTest extends JUnitSuite {
   <li>
     <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">Acceptance Release Pipeline</a></p>
     <ul>
-      <li>Automatically triggered on completion of <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline.</li>
+      <li>Automatically triggered on completion of <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod/">csw-prod</a> pipeline.</li>
       <li><code>csw-prod-release</code> pipeline published CSW artifacts to bintray, and must be manually triggered by an administrator.</li>
     </ul>
   </li>
 </ol><div class="callout note "><div class="callout-title">Note</div>
-<p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod-release/">csw-prod-release</a> pipeline is responsible for following tasks:</p>
+<p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod/">csw-prod</a> pipeline is responsible for following tasks:</p>
 <ul>
   <li>build and run <code>csw</code> tests</li>
   <li>publish binaries to bintray</li>
@@ -442,16 +443,14 @@ public class JUnitIntegrationExampleTest extends JUnitSuite {
 </ul>
 <pre><code>curl -G &#39;http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev/buildWithParameters&#39;  \
     --data-urlencode token=$DEV_TOKEN \
-    --data-urlencode DEV_VERSION=0.1-SNAPSHOT \
-    --data-urlencode BUILD_ENV=DEV
+    --data-urlencode CSW_VERSION=0.1-SNAPSHOT
 </code></pre>
 <ul>
   <li>For triggering <code>acceptance-release</code> pipeline, run below: (Modify parameters as applicable)</li>
 </ul>
 <pre><code>curl -G &#39;$REMOTE_JENKINS_URL/job/$JOB_NAME/buildWithParameters&#39; \
     --data-urlencode token=$RELEASE_TOKEN \
-    --data-urlencode RELEASE_VERSION=$RELEASE_VERSION \
-    --data-urlencode BUILD_ENV=PROD
+    --data-urlencode CSW_VERSION=$CSW_VERSION
 </code></pre>
 </div>
 <div>
