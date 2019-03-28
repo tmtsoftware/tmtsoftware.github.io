@@ -264,22 +264,24 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#logging-aggregator" name="logging-aggregator" class="anchor"><span class="anchor-link"></span></a>Logging Aggregator</h1>
-<p>The logging aggregation provides aggregation of logs generated from TMT applications written in Scala, Java, Python, C, C++, etc, System logs, Redis logs, Postgres logs, ElasticSearch logs, Keycloak logs using ELK stack(<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch</a>, <a href="https://www.elastic.co/guide/en/logstash/current/index.html">Logstash</a>, <a href="https://www.elastic.co/guide/en/kibana/current/index.html">Kibana</a>) and <a href="https://www.elastic.co/guide/en/beats/filebeat/current/index.html">Filebeat</a>.</p>
+<p>The logging aggregation provides aggregation of logs generated from TMT applications written in Scala, Java, Python, C, C++ and modules like System logs, Redis logs, Postgres logs, ElasticSearch logs, Keycloak logs using Elastic stack(<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch</a>, <a href="https://www.elastic.co/guide/en/logstash/current/index.html">Logstash</a>, <a href="https://www.elastic.co/guide/en/kibana/current/index.html">Kibana</a>) and <a href="https://www.elastic.co/guide/en/beats/filebeat/current/index.html">Filebeat</a>.</p>
 <h2><a href="#elastic-license" name="elastic-license" class="anchor"><span class="anchor-link"></span></a>Elastic license</h2>
-<p>It is recommended to use the basic/elastic license of ELK stack which is a free license. To know more about what features are available in basic license refer this <a href="https://www.elastic.co/subscriptions">link</a>.</p>
+<p>It is recommended to use the basic/elastic license of Elastic stack which is a free license. To know more about what features are available in basic license refer this <a href="https://www.elastic.co/subscriptions">link</a>.</p>
 <h2><a href="#architecture" name="architecture" class="anchor"><span class="anchor-link"></span></a>Architecture</h2>
 <p><img src="../services/logging_architecture.png" alt="logo" /></p>
-<p>As shown in above picture all machines in TMT can run Filebeat to watch log files. Filebeat is responsible for watching log files and shipping it to Logstash. It keeps the cursor to last read position in file, which means that application can write logs to the file independent of where Filebeat has reached in file picking them up for shipping.</p>
-<p>Logstash takes the Json logs which is in string format, parses it to Json object and then sends it to Elasticsearch. Elasticsearch then indexes the json data. If logs are generated in text format which will be the case for Redis, System, Postgres, Elasticsearch logs, then they will be parsed and indexed using the elastic <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-modules-overview.html">modules</a>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>All the files required for aggregator configuration can be found <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator">here</a>. How to use each of these files and it&rsquo;s significance will be explained further in the document.</p>
-<p>It is assumed that in production, Elasticsearch, Logstash and Kibana will be registered with TMT infra DNS setup. Hence, all the configuration files for production is provided referring to dns name. </p></div>
-<p>After the Json data is indexed in Elasticearch, Kibana is used to pull the data and provide the GUI on top it.</p>
+<p>As shown in above architecture diagram all machines in TMT can run Filebeat to watch log files. Filebeat is responsible for watching log files and shipping it to the centralised Logstash component. Filebeat maintains a marker in a registry for the last read position in a file. Therefore, applications can keep emitting logs to the file agnostic of the Filebeat&rsquo;s marker.</p>
+<p>Logstash collects the Json logs in string format, parses it to a valid Json object and then feeds it to Elasticsearch. Elasticsearch is responsible for ingesting and indexing the json data. If logs are generated in non-Json format which will be the case for Redis, System, Postgres, Elasticsearch logs, then they will be parsed and indexed using the elastic <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-modules-overview.html">modules</a>. </p>
+<p>After the Json data is indexed in Elasticearch, Kibana provides powerful visualisation tools and dashboards that offer various interactive diagrams to visualize complex queries. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>All the files required for logging aggregator configuration can be found <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator">here</a>. How to use each of these files and it&rsquo;s significance will be explained further in the document.</p>
+<p>It is assumed that in production, Elasticsearch, Logstash and Kibana will be registered with TMT infra DNS setup. Hence, all the configuration files for production is provided referring to DNS host name. </p>
+<p>It is strongly recommended to run the same version (v6.6.0 or higher) of elastic components so as to avoid any compatibility issues.</p>
+<p>By default, the elastic stack exposes the following ports and the configurations also rely on the same.  * 5044: Logstash TCP input.  * 9200: Elasticsearch HTTP port  * 5601: Kibana</p></div>
 <h2><a href="#tmt-applications-scala-java-python-c-c-" name="tmt-applications-scala-java-python-c-c-" class="anchor"><span class="anchor-link"></span></a>TMT Applications (Scala/Java/Python/C++/C)</h2>
-<p>In order to aggregate logs generated from TMT apps, Filebeat will require to watch them. So, the recommended practice is for apps to generate log files at a common place and Filebeat watches them. The common place to generate log files and watch them is defined by an environment variable <code>TMT_LOG_HOME</code> For e.g. TMT_LOG_HOME = /&laquo;user-accessible-space&raquo;/tmt/logs.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>In order to aggregate logs generated from TMT apps, Filebeat will require to watch them. The recommended practice is for apps to generate log files at a common place so that Filebeat can watch it. The common place to generate log files and watch them is defined by an environment variable <code>TMT_LOG_HOME</code> For e.g. TMT_LOG_HOME = /&laquo;user-accessible-space&raquo;/tmt/logs.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Make sure that in production TMT_LOG_HOME is not set to /tmp, otherwise on machine reboot all the logs will be lost. </p></div>
 <p>The upcoming sections will explain how each TMT app can generate log files at TMT_LOG_HOME and how Filebeat can watch from the same TMT_LOG_HOME:</p>
 <h3><a href="#scala-java" name="scala-java" class="anchor"><span class="anchor-link"></span></a>Scala/Java</h3>
-<p>For Scala/Java applications to dump logs in a file, it is important that developers enable the <code>FileAppender</code> in application.conf. To know more about how to configure FileAppender please refer the (see <a href="../services/logging.html#configuration">logging documentation</a>). Once, the FileAppender is enabled, the log files will be generated under <code>TMT_LOG_HOME</code>. If TMT_LOG_HOME is not set as an environment variable then <code>BaseLogPathNotDefined</code> exception will be thrown. For tests, <code>baseLogPath</code> from logging configuration can be overridden in application.conf.</p>
+<p>For Scala/Java applications to dump logs in a file, it is important that developers enable the <code>FileAppender</code> in application.conf. To know more about how to configure FileAppender please refer the <a href="../services/logging.html#configuration">logging documentation</a>. Once, the FileAppender is enabled, the log files will be generated under <code>TMT_LOG_HOME</code>. If TMT_LOG_HOME is not set as an environment variable then <code>BaseLogPathNotDefined</code> exception will be thrown. For tests, <code>baseLogPath</code> from logging configuration can be overridden in application.conf.</p>
 <h3><a href="#c-" name="c-" class="anchor"><span class="anchor-link"></span></a>C++</h3>
 <p>For C++ developers it is recommended to use the <a href="https://github.com/gabime/spdlog">spdlog</a> library along with <a href="https://github.com/guangie88/spdlog_setup">spdlog-setup</a> add-on library for logging in files.</p>
 <p>The following code snippet will explain how to use <code>spdlog</code>:</p>
@@ -335,7 +337,12 @@ int main()
     spdlog::drop_all();
 }
 
-//clang++ -std=c++17 main.cpp -o main</code></pre></dd>
+/*
+    Run the following commands on terminal to execute `main.cpp`
+
+    $   clang++ -std=c++17 main.cpp -o main
+    $   ./main
+*/</code></pre></dd>
   <dt>logging_default.toml
   </dt>
   <dd>
@@ -367,7 +374,7 @@ level = &quot;trace&quot;
 <h3><a href="#c" name="c" class="anchor"><span class="anchor-link"></span></a>C</h3>
 <p>For C develoers it is recommended to use <a href="https://github.com/HardySimpson/zlog">zlog</a> logging library. The following code snippet will explain how to use <code>zlog</code>:</p>
 <dl>
-  <dt>main.cpp
+  <dt>main.c
   </dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/c/main.c" target="_blank" title="Go to snippet source"></a><code class="language-c"><br/>int main(int argc, char **argv)
@@ -375,7 +382,7 @@ level = &quot;trace&quot;
 
     int rc;
     zlog_category_t* cat;
-    rc = zlog_init(&quot;logging_default.conf&quot;); // dzlog_init(&quot;test_default.conf&quot;, &quot;my_cat&quot;);
+    rc = zlog_init(&quot;logging_default.conf&quot;);
 
     if (rc)
     {
@@ -390,12 +397,20 @@ level = &quot;trace&quot;
     zlog_error(cat, &quot;I am Error C Log&quot;);
     zlog_fini();
     return 0;
-}</code></pre></dd>
+}
+
+/*
+    Run the following commands on terminal to execute `main.c`
+
+   $ cc -c -o main.o main.c -I/usr/local/include
+   $ cc -o main main.o -L/usr/local/lib -lzlog
+   $ ./main
+*/</code></pre></dd>
   <dt>logging_default.conf
   </dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/c/logging_default.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">[global]
-
+# Highly recommended to keep the default format as-is for a meaningful logging aggregation and analysis
 default format = &quot;{&quot;timestamp&quot; : &quot;%d(%FT%T).%ms%d(%z)&quot;, &quot;@severity&quot; : &quot;%V&quot;, &quot;file&quot; : &quot;%F&quot;, &quot;line&quot; : &quot;%L&quot;, &quot;@host&quot; : &quot;%H&quot;, &quot;message&quot; : &quot;%m&quot;} %n&quot;
 
 [rules]
@@ -528,7 +543,7 @@ class UTCFormatter(logging.Formatter):
 <p>All the above points are already covered for Scala/Java apps in logging framework.</p></div>
 <h3><a href="#filebeat-watching-tmt-app-logs-and-system-generated-logs" name="filebeat-watching-tmt-app-logs-and-system-generated-logs" class="anchor"><span class="anchor-link"></span></a>Filebeat watching TMT app logs and system generated logs</h3>
 <p>Once TMT applications generate log files under TMT_LOG_HOME, Filebeat needs to start watching them. In order for Filebeat to be aware of TMT_LOG_HOME, <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/filebeat/modules/system/filebeat.yml">filebeat.yml</a> should be used to start Filebeat.</p>
-<p>All machines running TMT application also need system generated logs to be watched by Filebeat so that it gets shipped to Logstash. This can be achieved by enabling <a href="https://www.elastic.co/guide/en/beats/filebeat/6.7/filebeat-module-system.html">System module</a> in Filebeat and making Elasticsearch aware of receiving system logs (text based logs) to parse and index them.</p>
+<p>All machines running TMT application also need system generated logs to be watched by Filebeat so that it gets shipped to Logstash. This can be achieved by enabling <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-module-system.html">System module</a> in Filebeat and making Elasticsearch aware of receiving system logs (text based logs) to parse and index them.</p>
 <p>In order to achieve this follow the below given steps:</p>
 <ul>
   <li>Run Elasticsearch using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/elasticsearch/elasticsearch.yml">elasticsearch.yml</a>.  Place <code>elasticsearch.yml</code> in &laquo;Elasticsearch installation folder&raquo;/config/ and execute <code>./bin/elasticsearch</code> (on Mac) or <code>bin/elasticsearch</code> (on Linux).</li>
