@@ -372,7 +372,7 @@ locationServiceUsage = RegisterOnly</code></pre></dd>
 <h3><a href="#lock" name="lock" class="anchor"><span class="anchor-link"></span></a>Lock</h3>
 <p>When the Supervisor actor receives a <code>Lock</code> message, it transitions the component to the <code>Lock</code> state. Upon locking, the Supervisor will only accept the commands received from the component that locked the component and ignore all others.</p>
 <p>In the <code>Lock</code> state, messages like <code>Shutdown</code> and <code>Restart</code> will also be ignored. A component must first be unlocked to accept these commands.</p>
-<p><code>Lock</code> messages are constructed with a duration value specified. When this duration expires, the component will automatically be unlocked. A component can be manually unlocked by sending an <code>Unlock</code> message.</p>
+<p><code>Lock</code> messages are constructed with a duration value specified. When this duration expires, the component will automatically be unlocked. There are two ways component can be unlocked: 1. Sending <code>Unlock</code> message (Note: This message should be sent by same component who has already locked component) 1. Sending <code>Unlock</code> message with admin Prefix i.e. <code>Prefix(&quot;csw.admin&quot;)</code>, this is treated as Admin Unlock command.</p>
 <h2><a href="#csw-services-injection" name="csw-services-injection" class="anchor"><span class="anchor-link"></span></a>CSW Services Injection</h2>
 <p>To provide access to CSW Services, they are injected into the <code>ComponentHandlers</code> class in the constructor in a <code>CswContext</code> object. This object provides the following services:</p>
 <ul>
