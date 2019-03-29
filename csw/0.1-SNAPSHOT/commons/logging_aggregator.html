@@ -275,7 +275,12 @@ tmtsoftware/csw
 <p>All the files required for logging aggregator configuration can be found <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator">here</a>. How to use each of these files and it&rsquo;s significance will be explained further in the document.</p>
 <p>It is assumed that in production, Elasticsearch, Logstash and Kibana will be registered with TMT infra DNS setup. Hence, all the configuration files for production is provided referring to DNS host name. </p>
 <p>It is strongly recommended to run the same version (v6.6.0 or higher) of elastic components so as to avoid any compatibility issues.</p>
-<p>By default, the elastic stack exposes the following ports and the configurations also rely on the same.  * 5044: Logstash TCP input.  * 9200: Elasticsearch HTTP port  * 5601: Kibana</p></div>
+<p>By default, the elastic stack exposes the following ports and the configurations also rely on the same.</p>
+<ul>
+  <li>5044: Logstash TCP input.</li>
+  <li>9200: Elasticsearch HTTP port</li>
+  <li>5601: Kibana</li>
+</ul></div>
 <h2><a href="#tmt-applications-scala-java-python-c-c-" name="tmt-applications-scala-java-python-c-c-" class="anchor"><span class="anchor-link"></span></a>TMT Applications (Scala/Java/Python/C++/C)</h2>
 <p>In order to aggregate logs generated from TMT apps, Filebeat will require to watch them. The recommended practice is for apps to generate log files at a common place so that Filebeat can watch it. The common place to generate log files and watch them is defined by an environment variable <code>TMT_LOG_HOME</code> For e.g. TMT_LOG_HOME = /&laquo;user-accessible-space&raquo;/tmt/logs.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Make sure that in production TMT_LOG_HOME is not set to /tmp, otherwise on machine reboot all the logs will be lost. </p></div>
@@ -603,8 +608,8 @@ class UTCFormatter(logging.Formatter):
 </ul>
 <p>For Modules like System, Postgres, Redis and Elasticsearch go to <code>Dashboard</code> and explore.</p>
 <h2><a href="#running-elastic-stack-for-developer" name="running-elastic-stack-for-developer" class="anchor"><span class="anchor-link"></span></a>Running Elastic stack for developer</h2>
-<p>For development purposes <a href="https://docs.docker.com/compose/">Docker compose</a> is used to start Elasticsearch, Logstash, Kibana and Filebeat in a container. Hence, make sure that latest Docker setup is installed and running before starting the ELK stack. Docker container is responsible to aggregate logs generated in <code>tmp/csw/logs</code>. Hence, developers writing Scala/Java/Python/C++/C applications need to generate log files under <code>/tmp/csw/logs</code>. </p>
-<p>Also, note that csw apps started via <code>csw-services.sh</code> will generate log files under <code>/tmp/csw/logs</code> and thus, it will be aggregated by the ELK docker container. To know more about setting up docker and starting ELK please refer <a href="apps.html#starting-elk-logging-aggregator-for-development">Starting ELK logging aggregator for Development</a>. </p>
+<p>For development purposes <a href="https://docs.docker.com/compose/">Docker compose</a> is used to start Elasticsearch, Logstash, Kibana and Filebeat in a container. Hence, make sure that latest Docker setup is installed and running before starting the Elastic stack. Docker container is responsible to aggregate logs generated in <code>tmp/csw/logs</code>. Hence, developers writing Scala/Java/Python/C++/C applications need to generate log files under <code>/tmp/csw/logs</code>. </p>
+<p>Also, note that csw apps started via <code>csw-services.sh</code> will generate log files under <code>/tmp/csw/logs</code> and thus, it will be aggregated by the Elastic docker container. To know more about setting up docker and starting Elastic please refer <a href="apps.html#starting-elk-logging-aggregator-for-development">Starting Elastic logging aggregator for Development</a>. </p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/commons/logging_aggregator.md" title="Edit this page" class="md-source-file md-edit">

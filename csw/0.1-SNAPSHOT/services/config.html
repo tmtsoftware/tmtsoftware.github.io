@@ -324,7 +324,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L34-L37" target="_blank" title="Go to snippet source"></a><code class="language-scala">//config client API
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L35-L38" target="_blank" title="Go to snippet source"></a><code class="language-scala">//config client API
 val clientApi: ConfigClientService = ConfigClientFactory.clientApi(actorSystem, locationService)
 //config admin API
 val adminApi: ConfigService = ConfigClientFactory.adminApi(actorSystem, locationService, factory)</code></pre></dd>
@@ -341,7 +341,7 @@ IConfigService adminApi = JConfigClientFactory.adminApi(actorSystem, clientLocat
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L49-L60" target="_blank" title="Go to snippet source"></a><code class="language-scala">//construct the path
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L50-L61" target="_blank" title="Go to snippet source"></a><code class="language-scala">//construct the path
 val filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;)
 
 val doneF = async {
@@ -368,7 +368,7 @@ Assert.assertTrue(exists);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">val defaultStrConf: String = &quot;foo { bar { baz : 1234 } }&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L45" target="_blank" title="Go to snippet source"></a><code class="language-scala">val defaultStrConf: String = &quot;foo { bar { baz : 1234 } }&quot;
 val doneF = async {
   // construct the path
   val filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;)
@@ -395,7 +395,7 @@ Assert.assertEquals(activeFile.toJConfigObject(mat).get().getString(&quot;foo.ba
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L82-L121" target="_blank" title="Go to snippet source"></a><code class="language-scala">  async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L83-L122" target="_blank" title="Go to snippet source"></a><code class="language-scala">  async {
     //construct ConfigData from String containing ASCII text
     val configString: String =
       &quot;&quot;&quot;
@@ -409,8 +409,8 @@ Assert.assertEquals(activeFile.toJConfigObject(mat).get().getString(&quot;foo.ba
     val config1: ConfigData = ConfigData.fromString(configString)
 
     //construct ConfigData from a local file containing binary data
-    val srcFilePath         = getClass.getClassLoader.getResource(&quot;smallBinary.bin&quot;).toURI
-    val config2: ConfigData = ConfigData.fromPath(Paths.get(srcFilePath))
+    val srcFilePath         = ResourceReader.copyToTmp(&quot;/smallBinary.bin&quot;)
+    val config2: ConfigData = ConfigData.fromPath(srcFilePath)
 
     //construct ConfigData from Array[Byte] by reading a local file
     val stream: InputStream    = getClass.getClassLoader.getResourceAsStream(&quot;smallBinary.bin&quot;)
@@ -457,7 +457,7 @@ Assert.assertEquals(id2, new ConfigId(&quot;3&quot;));</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L125-L135" target="_blank" title="Go to snippet source"></a><code class="language-scala">val futU = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L126-L136" target="_blank" title="Go to snippet source"></a><code class="language-scala">val futU = async {
   val destPath = Paths.get(&quot;/hcd/trombone/debug.bin&quot;)
   val newId = await(
     adminApi
@@ -481,7 +481,7 @@ Assert.assertEquals(newId, new ConfigId(&quot;5&quot;));</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L139-L145" target="_blank" title="Go to snippet source"></a><code class="language-scala">val futD = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L140-L146" target="_blank" title="Go to snippet source"></a><code class="language-scala">val futD = async {
   val unwantedFilePath = Paths.get(&quot;/hcd/trombone/debug.bin&quot;)
   await(adminApi.delete(unwantedFilePath, &quot;no longer needed&quot;))
   //validates the file is deleted
@@ -499,7 +499,7 @@ Assert.assertEquals(adminApi.getLatest(unwantedFilePath).get(), Optional.empty()
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L151-L161" target="_blank" title="Go to snippet source"></a><code class="language-scala">val doneF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L152-L162" target="_blank" title="Go to snippet source"></a><code class="language-scala">val doneF = async {
   // create a file using API first
   val filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;)
   val id: ConfigId =
@@ -524,7 +524,7 @@ Assert.assertEquals(defaultStrConf, actualData.toJStringF(mat).get());</code></p
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L167-L181" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF: Future[Assertion] = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L168-L182" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF: Future[Assertion] = async {
   //create a file
   val filePath = Paths.get(&quot;/test.conf&quot;)
   await(adminApi.create(filePath, ConfigData.fromString(defaultStrConf), annex = false, &quot;initial configuration&quot;))
@@ -563,7 +563,7 @@ Assert.assertEquals(newConfigData.toJStringF(mat).get(), newContent);</code></pr
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L187-L203" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L188-L204" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF = async {
   val tInitial = Instant.MIN
   //create a file
   val filePath = Paths.get(&quot;/a/b/c/test.conf&quot;)
@@ -603,7 +603,7 @@ Assert.assertEquals(newContent, latestData.toJStringF(mat).get());</code></pre><
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L209-L257" target="_blank" title="Go to snippet source"></a><code class="language-scala">//Here&#39;s a list of tuples containing FilePath and FileTyepe(Annex / Normal)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L210-L258" target="_blank" title="Go to snippet source"></a><code class="language-scala">//Here&#39;s a list of tuples containing FilePath and FileTyepe(Annex / Normal)
 val paths: List[(Path, FileType)] = List[(Path, FileType)](
   (Paths.get(&quot;a/c/trombone.conf&quot;), Annex),
   (Paths.get(&quot;a/b/c/hcd/hcd.conf&quot;), Normal),
@@ -626,7 +626,7 @@ paths map {
 val assertionF = async {
   //retrieve list of all files; for demonstration purpose show validate return values
   await(adminApi.list()).map(info ⇒ info.path).toSet shouldBe paths.map {
-    case (path, fileType) ⇒ path
+    case (path, _) ⇒ path
   }.toSet
 
   //retrieve list of files based on type; for demonstration purpose validate return values
@@ -695,7 +695,7 @@ Assert.assertEquals(Set.of(testId),
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L263-L284" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L264-L285" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF = async {
   val filePath = Paths.get(&quot;/a/test.conf&quot;)
   val id0      = await(adminApi.create(filePath, ConfigData.fromString(defaultStrConf), annex = false, &quot;first commit&quot;))
 
@@ -754,7 +754,7 @@ Assert.assertEquals(List.of(id2, id1),
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L290-L340" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L291-L341" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF = async {
   val tBegin   = Instant.now()
   val filePath = Paths.get(&quot;/a/test.conf&quot;)
   //create will make the 1st revision active with a default comment
@@ -870,7 +870,7 @@ Assert.assertEquals(defaultStrConf, initialContents);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L346-L351" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L347-L352" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertF = async {
   val metaData: ConfigMetadata = await(adminApi.getMetadata)
   //repository path must not be empty
   metaData.repoPath should not be empty

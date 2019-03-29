@@ -213,6 +213,8 @@ tmtsoftware/csw
     <li><a href="../../technical/framework/framework.html#entry-points" class="header">Entry Points</a></li>
     <li><a href="../../technical/framework/framework.html#component-creation" class="header">Component Creation</a></li>
     <li><a href="../../technical/framework/framework.html#component-initialization-and-lifecycle" class="header">Component Initialization and Lifecycle</a></li>
+    <li><a href="../../technical/framework/framework.html#command-service-clients" class="header">Command Service Clients</a></li>
+    <li><a href="../../technical/framework/framework.html#command-response-handling" class="header">Command Response Handling</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -239,6 +241,8 @@ tmtsoftware/csw
     <li><a href="../../technical/framework/framework.html#entry-points" class="header">Entry Points</a></li>
     <li><a href="../../technical/framework/framework.html#component-creation" class="header">Component Creation</a></li>
     <li><a href="../../technical/framework/framework.html#component-initialization-and-lifecycle" class="header">Component Initialization and Lifecycle</a></li>
+    <li><a href="../../technical/framework/framework.html#command-service-clients" class="header">Command Service Clients</a></li>
+    <li><a href="../../technical/framework/framework.html#command-response-handling" class="header">Command Response Handling</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -262,7 +266,11 @@ tmtsoftware/csw
 <p>Each supervisor then creates and watches its component and determines what to do when something goes wrong. It uses an instance of <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentBehaviorFactory.scala">ComponentBehaviorFactory</a> that is created via reflection from an entry in the  <a href="../../framework/describing-components.html">component info file</a>  file to create the component.</p>
 <p>The top level actor (TLA) representing the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/internal/component/ComponentBehavior.scala">component&rsquo;s behavior</a> uses the instance of <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentHandlers.scala">ComponentHandlers</a> returned from the supplied ComponentBehaviorFactory to handle incoming messages and commands for the component.</p>
 <h2><a href="#component-initialization-and-lifecycle" name="component-initialization-and-lifecycle" class="anchor"><span class="anchor-link"></span></a>Component Initialization and Lifecycle</h2>
-<p>The framework manages a component&rsquo;s <a href="../../framework/handling-lifecycle.html">lifecycle</a> so that it only receives commands once it has signaled that it has completed the initialization process. This includes <a href="../../framework/tracking-connections.html">tracking any connections</a> listed in the component info file. Once the component is in the running state, it can be discovered using the <a href="../location/location.html">Location Service</a> and other components can start sending <a href="../../commons/messages.html">command messages</a> to it.</p>
+<p>The framework manages a component&rsquo;s <a href="../../framework/handling-lifecycle.html">lifecycle</a> so that it only receives <a href="../../messages/commands.html">commands</a> once it has signaled that it has completed the initialization process. This includes <a href="../../framework/tracking-connections.html">tracking any connections</a> listed in the component info file. Once the component is in the running state, it can be discovered using the <a href="../location/location.html">Location Service</a> and other components can start sending <a href="../../commons/messages.html">command messages</a> to it.</p>
+<h2><a href="#command-service-clients" name="command-service-clients" class="anchor"><span class="anchor-link"></span></a>Command Service Clients</h2>
+<p>Although components are actually actors, it is convenient to be able to treat them as objects and call methods on them. The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-command/csw-command-api/src/main/scala/csw/command/api/scaladsl/CommandService.scala">CommandService</a> trait, and its implementation: <a href="https://github.com/tmtsoftware/csw/tree/master/csw-command/csw-command-client/src/main/scala/csw/command/client/internal/CommandServiceImpl.scala">CommandServiceImpl</a> provide a wrapper that uses Akka <code>ask</code> to send a message to a component and return a <code>Future</code> with it&rsquo;s response. The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-command/csw-command-client/src/main/scala/csw/command/client/CommandServiceFactory.scala">CommandServiceFactory</a> class can be used to make a <code>CommandService</code> instance from a <code>location</code> received from the <a href="../location/location.html">Location Service</a>.</p>
+<h2><a href="#command-response-handling" name="command-response-handling" class="anchor"><span class="anchor-link"></span></a>Command Response Handling</h2>
+<p>A <a href="../../framework/managing-command-state.html">Command Response Manager</a> class is used to manage the responses to a commands sent to a component.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/framework/framework.md" title="Edit this page" class="md-source-file md-edit">
