@@ -319,10 +319,10 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
                 if (!hcdLocation.isPresent())
                     throw new HcdNotFoundException();
                 else {
-                    runningHcds.put(connection, Optional.of(CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem())));
+                    runningHcds.put(connection, Optional.of(CommandServiceFactory.jMake(hcdLocation.orElseThrow(), ctx.getSystem())));
                 }
-                diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisher.behavior(CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem()), workerActor));
-            })).get();
+                diagnosticPublisher = ctx.spawnAnonymous(JDiagnosticsPublisher.behavior(CommandServiceFactory.jMake(hcdLocation.orElseThrow(), ctx.getSystem()), workerActor));
+            })).orElseThrow();
 
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>

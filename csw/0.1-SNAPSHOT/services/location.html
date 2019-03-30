@@ -456,7 +456,7 @@ log.info(&quot;Attempting to find &quot; + exampleConnection,
 
 Optional&lt;AkkaLocation&gt; findResult = locationService.find(exampleConnection).get();
 if (findResult.isPresent()) {
-    log.info(&quot;Find result: &quot; + connectionInfo(findResult.get().connection()));
+    log.info(&quot;Find result: &quot; + connectionInfo(findResult.orElseThrow().connection()));
 } else {
     log.info(() -&gt; &quot;Result of the find call : None&quot;);
 }</code></pre></dd>
@@ -494,7 +494,7 @@ log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot
 
 Optional&lt;AkkaLocation&gt; resolveResult = locationService.resolve(exampleConnection, waitForResolveLimit).get();
 if (resolveResult.isPresent()) {
-    log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.get().connection()));
+    log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.orElseThrow().connection()));
 } else {
     log.info(() -&gt; &quot;Timeout waiting for location &quot; + exampleConnection + &quot; to resolve.&quot;);
 }</code></pre></dd>

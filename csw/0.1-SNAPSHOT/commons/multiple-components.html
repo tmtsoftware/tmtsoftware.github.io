@@ -485,7 +485,7 @@ eventualCommandService.foreach { commandService ⇒
 
 CompletableFuture&lt;ICommandService&gt; eventualCommandService = resolvedHcdLocation.thenApply((Optional&lt;AkkaLocation&gt; hcdLocation) -&gt; {
     if (hcdLocation.isPresent())
-        return CommandServiceFactory.jMake(hcdLocation.get(), ctx.getSystem());
+        return CommandServiceFactory.jMake(hcdLocation.orElseThrow(), ctx.getSystem());
     else
         throw new HcdNotFoundException();
 });

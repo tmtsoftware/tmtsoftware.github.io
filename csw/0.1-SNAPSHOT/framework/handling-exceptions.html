@@ -263,7 +263,7 @@ private CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolveHcd() {
     // If an Hcd is found as a connection, resolve its location from location service and create other
     // required worker actors required by this assembly
     if (mayBeConnection.isPresent()) {
-        CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolve = locationService.resolve(mayBeConnection.get().&lt;AkkaLocation&gt;of(), Duration.ofSeconds(5));
+        CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolve = locationService.resolve(mayBeConnection.orElseThrow().&lt;AkkaLocation&gt;of(), Duration.ofSeconds(5));
         return resolve.thenCompose((Optional&lt;AkkaLocation&gt; resolvedHcd) -&gt; {
             if (resolvedHcd.isPresent())
                 return CompletableFuture.completedFuture(resolvedHcd);

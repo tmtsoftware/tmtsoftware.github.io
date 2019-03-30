@@ -387,7 +387,7 @@ Path filePath = Paths.get(&quot;/tmt/trmobone/assembly/hcd.conf&quot;);
 
 adminApi.create(filePath, ConfigData.fromString(defaultStrConf), false, &quot;First commit&quot;).get();
 
-ConfigData activeFile = clientApi.getActive(filePath).get().get();
+ConfigData activeFile = clientApi.getActive(filePath).get().orElseThrow();
 Assert.assertEquals(activeFile.toJConfigObject(mat).get().getString(&quot;foo.bar.baz&quot;), &quot;1234&quot;);</code></pre></dd>
 </dl>
 <h2><a href="#create" name="create" class="anchor"><span class="anchor-link"></span></a>create</h2>
@@ -516,7 +516,7 @@ Await.result(doneF, 2.seconds)</code></pre></dd>
 ConfigId id = adminApi.create(filePath, ConfigData.fromString(defaultStrConf), false, &quot;First commit&quot;).get();
 
 //validate
-ConfigData actualData = adminApi.getById(filePath, id).get().get();
+ConfigData actualData = adminApi.getById(filePath, id).get().orElseThrow();
 Assert.assertEquals(defaultStrConf, actualData.toJStringF(mat).get());</code></pre></dd>
 </dl>
 <h2><a href="#getlatest" name="getlatest" class="anchor"><span class="anchor-link"></span></a>getLatest</h2>
@@ -550,7 +550,7 @@ String newContent = &quot;I changed the contents!!!&quot;;
 adminApi.update(filePath, ConfigData.fromString(newContent), &quot;changed!!&quot;).get();
 
 //get the latest file
-ConfigData newConfigData = adminApi.getLatest(filePath).get().get();
+ConfigData newConfigData = adminApi.getLatest(filePath).get().orElseThrow();
 //validate
 Assert.assertEquals(newConfigData.toJStringF(mat).get(), newContent);</code></pre></dd>
 </dl>
@@ -592,10 +592,10 @@ adminApi.create(filePath, ConfigData.fromString(defaultStrConf), false, &quot;in
 String newContent = &quot;I changed the contents!!!&quot;;
 adminApi.update(filePath, ConfigData.fromString(newContent), &quot;changed!!&quot;).get();
 
-ConfigData initialData = adminApi.getByTime(filePath, tInitial).get().get();
+ConfigData initialData = adminApi.getByTime(filePath, tInitial).get().orElseThrow();
 Assert.assertEquals(defaultStrConf, initialData.toJStringF(mat).get());
 
-ConfigData latestData = adminApi.getByTime(filePath, Instant.now()).get().get();
+ConfigData latestData = adminApi.getByTime(filePath, Instant.now()).get().orElseThrow();
 Assert.assertEquals(newContent, latestData.toJStringF(mat).get());</code></pre></dd>
 </dl>
 <h2><a href="#list" name="list" class="anchor"><span class="anchor-link"></span></a>list</h2>
@@ -815,7 +815,7 @@ ConfigId id1 = adminApi.create(filePath, ConfigData.fromString(defaultStrConf), 
 Assert.assertEquals(List.of(id1),
     adminApi.historyActive(filePath).get().stream().map(ConfigFileRevision::id).collect(Collectors.toList()));
 //ensure active version is set
-Assert.assertEquals(id1, adminApi.getActiveVersion(filePath).get().get());
+Assert.assertEquals(id1, adminApi.getActiveVersion(filePath).get().orElseThrow());
 
 //override the contents four times
 adminApi.update(filePath, ConfigData.fromString(&quot;changing contents&quot;), &quot;second&quot;).get();
@@ -824,20 +824,20 @@ ConfigId id4 = adminApi.update(filePath, ConfigData.fromString(&quot;final conte
 ConfigId id5 = adminApi.update(filePath, ConfigData.fromString(&quot;final final contents&quot;), &quot;fifth&quot;).get();
 
 //update doesn&#39;t change the active revision
-Assert.assertEquals(id1, adminApi.getActiveVersion(filePath).get().get());
+Assert.assertEquals(id1, adminApi.getActiveVersion(filePath).get().orElseThrow());
 
 //play with active version
 adminApi.setActiveVersion(filePath, id3, &quot;id3 active&quot;).get();
 adminApi.setActiveVersion(filePath, id4, &quot;id4 active&quot;).get();
-Assert.assertEquals(id4, adminApi.getActiveVersion(filePath).get().get());
+Assert.assertEquals(id4, adminApi.getActiveVersion(filePath).get().orElseThrow());
 Instant tEnd = Instant.now();
 
 //reset active version to latest
 adminApi.resetActiveVersion(filePath, &quot;latest active&quot;).get();
-Assert.assertEquals(id5, adminApi.getActiveVersion(filePath).get().get());
+Assert.assertEquals(id5, adminApi.getActiveVersion(filePath).get().orElseThrow());
 //finally set initial version as active
 adminApi.setActiveVersion(filePath, id1, &quot;id1 active&quot;).get();
-Assert.assertEquals(id1, adminApi.getActiveVersion(filePath).get().get());
+Assert.assertEquals(id1, adminApi.getActiveVersion(filePath).get().orElseThrow());
 
 //validate full history
 List&lt;ConfigFileRevision&gt; fullHistory = adminApi.historyActive(filePath).get();
@@ -856,7 +856,7 @@ Assert.assertEquals(List.of(id1, id5, id4),
         adminApi.historyActive(filePath, 3).get().stream().map(ConfigFileRevision::id).collect(Collectors.toList()));
 
 //get contents of active version at a specified instance
-String initialContents = adminApi.getActiveByTime(filePath, tBegin).get().get().toJStringF(mat).get();
+String initialContents = adminApi.getActiveByTime(filePath, tBegin).get().orElseThrow().toJStringF(mat).get();
 Assert.assertEquals(defaultStrConf, initialContents);</code></pre></dd>
 </dl>
 <h2><a href="#getmetadata" name="getmetadata" class="anchor"><span class="anchor-link"></span></a>getMetaData</h2>
