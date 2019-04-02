@@ -264,31 +264,31 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#logging-aggregator" name="logging-aggregator" class="anchor"><span class="anchor-link"></span></a>Logging Aggregator</h1>
-<p>The logging aggregation provides aggregation of logs generated from TMT applications written in Scala, Java, Python, C, C++ and modules like System logs, Redis logs, Postgres logs, ElasticSearch logs, Keycloak logs using Elastic stack(<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch</a>, <a href="https://www.elastic.co/guide/en/logstash/current/index.html">Logstash</a>, <a href="https://www.elastic.co/guide/en/kibana/current/index.html">Kibana</a>) and <a href="https://www.elastic.co/guide/en/beats/filebeat/current/index.html">Filebeat</a>.</p>
+<p>The logging aggregator provides aggregation of logs generated from TMT applications written in Scala, Java, Python, C, C++, modules like System logs, Redis logs, Postgres logs, ElasticSearch logs, Keycloak logs using the Elastic stack(<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch</a>, <a href="https://www.elastic.co/guide/en/logstash/current/index.html">Logstash</a>, <a href="https://www.elastic.co/guide/en/kibana/current/index.html">Kibana</a>) and <a href="https://www.elastic.co/guide/en/beats/filebeat/current/index.html">Filebeat</a>.</p>
 <h2><a href="#elastic-license" name="elastic-license" class="anchor"><span class="anchor-link"></span></a>Elastic license</h2>
-<p>It is recommended to use the basic/elastic license of Elastic stack which is a free license. To know more about what features are available in basic license refer this <a href="https://www.elastic.co/subscriptions">link</a>.</p>
+<p>It is recommended to use the basic/elastic license of Elastic stack, which is a free license. To know more about what features are available in basic license refer this <a href="https://www.elastic.co/subscriptions">link</a>.</p>
 <h2><a href="#architecture" name="architecture" class="anchor"><span class="anchor-link"></span></a>Architecture</h2>
 <p><img src="../services/logging_architecture.png" alt="logo" /></p>
-<p>As shown in above architecture diagram all machines in TMT can run Filebeat to watch log files. Filebeat is responsible for watching log files and shipping it to the centralised Logstash component. Filebeat maintains a marker in a registry for the last read position in a file. Therefore, applications can keep emitting logs to the file agnostic of the Filebeat&rsquo;s marker.</p>
-<p>Logstash collects the Json logs in string format, parses it to a valid Json object and then feeds it to Elasticsearch. Elasticsearch is responsible for ingesting and indexing the json data. If logs are generated in non-Json format which will be the case for Redis, System, Postgres, Elasticsearch logs, then they will be parsed and indexed using the elastic <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-modules-overview.html">modules</a>. </p>
-<p>After the Json data is indexed in Elasticearch, Kibana provides powerful visualisation tools and dashboards that offer various interactive diagrams to visualize complex queries. </p><div class="callout note "><div class="callout-title">Note</div>
-<p>All the files required for logging aggregator configuration can be found <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator">here</a>. How to use each of these files and it&rsquo;s significance will be explained further in the document.</p>
-<p>It is assumed that in production, Elasticsearch, Logstash and Kibana will be registered with TMT infra DNS setup. Hence, all the configuration files for production is provided referring to DNS host name. </p>
+<p>As shown in above architecture diagram, all machines in TMT can run Filebeat to watch log files. Filebeat is responsible for watching log files and shipping it to the centralized Logstash component. Filebeat maintains a marker in a registry for the last read position in a file, so that it can resume where it left off should it need to be restarted. Applications can keep emitting logs to the file agnostic to whether Filebeat is running or not.</p>
+<p>Logstash collects the JSON logs (e.g. from components) in string format, parses it to a valid JSON object and then feeds it to Elasticsearch. Elasticsearch is responsible for ingesting and indexing the JSON data. If logs are generated in non-JSON format, which will be the case for Redis, syslog, Postgres, and Elasticsearch logs, they will be parsed and indexed using the elastic <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-modules-overview.html">modules</a>. </p>
+<p>After the JSON data is indexed in Elasticearch, Kibana provides powerful visualization tools and dashboards that offer various interactive diagrams to visualize complex queries. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>All the files required for logging aggregator configuration can be found <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator">here</a>. How to use each of these files and its significance will be explained further in the document.</p>
+<p>It is assumed that in production, Elasticsearch, Logstash and Kibana will be registered with TMT intranet DNS setup. Hence, all the configuration files for production are provided by referring to DNS host name. </p>
 <p>It is strongly recommended to run the same version (v6.6.0 or higher) of elastic components so as to avoid any compatibility issues.</p>
-<p>By default, the elastic stack exposes the following ports and the configurations also rely on the same.</p>
+<p>By default, the elastic stack exposes the following ports on which the configurations rely.</p>
 <ul>
   <li>5044: Logstash TCP input.</li>
   <li>9200: Elasticsearch HTTP port</li>
   <li>5601: Kibana</li>
 </ul></div>
 <h2><a href="#tmt-applications-scala-java-python-c-c-" name="tmt-applications-scala-java-python-c-c-" class="anchor"><span class="anchor-link"></span></a>TMT Applications (Scala/Java/Python/C++/C)</h2>
-<p>In order to aggregate logs generated from TMT apps, Filebeat will require to watch them. The recommended practice is for apps to generate log files at a common place so that Filebeat can watch it. The common place to generate log files and watch them is defined by an environment variable <code>TMT_LOG_HOME</code> For e.g. TMT_LOG_HOME = /&laquo;user-accessible-space&raquo;/tmt/logs.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>Make sure that in production TMT_LOG_HOME is not set to /tmp, otherwise on machine reboot all the logs will be lost. </p></div>
-<p>The upcoming sections will explain how each TMT app can generate log files at TMT_LOG_HOME and how Filebeat can watch from the same TMT_LOG_HOME:</p>
+<p>In order to aggregate logs generated from TMT apps, the Filebeat application is used to watch them. The recommended practice is for apps to generate log files at a common place so that Filebeat can find them. This common place is defined by an environment variable <code>TMT_LOG_HOME</code> For e.g. TMT_LOG_HOME = /&laquo;user-accessible-space&raquo;/tmt/logs.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>For convenience during development, you may choose to use /tmp for <code>TMT_LOG_HOME</code>. However, for production, this variable should be set to something more permanent, since all the files in /tmp will be lost on machine reboot.</p></div>
+<p>The upcoming sections will explain how each TMT app can generate log files at TMT_LOG_HOME and how Filebeat can read them:</p>
 <h3><a href="#scala-java" name="scala-java" class="anchor"><span class="anchor-link"></span></a>Scala/Java</h3>
-<p>For Scala/Java applications to dump logs in a file, it is important that developers enable the <code>FileAppender</code> in application.conf. To know more about how to configure FileAppender please refer the <a href="../services/logging.html#configuration">logging documentation</a>. Once, the FileAppender is enabled, the log files will be generated under <code>TMT_LOG_HOME</code>. If TMT_LOG_HOME is not set as an environment variable then <code>BaseLogPathNotDefined</code> exception will be thrown. For tests, <code>baseLogPath</code> from logging configuration can be overridden in application.conf.</p>
+<p>For Scala/Java applications to dump logs in a file, it is important that developers enable the <code>FileAppender</code> in application.conf. To know more about how to configure FileAppender please refer the <a href="../services/logging.html#configuration">logging documentation</a>. Once, the FileAppender is enabled, the log files will be generated under <code>TMT_LOG_HOME</code>. If <code>TMT_LOG_HOME</code> is not set as an environment variable then a <code>BaseLogPathNotDefined</code> exception will be thrown. For tests, you can hard code a logging directory without setting the <code>TMT_LOG_HOME</code> environment variable by overriding the <code>baseLogPath</code> configuration setting in the logging configuration in your <code>application.conf</code> file.</p>
 <h3><a href="#c-" name="c-" class="anchor"><span class="anchor-link"></span></a>C++</h3>
-<p>For C++ developers it is recommended to use the <a href="https://github.com/gabime/spdlog">spdlog</a> library along with <a href="https://github.com/guangie88/spdlog_setup">spdlog-setup</a> add-on library for logging in files.</p>
+<p>For C++ developers, it is recommended to use the <a href="https://github.com/gabime/spdlog">spdlog</a> library along with <a href="https://github.com/guangie88/spdlog_setup">spdlog-setup</a> add-on library for logging in files.</p>
 <p>The following code snippet will explain how to use <code>spdlog</code>:</p>
 <dl>
   <dt>main.cpp
@@ -369,15 +369,15 @@ level = &quot;trace&quot;
 <p>The source code for above code can be found <a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/cpp">here</a></p><div class="callout note "><div class="callout-title">Note</div>
 <p>Things to keep in mind while writing C++/C/Python apps</p>
 <ul>
-  <li>The structure of json logs should adhere to <a href="../services/logging.html#log-structure">this</a> format</li>
-  <li>log files should be generated at path set at TMT_LOG_HOME</li>
-  <li>time should be logged in UTC</li>
-  <li>recommended to use rotating files for logging</li>
-  <li>configuration of log level should be in <code>.toml</code> file (or any config file for that matter e.g. <code>.conf</code> for C or <code>.json</code> for python) so that  log level is changeable without re-compiling C/C++ code.</li>
+  <li>The structure of JSON logs should adhere to <a href="../services/logging.html#log-structure">this</a> format</li>
+  <li>Log files should be generated at path set at TMT_LOG_HOME</li>
+  <li>Time should be logged in UTC</li>
+  <li>It is recommended to use rotating files for logging</li>
+  <li>Configuration of log levels should be in <code>.toml</code> file (or any config file for that matter e.g. <code>.conf</code> for C or <code>.json</code> for python) so that  log level is changeable without re-compiling C/C++ code.</li>
 </ul>
-<p>All the above points are already covered for Scala/Java apps in logging framework.</p></div>
+<p>All the above points are already included for Scala/Java apps using the CSW Logging framework.</p></div>
 <h3><a href="#c" name="c" class="anchor"><span class="anchor-link"></span></a>C</h3>
-<p>For C develoers it is recommended to use <a href="https://github.com/HardySimpson/zlog">zlog</a> logging library. The following code snippet will explain how to use <code>zlog</code>:</p>
+<p>For C developers, it is recommended to use <a href="https://github.com/HardySimpson/zlog">zlog</a> logging library. The following code snippet will explain how to use <code>zlog</code>:</p>
 <dl>
   <dt>main.c
   </dt>
@@ -424,15 +424,7 @@ default format = &quot;{&quot;timestamp&quot; : &quot;%d(%FT%T).%ms%d(%z)&quot;,
 *.* &quot;%E(TMT_LOG_HOME)/zlog.log&quot;</code></pre></dd>
 </dl>
 <p>The source code for above code can be found <a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/c">here</a></p><div class="callout note "><div class="callout-title">Note</div>
-<p>Things to keep in mind while writing C++/C/Python apps</p>
-<ul>
-  <li>The structure of json logs should adhere to <a href="../services/logging.html#log-structure">this</a> format</li>
-  <li>log files should be generated at path set at TMT_LOG_HOME</li>
-  <li>time should be logged in UTC</li>
-  <li>recommended to use rotating files for logging</li>
-  <li>configuration of log level should be in <code>.toml</code> file (or any config file for that matter e.g. <code>.conf</code> for C or <code>.json</code> for python) so that  log level is changeable without re-compiling C/C++ code.</li>
-</ul>
-<p>All the above points are already covered for Scala/Java apps in logging framework.</p></div>
+<p>Please refer to note above in the C++ section.</p></div>
 <h3><a href="#python" name="python" class="anchor"><span class="anchor-link"></span></a>Python</h3>
 <p>For python developers it is recommended to use the default <code>python-logging</code> module that comes with python. The following code snippet will explain how to use <code>python-logging</code> with python 3.7:</p>
 <dl>
@@ -536,19 +528,11 @@ class UTCFormatter(logging.Formatter):
     converter = time.gmtime</code></pre></dd>
 </dl>
 <p>The source code for above code can be found <a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/python">here</a></p><div class="callout note "><div class="callout-title">Note</div>
-<p>The use of <code>tmt_formatter.py</code> in <code>logging_default.json</code> to log in UTC timezone.</p></div><div class="callout note "><div class="callout-title">Note</div>
-<p>Things to keep in mind while writing C++/C/Python apps</p>
-<ul>
-  <li>The structure of json logs should adhere to <a href="../services/logging.html#log-structure">this</a> format</li>
-  <li>log files should be generated at path set at TMT_LOG_HOME</li>
-  <li>time should be logged in UTC</li>
-  <li>recommended to use rotating files for logging</li>
-  <li>configuration of log level should be in <code>.toml</code> file (or any config file for that matter e.g. <code>.conf</code> for C or <code>.json</code> for python) so that  log level is changeable without re-compiling C/C++ code.</li>
-</ul>
-<p>All the above points are already covered for Scala/Java apps in logging framework.</p></div>
+<p>The above example shows how <code>tmt_formatter.py</code> in <code>logging_default.json</code> is used to log with UTC timestamps.</p></div><div class="callout note "><div class="callout-title">Note</div>
+<p>Please refer to note above in the C++ section.</p></div>
 <h3><a href="#filebeat-watching-tmt-app-logs-and-system-generated-logs" name="filebeat-watching-tmt-app-logs-and-system-generated-logs" class="anchor"><span class="anchor-link"></span></a>Filebeat watching TMT app logs and system generated logs</h3>
 <p>Once TMT applications generate log files under TMT_LOG_HOME, Filebeat needs to start watching them. In order for Filebeat to be aware of TMT_LOG_HOME, <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/filebeat/modules/system/filebeat.yml">filebeat.yml</a> should be used to start Filebeat.</p>
-<p>All machines running TMT application also need system generated logs to be watched by Filebeat so that it gets shipped to Logstash. This can be achieved by enabling <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-module-system.html">System module</a> in Filebeat and making Elasticsearch aware of receiving system logs (text based logs) to parse and index them.</p>
+<p>All machines running TMT applications also need system generated logs to be watched by Filebeat so that it gets shipped to Logstash. This can be achieved by enabling <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-module-system.html">System module</a> in Filebeat and making Elasticsearch aware of receiving system logs (text based logs) to parse and index them.</p>
 <p>In order to achieve this follow the below given steps:</p>
 <ul>
   <li>Run Elasticsearch using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/elasticsearch/elasticsearch.yml">elasticsearch.yml</a>.  Place <code>elasticsearch.yml</code> in &laquo;Elasticsearch installation folder&raquo;/config/ and execute <code>./bin/elasticsearch</code> (on Mac) or <code>bin/elasticsearch</code> (on Linux).</li>
@@ -557,9 +541,9 @@ class UTCFormatter(logging.Formatter):
   <li>Run Filebeat from &laquo;Filebeat installation folder&raquo; by executing <code>./filebeat -e</code> (on Mac) or <code>filebeat -e</code> (on Linux).  This will enable system module for watching system logs from its default path i.e. /var/log/system.log as well as watching log files under TMT_LOG_HOME.</li>
   <li>Run Kibana using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/kibana/kibana.yml">kibana.yml</a>.  Place <code>kibana.yml</code> in &laquo;Kibana installation folder&raquo;/config/ and execute <code>./bin/kibana</code> (on mac) or <code>bin/kibana</code> (on Linux). This will give GUI over  logs aggregated in Elasticsearch.</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
-<p>It is assumed that in production, Elasticsearch, Logstash and Kibana will be registered with TMT infra DNS setup. Hence, all the <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator/prod">configuration files</a> for production is provided referring to dns name. </p></div>
+<p>It is assumed that in production, Elasticsearch, Logstash and Kibana will be registered with TMT intranet DNS setup. Hence, all the <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator/prod">configuration files</a> for production are provided by referring to DNS host name. </p></div>
 <h2><a href="#redis-logs" name="redis-logs" class="anchor"><span class="anchor-link"></span></a>Redis logs</h2>
-<p>Redis will be started in sentinel mode, master mode and slave mode on different machines for Event and Alarm service. <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/conf">Configuration files</a> are provided for Redis sentinel, master and slave to log in file <code>/usr/local/var/log/redis/redis-server.log</code>. Filebeat will also be watching this file once <a href="https://www.elastic.co/guide/en/beats/filebeat/6.7/filebeat-module-redis.html">Redis module</a> is enabled.</p>
+<p>In production, Redis will be started in sentinel mode, master mode and slave mode on different machines for Event and Alarm service. <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/conf">Configuration files</a> are provided for Redis sentinel, master and slave to log in file <code>/usr/local/var/log/redis/redis-server.log</code>. Filebeat will also be watching this file once the <a href="https://www.elastic.co/guide/en/beats/filebeat/6.7/filebeat-module-redis.html">Redis module</a> is enabled.</p>
 <p>Note that system generated logs on Redis machines also needs to be watched by Filebeat and aggregated. In order to enable Redis and System module follow the below given steps: </p>
 <ul>
   <li>Run Elasticsearch using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/elasticsearch/elasticsearch.yml">elasticsearch.yml</a>.  Place <code>elasticsearch.yml</code> in &laquo;Elasticsearch installation folder&raquo;/config/ and execute <code>./bin/elasticsearch</code> (on Mac) or <code>bin/elasticsearch</code> (on Linux).</li>
@@ -589,7 +573,7 @@ class UTCFormatter(logging.Formatter):
   <li>Run Kibana using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/kibana/kibana.yml">kibana.yml</a>.  Place <code>kibana.yml</code> in &laquo;Kibana installation folder&raquo;/config/ and execute <code>./bin/kibana</code> (on mac) or <code>bin/kibana</code> (on Linux). This will give GUI over  logs aggregated in Elasticsearch.</li>
 </ul>
 <h2><a href="#keycloak-logs" name="keycloak-logs" class="anchor"><span class="anchor-link"></span></a>Keycloak logs</h2>
-<p>Logs generated from Keycloak needs to be watched by Filebeat and aggregated. Hence, use <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/conf/auth_service/standalone.xml">standalone.xml</a> to start JBoss server which will make JBoss server to log in json format, enable keycloak logs and generate log files under <code>TMT_LOG_HOME</code>.</p>
+<p>Logs generated from Keycloak needs to be watched by Filebeat and aggregated. Hence, use <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/conf/auth_service/standalone.xml">standalone.xml</a> to start JBoss server which will make JBoss server to log in JSON format, enable keycloak logs, and generate log files under <code>TMT_LOG_HOME</code>.</p>
 <p>Note that system generated logs on Keycloak machine also needs to be watched by Filebeat and aggregated. In order to watch Keycloak logs from <code>TMT_LOG_HOME</code> and enable system module refer the steps from <a href="logging_aggregator.html#filebeat-watching-tmt-app-logs-and-system-generated-logs">here</a>. </p>
 <h2><a href="#system-logs-on-logstash-and-kibana-machines" name="system-logs-on-logstash-and-kibana-machines" class="anchor"><span class="anchor-link"></span></a>System logs on Logstash and Kibana machines</h2>
 <p>Machines running Logstash and Kibana will require to aggregate system logs from their machines too. Hence, in order to enable system module on their machines follow the below given steps:</p>
@@ -601,14 +585,14 @@ class UTCFormatter(logging.Formatter):
   <li>Run Kibana using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/kibana/kibana.yml">kibana.yml</a>.  Place <code>kibana.yml</code> in &laquo;Kibana installation folder&raquo;/config/ and execute <code>./bin/kibana</code> (on mac) or <code>bin/kibana</code> (on Linux). This will give GUI over  logs aggregated in Elasticsearch.</li>
 </ul>
 <h2><a href="#explore-kibana" name="explore-kibana" class="anchor"><span class="anchor-link"></span></a>Explore Kibana</h2>
-<p>Once Kibana is up and running hit <code>http://localhost:5601/</code> in browser and go to:</p>
+<p>Once Kibana is up and running, open <code>http://localhost:5601/</code> in a browser and go to:</p>
 <ul>
   <li><code>Management</code> -&gt; <code>Kibana</code> -&gt; <code>Index Patterns</code> and create an index pattern as per the requirement.</li>
   <li><code>Discover</code> -&gt; <code>Select the index pattern created</code> and explore</li>
 </ul>
 <p>For Modules like System, Postgres, Redis and Elasticsearch go to <code>Dashboard</code> and explore.</p>
 <h2><a href="#running-elastic-stack-for-developer" name="running-elastic-stack-for-developer" class="anchor"><span class="anchor-link"></span></a>Running Elastic stack for developer</h2>
-<p>For development purposes <a href="https://docs.docker.com/compose/">Docker compose</a> is used to start Elasticsearch, Logstash, Kibana and Filebeat in a container. Hence, make sure that latest Docker setup is installed and running before starting the Elastic stack. Docker container is responsible to aggregate logs generated in <code>tmp/csw/logs</code>. Hence, developers writing Scala/Java/Python/C++/C applications need to generate log files under <code>/tmp/csw/logs</code>. </p>
+<p>For development purposes <a href="https://docs.docker.com/compose/">Docker compose</a> is used to start Elasticsearch, Logstash, Kibana and Filebeat in a container. Hence, make sure that latest Docker setup is installed and running before starting the Elastic stack. The Docker container is responsible for aggregating logs generated in <code>tmp/csw/logs</code>. Hence, developers writing Scala/Java/Python/C++/C applications need to generate log files under <code>/tmp/csw/logs</code>. </p>
 <p>Also, note that csw apps started via <code>csw-services.sh</code> will generate log files under <code>/tmp/csw/logs</code> and thus, it will be aggregated by the Elastic docker container. To know more about setting up docker and starting Elastic please refer <a href="apps.html#starting-elk-logging-aggregator-for-development">Starting Elastic logging aggregator for Development</a>. </p>
 </div>
 <div>
