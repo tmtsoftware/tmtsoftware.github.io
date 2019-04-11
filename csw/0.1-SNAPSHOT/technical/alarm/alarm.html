@@ -269,7 +269,7 @@ tmtsoftware/csw
 <div class="md-content__searchable">
 <h1><a href="#alarm-service-technical-description" name="alarm-service-technical-description" class="anchor"><span class="anchor-link"></span></a>Alarm Service Technical Description</h1>
 <h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
-<p>Alarm service in TMT software is used by components to raise alarms. Alarms could be of different severities such as Warning, Critical, etc. The alarm system also provides mechanism to monitor the health of all components and subsystems in TMT. </p>
+<p>Alarm service in TMT software is used by components to raise alarms. Alarms could be of different severities such as Warning, Critical, etc. The alarm system also provides mechanism to monitor the health of all components and subsystems in TMT.</p>
 <h2><a href="#technology" name="technology" class="anchor"><span class="anchor-link"></span></a>Technology</h2>
 <p>Alarm service uses <a href="https://redis.io/">Redis</a> for persistence. Redis provides <a href="https://redis.io/topics/notifications">Keyspace Notifications</a> which allows clients to subscribe to Pub/Sub channels in order to receive events affecting the Redis data set in some way.</p>
 <p><img src="alarm-layers.png" alt="Alarm Dependencies" /></p>
@@ -317,19 +317,19 @@ tmtsoftware/csw
   <li><code>Ill</code></li>
   <li><code>Bad</code></li>
 </ul>
-<p>Health is calculation based on severity. Figure shown below shows a mapping between health and severities.</p>
+<p>Health is calculated based on severity. Figure shown below shows a mapping between health and severities.</p>
 <p><img src="alarm-health.png" alt="alarm-health" /></p>
 <h2><a href="#severity-health-aggregations" name="severity-health-aggregations" class="anchor"><span class="anchor-link"></span></a>Severity &amp; Health Aggregations</h2>
 <p>A severity can be associated with an alarm, a component or a sub-system.</p>
-<p>Unlike alarms, which has a direct association with severity, components and sub-systems don&rsquo;t have a direct association with alarm-severities. They have aggregated severities based on severities on their children.</p>
+<p>Unlike alarms, which has a direct association with severity, components and sub-systems don&rsquo;t have a direct association with severities. They have aggregated severities based on severities of their children.</p>
 <p><img src="alarm-hierarchy.png" alt="alarm-hierarchy" /></p>
 <p>A components aggregated severity is equal to severity of it&rsquo;s child alarm with &ldquo;maximum&rdquo; severity. Similarly, a sub-system&rsquo;s aggregated severity is determined by it&rsquo;s child component with maximum severity.</p>
-<p>Health aggregation works on top of severity aggregation. A components aggregated health is calculated by first calculating it&rsquo;s aggregated severity and then mapping to health. Sub-System health aggregation works similarly.</p>
+<p>Health aggregation works on top of severity aggregation. A components aggregated health is calculated by first calculating it&rsquo;s aggregated severity and then mapping it to health. Sub-System health aggregation works in the same way.</p>
 <h2><a href="#redis-storage" name="redis-storage" class="anchor"><span class="anchor-link"></span></a>Redis Storage</h2>
 <p><img src="redis-keys.png" alt="redis-keys" /></p>
 <h3><a href="#metadata" name="metadata" class="anchor"><span class="anchor-link"></span></a>Metadata</h3>
-<p>Metadata of an alarm is static information about an alarm such as name, description, subsystem, component, etc. This information is not supposed to change during runtime. Since the metadata is static, entire metadata of an alarm is stored against a single redis key in json format. The key name is formed with pattern: <code>metadata-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code> e.g. <code>metadata-nfiraos-trombone-tromboneaxislowlimitalarm</code>.</p>
-<p>This sample json below, shows structure of typical alarm metadata</p>
+<p>Metadata of an alarm is static information about an alarm such as name, description, subsystem, component, etc. This information is not changed during runtime. Since the metadata is static, entire metadata of an alarm is stored against a single redis key in json format for easy retrieval. The key name is formed with pattern: <code>metadata-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code> e.g. <code>metadata-nfiraos-trombone-tromboneaxislowlimitalarm</code>.</p>
+<p>The sample json below, shows structure of typical alarm metadata</p>
 <pre class="prettyprint"><code class="language-json">{
    &quot;subsystem&quot;:&quot;tcs&quot;,
    &quot;component&quot;:&quot;corrections&quot;,
@@ -381,17 +381,17 @@ tmtsoftware/csw
 </ul>
 <h3><a href="#shelve-status" name="shelve-status" class="anchor"><span class="anchor-link"></span></a>Shelve Status</h3>
 <p>Indicates shelve status of an alarm. The key name is formed with pattern <code>shelvestatus-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code>. e.g. <code>shelvestatus-nfiraos-trombone-tromboneaxislowlimitalarm</code></p>
-<p>This key could have one of the following values</p>
+<p>This key can have one of the following values</p>
 <ul>
   <li><code>shelved</code></li>
   <li><code>unshelved</code></li>
 </ul>
-<p>If now value is present, it is inferred as <code>unshelved</code></p>
+<p>If no value is present, it is inferred as <code>unshelved</code></p>
 <h3><a href="#alarm-time" name="alarm-time" class="anchor"><span class="anchor-link"></span></a>Alarm Time</h3>
 <p>Indicates the time since last severity change of an alarm. The key name is formed with pattern <code>alarmtime-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code>. e.g. <code>alarmtime-nfiraos-beamsplitter-splitterlimitalarm</code></p>
 <p>The value is stored in the format: <code>2019-04-03T11:09:28.404143Z</code></p>
 <h3><a href="#initializing" name="initializing" class="anchor"><span class="anchor-link"></span></a>Initializing</h3>
-<p>Indicates whether is initializing or it&rsquo;s initialization is finished. It contains a boolean value either <code>true</code> or <code>false</code></p>
+<p>Indicates whether alarm is initializing or it&rsquo;s initialization is finished. It contains a boolean value either <code>true</code> or <code>false</code></p>
 <p>The key name is formed with pattern <code>initializing-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code>. e.g. <code>initializing-lgsf-tcspkinactive-cpuidlealarm</code></p>
 <h2><a href="#alarm-disconnection" name="alarm-disconnection" class="anchor"><span class="anchor-link"></span></a>Alarm Disconnection</h2>
 <p>All the severities except <code>Disconnected</code>, need to be set explicitly. <code>Disconnected</code> is a special severity in the sense that it can never be set by a component explicitly and is always inferred when there is no severity. Alarm service uses <a href="https://en.wikipedia.org/wiki/Heartbeat_(computing)">Heartbeat pattern</a>.</p>
@@ -402,25 +402,25 @@ tmtsoftware/csw
 <p>Actual TLL depends on <code>refresh-interval</code> &amp; <code>max-missed-refresh-counts</code> configurations. For example, if <code>refresh-interval</code> is set to <code>3s</code> (3 seconds) and <code>max-missed-refresh-counts</code> is set to 2, alarm will get disconnected after 6 seconds (3 * 2)</p></div>
 <p>Using the heartbeat pattern allows us to detect dead or disconnected components automatically without polling them at regular intervals.</p>
 <h2><a href="#severity-latching" name="severity-latching" class="anchor"><span class="anchor-link"></span></a>Severity Latching</h2>
-<p>Alarm metadata json has an attribute called &ldquo;isLatchable&rdquo;. This drives the latching behaviour of alarms. If an alarm is latchable, it&rsquo;s latched severity sticks to the last highest severity until the alarm is reset. Reset operation is provided as an api in alarm service.</p>
+<p><a href="#metadata">Alarm metadata</a> json has a boolean attribute called &ldquo;isLatchable&rdquo;. This determines the latching behaviour of an alarm. If an alarm is latchable, it&rsquo;s latched severity <em>sticks</em> to the last highest severity until the alarm is reset. Reset operation is provided the <a href="#api-structure">admin api</a> of alarm service.</p>
 <p><img src="alarm-latchable-behavior-with-reset.gif" alt="latched-alarm-behaviour" /></p>
 <p>For, alarms which are not latchable, latched severity will always be equal to severity.</p>
-<p>Setting severity and latched severity both is done by <code>SetSeverity</code> api. As described in previous sections, When a component dies, it can&rsquo;t call <code>SetSeverity</code> and the severity key in redis, expires. However the &ldquo;Latched Severity&rdquo; is still not updated which is a problem. To solve this problem, the alarm server subscribes to all severity changes (using akka stream api of alarm service) and whenever it detects a key has expired, it updates it&rsquo;s respective &ldquo;latchedSeverity&rdquo; value in redis.</p>
+<p>Setting severity and latched severity both is done by <code>SetSeverity</code> api. As described in previous sections, when a component dies, it can&rsquo;t call <code>SetSeverity</code> and the severity key in redis, expires. However the &ldquo;Latched Severity&rdquo; is still not updated; which is a problem. To solve this problem, the alarm server subscribes to all severity changes (using akka stream api of alarm service) and whenever it detects a key has expired, it updates it&rsquo;s respective &ldquo;latchedSeverity&rdquo; value in redis to <code>disconnected</code>.</p>
 <h2><a href="#shelving-alarms" name="shelving-alarms" class="anchor"><span class="anchor-link"></span></a>Shelving Alarms</h2>
 <p>Alarms can be shelved and un-shelved using alarm service api. An alarm can only be shelved until a predefined time. The time can be configured in alarm configuration. For example: </p>
 <pre class="prettyprint"><code class="language-hocon">shelve-timeout = &quot;8:00:00 AM&quot; // format -&gt; h:m:s a
 </code></pre>
 <p>When changing the shelve status to <code>shelved</code> it is set using <code>setex</code> operation of redis with an appropriate TTL so that it get&rsquo;s expired on next <code>shelve-timeout</code>. Once expired, it is inferred as <code>unshelved</code>.</p>
-<p>Alarms can also be un-shelved explicitly before next <code>shelve-timeout</code> occurs. <code>Unshelve</code> api sets <code>unshelved</code> value in redis explicitly without any TTL.</p>
+<p>Alarms can also be un-shelved explicitly before next <code>shelve-timeout</code> occurs. <code>unshelve</code> api sets <code>unshelved</code> value in redis explicitly without any TTL.</p>
 <h2><a href="#acknowledging-alarms" name="acknowledging-alarms" class="anchor"><span class="anchor-link"></span></a>Acknowledging Alarms</h2>
-<p>Alarms can be in either <code>ackowldged</code> or <code>unackowldged</code> state. See <a href="#acknowledgement-status">Acknowledgement Status</a> for more details. The state can be changed by simply using <code>acknowledge</code> or <code>unacknowledge</code> api of alarm service. Apart from these apis, Setting severity can also change the Acknowledgement Status of an alarm.</p>
+<p>Alarms can be in either <code>ackowldged</code> or <code>unackowldged</code> state. See <a href="#acknowledgement-status">Acknowledgement Status</a> for more details. The state can be changed by simply using <code>acknowledge</code> or <code>unacknowledge</code> api of alarm service. Apart from these apis, setting severity can also change the Acknowledgement Status of an alarm.</p>
 <p>Alarm can either be be auto-acknowledgeable or not auto-acknowledgeable. This behavior is driven from <a href="#metadata">alarm metadata</a>. When an alarm is not auto-acknowledgeable, whenever it&rsquo;s severity changes to anything except Okay, it&rsquo;s Acknowledgement Status becomes <code>unackowldged</code>. If it is changing from any severity to Okay, Acknowledgement Status remains same.</p>
 <p>When the alarm is auto-acknowledgeable, whenever it&rsquo;s severity changes to Okay, it&rsquo;s Acknowledgement Status becomes <code>ackowldged</code>. If it changes to anything else, Acknowledgement Status remains same.</p>
 <h2><a href="#api-structure" name="api-structure" class="anchor"><span class="anchor-link"></span></a>Api Structure</h2>
 <p><img src="api-structure.png" alt="api-structure" /></p>
 <h2><a href="#architecture" name="architecture" class="anchor"><span class="anchor-link"></span></a>Architecture</h2>
 <p><img src="alarm-architecture.png" alt="architecture" /></p><div class="callout note "><div class="callout-title">Note</div>
-<p>At the time of writing this documentation, the alarm server does not exit. It will be developed in future.</p></div>
+<p>At the time of writing this documentation, the alarm server does not exist. It will be developed in future.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/alarm/alarm.md" title="Edit this page" class="md-source-file md-edit">
