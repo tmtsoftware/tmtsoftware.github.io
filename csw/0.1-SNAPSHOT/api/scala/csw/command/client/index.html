@@ -134,9 +134,9 @@
       
       <p class="shortcomment cmt">This project defines the basic classes and traits for the <i>Command Service</i>.</p><div class="fullcomment"><div class="comment cmt"><h4> Command Service </h4><p>This project defines the basic classes and traits for the <i>Command Service</i>.</p><p>Related projects are:
 - <b>csw-messages</b>:</p><ul><li>This defines the types of command (Oneway/Submit etc.) and types of <i>configurations</i> (Setup/Observe/Wait etc.)</li><li>Complete usage of Messages is available at: https://tmtsoftware.github.io/csw/services/messages.html</li></ul><p>- <b>framework</b>:</p><ul><li>This defines the Hcd and Assembly handlers, lifecycle manager and supervisor for components.</li><li>Framework allows component writer to override onValidation, onSubmit and onOneway handlers. (Note it allows overriding other handlers as well.)</li><li>On every command received by component, onValidation handler gets invoked where received command gets validated and validation response is returned.</li><li>Based on validation response and command type, onSubmit/onOneway hooks gets invoked where command gets processed.</li><li>Complete details of handling commands can be found here : https://tmtsoftware.github.io/csw/framework/handling-lifecycle.html#handling-commands</li></ul><p>Important classes in this project are:</p><p>- <a href="CommandResponseManager.html" class="extype" name="csw.command.client.CommandResponseManager">csw.command.client.CommandResponseManager</a></p><p>This class wraps CommandResponseManagerActor and provides helpers to interact with actor which is responsible for adding/updating/querying command result.
-Component writers will get handle to CommandResponseManager in their handlers.</p><p>- <span class="extype" name="csw.command.client.internal.CommandResponseManagerBehavior">csw.command.client.internal.CommandResponseManagerBehavior</span> maintains two states:</p><ul><li><span class="extype" name="csw.command.client.internal.CommandResponseState">csw.command.client.internal.CommandResponseState</span>:
-     It maintains <a href="../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> of Commands and their corresponding <span class="extype" name="csw.command.client.internal.CommandState">csw.command.client.internal.CommandState</span>.</li><li><span class="extype" name="csw.command.client.internal.CommandCorrelation">csw.command.client.internal.CommandCorrelation</span> :
-     It maintains commands <a href="../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> correlation between parent to child and child to parent.</li></ul><p>- <a href="../api/scaladsl/CommandService.html" class="extype" name="csw.command.api.scaladsl.CommandService">csw.command.api.scaladsl.CommandService</a></p><p>This class wraps the <a href="../../location/api/models/AkkaLocation.html" class="extype" name="csw.location.api.models.AkkaLocation">csw.location.api.models.AkkaLocation</a> and provides helpers to send commands to component actor extracted from provided location.
+Component writers will get handle to CommandResponseManager in their handlers.</p><p>- <code>CommandResponseManagerActor</code> maintains four states:</p><ul><li><code>CommandResponseState</code>:
+     It maintains <a href="../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> of Commands and their corresponding <a href="../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">csw.params.commands.CommandResponse.SubmitResponse</a>.</li><li><code>CommandCorrelation</code> :
+     It maintains commands <a href="../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> correlation between parent to child and child to parent.</li><li><a href="Store.html" class="extype" name="csw.command.client.Store">csw.command.client.Store</a> for command subscribers and query subscribers</li></ul><p>- <a href="../api/scaladsl/CommandService.html" class="extype" name="csw.command.api.scaladsl.CommandService">csw.command.api.scaladsl.CommandService</a></p><p>This class wraps the <a href="../../location/api/models/AkkaLocation.html" class="extype" name="csw.location.api.models.AkkaLocation">csw.location.api.models.AkkaLocation</a> and provides helpers to send commands to component actor extracted from provided location.
 Normal component writers workflow would be to first resolve component using location service and then create CommandService instance using resolved location.</p><p>Using this instance, you can Submit Command/Commands to other component or query for command result or subscribe for long running command result.</p><p>When you have multiple commands targeted to multiple components then you can use ConfigDistributor.
 Using CommandDistributor utility you can send all these commands in one go and get aggregated response.</p><p>Complete guide of usage of different API's provided by CommandService is available at:
 <a href="https://tmtsoftware.github.io/csw/command.html" target="_blank">https://tmtsoftware.github.io/csw/command.html</a></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="csw.command">command</a></dd></dl></div>
@@ -189,9 +189,17 @@ Using CommandDistributor utility you can send all these commands in one go and g
       
       
     </li><li class="current-entities indented3">
+                        <a class="object" href="CRMCacheProperties$.html" title=""></a>
+                        <a class="class" href="CRMCacheProperties.html" title="Configurations to be used by underlying CommandResponseState's cache maintained by CommandResponseManagerActor"></a>
+                        <a href="CRMCacheProperties.html" title="Configurations to be used by underlying CommandResponseState's cache maintained by CommandResponseManagerActor">CRMCacheProperties</a>
+                      </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="CommandResponseManager.html" title="Wrapper API for interacting with Command Response Manager of a component"></a>
                         <a href="CommandResponseManager.html" title="Wrapper API for interacting with Command Response Manager of a component">CommandResponseManager</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="CommandResponseManagerActor$.html" title="The Behavior of a Command Response Manager is represented as a mutable behavior."></a>
+                        <a href="CommandResponseManagerActor$.html" title="The Behavior of a Command Response Manager is represented as a mutable behavior.">CommandResponseManagerActor</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="CommandServiceFactory$.html" title="The factory helps in creating CommandService api for scala and java both"></a>
@@ -230,9 +238,9 @@ Using CommandDistributor utility you can send all these commands in one go and g
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><h4> Command Service </h4><p>This project defines the basic classes and traits for the <i>Command Service</i>.</p><p>Related projects are:
 - <b>csw-messages</b>:</p><ul><li>This defines the types of command (Oneway/Submit etc.) and types of <i>configurations</i> (Setup/Observe/Wait etc.)</li><li>Complete usage of Messages is available at: https://tmtsoftware.github.io/csw/services/messages.html</li></ul><p>- <b>framework</b>:</p><ul><li>This defines the Hcd and Assembly handlers, lifecycle manager and supervisor for components.</li><li>Framework allows component writer to override onValidation, onSubmit and onOneway handlers. (Note it allows overriding other handlers as well.)</li><li>On every command received by component, onValidation handler gets invoked where received command gets validated and validation response is returned.</li><li>Based on validation response and command type, onSubmit/onOneway hooks gets invoked where command gets processed.</li><li>Complete details of handling commands can be found here : https://tmtsoftware.github.io/csw/framework/handling-lifecycle.html#handling-commands</li></ul><p>Important classes in this project are:</p><p>- <a href="CommandResponseManager.html" class="extype" name="csw.command.client.CommandResponseManager">csw.command.client.CommandResponseManager</a></p><p>This class wraps CommandResponseManagerActor and provides helpers to interact with actor which is responsible for adding/updating/querying command result.
-Component writers will get handle to CommandResponseManager in their handlers.</p><p>- <span class="extype" name="csw.command.client.internal.CommandResponseManagerBehavior">csw.command.client.internal.CommandResponseManagerBehavior</span> maintains two states:</p><ul><li><span class="extype" name="csw.command.client.internal.CommandResponseState">csw.command.client.internal.CommandResponseState</span>:
-     It maintains <a href="../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> of Commands and their corresponding <span class="extype" name="csw.command.client.internal.CommandState">csw.command.client.internal.CommandState</span>.</li><li><span class="extype" name="csw.command.client.internal.CommandCorrelation">csw.command.client.internal.CommandCorrelation</span> :
-     It maintains commands <a href="../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> correlation between parent to child and child to parent.</li></ul><p>- <a href="../api/scaladsl/CommandService.html" class="extype" name="csw.command.api.scaladsl.CommandService">csw.command.api.scaladsl.CommandService</a></p><p>This class wraps the <a href="../../location/api/models/AkkaLocation.html" class="extype" name="csw.location.api.models.AkkaLocation">csw.location.api.models.AkkaLocation</a> and provides helpers to send commands to component actor extracted from provided location.
+Component writers will get handle to CommandResponseManager in their handlers.</p><p>- <code>CommandResponseManagerActor</code> maintains four states:</p><ul><li><code>CommandResponseState</code>:
+     It maintains <a href="../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> of Commands and their corresponding <a href="../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">csw.params.commands.CommandResponse.SubmitResponse</a>.</li><li><code>CommandCorrelation</code> :
+     It maintains commands <a href="../../params/core/models/Id.html" class="extype" name="csw.params.core.models.Id">csw.params.core.models.Id</a> correlation between parent to child and child to parent.</li><li><a href="Store.html" class="extype" name="csw.command.client.Store">csw.command.client.Store</a> for command subscribers and query subscribers</li></ul><p>- <a href="../api/scaladsl/CommandService.html" class="extype" name="csw.command.api.scaladsl.CommandService">csw.command.api.scaladsl.CommandService</a></p><p>This class wraps the <a href="../../location/api/models/AkkaLocation.html" class="extype" name="csw.location.api.models.AkkaLocation">csw.location.api.models.AkkaLocation</a> and provides helpers to send commands to component actor extracted from provided location.
 Normal component writers workflow would be to first resolve component using location service and then create CommandService instance using resolved location.</p><p>Using this instance, you can Submit Command/Commands to other component or query for command result or subscribe for long running command result.</p><p>When you have multiple commands targeted to multiple components then you can use ConfigDistributor.
 Using CommandDistributor utility you can send all these commands in one go and get aggregated response.</p><p>Complete guide of usage of different API's provided by CommandService is available at:
 <a href="https://tmtsoftware.github.io/csw/command.html" target="_blank">https://tmtsoftware.github.io/csw/command.html</a></p></div><div class="toggleContainer block">
@@ -287,7 +295,25 @@ Using CommandDistributor utility you can send all these commands in one go and g
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="csw.command.client.CommandResponseManager" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="csw.command.client.CRMCacheProperties" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CRMCachePropertiesextendsProductwithSerializable"></a><a id="CRMCacheProperties:CRMCacheProperties"></a>
+      <span class="permalink">
+      <a href="../../../csw/command/client/index.html#CRMCachePropertiesextendsProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="Configurations to be used by underlying CommandResponseState's cache maintained by CommandResponseManagerActor" href="CRMCacheProperties.html"><span class="name">CRMCacheProperties</span></a><span class="params">(<span name="maxSize">maxSize: <a href="http://scala-lang.org/files/archive/api/2.12.8/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>, <span name="expiry">expiry: <span class="extype" name="java.time.Duration">Duration</span></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.8/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.12.8/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Configurations to be used by underlying <code>CommandResponseState's</code> cache maintained by <a href="CommandResponseManagerActor$.html" class="extype" name="csw.command.client.CommandResponseManagerActor">CommandResponseManagerActor</a>
+</p><div class="fullcomment"><div class="comment cmt"><p>Configurations to be used by underlying <code>CommandResponseState's</code> cache maintained by <a href="CommandResponseManagerActor$.html" class="extype" name="csw.command.client.CommandResponseManagerActor">CommandResponseManagerActor</a>
+</p></div><dl class="paramcmts block"><dt class="param">maxSize</dt><dd class="cmt"><p>maximum number of states the cache can hold, used for eviction of states</p></dd><dt class="param">expiry</dt><dd class="cmt"><p>maximum amount of time a state can stay in cache from last access, also used for eviction</p></dd></dl></div>
+    </li><li name="csw.command.client.CommandResponseManager" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="CommandResponseManagerextendsAnyRef"></a><a id="CommandResponseManager:CommandResponseManager"></a>
       <span class="permalink">
       <a href="../../../csw/command/client/index.html#CommandResponseManagerextendsAnyRef" title="Permalink">
@@ -330,7 +356,54 @@ Using CommandDistributor utility you can send all these commands in one go and g
         <div class="values members">
               <h3>Value Members</h3>
               <ol>
-                <li name="csw.command.client.CommandServiceFactory" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+                <li name="csw.command.client.CRMCacheProperties" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CRMCacheProperties"></a><a id="CRMCacheProperties:CRMCacheProperties"></a>
+      <span class="permalink">
+      <a href="../../../csw/command/client/index.html#CRMCacheProperties" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CRMCacheProperties$.html"><span class="name">CRMCacheProperties</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.12.8/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="csw.command.client.CommandResponseManagerActor" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CommandResponseManagerActor"></a><a id="CommandResponseManagerActor:CommandResponseManagerActor"></a>
+      <span class="permalink">
+      <a href="../../../csw/command/client/index.html#CommandResponseManagerActor" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="The Behavior of a Command Response Manager is represented as a mutable behavior." href="CommandResponseManagerActor$.html"><span class="name">CommandResponseManagerActor</span></a>
+      </span>
+      
+      <p class="shortcomment cmt">The Behavior of a Command Response Manager is represented as a mutable behavior.</p><div class="fullcomment"><div class="comment cmt"><p>The Behavior of a Command Response Manager is represented as a mutable behavior. This behavior will be created as an actor.
+There will be one CommandResponseManager for a given component which will provide an interface to interact with the status
+and result of a submitted commands.</p><p>This class defines the behavior of CommandResponseManagerActor and is responsible for adding/updating/querying command result.
+When component receives command of type Submit, then framework (ComponentBehavior - TLA) will add a entry of this command
+with the <a href="../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">csw.params.commands.CommandResponse.SubmitResponse</a> of <a href="../../params/commands/CommandResponse$$Started.html" class="extype" name="csw.params.commands.CommandResponse.Started">csw.params.commands.CommandResponse.Started</a>
+stored into the CommandResponseManager.</p><p>In case of short running or immediate command, submit response will be of type final result which can either positive or negative
+In case of long running command, a positive validation will result of type <a href="../../params/commands/CommandResponse$$Started.html" class="extype" name="csw.params.commands.CommandResponse.Started">csw.params.commands.CommandResponse.Started</a>
+then it is the responsibility of component writer to update the runId of the command with its final command status later on
+with a <a href="../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">csw.params.commands.CommandResponse.SubmitResponse</a> which will either be a positive or negative response.</p><p>CommandResponseManager also provides subscribe API.
+One of the use cases for this is when Assembly splits a top level command into two sub commands and forwards them to two different HCD's.
+In this case, Assembly can register its interest in the final <a href="../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">csw.params.commands.CommandResponse.SubmitResponse</a>
+from two HCD's when these sub commands completes, using subscribe API. And once Assembly receives final submit response
+from both the HCD's then it can update Top level command with final <a href="../../params/commands/CommandResponse$$SubmitResponse.html" class="extype" name="csw.params.commands.CommandResponse.SubmitResponse">csw.params.commands.CommandResponse.SubmitResponse</a>
+In this case, Assembly can register its interest in the final <a href="../../params/commands/CommandResponse.html" class="extype" name="csw.params.commands.CommandResponse">csw.params.commands.CommandResponse</a>
+from two HCD's when these sub commands completes, using subscribe API. And once Assembly receives final command response
+from both the HCD's then it can update Top level command with final <a href="../../params/commands/CommandResponse.html" class="extype" name="csw.params.commands.CommandResponse">csw.params.commands.CommandResponse</a></p></div></div>
+    </li><li name="csw.command.client.CommandServiceFactory" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="CommandServiceFactory"></a><a id="CommandServiceFactory:CommandServiceFactory"></a>
       <span class="permalink">
       <a href="../../../csw/command/client/index.html#CommandServiceFactory" title="Permalink">
