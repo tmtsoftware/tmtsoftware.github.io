@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
-<title>Alarm Service Technical Description · TMT Common Software (CSW)</title>
+<title>Alarm Service · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Common Software (CSW)
 </span>
 <span class="md-header-nav__topic">
-Alarm Service Technical Description
+Alarm Service
 </span>
 </div>
 </div>
@@ -194,21 +194,21 @@ tmtsoftware/csw
   <li><a href="../../commons/manuals.html" class="page">Manuals</a></li>
   <li><a href="../../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
-    <li><a href="../../technical/framework/framework.html" class="page">CSW Framework Design Description</a></li>
-    <li><a href="../../technical/location/location.html" class="page">Location Service Technical Description</a></li>
-    <li><a href="../../technical/configuration/configuration.html" class="page">Configuration Service Technical Description</a></li>
-    <li><a href="../../technical/logging/logging.html" class="page">Logging Service Technical Description</a></li>
-    <li><a href="../../technical/event/event.html" class="page">Event Service Technical Description</a></li>
-    <li><a href="../../technical/alarm/alarm.html" class="active page">Alarm Service Technical Description</a></li>
-    <li><a href="../../technical/time/time.html" class="page">Time Service Technical Description</a></li>
-    <li><a href="../../technical/database/database.html" class="page">Database Service Technical Description</a></li>
-    <li><a href="../../technical/aas/aas.html" class="page">Authentication and Authorization Service Technical Description</a></li>
+    <li><a href="../../technical/framework/framework.html" class="page">CSW Framework</a></li>
+    <li><a href="../../technical/location/location.html" class="page">Location Service</a></li>
+    <li><a href="../../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
+    <li><a href="../../technical/logging/logging.html" class="page">Logging Service</a></li>
+    <li><a href="../../technical/event/event.html" class="page">Event Service</a></li>
+    <li><a href="../../technical/alarm/alarm.html" class="active page">Alarm Service</a></li>
+    <li><a href="../../technical/time/time.html" class="page">Time Service</a></li>
+    <li><a href="../../technical/database/database.html" class="page">Database Service</a></li>
+    <li><a href="../../technical/aas/aas.html" class="page">Authentication and Authorization Service</a></li>
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../technical/alarm/alarm.html#alarm-service-technical-description" class="header">Alarm Service Technical Description</a>
+  <li><a href="../../technical/alarm/alarm.html#alarm-service" class="header">Alarm Service</a>
   <ul>
     <li><a href="../../technical/alarm/alarm.html#introduction" class="header">Introduction</a></li>
     <li><a href="../../technical/alarm/alarm.html#technology" class="header">Technology</a></li>
@@ -243,7 +243,7 @@ tmtsoftware/csw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../technical/alarm/alarm.html#alarm-service-technical-description" class="header">Alarm Service Technical Description</a>
+  <li><a href="../../technical/alarm/alarm.html#alarm-service" class="header">Alarm Service</a>
   <ul>
     <li><a href="../../technical/alarm/alarm.html#introduction" class="header">Introduction</a></li>
     <li><a href="../../technical/alarm/alarm.html#technology" class="header">Technology</a></li>
@@ -267,7 +267,7 @@ tmtsoftware/csw
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#alarm-service-technical-description" name="alarm-service-technical-description" class="anchor"><span class="anchor-link"></span></a>Alarm Service Technical Description</h1>
+<h1><a href="#alarm-service" name="alarm-service" class="anchor"><span class="anchor-link"></span></a>Alarm Service</h1>
 <h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
 <p>Alarm service in TMT software is used by components to raise alarms. Alarms could be of different severities such as Warning, Critical, etc. The alarm system also provides mechanism to monitor the health of all components and subsystems in TMT.</p>
 <h2><a href="#technology" name="technology" class="anchor"><span class="anchor-link"></span></a>Technology</h2>
@@ -317,7 +317,7 @@ tmtsoftware/csw
   <li><code>Ill</code></li>
   <li><code>Bad</code></li>
 </ul>
-<p>Health is calculated based on severity. Figure shown below shows a mapping between health and severities.</p>
+<p>Health is calculated based on severity. A mapping between health and severities is shown in the figure below.</p>
 <p><img src="alarm-health.png" alt="alarm-health" /></p>
 <h2><a href="#severity-health-aggregations" name="severity-health-aggregations" class="anchor"><span class="anchor-link"></span></a>Severity &amp; Health Aggregations</h2>
 <p>A severity can be associated with an alarm, a component or a sub-system.</p>
@@ -407,7 +407,7 @@ tmtsoftware/csw
 <p>For, alarms which are not latchable, latched severity will always be equal to severity.</p>
 <p>Setting severity and latched severity both is done by <code>SetSeverity</code> api. As described in previous sections, when a component dies, it can&rsquo;t call <code>SetSeverity</code> and the severity key in redis, expires. However the &ldquo;Latched Severity&rdquo; is still not updated; which is a problem. To solve this problem, the alarm server subscribes to all severity changes (using akka stream api of alarm service) and whenever it detects a key has expired, it updates it&rsquo;s respective &ldquo;latchedSeverity&rdquo; value in redis to <code>disconnected</code>.</p>
 <h2><a href="#shelving-alarms" name="shelving-alarms" class="anchor"><span class="anchor-link"></span></a>Shelving Alarms</h2>
-<p>Alarms can be shelved and un-shelved using alarm service api. An alarm can only be shelved until a predefined time. The time can be configured in alarm configuration. For example: </p>
+<p>Alarms can be shelved and un-shelved using alarm service api. An alarm can only be shelved for a predefined time. The time can be configured in alarm configuration. For example: </p>
 <pre class="prettyprint"><code class="language-hocon">shelve-timeout = &quot;8:00:00 AM&quot; // format -&gt; h:m:s a
 </code></pre>
 <p>When changing the shelve status to <code>shelved</code> it is set using <code>setex</code> operation of redis with an appropriate TTL so that it get&rsquo;s expired on next <code>shelve-timeout</code>. Once expired, it is inferred as <code>unshelved</code>.</p>
@@ -439,7 +439,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../technical/event/event.html" title="Event Service Technical Description" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../technical/event/event.html" title="Event Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -448,17 +448,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Event Service Technical Description
+Event Service
 </span>
 </div>
 </a>
-<a href="../../technical/time/time.html" title="Time Service Technical Description" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../technical/time/time.html" title="Time Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Time Service Technical Description
+Time Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

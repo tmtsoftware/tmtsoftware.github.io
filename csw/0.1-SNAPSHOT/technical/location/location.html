@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
-<title>Location Service Technical Description · TMT Common Software (CSW)</title>
+<title>Location Service · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Common Software (CSW)
 </span>
 <span class="md-header-nav__topic">
-Location Service Technical Description
+Location Service
 </span>
 </div>
 </div>
@@ -194,22 +194,23 @@ tmtsoftware/csw
   <li><a href="../../commons/manuals.html" class="page">Manuals</a></li>
   <li><a href="../../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
-    <li><a href="../../technical/framework/framework.html" class="page">CSW Framework Design Description</a></li>
-    <li><a href="../../technical/location/location.html" class="active page">Location Service Technical Description</a></li>
-    <li><a href="../../technical/configuration/configuration.html" class="page">Configuration Service Technical Description</a></li>
-    <li><a href="../../technical/logging/logging.html" class="page">Logging Service Technical Description</a></li>
-    <li><a href="../../technical/event/event.html" class="page">Event Service Technical Description</a></li>
-    <li><a href="../../technical/alarm/alarm.html" class="page">Alarm Service Technical Description</a></li>
-    <li><a href="../../technical/time/time.html" class="page">Time Service Technical Description</a></li>
-    <li><a href="../../technical/database/database.html" class="page">Database Service Technical Description</a></li>
-    <li><a href="../../technical/aas/aas.html" class="page">Authentication and Authorization Service Technical Description</a></li>
+    <li><a href="../../technical/framework/framework.html" class="page">CSW Framework</a></li>
+    <li><a href="../../technical/location/location.html" class="active page">Location Service</a></li>
+    <li><a href="../../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
+    <li><a href="../../technical/logging/logging.html" class="page">Logging Service</a></li>
+    <li><a href="../../technical/event/event.html" class="page">Event Service</a></li>
+    <li><a href="../../technical/alarm/alarm.html" class="page">Alarm Service</a></li>
+    <li><a href="../../technical/time/time.html" class="page">Time Service</a></li>
+    <li><a href="../../technical/database/database.html" class="page">Database Service</a></li>
+    <li><a href="../../technical/aas/aas.html" class="page">Authentication and Authorization Service</a></li>
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../technical/location/location.html#location-service-technical-description" class="header">Location Service Technical Description</a>
+  <li><a href="../../technical/location/location.html#location-service" class="header">Location Service</a>
   <ul>
+    <li><a href="../../technical/location/location.html#introduction" class="header">Introduction</a></li>
     <li><a href="../../technical/location/location.html#location-service-implementation" class="header">Location Service Implementation</a></li>
   </ul></li>
 </ul>
@@ -232,8 +233,9 @@ tmtsoftware/csw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../technical/location/location.html#location-service-technical-description" class="header">Location Service Technical Description</a>
+  <li><a href="../../technical/location/location.html#location-service" class="header">Location Service</a>
   <ul>
+    <li><a href="../../technical/location/location.html#introduction" class="header">Introduction</a></li>
     <li><a href="../../technical/location/location.html#location-service-implementation" class="header">Location Service Implementation</a></li>
   </ul></li>
 </ul>
@@ -245,8 +247,9 @@ tmtsoftware/csw
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#location-service-technical-description" name="location-service-technical-description" class="anchor"><span class="anchor-link"></span></a>Location Service Technical Description</h1>
-<p>The Location Service is used to register and find CSW services in the local network. A service can be an Akka actor (including CSW components, such as assemblies and HCDs), an HTTP server or a server running on some TCP host and port.</p>
+<h1><a href="#location-service" name="location-service" class="anchor"><span class="anchor-link"></span></a>Location Service</h1>
+<h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
+<p>The Location Service is used to register and find CSW services in the TMT network. A service can be an Akka actor (including CSW components, such as assemblies and HCDs), an HTTP server or a server running on some TCP host and port.</p>
 <p>For information on <em>using</em> the Location Service, see these sections:</p>
 <ul>
   <li><a href="../../services/location.html">CSW Location Service</a></li>
@@ -254,15 +257,20 @@ tmtsoftware/csw
   <li><a href="../../apps/cswlocationagent.html">CSW Location Agent</a></li>
 </ul>
 <h2><a href="#location-service-implementation" name="location-service-implementation" class="anchor"><span class="anchor-link"></span></a>Location Service Implementation</h2>
-<p>The core feature of the Location Service is an <a href="https://akka.io/">Akka</a> cluster that uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html">Conflict Free Replicated Datasets (CRDTs)</a> to share location information in the network. </p><div class="callout note "><div class="callout-title">Note</div>
-<p>See <a href="https://medium.com/@unmeshvjoshi/service-discovery-with-crdts-fb02bb48cfff">here</a> for some background on how the choice was made to use an Akka cluster with CRDTs.</p></div>
-<p>When a CSW component or service starts up, it registers with the Location Service by posting a message to an HTTP API that talks to one of the actors in the cluster - typically one running on the local host. The location information is shared in the cluster and clients anywhere in the network can use the HTTP API to locate the service.</p>
-<p>The implementation of the Location Service is split into four subprojects:</p>
+<p>Core implementation of location service uses</p>
 <ul>
-  <li><a href="location-server.html">csw-location-server</a> - the main implementation, including the cluster actor and HTTP server</li>
-  <li><a href="location-client.html">csw-location-client</a> - a wrapper for the HTTP API, used by clients</li>
-  <li><a href="location-api.html">csw-location-api</a> - common API implemented by the csw-location-server and csw-location-client</li>
-  <li><a href="location-agent.html">csw-location-agent</a> - an application used to register non-csw services</li>
+  <li><a href="https://doc.akka.io/docs/akka/current/index-cluster.html">Akka Cluster</a></li>
+  <li><a href="https://doc.akka.io/docs/akka/current/typed/distributed-data.html">Conflict Free Replicated Data Types (CRDTs)</a></li>
+  <li><a href="https://doc.akka.io/docs/akka-http/current">Akka Http</a>.</li>
+</ul>
+<p>You can find more details on CSW is using this in <a href="location-server.html">csw-location-server</a>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>See <a href="https://medium.com/@unmeshvjoshi/service-discovery-with-crdts-fb02bb48cfff">here</a> for some background on how the choice was made to use an Akka cluster with CRDTs.</p></div>
+<p>The implementation of the Location Service is split into following four sub-modules:</p>
+<ul>
+  <li><a href="location-api.html">csw-location-api</a> - common API implemented by the <code>csw-location-server</code> and <code>csw-location-client</code></li>
+  <li><a href="location-server.html">csw-location-server</a> - think of it as a agent which runs on every machine and exposes HTTP routes which underneath uses akka cluster and distributed data.</li>
+  <li><a href="location-client.html">csw-location-client</a> - lightweight HTTP client for location service</li>
+  <li><a href="location-agent.html">csw-location-agent</a> - an application used to register non-csw services (Http/Tcp).</li>
 </ul>
 </div>
 <div>
@@ -282,7 +290,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../technical/framework/framework.html" title="CSW Framework Design Description" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../technical/framework/framework.html" title="CSW Framework" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -291,17 +299,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-CSW Framework Design Description
+CSW Framework
 </span>
 </div>
 </a>
-<a href="../../technical/configuration/configuration.html" title="Configuration Service Technical Description" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../technical/configuration/configuration.html" title="Configuration Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Configuration Service Technical Description
+Configuration Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

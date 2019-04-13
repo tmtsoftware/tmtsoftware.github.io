@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
-<title>CSW Location Server</title>
+<title>Location Server</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../lib/prettify/prettify.css">
@@ -43,7 +43,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <nav class="md-header-nav md-grid">
 <div class="md-flex">
 <div class="md-flex__cell md-flex__cell--shrink">
-<a href="../../technical/location/location-server.html" title="CSW Location Server" class="md-header-nav__button md-logo">
+<a href="../../technical/location/location-server.html" title="Location Server" class="md-header-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
 </div>
@@ -52,7 +52,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 </div>
 <div class="md-flex__cell md-flex__cell--stretch">
 <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
-CSW Location Server
+Location Server
 </div>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
@@ -107,12 +107,12 @@ tmtsoftware/csw
 <div class="md-sidebar__inner">
 <nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
 <label class="md-nav__title md-nav__title--site" for="drawer">
-<a href="../../technical/location/location-server.html" title="CSW Location Server" class="md-nav__button md-logo">
+<a href="../../technical/location/location-server.html" title="Location Server" class="md-nav__button md-logo">
 <span class="md-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
-<a href="../../technical/location/location-server.html" title="CSW Location Server">
-CSW Location Server
+<a href="../../technical/location/location-server.html" title="Location Server">
+Location Server
 </a>
 </label>
 <div class="md-nav__source">
@@ -134,8 +134,11 @@ tmtsoftware/csw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../technical/location/location-server.html#csw-location-server" class="header">CSW Location Server</a>
+  <li><a href="../../technical/location/location-server.html#location-server" class="header">Location Server</a>
   <ul>
+    <li><a href="../../technical/location/location-server.html#introduction" class="header">Introduction</a></li>
+    <li><a href="../../technical/location/location-server.html#design" class="header">Design</a></li>
+    <li><a href="../../technical/location/location-server.html#internals" class="header">Internals</a></li>
     <li><a href="../../technical/location/location-server.html#java-api" class="header">Java API</a></li>
     <li><a href="../../technical/location/location-server.html#tests" class="header">Tests</a></li>
   </ul></li>
@@ -159,8 +162,11 @@ tmtsoftware/csw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../technical/location/location-server.html#csw-location-server" class="header">CSW Location Server</a>
+  <li><a href="../../technical/location/location-server.html#location-server" class="header">Location Server</a>
   <ul>
+    <li><a href="../../technical/location/location-server.html#introduction" class="header">Introduction</a></li>
+    <li><a href="../../technical/location/location-server.html#design" class="header">Design</a></li>
+    <li><a href="../../technical/location/location-server.html#internals" class="header">Internals</a></li>
     <li><a href="../../technical/location/location-server.html#java-api" class="header">Java API</a></li>
     <li><a href="../../technical/location/location-server.html#tests" class="header">Tests</a></li>
   </ul></li>
@@ -173,23 +179,67 @@ tmtsoftware/csw
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#csw-location-server" name="csw-location-server" class="anchor"><span class="anchor-link"></span></a>CSW Location Server</h1>
-<p>The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server">csw-location-server</a> project contains the main implementation of the Location Service, including the cluster actor and HTTP server.</p>
-<p>Normally one instance of the <em>location server</em> will run on each host that is running CSW services (although clients can be configured to use a remote host). The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/Main.scala">Main</a> class delegates the job of creating the cluster actor and HTTP server instance to the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/internal/ServerWiring.scala">ServerWiring</a> class.</p>
+<h1><a href="#location-server" name="location-server" class="anchor"><span class="anchor-link"></span></a>Location Server</h1>
+<h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
+<p>The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server">csw-location-server</a> project contains the main implementation of the Location Service. Think of it as a agent which is running on every machine. Normally one instance of the <em>location server</em> will run on each host that is running CSW services (although clients can be configured to use a remote host).</p>
+<h2><a href="#design" name="design" class="anchor"><span class="anchor-link"></span></a>Design</h2>
+<p>Main building blocks of location service are captured below, we will go through each one of them in following sections:</p>
+<ul>
+  <li><a href="https://doc.akka.io/docs/akka/current/index-cluster.html">Akka Cluster</a></li>
+  <li><a href="https://doc.akka.io/docs/akka/current/typed/distributed-data.html">Conflict Free Replicated Data Types (CRDTs)</a>: Shares location information within the network.</li>
+  <li><a href="https://doc.akka.io/docs/akka-http/current">Akka Http</a></li>
+  <li>DeathWatch Actor</li>
+</ul>
+<p><img src="../../images/locationservice/location-service.png" alt="Location Service" /></p>
+<p>Above diagram shows different parts of location service and how it will look like in TMT environment. On a single physical machine, we can have multiple JVM&rsquo;s (Java Virtual Machines) running. Roughly these JVM&rsquo;s can be categorized into two types:</p>
+<ul>
+  <li><code>Container</code>: It can have single or multiple components (HCD, Assembly etc.) running inside it.</li>
+  <li><code>Location Service</code>: Think of it as a agent which is running on all the machines in TMT environment.</li>
+</ul><div class="callout note "><div class="callout-title">Note</div>
+<p>Here onwards, we will refer location service as agent or server interchangeably. Do not confuse it with <a href="location-agent.html">csw-location-agent</a>.</p></div>
+<p>Let&rsquo;s discuss different components of <code>Location Server</code> in following sections:</p>
+<h3><a href="#cluster-member" name="cluster-member" class="anchor"><span class="anchor-link"></span></a>Cluster Member</h3>
+<p>Location service JVM (precisely Actor System) takes part in <a href="https://doc.akka.io/docs/akka/current/index-cluster.html">Akka Cluster</a>. By default, this actor system binds to port <code>3552</code>. Initially when there is no member in Akka cluster, node joins itself. Such a node is referred as seed node (introducer) and location of this node needs to be known so that other nodes can join to this known address and forms a larger cluster. After the joining process the seed nodes are not special and they participate in the cluster in exactly the same way as other nodes.</p>
+<p>Akka Cluster provides cluster <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#membership">membership</a> service using <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#gossip">gossip</a> protocols and an automatic <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#failure-detector">failure detector</a>.</p>
+<p>Death watch uses the cluster failure detector for nodes in the cluster, i.e. it detects network failures and JVM crashes, in addition to graceful termination of watched actor. Death watch generates the <code>Terminated</code> message to the watching actor when the unreachable cluster node has been downed and removed. Hence we have kept <code>auto-down-unreachable-after = 10s</code> so that in case of failure, interested parties get the death watch notification for the location in around 10s.</p>
+<h3><a href="#distributed-data-replicator-" name="distributed-data-replicator-" class="anchor"><span class="anchor-link"></span></a>Distributed Data (Replicator)</h3>
+<p>We use Akka Distributed Data to share CSW components locations between nodes in an Akka Cluster. These locations are accessed with an actor called as <code>replicator</code> providing a key-value store like API. We store following data in this key-value store (distributed data):</p>
+<ul>
+  <li>
+  <p><code>AllServices</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala#maps">LWWMap</a> CRDT from <code>Connection</code> to <code>Location</code>. <code>Connection</code> and <code>Location</code> can be one of <code>Akka</code>, <code>Tcp</code> or <code>HTTP</code> type.  At any point in time, value of this map represents all the locations registered with <code>Location Service</code> in a TMT environment.</p></li>
+  <li>
+  <p><code>Service</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala#flags-and-registers">LWWRegister</a> which holds location of CSW component against unique connection name.  <code>Location service</code> track API internally uses this key to register interest in change notifications by sending <code>Replicator.Subscribe</code> message to the Replicator.  It will send <code>Replicator.Changed</code> messages to the registered subscriber when the data for the subscribed key is updated.</p></li>
+</ul>
+<h4><a href="#consistency-gurantees" name="consistency-gurantees" class="anchor"><span class="anchor-link"></span></a>Consistency Gurantees</h4>
+<ul>
+  <li><code>WriteMajority</code>: All the write API&rsquo;s (register, unregister etc.) updates registry (distributed data) with consistency level of <code>WriteMajority</code> which means value will immediately be written to a majority of replicas, i.e. at least N/2 + 1 replicas, where N is the number of nodes in the cluster</li>
+  <li><code>ReadLocal</code>: All the get API&rsquo;s (find, resolve, list etc.): retrives value from registry (distributed data) with consistency level of <code>ReadLocal</code> which means value will only be read from the local replica</li>
+</ul>
+<p>In TMT enviornment, we do not want two components to be registered with same connection name. This is achieved by configuring consistency level of <code>WriteMajority</code> for <code>register</code> API. Register API gurantees that component is register with location service and it&rsquo;s entry is replicated to at least N/2 + 1 replicas.</p>
+<p>Based on above configuration, it is always guranteed that only one location of component will exist at any point in time in registry. Hence it is safe to read location just from local replica with consistency level of <code>ReadLocal</code> with the assumption that eventually location will get replicated on this replica if not present when queried.</p>
+<h3><a href="#death-watch-actor" name="death-watch-actor" class="anchor"><span class="anchor-link"></span></a>Death Watch Actor</h3>
+<p>Death watch actor register interest in change notifications for <code>AllServices</code> key. Hence on every addition or removal of location, death watch actor receives <code>Changed[LWWMap[Connection, Location]]</code> message from where it gets all the current locations.</p>
+<p>Death watch actor then starts watching all the new locations. When it receives <code>Terminated</code> signal for any of the watched location precisely for actor ref, then it unregister that particular connection from location service.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Death watch actor only supports akka locations and filters out <code>tcp</code> and <code>http</code> locations.</p></div>
+<h3><a href="#http-server" name="http-server" class="anchor"><span class="anchor-link"></span></a>HTTP Server</h3>
+<p>Location service provides HTTP routes to get, register, unregister and track locations. Only one instance of location server is started on port <code>7654</code> on evey machine. Client from same machine running in different processes can connect to <code>localhost:7654</code> to access location service. In most of the cases, you will not directly talk to this address. You will always use loocation service client provided by CSW which internally connects to <code>localhost:7654</code> to access <code>Location Service</code>.</p>
+<p>Location service <code>/track</code> route is implemented using <a href="https://doc.akka.io/docs/akka-http/current/sse-support.html#server-sent-events-support">SSE (Server Sent Event)</a> for pushing location change notifications to client. It keeps the connection alive by sending heartbeats every 2 seconds if location does not change for that period.</p>
+<h2><a href="#internals" name="internals" class="anchor"><span class="anchor-link"></span></a>Internals</h2>
+<p>The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/Main.scala">Main</a> class delegates the job of creating the cluster actor and HTTP server instance to the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/internal/ServerWiring.scala">ServerWiring</a> class.</p>
 <p>The default tcp ports for the actor and HTTP servers are specified in <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/resources/application.conf">application.conf</a>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>Due to the way random port numbers are used for CSW components, firewalls should be disabled for these systems, which are assumed to be in an internal network that is protected from outside access. </p></div>
-<p>In order to determine the correct IP address to use for the local host, it is necessary to set the <em>INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs). The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> class uses that information, along with other settings when starting the cluster actor. It also needs to know the <em>cluster seeds</em>, a comma separated list of <em>host:port</em> values for at least one other actor in the cluster. This information is needed in order to join the location service cluster. </p>
-<p>The Location Service HTTP server is implemented by the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationRoutes.scala">LocationRoutes</a> class, which defines the HTTP routes and talks to the cluster actor on the client&rsquo;s behalf. </p>
-<h3><a href="#java-api" name="java-api" class="anchor"><span class="anchor-link"></span></a>Java API</h3>
+<p>Due to the way random port numbers are used for CSW components, firewalls should be disabled for these systems, which are assumed to be in an internal network that is protected from outside access.</p></div>
+<p>In order to determine the correct IP address to use for the local host, it is necessary to set the <em>INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs). The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> class uses that information, along with other settings when starting the cluster actor. It also needs to know the <em>cluster seeds</em>, a comma separated list of <em>host:port</em> values for at least one other actor in the cluster. This information is needed in order to join the location service cluster.</p>
+<p>The Location Service HTTP server is implemented by the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationRoutes.scala">LocationRoutes</a> class, which defines the HTTP routes and talks to the cluster actor on the client&rsquo;s behalf.</p>
+<h2><a href="#java-api" name="java-api" class="anchor"><span class="anchor-link"></span></a>Java API</h2>
 <p>Since the location <em>server</em> is only accessed internally, there is no extra Java API for it. The location service <em>client</em> and <em>API</em> code does provide Java APIs (see below).</p>
-<h3><a href="#tests" name="tests" class="anchor"><span class="anchor-link"></span></a>Tests</h3>
+<h2><a href="#tests" name="tests" class="anchor"><span class="anchor-link"></span></a>Tests</h2>
 <p>There are numerous tests for the location server, including multi-jvm tests. The tests can be run with:</p>
-<pre><code>sbt csw-location-server/test:test
-</code></pre>
-<p>for the unit tests, and:</p>
-<pre><code>sbt csw-location-server/multi-jvm:test
-</code></pre>
-<p>for the multi-jvm tests.</p>
+<ul>
+  <li>
+  <p>Unit/Component Tests: <code>sbt csw-location-server/test:test</code></p></li>
+  <li>
+  <p>Multi-Jvm Tests: <code>sbt csw-location-server/multi-jvm:test</code></p></li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/location/location-server.md" title="Edit this page" class="md-source-file md-edit">
