@@ -220,7 +220,7 @@ tmtsoftware/csw
     <li><a href="../../technical/alarm/alarm.html#severity-latching" class="header">Severity Latching</a></li>
     <li><a href="../../technical/alarm/alarm.html#shelving-alarms" class="header">Shelving Alarms</a></li>
     <li><a href="../../technical/alarm/alarm.html#acknowledging-alarms" class="header">Acknowledging Alarms</a></li>
-    <li><a href="../../technical/alarm/alarm.html#api-structure" class="header">Api Structure</a></li>
+    <li><a href="../../technical/alarm/alarm.html#api-structure" class="header">API Structure</a></li>
     <li><a href="../../technical/alarm/alarm.html#architecture" class="header">Architecture</a></li>
   </ul></li>
 </ul>
@@ -255,7 +255,7 @@ tmtsoftware/csw
     <li><a href="../../technical/alarm/alarm.html#severity-latching" class="header">Severity Latching</a></li>
     <li><a href="../../technical/alarm/alarm.html#shelving-alarms" class="header">Shelving Alarms</a></li>
     <li><a href="../../technical/alarm/alarm.html#acknowledging-alarms" class="header">Acknowledging Alarms</a></li>
-    <li><a href="../../technical/alarm/alarm.html#api-structure" class="header">Api Structure</a></li>
+    <li><a href="../../technical/alarm/alarm.html#api-structure" class="header">API Structure</a></li>
     <li><a href="../../technical/alarm/alarm.html#architecture" class="header">Architecture</a></li>
   </ul></li>
 </ul>
@@ -416,11 +416,18 @@ tmtsoftware/csw
 <p>Alarms can be in either <code>ackowldged</code> or <code>unackowldged</code> state. See <a href="#acknowledgement-status">Acknowledgement Status</a> for more details. The state can be changed to <code>ackowldged</code> by simply using <code>acknowledge</code> api of alarm service. Apart from this api, setting severity can also change the Acknowledgement Status of an alarm.</p>
 <p>Alarm can either be auto-acknowledgeable or not auto-acknowledgeable. This behavior is driven from <a href="#metadata">alarm metadata</a>. When an alarm is not auto-acknowledgeable, whenever it&rsquo;s severity changes to anything except Okay, it&rsquo;s Acknowledgement Status becomes <code>unackowldged</code>. If it is changing from any severity to Okay, Acknowledgement Status remains same.</p>
 <p>When the alarm is auto-acknowledgeable, whenever it&rsquo;s severity changes to Okay, it&rsquo;s Acknowledgement Status becomes <code>ackowldged</code>. If it changes to anything else, Acknowledgement Status remains same.</p>
-<h2><a href="#api-structure" name="api-structure" class="anchor"><span class="anchor-link"></span></a>Api Structure</h2>
+<h2><a href="#api-structure" name="api-structure" class="anchor"><span class="anchor-link"></span></a>API Structure</h2>
 <p><img src="api-structure.png" alt="api-structure" /></p>
+<p>The alarm service is divided into two parts. First one is called, well, <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> and it is meant for Components who need just one api i.e. <code>SetSeverity</code></p>
+<p>The other one is <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a>. This api allows admins operations such as shelving alarms, subscribing for severity changes, acknowledging alarms, etc. This api is consumed from <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-cli">alarm cli</a> and alarm server.</p>
+<p>The api doc for alarm service can be found <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmService.html">here</a> and <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmAdminService.html">here</a>.</p>
+<p>Detailed documentation about how to use these apis is available <a href="../../services/alarm.html">here</a>. </p>
 <h2><a href="#architecture" name="architecture" class="anchor"><span class="anchor-link"></span></a>Architecture</h2>
-<p><img src="alarm-architecture.png" alt="architecture" /></p><div class="callout note "><div class="callout-title">Note</div>
-<p>At the time of writing this documentation, the alarm server does not exist. It will be developed in future.</p></div>
+<p><img src="alarm-architecture.png" alt="architecture" /></p><div class="callout warning "><div class="callout-title">Important</div>
+<p>At the time of writing this documentation, the alarm server does not exist. It will be developed in future. It&rsquo;s description and scope of work is subjected to change</p></div>
+<p>For alarms to function, it is necessary that redis instance is registered with location service. Redis here is configured similar to other services in CSW. There is a master redis instance and a slave redis instance. They are configured in &ldquo;replication&rdquo; mode. There a sentinel who&rsquo;s responsibility is to promote slave as master when master goes down. It is important to note that when master goes down, the &ldquo;location&rdquo; of alarm service remains same because location of alarm service is of sentinel and not of master or slave. The master and slave redis instances are dedicated for alarm, however sentinel is same across csw services.</p>
+<p>Once location is registered, components, alarm CLI &amp; alarm server can resolve redis location and start interacting with it using the alarm api &amp; alarm admin api. While the interaction of components with redis is limited to just <code>setSeverity</code> api, Alarm CLI can perform all admin operations as discussed <a href="#api-structure">above</a>.</p>
+<p>Alarm server is not built yet. When built, it&rsquo;s functionality will be to watch all severity changes using the admin api and <a href="#severity-latching">latch</a> appropriate alarms to disconnected severity. Apart from this, in future, it may also be responsible for providing an HTTP interface for various UI layer applications for alarm and health visualisations.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/alarm/alarm.md" title="Edit this page" class="md-source-file md-edit">
