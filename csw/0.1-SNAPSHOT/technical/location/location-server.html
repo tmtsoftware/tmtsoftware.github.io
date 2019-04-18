@@ -210,7 +210,6 @@ tmtsoftware/csw
   <li>
   <p><code>Service</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala#flags-and-registers">LWWRegister</a> which holds location of CSW component against unique connection name.</p></li>
 </ul>
-<p><code>Location service</code> track API internally uses <code>Service</code> key to register interest in change notifications by sending <code>Replicator.Subscribe</code> message to the Replicator. It sends <code>Replicator.Changed</code> messages to the registered subscriber when the data for the subscribed key is updated.</p>
 <h4><a href="#consistency-guarantees" name="consistency-guarantees" class="anchor"><span class="anchor-link"></span></a>Consistency Guarantees</h4>
 <ul>
   <li><code>WriteMajority</code>: All the write API&rsquo;s (register, unregister etc.) updates registry (distributed data) with consistency level of <code>WriteMajority</code> which means value will immediately be written to a majority of replicas, i.e. at least N/2 + 1 replicas, where N is the number of nodes in the cluster</li>
@@ -224,7 +223,52 @@ tmtsoftware/csw
 <p>Death watch actor only supports akka locations and filters out <code>tcp</code> and <code>http</code> locations.</p></div>
 <h3><a href="#http-server" name="http-server" class="anchor"><span class="anchor-link"></span></a>HTTP Server</h3>
 <p>Location service provides HTTP routes to get, register, unregister and track locations. Only one instance of location server is started on port <code>7654</code> on evey machine. Client from same machine running in different processes can connect to <code>localhost:7654</code> to access location service. In most of the cases, you will not directly talk to this address. You will always use loocation service client provided by CSW which internally connects to <code>localhost:7654</code> to access <code>Location Service</code>.</p>
-<p>Location service <code>/track</code> route is implemented using <a href="https://doc.akka.io/docs/akka-http/current/sse-support.html#server-sent-events-support">SSE (Server Sent Event)</a> for pushing location change notifications to client. It keeps the connection alive by sending heartbeats every 2 seconds if location does not change for that period.</p>
+<h3><a href="#how-location-tracking-works" name="how-location-tracking-works" class="anchor"><span class="anchor-link"></span></a>How location tracking works</h3>
+<p>Below diagram illustrate <code>Assembly</code> tracking <code>HCD</code>. Use case shown in diagram is when <code>Assembly</code> starts tracking, before <code>HCD</code> is registered with location service. It also shows abrupt shutdown of <code>HCD</code> and how <code>Assembly</code> gets notification of that.</p>
+<p><img src="../../images/locationservice/track.png" alt="Location Track" /></p>
+<p>Let us go through each action step by step as shown in diagram:</p>
+<ol>
+  <li>
+    <p><code>Assembly</code> starts tracking <code>HCD</code> by sending <code>HTTP</code> track request using location client to location server.</p>
+    <ol>
+      <li>
+      <p>On receiving track request, location server internally subscribes to the <code>replicator</code> using <code>Service</code> key as explained in previous section and generates stream of <code>TrackingEvent</code></p></li>
+      <li>
+      <p>Server then maps this stream of <code>TrackingEvent</code> to <a href="https://doc.akka.io/docs/akka-http/current/sse-support.html">SSE (ServerSentEvent)</a></p></li>
+      <li>
+      <p>Server also keeps sending <code>ServerSentEvent.heartbeat</code> every <code>2 seconds</code> to keep connection alive</p></li>
+    </ol>
+  </li>
+  <li>
+    <p><code>HCD</code> registers with location service by sending <code>register</code> request to location server.</p>
+    <ol>
+      <li>
+      <p>On receiving register request, location server internally updates both <code>Service</code> and <code>AllServices</code> keys by sending <code>update</code> message to <code>replicator</code></p></li>
+    </ol>
+  </li>
+  <li>
+  <p>Death watch actor is started with location service and it gets notification on every component registration.  In our flow, death watch actor receives notification of <code>HCD</code> getting registered with location service from previous step and it immediately start watching death of <code>HCD</code>.</p></li>
+  <li>
+  <p>One of the task of <code>replicator</code> is to keep replicating <code>CRDT&#39;s</code> from one node to other.  In this case, location of <code>HCD</code> gets replicated from <code>Machine 1</code> to <code>Machine 2</code></p></li>
+  <li>
+    <p>As soon as <code>replicator</code> from <code>Machine 2</code> receives <code>HCD</code> location, it notifies all the interested parties.</p>
+    <ol>
+      <li>
+      <p>Remember <code>Step 1</code> is interested and receives <code>Changed(key)</code> message from <code>replicator</code> which gets mapped to <code>TrackingEvent</code></p></li>
+    </ol>
+  </li>
+  <li>
+  <p>Location server then maps it to <code>LocationUpdated</code> event and pushes it to <code>Assembly</code> via <code>SSE</code></p></li>
+  <li>
+  <p>Assume that after some time, <code>HCD</code> crashes/terminates/throws exception and shutdowns abruptly.</p></li>
+  <li>
+  <p>As described in <code>Step 3</code>, Death watch actor is watching <code>HCD</code>.  On <code>HCD&#39;s</code> shutdown, death watch actor <code>unregisters</code> <code>HCD</code> from location service by sending update message by removing <code>HCD&#39;s</code> entry from <code>replicator</code>.</p></li>
+  <li>
+  <p>Eventually this removal of <code>HCD</code> gets replicated to <code>replicator</code> running on <code>Machine 2</code>.</p></li>
+  <li>
+  <p>On receiving removal of <code>HCD</code> location, same actions gets performed as described in <code>Step 5</code>.  In this case, <code>LocationRemoved</code> event gets pushed to <code>Assembly</code> via <code>SSE</code></p></li>
+</ol><div class="callout note "><div class="callout-title">Note</div>
+<p>At any point in time, <code>Assembly</code> can choose to cancel tracking. On cancellation, this persistent connection will be released.</p></div>
 <h2><a href="#internals" name="internals" class="anchor"><span class="anchor-link"></span></a>Internals</h2>
 <p>The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/Main.scala">Main</a> class delegates the job of creating the cluster actor and HTTP server instance to the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/internal/ServerWiring.scala">ServerWiring</a> class.</p>
 <p>The default tcp ports for the actor and HTTP servers are specified in <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/resources/application.conf">application.conf</a>.</p><div class="callout note "><div class="callout-title">Note</div>
