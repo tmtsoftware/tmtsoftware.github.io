@@ -754,7 +754,7 @@ Assert.assertEquals(List.of(id2, id1),
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L291-L341" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L291-L343" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertionF = async {
   val tBegin   = Instant.now()
   val filePath = Paths.get(&quot;/a/test.conf&quot;)
   //create will make the 1st revision active with a default comment
@@ -787,11 +787,13 @@ Assert.assertEquals(List.of(id2, id1),
   //validate full history
   val fullHistory = await(adminApi.historyActive(filePath))
   fullHistory.map(_.id) shouldBe List(id1, id5, id4, id3, id1)
-  fullHistory.map(_.comment) shouldBe List(s&quot;$id1 active&quot;,
-                                           &quot;latest active&quot;,
-                                           s&quot;$id4 active&quot;,
-                                           s&quot;$id3 active&quot;,
-                                           &quot;initializing active file with the first version&quot;)
+  fullHistory.map(_.comment) shouldBe List(
+    s&quot;$id1 active&quot;,
+    &quot;latest active&quot;,
+    s&quot;$id4 active&quot;,
+    s&quot;$id3 active&quot;,
+    &quot;initializing active file with the first version&quot;
+  )
 
   //drop initial revision and take only update revisions
   val fragmentedHistory = await(adminApi.historyActive(filePath, tBegin, tEnd))
@@ -870,7 +872,7 @@ Assert.assertEquals(defaultStrConf, initialContents);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L347-L352" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/config/ConfigClientExampleTest.scala#L349-L354" target="_blank" title="Go to snippet source"></a><code class="language-scala">val assertF = async {
   val metaData: ConfigMetadata = await(adminApi.getMetadata)
   //repository path must not be empty
   metaData.repoPath should not be empty
