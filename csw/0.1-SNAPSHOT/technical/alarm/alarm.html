@@ -269,9 +269,9 @@ tmtsoftware/csw
 <div class="md-content__searchable">
 <h1><a href="#alarm-service" name="alarm-service" class="anchor"><span class="anchor-link"></span></a>Alarm Service</h1>
 <h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
-<p>Alarm service in TMT software is used by components to raise alarms. Alarms could be of different severities such as Warning, Critical, etc. The alarm system also provides mechanism to monitor the health of all components and subsystems in TMT.</p>
+<p>Alarm Service in TMT software is used by components to raise alarms. Alarms could be of different severities such as Warning, Critical, etc. The alarm system also provides mechanisms to monitor the health of all components and subsystems in TMT.</p>
 <h2><a href="#technology" name="technology" class="anchor"><span class="anchor-link"></span></a>Technology</h2>
-<p>Alarm service uses <a href="https://redis.io/">Redis</a> for persistence. Redis provides <a href="https://redis.io/topics/notifications">Keyspace Notifications</a> which allows clients to subscribe to Pub/Sub channels in order to receive events affecting the Redis data set in some way.</p>
+<p>Alarm Service uses <a href="https://redis.io/">Redis</a> for persistence. Redis provides <a href="https://redis.io/topics/notifications">Keyspace Notifications</a> which allows clients to subscribe to Pub/Sub channels in order to receive events affecting the Redis data set in some way.</p>
 <p><img src="alarm-layers.png" alt="Alarm Dependencies" /></p>
 <p>We have created a layer i.e. &ldquo;Romaine&rdquo; which converts redis events into an <a href="https://doc.akka.io/docs/akka/current/stream/index.html">akka stream</a>. Romaine internally uses a java redis library called <a href="https://lettuce.io/">Lettuce</a>.</p>
 <h2><a href="#severities" name="severities" class="anchor"><span class="anchor-link"></span></a>Severities</h2>
@@ -311,7 +311,7 @@ tmtsoftware/csw
   </tbody>
 </table>
 <h2><a href="#health" name="health" class="anchor"><span class="anchor-link"></span></a>Health</h2>
-<p>Health is a higher level abstraction created on top of severities. An alarm can have one of the following heaths at a given time.</p>
+<p>Health is a higher level abstraction created on top of severities. One or more alarms can be combined to calculate one of the following healths at a given time.</p>
 <ul>
   <li><code>Good</code></li>
   <li><code>Ill</code></li>
@@ -323,13 +323,13 @@ tmtsoftware/csw
 <p>A severity can be associated with an alarm, a component or a sub-system.</p>
 <p>Unlike alarms, which has a direct association with severity, components and sub-systems don&rsquo;t have a direct association with severities. They have aggregated severities based on severities of their children.</p>
 <p><img src="alarm-hierarchy.png" alt="alarm-hierarchy" /></p>
-<p>A components aggregated severity is equal to severity of it&rsquo;s child alarm with &ldquo;maximum&rdquo; severity. Similarly, a sub-system&rsquo;s aggregated severity is determined by it&rsquo;s child component with maximum severity.</p>
-<p>Health aggregation works on top of severity aggregation. A components aggregated health is calculated by first calculating it&rsquo;s aggregated severity and then mapping it to health. Sub-System health aggregation works in the same way.</p>
+<p>A components aggregated severity is equal to severity of its child alarm with &ldquo;maximum&rdquo; severity. Similarly, a sub-system&rsquo;s aggregated severity is determined by its child component with maximum severity.</p>
+<p>Health aggregation works on top of severity aggregation. A components aggregated health is calculated by first calculating its aggregated severity and then mapping it to health. Sub-System health aggregation works in the same way.</p>
 <h2><a href="#redis-storage" name="redis-storage" class="anchor"><span class="anchor-link"></span></a>Redis Storage</h2>
 <p><img src="redis-keys.png" alt="redis-keys" /></p>
 <h3><a href="#metadata" name="metadata" class="anchor"><span class="anchor-link"></span></a>Metadata</h3>
-<p>Metadata of an alarm is static information about an alarm such as name, description, subsystem, component, etc. This information is not changed during runtime. Since the metadata is static, entire metadata of an alarm is stored against a single redis key in json format for easy retrieval. The key name is formed with pattern: <code>metadata-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code> e.g. <code>metadata-nfiraos-trombone-tromboneaxislowlimitalarm</code>.</p>
-<p>The sample json below, shows structure of typical alarm metadata</p>
+<p>Metadata of an alarm is static information about an alarm such as name, description, subsystem, component, etc. This information is not changed during runtime. Since the metadata is static, entire metadata of an alarm is stored against a single redis key in json format for easy retrieval. The static information is contained in a configuration file and loaded when Alarm Service starts up. The key name is formed with pattern: <code>metadata-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code> e.g. <code>metadata-nfiraos-trombone-tromboneaxislowlimitalarm</code>.</p>
+<p>The sample JSON below, shows structure of typical alarm metadata from the configuration file</p>
 <pre class="prettyprint"><code class="language-json">{
    &quot;subsystem&quot;:&quot;tcs&quot;,
    &quot;component&quot;:&quot;corrections&quot;,
@@ -380,7 +380,7 @@ tmtsoftware/csw
   <li><code>disconnected</code></li>
 </ul>
 <h3><a href="#shelve-status" name="shelve-status" class="anchor"><span class="anchor-link"></span></a>Shelve Status</h3>
-<p>Indicates shelve status of an alarm. The key name is formed with pattern <code>shelvestatus-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code>. e.g. <code>shelvestatus-nfiraos-trombone-tromboneaxislowlimitalarm</code></p>
+<p>Indicates shelved status of an alarm. The key name is formed with pattern <code>shelvestatus-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code>. e.g. <code>shelvestatus-nfiraos-trombone-tromboneaxislowlimitalarm</code></p>
 <p>This key can have one of the following values</p>
 <ul>
   <li><code>shelved</code></li>
@@ -388,13 +388,13 @@ tmtsoftware/csw
 </ul>
 <p>If no value is present, it is inferred as <code>unshelved</code></p>
 <h3><a href="#alarm-time" name="alarm-time" class="anchor"><span class="anchor-link"></span></a>Alarm Time</h3>
-<p>Indicates the time since last severity change of an alarm. The key name is formed with pattern <code>alarmtime-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code>. e.g. <code>alarmtime-nfiraos-beamsplitter-splitterlimitalarm</code></p>
+<p>Indicates the time of the last severity change of an alarm. The key name is formed with pattern <code>alarmtime-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code>. e.g. <code>alarmtime-nfiraos-beamsplitter-splitterlimitalarm</code></p>
 <p>The value is stored in the format: <code>2019-04-03T11:09:28.404143Z</code></p>
 <h3><a href="#initializing" name="initializing" class="anchor"><span class="anchor-link"></span></a>Initializing</h3>
-<p>Indicates whether alarm is initializing or it&rsquo;s initialization is finished. It contains a boolean value either <code>true</code> or <code>false</code></p>
+<p>Indicates whether alarm is initializing or its initialization is finished. It contains a boolean value either <code>true</code> or <code>false</code></p>
 <p>The key name is formed with pattern <code>initializing-[SUBSYSTEM_NAME]-[COMPONENT_NAME]-[ALARM_NAME]</code>. e.g. <code>initializing-lgsf-tcspkinactive-cpuidlealarm</code></p>
 <h2><a href="#alarm-disconnection" name="alarm-disconnection" class="anchor"><span class="anchor-link"></span></a>Alarm Disconnection</h2>
-<p>All the severities except <code>Disconnected</code>, need to be set explicitly. <code>Disconnected</code> is a special severity in the sense that it can never be set by a component explicitly and is always inferred when there is no severity. Alarm service uses <a href="https://en.wikipedia.org/wiki/Heartbeat_(computing)">Heartbeat pattern</a>.</p>
+<p>All the severities except <code>Disconnected</code>, need to be set explicitly. <code>Disconnected</code> is a special severity in the sense that it can never be set by a component explicitly and is always inferred when there is no severity value has been set. Alarm service uses <a href="https://en.wikipedia.org/wiki/Heartbeat_(computing)">Heartbeat pattern</a>.</p>
 <p>Whenever a component calls <code>SetSeverity</code>, severity get stored in redis for that alarm with certain <em>TTL</em>. This TTL is configurable. For our example, let&rsquo;s assume it is 5 seconds. A TTL of 5 second means that if another call to <code>SetSeverity</code> is not made <strong>within</strong> 5 seconds, the current severity will get deleted from redis. Absence of severity is inferred as &ldquo;Disconnected&rdquo; severity. </p>
 <p><img src="alarm-disconnection.gif" alt="alarm-disconnection" /></p>
 <p>So to avoid disconnection of an alarm, the component will need to ensure that a <code>SetSeverity</code> call (aka heartbeat) is made with appropriate severity at-least once in every 5 seconds.</p>
@@ -402,15 +402,15 @@ tmtsoftware/csw
 <p>Actual TLL depends on <code>refresh-interval</code> &amp; <code>max-missed-refresh-counts</code> configurations. For example, if <code>refresh-interval</code> is set to <code>3s</code> (3 seconds) and <code>max-missed-refresh-counts</code> is set to 2, alarm will get disconnected after 6 seconds (3 * 2)</p></div>
 <p>Using the heartbeat pattern allows us to detect dead or disconnected components automatically without polling them at regular intervals.</p>
 <h2><a href="#severity-latching" name="severity-latching" class="anchor"><span class="anchor-link"></span></a>Severity Latching</h2>
-<p><a href="#metadata">Alarm metadata</a> json has a boolean attribute called &ldquo;isLatchable&rdquo;. This determines the latching behaviour of an alarm. If an alarm is latchable, it&rsquo;s latched severity <em>sticks</em> to the last highest severity until the alarm is reset. Reset operation is provided the <a href="#api-structure">admin api</a> of alarm service.</p>
+<p><a href="#metadata">Alarm metadata</a> JSON has a boolean attribute called &ldquo;isLatchable&rdquo;. This determines the latching behaviour of an alarm. If an alarm is latchable, its latched severity <em>sticks</em> to the last highest severity reached until the alarm is reset. Reset operation is provided the <a href="#api-structure">admin api</a> of alarm service.</p>
 <p><img src="alarm-latchable-behavior-with-reset.gif" alt="latched-alarm-behaviour" /></p>
 <p>For, alarms which are not latchable, latched severity will always be equal to severity.</p>
-<p>Setting severity and latched severity both is done by <code>SetSeverity</code> api. As described in previous sections, when a component dies, it can&rsquo;t call <code>SetSeverity</code> and the severity key in redis, expires. However the &ldquo;Latched Severity&rdquo; is still not updated; which is a problem. To solve this problem, the alarm server subscribes to all severity changes (using akka stream api of alarm service) and whenever it detects a key has expired, it updates it&rsquo;s respective &ldquo;latchedSeverity&rdquo; value in redis to <code>disconnected</code>.</p>
+<p>Setting severity and latched severity both is done by <code>SetSeverity</code> api. As described in previous sections, when a component dies, it can&rsquo;t call <code>SetSeverity</code> and the severity key in redis, expires. However the &ldquo;Latched Severity&rdquo; is still not updated; which is a problem. To solve this problem, the future Alarm Server subscribes to all severity changes (using akka stream api of alarm service) and whenever it detects a key has expired, it updates its respective &ldquo;latchedSeverity&rdquo; value in Redis to <code>disconnected</code>.</p>
 <h2><a href="#shelving-alarms" name="shelving-alarms" class="anchor"><span class="anchor-link"></span></a>Shelving Alarms</h2>
-<p>Alarms can be shelved and un-shelved using alarm service api. An alarm can only be shelved for a predefined time. The time can be configured in alarm configuration. For example: </p>
+<p>Alarms can be shelved and un-shelved using the Alarm Service API. A shelved alarm will contribute to a subsystem&rsquo;s aggregate severity and health. An alarm can only be shelved for a predefined time. The time can be configured in Alarm Service configuration. For example: </p>
 <pre class="prettyprint"><code class="language-hocon">shelve-timeout = &quot;8:00:00 AM&quot; // format -&gt; h:m:s a
 </code></pre>
-<p>When changing the shelve status to <code>shelved</code> it is set using <code>setex</code> operation of redis with an appropriate TTL so that it get&rsquo;s expired on next <code>shelve-timeout</code>. Once expired, it is inferred as <code>unshelved</code>.</p>
+<p>When changing the shelve status to <code>shelved</code> it is set using <code>setex</code> operation of redis with an appropriate TTL so that it gets expired on next <code>shelve-timeout</code>. Once expired, it is inferred as <code>unshelved</code>.</p>
 <p>Alarms can also be un-shelved explicitly before next <code>shelve-timeout</code> occurs. <code>unshelve</code> api sets <code>unshelved</code> value in redis explicitly without any TTL.</p>
 <h2><a href="#acknowledging-alarms" name="acknowledging-alarms" class="anchor"><span class="anchor-link"></span></a>Acknowledging Alarms</h2>
 <p>Alarms can be in either <code>ackowldged</code> or <code>unackowldged</code> state. See <a href="#acknowledgement-status">Acknowledgement Status</a> for more details. The state can be changed to <code>ackowldged</code> by simply using <code>acknowledge</code> api of alarm service. Apart from this api, setting severity can also change the Acknowledgement Status of an alarm.</p>
@@ -418,16 +418,16 @@ tmtsoftware/csw
 <p>When the alarm is auto-acknowledgeable, whenever it&rsquo;s severity changes to Okay, it&rsquo;s Acknowledgement Status becomes <code>ackowldged</code>. If it changes to anything else, Acknowledgement Status remains same.</p>
 <h2><a href="#api-structure" name="api-structure" class="anchor"><span class="anchor-link"></span></a>API Structure</h2>
 <p><img src="api-structure.png" alt="api-structure" /></p>
-<p>The alarm service is divided into two parts. First one is called, well, <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> and it is meant for Components who need just one api i.e. <code>SetSeverity</code></p>
-<p>The other one is <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a>. This api allows admins operations such as shelving alarms, subscribing for severity changes, acknowledging alarms, etc. This api is consumed from <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-cli">alarm cli</a> and alarm server.</p>
-<p>The api doc for alarm service can be found <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmService.html">here</a> and <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmAdminService.html">here</a>.</p>
-<p>Detailed documentation about how to use these apis is available <a href="../../services/alarm.html">here</a>. </p>
+<p>The Alarm Service is divided into two parts. First one is called, well, <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> and it is meant for Components that are provided with one API i.e. <code>SetSeverity</code></p>
+<p>The other API is <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a>. This API allows administrative operations such as shelving alarms, subscribing for severity changes, acknowledging alarms, etc. This API is consumed from <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-cli">alarm cli</a> and Alarm Server. This API is also used by administrative clients such as engineering user interfaces to set the active versions of files.</p>
+<p>The API doc for Alarm Service can be found <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmService.html">here</a> and <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmAdminService.html">here</a>.</p>
+<p>Detailed documentation about how to use these APIs is available <a href="../../services/alarm.html">here</a>. </p>
 <h2><a href="#architecture" name="architecture" class="anchor"><span class="anchor-link"></span></a>Architecture</h2>
 <p><img src="alarm-architecture.png" alt="architecture" /></p><div class="callout warning "><div class="callout-title">Important</div>
-<p>At the time of writing this documentation, the alarm server does not exist. It will be developed in future. It&rsquo;s description and scope of work is subjected to change</p></div>
-<p>For alarms to function, it is necessary that redis instance is registered with location service. Redis here is configured similar to other services in CSW. There is a master redis instance and a slave redis instance. They are configured in &ldquo;replication&rdquo; mode. There a sentinel who&rsquo;s responsibility is to promote slave as master when master goes down. It is important to note that when master goes down, the &ldquo;location&rdquo; of alarm service remains same because location of alarm service is of sentinel and not of master or slave. The master and slave redis instances are dedicated for alarm, however sentinel is same across csw services.</p>
-<p>Once location is registered, components, alarm CLI &amp; alarm server can resolve redis location and start interacting with it using the alarm api &amp; alarm admin api. While the interaction of components with redis is limited to just <code>setSeverity</code> api, Alarm CLI can perform all admin operations as discussed <a href="#api-structure">above</a>.</p>
-<p>Alarm server is not built yet. When built, it&rsquo;s functionality will be to watch all severity changes using the admin api and <a href="#severity-latching">latch</a> appropriate alarms to disconnected severity. Apart from this, in future, it may also be responsible for providing an HTTP interface for various UI layer applications for alarm and health visualisations.</p>
+<p>At the time of writing this documentation, the Alarm Server does not exist. It will be developed in future as part of ESW.HCMS. Its description and scope of work is subjected to change</p></div>
+<p>For alarms to function, it is necessary that Redis instance is registered with Location Service. Redis here is configured similar to other services in CSW. There is a master Redis instance and a slave Redis instance. They are configured in &ldquo;replication&rdquo; mode. There is a Sentinel instance who&rsquo;s responsibility it is to promote the slave as master when master goes down. It is important to note that when master goes down, the &ldquo;location&rdquo; of Alarm Service remains the same because the location of Alarm Service is the location of Sentinel and not of master or slave. The master and slave Redis instances are dedicated for alarm, however Sentinel is shared across CSW Redis-based services.</p>
+<p>Once location is registered, components, alarm CLI &amp; Alarm Server can resolve Redis location and start interacting with it using the component alarm API &amp; alarm admin API. While the interaction of components with Alarm Service is limited to the <code>setSeverity</code> API, Alarm CLI can perform all admin operations as discussed <a href="#api-structure">above</a>.</p>
+<p>Alarm Server is part of ESW.HCMS and is not yet built. When built, its functionality will be to watch all severity changes using the admin API and <a href="#severity-latching">latch</a> appropriate alarms to disconnected severity. Apart from this, it will also be responsible for logging alarms and generating alarm events for archiving in DMS.ENG. It provides an HTTP interface for various UI layer ESW.HCMS applications for alarm and health visualisations.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/alarm/alarm.md" title="Edit this page" class="md-source-file md-edit">

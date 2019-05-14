@@ -181,32 +181,32 @@ tmtsoftware/csw
 <div class="md-content__searchable">
 <h1><a href="#location-server" name="location-server" class="anchor"><span class="anchor-link"></span></a>Location Server</h1>
 <h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
-<p>The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server">csw-location-server</a> project contains the main implementation of the Location Service. Think of it as a agent which is running on every machine. Normally one instance of the <em>location server</em> will run on each host that is running CSW services (although clients can be configured to use a remote host).</p>
+<p>The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server">csw-location-server</a> project contains the main implementation of the Location Service. Think of it as a agent which is running on every machine. Normally one instance of the <em>Location Server</em> will run on each host that is running CSW services (although clients can be configured to use a remote host).</p>
 <h2><a href="#design" name="design" class="anchor"><span class="anchor-link"></span></a>Design</h2>
 <p>Main building blocks of location service are captured below, we will go through each one of them in following sections:</p>
 <ul>
   <li><a href="https://doc.akka.io/docs/akka/current/index-cluster.html">Akka Cluster</a></li>
   <li><a href="https://doc.akka.io/docs/akka/current/typed/distributed-data.html">Conflict Free Replicated Data Types (CRDTs)</a>: Shares location information within the network.</li>
-  <li><a href="https://doc.akka.io/docs/akka-http/current">Akka Http</a></li>
+  <li><a href="https://doc.akka.io/docs/akka-http/current">Akka HTTP</a></li>
   <li>DeathWatch Actor</li>
 </ul>
 <p><img src="../../images/locationservice/location-service.png" alt="Location Service" /></p>
-<p>Above diagram shows different parts of location service and how it will look like in TMT environment. On a single physical machine, we can have multiple JVM&rsquo;s (Java Virtual Machines) running. Roughly these JVM&rsquo;s can be categorized into two types:</p>
+<p>Above diagram shows different parts of Location Service and how it will look like in TMT environment. On a single physical machine, we can have multiple JVM&rsquo;s (Java Virtual Machines) running. Roughly these JVM&rsquo;s can be categorized into two types:</p>
 <ul>
   <li><code>Container</code>: It can have single or multiple components (HCD, Assembly etc.) running inside it.</li>
   <li><code>Location Service</code>: Think of it as a agent which is running on all the machines in TMT environment.</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
-<p>Here onwards, we will refer location service as agent or server interchangeably. Do not confuse it with <a href="location-agent.html">csw-location-agent</a>.</p></div>
+<p>Here onwards, we will refer to Location Service as agent or server interchangeably. Do not confuse it with <a href="location-agent.html">csw-location-agent</a>.</p></div>
 <p>Let&rsquo;s discuss different components of <code>Location Server</code> in following sections:</p>
 <h3><a href="#cluster-member" name="cluster-member" class="anchor"><span class="anchor-link"></span></a>Cluster Member</h3>
-<p>Location service JVM (precisely Actor System) takes part in <a href="https://doc.akka.io/docs/akka/current/index-cluster.html">Akka Cluster</a>. By default, this actor system binds to port <code>3552</code>. Initially when there is no member in Akka cluster, node joins itself. Such a node is referred as seed node (introducer) and location of this node needs to be known so that other nodes can join to this known address and form a larger cluster. After the joining process is complete, seed nodes are not special and they participate in the cluster in exactly the same way as other nodes.</p>
+<p>Location Service JVM (precisely Actor System) takes part in <a href="https://doc.akka.io/docs/akka/current/index-cluster.html">Akka Cluster</a>. By default, this actor system binds to port <code>3552</code>. Initially when there is no member in Akka cluster, node joins itself. Such a node is referred as seed node (introducer) and the location of this node needs to be known so that other nodes can join to this known address and form a larger cluster. After the joining process is complete, seed nodes are not special and they participate in the cluster in exactly the same way as other nodes.</p>
 <p>Akka Cluster provides cluster <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#membership">membership</a> service using <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#gossip">gossip</a> protocols and an automatic <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#failure-detector">failure detector</a>.</p>
 <p>Death watch uses the cluster failure detector for nodes in the cluster, i.e. it detects network failures and JVM crashes, in addition to graceful termination of watched actor. Death watch generates the <code>Terminated</code> message to the watching actor when the unreachable cluster node has been downed and removed. Hence we have kept <code>auto-down-unreachable-after = 10s</code> so that in case of failure, interested parties get the death watch notification for the location in around 10s.</p>
 <h3><a href="#distributed-data-replicator-" name="distributed-data-replicator-" class="anchor"><span class="anchor-link"></span></a>Distributed Data (Replicator)</h3>
-<p>We use Akka Distributed Data to share CSW components locations between nodes in an Akka Cluster. These locations are accessed with an actor called as <code>replicator</code> providing a key-value store like API. We store following data in this key-value store (distributed data):</p>
+<p>We use Akka Distributed Data to share CSW component locations between nodes in an Akka Cluster. These locations are accessed with an actor called as <code>replicator</code> providing a key-value store like API. We store the following data in this key-value store (distributed data):</p>
 <ul>
   <li>
-  <p><code>AllServices</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala#maps">LWWMap</a> CRDT from <code>Connection</code> to <code>Location</code>. <code>Connection</code> and <code>Location</code> can be one of <code>Akka</code>, <code>Tcp</code> or <code>HTTP</code> type.  At any point in time, value of this map represents all the locations registered with <code>Location Service</code> in a TMT environment.</p></li>
+  <p><code>AllServices</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala#maps">LWWMap</a> CRDT from <code>Connection</code> to <code>Location</code>. <code>Connection</code> and <code>Location</code> can be one of <code>Akka</code>, <code>Tcp</code> or <code>HTTP</code> type.  At any point in time, the value of this map represents all the locations registered with <code>Location Service</code> in a TMT environment.</p></li>
   <li>
   <p><code>Service</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala#flags-and-registers">LWWRegister</a> which holds location of CSW component against unique connection name.</p></li>
 </ul>
@@ -215,16 +215,16 @@ tmtsoftware/csw
   <li><code>WriteMajority</code>: All the write API&rsquo;s (register, unregister etc.) updates registry (distributed data) with consistency level of <code>WriteMajority</code> which means value will immediately be written to a majority of replicas, i.e. at least N/2 + 1 replicas, where N is the number of nodes in the cluster</li>
   <li><code>ReadLocal</code>: All the get API&rsquo;s (find, resolve, list etc.): retrieves value from registry (distributed data) with consistency level of <code>ReadLocal</code> which means value will only be read from the local replica</li>
 </ul>
-<p>In TMT environment, we do not want two components to be registered with same connection name. This is achieved by configuring consistency level of <code>WriteMajority</code> for <code>register</code> API. Register API guarantees that component is register with location service and it&rsquo;s entry is replicated to at least N/2 + 1 replicas.</p>
-<p>Based on above configuration, it is always guaranteed that only one location of component will exist at any point in time in registry. Hence it is safe to read location just from local replica with consistency level of <code>ReadLocal</code> with the assumption that eventually location will get replicated on this replica if not present when queried.</p>
+<p>In TMT environment, we do not want two components to be registered with same connection name. This is achieved by configuring consistency level of <code>WriteMajority</code> for <code>register</code> API. Register API guarantees that a component is registered with Location Service and its entry is replicated to at least N/2 + 1 replicas.</p>
+<p>Based on above configuration, it is always guaranteed that only one location of a component will exist at any point in time in registry. Hence it is safe to read location just from local replica with consistency level of <code>ReadLocal</code> with the assumption that eventually location will get replicated on this replica if not present when queried.</p>
 <h3><a href="#death-watch-actor" name="death-watch-actor" class="anchor"><span class="anchor-link"></span></a>Death Watch Actor</h3>
-<p>Death watch actor register interest in change notifications for <code>AllServices</code> key. Hence on every addition or removal of location, death watch actor receives <code>Changed[LWWMap[Connection, Location]]</code> message from where it gets all the current locations.</p>
-<p>Death watch actor then starts watching all the new locations. When it receives <code>Terminated</code> signal for any of the watched location precisely for actor ref, then it unregister that particular connection from location service.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>Death watch actor only supports akka locations and filters out <code>tcp</code> and <code>http</code> locations.</p></div>
+<p>Death watch actor registers interest in change notifications for <code>AllServices</code> key. Hence on every addition or removal of location, death watch actor receives <code>Changed[LWWMap[Connection, Location]]</code> message from where it gets all the current locations.</p>
+<p>Death watch actor then starts watching all the new locations. When it receives <code>Terminated</code> signal for any of the watched location precisely for actor ref, then it unregister that particular connection from Location Service.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Death watch actor only supports Akka locations and filters out <code>tcp</code> and <code>http</code> locations.</p></div>
 <h3><a href="#http-server" name="http-server" class="anchor"><span class="anchor-link"></span></a>HTTP Server</h3>
-<p>Location service provides HTTP routes to get, register, unregister and track locations. Only one instance of location server is started on port <code>7654</code> on evey machine. Client from same machine running in different processes can connect to <code>localhost:7654</code> to access location service. In most of the cases, you will not directly talk to this address. You will always use loocation service client provided by CSW which internally connects to <code>localhost:7654</code> to access <code>Location Service</code>.</p>
+<p>Location Service provides HTTP routes to get, register, unregister and track locations. Only one instance of location server is started on port <code>7654</code> on evey machine. Client from same machine running in different processes can connect to <code>localhost:7654</code> to access Location Service. In most of the cases, you will not directly talk to this address. You will always use Location Service client provided by CSW which internally connects to <code>localhost:7654</code> to access <code>Location Service</code>.</p>
 <h3><a href="#how-location-tracking-works" name="how-location-tracking-works" class="anchor"><span class="anchor-link"></span></a>How location tracking works</h3>
-<p>Below diagram illustrate <code>Assembly</code> tracking <code>HCD</code>. Use case shown in diagram is when <code>Assembly</code> starts tracking, before <code>HCD</code> is registered with location service. It also shows abrupt shutdown of <code>HCD</code> and how <code>Assembly</code> gets notification of that.</p>
+<p>Below diagram illustrate <code>Assembly</code> tracking <code>HCD</code>. Use case shown in diagram is when <code>Assembly</code> starts tracking, before <code>HCD</code> is registered with Location Service. It also shows the abrupt shutdown of <code>HCD</code> and how <code>Assembly</code> gets notification of that.</p>
 <p><img src="../../images/locationservice/track.png" alt="Location Track" /></p>
 <p>Let us go through each action step by step as shown in diagram:</p>
 <ol>
@@ -240,16 +240,16 @@ tmtsoftware/csw
     </ol>
   </li>
   <li>
-    <p><code>HCD</code> registers with location service by sending <code>register</code> request to location server.</p>
+    <p><code>HCD</code> registers with Location Service by sending <code>register</code> request to location server.</p>
     <ol>
       <li>
       <p>On receiving register request, location server internally updates both <code>Service</code> and <code>AllServices</code> keys by sending <code>update</code> message to <code>replicator</code></p></li>
     </ol>
   </li>
   <li>
-  <p>Death watch actor is started with location service and it gets notification on every component registration.  In our flow, death watch actor receives notification of <code>HCD</code> getting registered with location service from previous step and it immediately start watching death of <code>HCD</code>.</p></li>
+  <p>Death watch actor is started with Location Service and it gets notification on every component registration.  In our flow, death watch actor receives notification of <code>HCD</code> getting registered with Location Service from previous step and it immediately starts watching death of <code>HCD</code>.</p></li>
   <li>
-  <p>One of the task of <code>replicator</code> is to keep replicating <code>CRDT&#39;s</code> from one node to other.  In this case, location of <code>HCD</code> gets replicated from <code>Machine 1</code> to <code>Machine 2</code></p></li>
+  <p>One of the tasks of <code>replicator</code> is to keep replicating <code>CRDT&#39;s</code> from one node to other.  In this case, location of <code>HCD</code> gets replicated from <code>Machine 1</code> to <code>Machine 2</code></p></li>
   <li>
     <p>As soon as <code>replicator</code> from <code>Machine 2</code> receives <code>HCD</code> location, it notifies all the interested parties.</p>
     <ol>
@@ -262,7 +262,7 @@ tmtsoftware/csw
   <li>
   <p>Assume that after some time, <code>HCD</code> crashes/terminates/throws exception and shutdowns abruptly.</p></li>
   <li>
-  <p>As described in <code>Step 3</code>, Death watch actor is watching <code>HCD</code>.  On <code>HCD&#39;s</code> shutdown, death watch actor <code>unregisters</code> <code>HCD</code> from location service by sending update message by removing <code>HCD&#39;s</code> entry from <code>replicator</code>.</p></li>
+  <p>As described in <code>Step 3</code>, Death watch actor is watching <code>HCD</code>.  On <code>HCD&#39;s</code> shutdown, death watch actor <code>unregisters</code> <code>HCD</code> from Location Service by sending update message by removing <code>HCD&#39;s</code> entry from <code>replicator</code>.</p></li>
   <li>
   <p>Eventually this removal of <code>HCD</code> gets replicated to <code>replicator</code> running on <code>Machine 2</code>.</p></li>
   <li>
@@ -271,9 +271,9 @@ tmtsoftware/csw
 <p>At any point in time, <code>Assembly</code> can choose to cancel tracking. On cancellation, this persistent connection will be released.</p></div>
 <h2><a href="#internals" name="internals" class="anchor"><span class="anchor-link"></span></a>Internals</h2>
 <p>The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/Main.scala">Main</a> class delegates the job of creating the cluster actor and HTTP server instance to the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/internal/ServerWiring.scala">ServerWiring</a> class.</p>
-<p>The default tcp ports for the actor and HTTP servers are specified in <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/resources/application.conf">application.conf</a>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>The default TCP ports for the actor and HTTP servers are specified in <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/resources/application.conf">application.conf</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Due to the way random port numbers are used for CSW components, firewalls should be disabled for these systems, which are assumed to be in an internal network that is protected from outside access.</p></div>
-<p>In order to determine the correct IP address to use for the local host, it is necessary to set the <em>INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs). The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> class uses that information, along with other settings when starting the cluster actor. It also needs to know the <em>cluster seeds</em>, a comma separated list of <em>host:port</em> values for at least one other actor in the cluster. This information is needed in order to join the location service cluster.</p>
+<p>In order to determine the correct IP address to use for the local host, it is necessary to set the <em>INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs). The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> class uses that information, along with other settings when starting the cluster actor. It also needs to know the <em>cluster seeds</em>, a comma separated list of <em>host:port</em> values for at least one other actor in the cluster. This information is needed in order to join the Location Service cluster.</p>
 <p>The Location Service HTTP server is implemented by the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationRoutes.scala">LocationRoutes</a> class, which defines the HTTP routes and talks to the cluster actor on the client&rsquo;s behalf.</p>
 <h2><a href="#java-api" name="java-api" class="anchor"><span class="anchor-link"></span></a>Java API</h2>
 <p>Since the location <em>server</em> is only accessed internally, there is no extra Java API for it. The location service <em>client</em> and <em>API</em> code does provide Java APIs (see below).</p>
