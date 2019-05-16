@@ -259,7 +259,7 @@ tmtsoftware/csw
 <h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
 <p>The time service implementation provides API for managing time across various components within the TMT architecture. TMT has standardised on the use of Precision Time Protocol (PTP), an IEEE 1588 standard, as the basis of observatory time to achieve sub-microsecond accuracy and precision. The PTP grand master clock (a hardware device) is synchronized to the Global Positioning System (GPS) time. Each computer system participating in the PTP network synchronizes to Observatory Time using the PTP protocol. For higher accuracy in time measurements, hardware time stamping is recommended and the network entities should be fitted with PTP capable Network Interface Cards (NIC).</p>
 <p>The TMT time service relies on making native calls (Linux kernel C methods invocation) to get the nanosecond precise time overcoming the limitations of Scala and Java libraries which support only microsecond precision till date. These native calls are provided as wrapper over Java and Scala APIs for easy use by component developers familiar with Java/Scala. The TMT time service is responsible for primarily providing time in <a href="#summary-of-relevant-time-metrics">Coordinated Universal Time (UTC)</a> and <a href="#summary-of-relevant-time-metrics">International Atomic Time (TAI)</a> time scales. The handling of <a href="#summary-of-relevant-time-metrics">leap second</a> event is taken care by the TMT time service automatically(without human intervention) as the PTP grandmaster distributes the accurate information when received through GPS.</p>
-<p>The time service also allows for scheduling tasks either periodically or once using both UTC and TAI time. These schedulers are optimised for handling scheduled task at 1KHz frequency or 1 task every 1 millisecond. However, there can be jitters due to JVM garbage collection, CPU loads and concurrent task execution.</p>
+<p>The time service also allows for scheduling tasks either periodically or once using both UTC and TAI time. These schedulers are optimised for handling scheduled tasks at 1KHz frequency or 1 task every 1 millisecond. However, there can be jitters due to JVM garbage collection, CPU loads and concurrent task execution.</p>
 <h2><a href="#summary-of-relevant-time-metrics" name="summary-of-relevant-time-metrics" class="anchor"><span class="anchor-link"></span></a>Summary of relevant time metrics</h2>
 <ul>
   <li>
@@ -333,7 +333,7 @@ val ClockTAI      = 11 // It is basically defined as CLOCK_REALTIME(UTC) + tai_o
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-time/csw-time-clock/jvm/src/main/scala/csw/time/clock/natives/models/TMTClock.scala#L32-L54" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def now(clockId: Int): Instant = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-time/csw-time-clock/jvm/src/main/scala/csw/time/clock/natives/models/TMTClock.scala#L32-L53" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def now(clockId: Int): Instant = {
   val timeSpec = new TimeSpec()
   TimeLibrary.clock_gettime(clockId, timeSpec)
   Instant.ofEpochSecond(timeSpec.seconds.longValue(), timeSpec.nanoseconds.longValue())
@@ -345,7 +345,6 @@ override def offset: Int = {
   timeVal.tai
 }
 
-// todo: without sudo or somehow handle it internally?
 // sets the tai offset on kernel (needed when ptp is not setup)
 override def setTaiOffset(offset: Int): Unit = {
   val timex = new Timex()

@@ -206,6 +206,18 @@ tmtsoftware/csw
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../technical/event/event.html#event-service" class="header">Event Service</a>
+  <ul>
+    <li><a href="../../technical/event/event.html#introduction" class="header">Introduction</a></li>
+    <li><a href="../../technical/event/event.html#technology" class="header">Technology</a></li>
+    <li><a href="../../technical/event/event.html#romaine" class="header">Romaine</a></li>
+    <li><a href="../../technical/event/event.html#event-publishing" class="header">Event Publishing</a></li>
+    <li><a href="../../technical/event/event.html#event-subscription" class="header">Event Subscription</a></li>
+    <li><a href="../../technical/event/event.html#architecture" class="header">Architecture</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </nav>
@@ -219,11 +231,77 @@ tmtsoftware/csw
 </div>
 </div>
 </div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../technical/event/event.html#event-service" class="header">Event Service</a>
+  <ul>
+    <li><a href="../../technical/event/event.html#introduction" class="header">Introduction</a></li>
+    <li><a href="../../technical/event/event.html#technology" class="header">Technology</a></li>
+    <li><a href="../../technical/event/event.html#romaine" class="header">Romaine</a></li>
+    <li><a href="../../technical/event/event.html#event-publishing" class="header">Event Publishing</a></li>
+    <li><a href="../../technical/event/event.html#event-subscription" class="header">Event Subscription</a></li>
+    <li><a href="../../technical/event/event.html#architecture" class="header">Architecture</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#event-service" name="event-service" class="anchor"><span class="anchor-link"></span></a>Event Service</h1>
-<p>Some event text</p>
+<h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
+<p>Event Service is a <a href="https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern">PubSub</a> Service which allows publishing and subscription of <a href="../../messages/events.html">Events</a> based on Event Key which is a combination of Prefix and Event Name. Event Service is optimized for the high performance requirements of events as demands with varying rates, for ex. 100 Hz, 50 Hz etc., but can also be used with events that are published infrequently or when values change. The end-to-end latency of events assured by Event service is 5 milliseconds. It also ensures ordered delivery of events with no event loss within performance specification. </p>
+<p>In the TMT control system, events may be created as the output of a calculation by one component for the input to a calculation in one or more other components. Demand events often consist of events that are published at a specific rate.</p>
+<h2><a href="#technology" name="technology" class="anchor"><span class="anchor-link"></span></a>Technology</h2>
+<p>There were two good candidates for the backend of Event Service - <a href="https://kafka.apache.org/">Apache Kafka</a> and <a href="https://redis.io/">Redis</a>. The Event Service API is implemented with both the backends and a performance testing was done to select one particular backend which would cater to our low latency requirements. Redis seemed to be a good choice for the backend as it turned out to be better at providing low latency unlike Kafka which is more suited for high throughput systems. Hence you can see 2 implementations of the API in the Event Service client. The code is structured in a way that it is easy to switch the implementations.</p>
+<p><a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/client/EventServiceFactory.html">EventServiceFactory</a> in event-client which provides APIs to make new <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventService.html">EventService</a> or <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/javadsl/IEventService.html">IEventService</a> takes an <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/client/models/EventStore.html">EventStore</a> which could be either <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/client/models/EventStores/RedisStore.html">RedisStore</a> or <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/client/models/EventStores/KafkaStore.html">KafkaStore</a>. The default value is set to RedisStore.</p>
+<p>Event Service uses <a href="https://redis.io/topics/pubsub">Redis&rsquo; PubSub</a> for publishing and subscribing to events. And to cater a specific feature of fetching the latest event on subscription, <a href="https://redis.io/commands/set">set operation</a> of Redis DB is used.</p>
+<p>We have created a scala library called &ldquo;Romaine&rdquo; to communicate to Redis.</p>
+<p><img src="event-layers.png" alt="Event Dependencies" /></p>
+<h2><a href="#romaine" name="romaine" class="anchor"><span class="anchor-link"></span></a>Romaine</h2>
+<p>Romaine is a redis client library writen by us. It&rsquo;s a Scala library built over Java Redis client library called <a href="https://lettuce.io/">Lettuce</a> which provides rich APIs over existing functionality offered by Lettuce. </p>
+<p>Romaine offers various APIs:</p>
+<ul>
+  <li>
+  <p><strong>Async API:</strong> Provides asynchronous API (<code>romaine.async.RedisAsyncApi</code>) for various redis commands like <code>get</code>, <code>set</code>, <code>publish</code> etc.</p></li>
+  <li>
+  <p><strong>Reactive API:</strong> Provides API for Subscription and Pattern-Subscription (<code>romaine.reactive.RedisSubscriptionApi</code>). On subscription, it returns an <a href="https://doc.akka.io/docs/akka/current/stream/index.html">Akka Stream</a> of Events which on execution materializes to <code>RedisSubscription</code> instance which gives handle to unsubscribe to events.</p></li>
+  <li>
+  <p><strong>Keyspace API:</strong> Provides APIs to watch <a href="https://redis.io/topics/notifications">Keyspace Notifications</a> (<code>romaine.keyspace.RedisKeySpaceApi</code>). This is a rich API built on Akka Streams which provides not just the change events that happen on keys (for eg: Update, Removal etc.) but also the old and new values corresponding to those keys. </p></li>
+</ul>
+<p>Event Service uses <code>Async API</code> for publishing and setting the latest event, and <code>Reactive API</code> for subscribing to events and patterns. <code>Keyspace API</code> is used in alarm service.</p>
+<h2><a href="#event-publishing" name="event-publishing" class="anchor"><span class="anchor-link"></span></a>Event Publishing</h2>
+<p>Publishing of events involves two things -</p>
+<ul>
+  <li>
+  <p>Publish the event in Redis</p></li>
+  <li>
+  <p>Setting the value of event against the event key in redis. This is to cater to a specific requirement of fetching latest event as soon as a new subscription happens.</p></li>
+</ul>
+<p>In case, when Event Server is not available, the Publish APIs would fail with an exception <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/exceptions/EventServerNotAvailable.html">EventServerNotAvailable</a>. If due to any other reasons, the publishing of events fail, the publish APIs would throw a <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/exceptions/PublishFailure.html">PublishFailure</a></p>
+<h2><a href="#event-subscription" name="event-subscription" class="anchor"><span class="anchor-link"></span></a>Event Subscription</h2>
+<p>Subscribing to event keys returns an <a href="https://doc.akka.io/docs/akka/current/stream/index.html">Akka Stream</a> of events. Subscription to concrete event keys as well as to glob-style patterns is supported. With pattern subscription, the subscriber receives all the events with event-keys that match the provided pattern. The subscriber gets a handle 0to instance of <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventSubscription.html">EventSubscription</a> which could be used to unsubscribe. </p>
+<p>The subscription API supports subscribing with different modes to control the rate of events you receive. Two modes are provided - RateAdapterMode and RateLimiter mode. Details of when to use which mode could be found <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/SubscriptionMode.html">here</a>.</p>
+<p>Subscriber API also provides a <code>get</code> API which could be used to fetch the latest events for the specified event keys.</p>
+<p>In case, when Event Server is not available, the Subscribe APIs would fail with an exception <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/exceptions/EventServiceNotAvailable.html">EventServiceNotAvailable</a></p>
+<h2><a href="#architecture" name="architecture" class="anchor"><span class="anchor-link"></span></a>Architecture</h2>
+<p>In order to allow components to discover Event Server/Event Store, it is necessary to register it with the Location Service. Event Server here is referred to the Redis instance(particularly <a href="https://redis.io/topics/sentinel">Redis Sentinel</a>).</p>
+<p>For high availability of event server, we use the Redis Sentinel along with a master and a slave. Master and slave are configured in &ldquo;replication&rdquo; mode.</p>
+<p>The Sentinel&rsquo;s responsibility is to promote the slave as master when master goes down. It is important to note that when master goes down, the &ldquo;location&rdquo; of Event Server remains the same because the location of Event Server is the location of Sentinel and not of master or slave. The master and slave Redis instances are dedicated for event, however Sentinel is shared across CSW Redis-based services. As Sentinel caters to more than one master, we need to specify which master to connect to for event server. That is configured in <code>reference.conf</code> in <code>csw-event-client</code> project. </p>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-event/csw-event-client/src/main/resources/reference.conf#L4-L8" target="_blank" title="Go to snippet source"></a><code class="language-conf">csw-event {
+  redis {
+    masterId = &quot;eventServer&quot;
+  }
+}</code></pre>
+<p>Once location is registered, components and event CLI can resolve Event server location and start publishing/subscribing. </p>
+<p><img src="architecture.png" alt="architecture" /></p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/event/event.md" title="Edit this page" class="md-source-file md-edit">
