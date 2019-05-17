@@ -178,7 +178,7 @@ tmtsoftware/csw-js
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#javascript-adapter-csw-aas-js-" name="javascript-adapter-csw-aas-js-" class="anchor"><span class="anchor-link"></span></a>Javascript Adapter (csw-aas-js)</h1>
-<p><code>csw-aas-js</code> is an npm package which provides React components that integrate with the CSW Authentication and Authorization Service. UI applications can use these React components to enable the application to show or hide components based on the authentication and authorization policy. </p>
+<p><code>csw-aas-js</code> is an npm package which provides React components that integrate with the CSW Authentication and Authorization Service. UI applications can use these React components to enable the application to show or hide components based on the authentication and authorization policy. <code>csw-aas-js</code> is written in typescript and it bundles transpiled es6 module along with type declarations. </p>
 <!-- introduction to the javascript adapter -->
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the <code>csw-aas-js</code> adapter, run this command from root folder of your application where <code>package.json</code> exists:</p>
@@ -199,7 +199,7 @@ tmtsoftware/csw-js
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/config/AppConfig.js#L2-L5" target="_blank" title="Go to snippet source"></a><code class="language-js">export const AppConfig = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/config/AppConfig.js#L2-L5" target="_blank" title="Go to snippet source"></a><code class="language-js">export const AppConfig = {
   realm: &#39;example&#39;,
   clientId: &#39;example-app&#39;,
 }</code></pre></dd>
@@ -219,14 +219,14 @@ tmtsoftware/csw-js
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/components/NavComponent.jsx#L4" target="_blank" title="Go to snippet source"></a><code class="language-jsx">import { AuthContext, Logout, Login } from &#39;csw-aas-js&#39;</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/components/NavComponent.jsx#L4" target="_blank" title="Go to snippet source"></a><code class="language-jsx">import { AuthContext, Logout, Login } from &#39;csw-aas-js&#39;</code></pre></dd>
 </dl>
 <h3><a href="#authcontextprovider" name="authcontextprovider" class="anchor"><span class="anchor-link"></span></a>AuthContextProvider</h3>
 <p><code>AuthContextProvider</code> is wrapper over a React <a href="https://reactjs.org/docs/context.html#contextprovider">Context.Provider</a>. A JSON configuration file must be passed in that contains the application specific AAS server configuration (e.g. clientId, realm). When a user logs in, an AAS Server is instantiated, with the UI application specific configuration overriding the predefined configuration. Once the AAS sever is instantiated, an <code>auth</code> object is created with the needed attributes and APIs. This <code>auth</code> object is available to other React components; since <code>AuthContextProvider</code> is a <code>Provider</code>, its data can be shared with any of the children React components in its tree in a <code>Consumer</code> component (see below). All <code>Consumer</code>s that are descendants of a <code>Provider</code> will re-render whenever the AuthContextProvider’s state changes, e.g. a user authorizes. It is recommended to use <code>AuthContextProvider</code> to wrap the entire application so that data can be shared anywhere in application via a <code>Consumer</code>. </p>
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/components/ExampleApp.jsx#L22-L58" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;AuthContextProvider config={AppConfig}&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/components/ExampleApp.jsx#L22-L58" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;AuthContextProvider config={AppConfig}&gt;
   &lt;BrowserRouter&gt;
     &lt;div&gt;
       &lt;NavComponent /&gt;
@@ -260,14 +260,14 @@ tmtsoftware/csw-js
 </dl>
 <h4><a href="#source-code-for-realmrole-component" name="source-code-for-realmrole-component" class="anchor"><span class="anchor-link"></span></a>Source code for RealmRole component</h4>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/context/AuthContextProvider.jsx">AuthContextProvider Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/context/AuthContextProvider.tsx">AuthContextProvider Component</a></li>
 </ul>
 <h3><a href="#consumer" name="consumer" class="anchor"><span class="anchor-link"></span></a>Consumer</h3>
 <p><code>Consumer</code> is similar to a React <a href="https://reactjs.org/docs/context.html#contextconsumer">Context.Consumer</a>. The shared <code>auth</code> object from the <code>AuthContextProvider</code> can be accessed using a <code>Consumer</code> component </p>
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/components/Read.jsx#L6-L21" target="_blank" title="Go to snippet source"></a><code class="language-jsx">const { auth } = useContext(AuthContext)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/components/Read.jsx#L6-L21" target="_blank" title="Go to snippet source"></a><code class="language-jsx">const { auth } = useContext(AuthContext)
 return (
   &lt;div className=&#39;nav-wrapper&#39;&gt;
     {auth &amp;&amp; auth.isAuthenticated() ? (
@@ -286,63 +286,63 @@ return (
 </dl>
 <h4><a href="#source-code-for-realmrole-component" name="source-code-for-realmrole-component" class="anchor"><span class="anchor-link"></span></a>Source code for RealmRole component</h4>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/context/AuthContext.jsx">Consumer Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/context/AuthContext.ts">Consumer Component</a></li>
 </ul>
 <h3><a href="#login" name="login" class="anchor"><span class="anchor-link"></span></a>Login</h3>
 <p>The <code>Login</code> component instantiates an AAS server with the configurations provided. It redirects to an AAS server login page for the user to login. After login, the <code>auth</code> object in the context is updated with the appropriate values, e.g. token, realm &amp; client roles etc.</p>
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/components/NavComponent.jsx#L32" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;Login /&gt;</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/components/NavComponent.jsx#L32" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;Login /&gt;</code></pre></dd>
 </dl>
 <h4><a href="#source-code-for-login-component" name="source-code-for-login-component" class="anchor"><span class="anchor-link"></span></a>Source code for Login component</h4>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/Login.jsx">Login Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/Login.tsx">Login Component</a></li>
 </ul>
 <h3><a href="#logout" name="logout" class="anchor"><span class="anchor-link"></span></a>Logout</h3>
 <p>The <code>Logout</code> component logs out the user from the AAS server. It clears the <code>auth</code> object stored in the context.</p>
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/components/NavComponent.jsx#L28-L29" target="_blank" title="Go to snippet source"></a><code class="language-jsx">  &lt;Logout /&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/components/NavComponent.jsx#L28-L29" target="_blank" title="Go to snippet source"></a><code class="language-jsx">  &lt;Logout /&gt;
 ) : (</code></pre></dd>
 </dl>
 <h4><a href="#source-code-for-logout-component" name="source-code-for-logout-component" class="anchor"><span class="anchor-link"></span></a>Source code for Logout component</h4>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/Logout.jsx">Logout Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/Logout.tsx">Logout Component</a></li>
 </ul>
 <h3><a href="#checklogin" name="checklogin" class="anchor"><span class="anchor-link"></span></a>CheckLogin</h3>
 <p><code>CheckLogin</code> components provide ability to show something only if the user is logged in. In the following code snippet, <code>Write</code> is a react component that is shown only if the user is logged in. The behavior if the user is not logged in can be defined by an HTML element or React component that is passed into the component as an <code>error</code> property, shown as an <code>ExampleError</code> Component in following snippet.</p>
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/components/ExampleApp.jsx#L31-L33" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;CheckLogin error={&lt;ExampleError /&gt;}&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/components/ExampleApp.jsx#L31-L33" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;CheckLogin error={&lt;ExampleError /&gt;}&gt;
   &lt;Write /&gt;
 &lt;/CheckLogin&gt;</code></pre></dd>
 </dl>
 <h4><a href="#source-code-for-checklogin-component" name="source-code-for-checklogin-component" class="anchor"><span class="anchor-link"></span></a>Source code for CheckLogin component</h4>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/authentication/CheckLogin.jsx">CheckLogin Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/authentication/CheckLogin.tsx">CheckLogin Component</a></li>
 </ul>
 <h3><a href="#realmrole" name="realmrole" class="anchor"><span class="anchor-link"></span></a>RealmRole</h3>
 <p><code>RealmRole</code> components provide the ability to show something only if the user is logged in and has the specified realm role. In the following code snippet, the contents of the <code>div</code> block are shown only if the user is logged in and has the realm role specified in the <code>realmRole</code> prop. Similar to <code>CheckLogin</code>, the behaviour if the user is not logged in can be optionally defined by an HTML element or React component that is passed into the component as an <code>error</code> property, shown as an <code>ExampleError</code> Component in following snippet.</p>
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/components/ExampleApp.jsx#L43-L45" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;RealmRole realmRole=&#39;example-admin-role&#39; error={&lt;ExampleError /&gt;}&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/components/ExampleApp.jsx#L43-L45" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;RealmRole realmRole=&#39;example-admin-role&#39; error={&lt;ExampleError /&gt;}&gt;
   &lt;div&gt;Example admin role specific functionality&lt;/div&gt;
 &lt;/RealmRole&gt;</code></pre></dd>
 </dl>
 <h4><a href="#source-code-for-realmrole-component" name="source-code-for-realmrole-component" class="anchor"><span class="anchor-link"></span></a>Source code for RealmRole component</h4>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/authorization/RealmRole.jsx">RealmRole Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/authorization/RealmRole.tsx">RealmRole Component</a></li>
 </ul>
 <h3><a href="#clientrole" name="clientrole" class="anchor"><span class="anchor-link"></span></a>ClientRole</h3>
 <p><code>ClientRole</code> components provide the ability to show something only if the user is logged in and has the specified client role for the specified client. In the following code snippet, the contents of the <code>div</code> block are shown only if the user is logged in and has the client role for specified client in the <code>clientRole</code> prop. Similar to <code>RealmRole</code>, the behaviour if the user is not logged in can be optionally defined by an HTML element or React component that is passed into the component as an <code>error</code> property, shown as an <code>ExampleError</code> Component in following snippet.</p>
 <dl>
   <dt>Javascript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/example/src/components/ExampleApp.jsx#L50-L55" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;ClientRole
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js-examples/example-app/src/components/ExampleApp.jsx#L50-L55" target="_blank" title="Go to snippet source"></a><code class="language-jsx">&lt;ClientRole
   clientRole=&#39;person-role&#39;
   client=&#39;example-server&#39;
   error={&lt;ExampleError /&gt;}&gt;
@@ -351,7 +351,7 @@ return (
 </dl>
 <h4><a href="#source-code-for-clientrole-component" name="source-code-for-clientrole-component" class="anchor"><span class="anchor-link"></span></a>Source code for ClientRole component</h4>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/authorization/ClientRole.jsx">ClientRole Component</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw-js/tree/master/csw-aas-js/src/components/authorization/ClientRole.tsx">ClientRole Component</a></li>
 </ul>
 <h2><a href="#technical-description" name="technical-description" class="anchor"><span class="anchor-link"></span></a>Technical Description</h2>
 <p>See <a href="../technical/csw-aas-js.html">csw-aas-js Technical Description</a>.</p>
