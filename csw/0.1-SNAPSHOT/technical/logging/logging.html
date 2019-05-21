@@ -206,6 +206,16 @@ tmtsoftware/csw
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../technical/logging/logging.html#logging-service" class="header">Logging Service</a>
+  <ul>
+    <li><a href="../../technical/logging/logging.html#implementation-details" class="header">Implementation details</a></li>
+    <li><a href="../../technical/logging/logging.html#changing-log-level-of-components" class="header">Changing log level of components</a></li>
+    <li><a href="../../technical/logging/logging.html#external-loggers" class="header">External Loggers</a></li>
+    <li><a href="../../technical/logging/logging.html#hierarchy-of-loggerfactories" class="header">Hierarchy of LoggerFactories</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </nav>
@@ -219,11 +229,52 @@ tmtsoftware/csw
 </div>
 </div>
 </div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../technical/logging/logging.html#logging-service" class="header">Logging Service</a>
+  <ul>
+    <li><a href="../../technical/logging/logging.html#implementation-details" class="header">Implementation details</a></li>
+    <li><a href="../../technical/logging/logging.html#changing-log-level-of-components" class="header">Changing log level of components</a></li>
+    <li><a href="../../technical/logging/logging.html#external-loggers" class="header">External Loggers</a></li>
+    <li><a href="../../technical/logging/logging.html#hierarchy-of-loggerfactories" class="header">Hierarchy of LoggerFactories</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#logging-service" name="logging-service" class="anchor"><span class="anchor-link"></span></a>Logging Service</h1>
-<p>Start Here</p>
+<p>The Logging Service library provides an advanced logging facility for csw components and services. The Logger API for <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/logging/api/scaladsl/Logger.html">scala</a> and <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/logging/api/javadsl/ILogger.html">java</a> allows to log at different levels viz. <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warn</code> and <code>error</code>.</p>
+<p>The library allows separate log levels for the logging API, Akka logging, and Slf4J. Also, it provides ability to set different log levels for different components. To understand how to use the API refer to <a href="../../services/logging.html">this doc</a>. </p>
+<h3><a href="#implementation-details" name="implementation-details" class="anchor"><span class="anchor-link"></span></a>Implementation details</h3>
+<p>Following is the diagram to show interaction of various classes, components and services in the Logging ecosystem.</p>
+<p><img src="class-interaction.png" alt="Interaction diagram of classes" /></p>
+<p>For each container/standalone component, a new <code>csw.logging.client.internal.LoggingSystem</code> is created and started with the help of <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/logging/client/scaladsl/LoggingSystemFactory$.html">LoggingSystemFactory</a>.</p>
+<p><code>LoggingSystem</code> on creation performs various things:</p>
+<ul>
+  <li>
+  <p>Spawning <code>csw.logging.client.internal.LogActor</code>. LogActor is the central component of Logging service. All the messages of changing log level at runtime and logging at different levels go through the LogActor. Even external loggers <code>csw.logging.client.compat.AkkaLogger</code> and <code>csw.logging.client.compat.Slf4jAppender</code> send messages to <code>LogActor</code> in order to log messages to the configured appenders (<a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/logging/client/appenders/StdOutAppender.html">StdOutAppender</a> and <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/logging/client/appenders/FileAppender.html">FileAppender</a>).</p></li>
+  <li>
+  <p>Creating <code>csw.logging.client.internal.LoggerImpl</code> which is a concrete implementation of <code>Logger</code> API. In order to do logging of messages sent by services/components, <code>LoggerImpl</code> also sends messages to <code>LogActor</code>.</p></li>
+  <li>
+  <p>Load default logging configurations from <code>logging.conf</code> and initialize <code>csw.logging.client.internal.LoggingState</code> which is a singleton object keeping track of the current logging state (levels of logging API, akka, slf4j and various components) of the application. <code>LoggingSystem</code> changes this <code>LoggingState</code> to change logging level of services/components. And <code>LoggerImpl</code> picks up from this state inorder to decide if the message needs to be logged or not depending on the current level set.</p></li>
+</ul>
+<h3><a href="#changing-log-level-of-components" name="changing-log-level-of-components" class="anchor"><span class="anchor-link"></span></a>Changing log level of components</h3>
+<p>The above figure also demonstrates the flow of a request for changing log level of a component. Such a request would be initiated by some admin dashboard which will hit the Admin Http Server. On receiving the request, Admin Http Server will resolve the component from Location Service and send that component a <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/command/client/messages/SetComponentLogLevel.html">SetComponentLogLevel</a> message. This message is received by the <code>SupervisorBehavior</code> of that component which changes the global <code>LoggingState</code>. On any following logs of that component, the latest <code>LoggingState</code> will be used in <code>LoggerImpl</code> to decide whether it needs to be logged or not depending on the new loglevel.</p>
+<h3><a href="#external-loggers" name="external-loggers" class="anchor"><span class="anchor-link"></span></a>External Loggers</h3>
+<p>External loggers like AkkaLogger and Slf4jAppender are wired up such that any logs from those libraries (akka and others that implement Slf4j like log4j, logback, tinylog etc) will go through our facade of AkkaLogger and Slf4jAppender respectively. For AkkaLogger, there is a configuration <code>akka.loggers</code> specified in <code>logging.conf</code> which does this wiring and for Slf4jAppender <code>logback.xml</code> is configured. </p>
+<h3><a href="#hierarchy-of-loggerfactories" name="hierarchy-of-loggerfactories" class="anchor"><span class="anchor-link"></span></a>Hierarchy of LoggerFactories</h3>
+<p>All the services for e.g. Event Service, Alarm Service etc, create their own instances of LoggerFactory which inherit from <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/logging/client/scaladsl/LoggerFactory.html">LoggerFactory</a> provided by <code>csw-logging-client</code>.</p>
+<p>The below diagram shows the hierarchy of the LoggerFactory and where do the Service Loggers stand in that tree.</p>
+<p><img src="logger-factory-hierarchy.png" alt="Hierarchy of Logger Factories" /></p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/logging/logging.md" title="Edit this page" class="md-source-file md-edit">
