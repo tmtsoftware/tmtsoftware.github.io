@@ -268,7 +268,14 @@ tmtsoftware/csw
 <p>Depending on which store is provided to the <code>EventServiceFactory</code>, an implementation of <code>EventService</code> is returned  which could be either <code>KafkaEventService</code> or <code>RedisEventService</code>. The default store is set to <code>RedisStore</code>. Hence the service returned by default  is <code>RedisEventService</code>.</p>
 <p>Below is the sequence diagram of the event service. It captures the flow from creation of <code>EventService</code> via <code>EventServiceFactory</code> till the publishing/subscription of events to Redis.</p>
 <p><img src="sequence-diagram.png" alt="Sequence Diagram" /> </p>
-<p><code>EventServiceFactory</code> allows creation of <code>EventService</code> using host and port of the EventStore or using <code>LocationService</code> to resolve location of the EventStore. <code>EventService</code> provides APIs to create <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventPublisher.html">EventPublisher</a> and <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventSubscriber.html">EventSubscriber</a>. Refer to <a href="../../services/event.md#accessing-event-service">this section</a> of event service doc to read about APIs provided by this entity.</p>
+<p><code>EventServiceFactory</code> provides overloads of <code>make</code> method which allow creation of <code>EventService</code> using host-port as well as using <code>LocationService</code> to resolve the EventStore. <code>EventService</code> provides APIs to create <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventPublisher.html">EventPublisher</a> and <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/event/api/scaladsl/EventSubscriber.html">EventSubscriber</a> which allow users to publish/subscribe to events. It provides both APIs </p>
+<ul>
+  <li>
+  <p>to make new instances of publisher/subscriber</p></li>
+  <li>
+  <p>to use a default instance of publisher/subscriber</p></li>
+</ul>
+<p>When to use which API is documented in <a href="../../services/event.html#accessing-event-service">this section</a> of the event service doc.</p>
 <p>Event Service uses <a href="https://redis.io/topics/pubsub">Redis&rsquo; PubSub</a> for publishing and subscribing to events. And to cater a specific feature of fetching the latest event on subscription, <a href="https://redis.io/commands/set">set operation</a> of Redis DB is used.</p>
 <p>We have created a scala library called &ldquo;Romaine&rdquo; to communicate to Redis.</p>
 <p><img src="event-layers.png" alt="Event Dependencies" /></p>
