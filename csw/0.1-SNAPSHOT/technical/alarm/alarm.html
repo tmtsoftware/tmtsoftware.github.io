@@ -140,15 +140,15 @@ tmtsoftware/csw
   <li><a href="../../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
-  <li><a href="../../commons/messages.html" class="page">Messages</a>
+  <li><a href="../../commons/params.html" class="page">Params</a>
   <ul>
-    <li><a href="../../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
-    <li><a href="../../messages/units.html" class="page">Units</a></li>
-    <li><a href="../../messages/subsystem.html" class="page">Subsystem</a></li>
-    <li><a href="../../messages/commands.html" class="page">Commands</a></li>
-    <li><a href="../../messages/events.html" class="page">Events</a></li>
-    <li><a href="../../messages/states.html" class="page">State Variables</a></li>
-    <li><a href="../../messages/result.html" class="page">Result</a></li>
+    <li><a href="../../params/keys-parameters.html" class="page">Keys and Parameters</a></li>
+    <li><a href="../../params/units.html" class="page">Units</a></li>
+    <li><a href="../../params/subsystem.html" class="page">Subsystem</a></li>
+    <li><a href="../../params/commands.html" class="page">Commands</a></li>
+    <li><a href="../../params/events.html" class="page">Events</a></li>
+    <li><a href="../../params/states.html" class="page">State Variables</a></li>
+    <li><a href="../../params/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
   <ul>
@@ -195,6 +195,7 @@ tmtsoftware/csw
   <li><a href="../../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
     <li><a href="../../technical/logging/logging.html" class="page">Logging Service</a></li>
@@ -220,7 +221,7 @@ tmtsoftware/csw
     <li><a href="../../technical/alarm/alarm.html#severity-latching" class="header">Severity Latching</a></li>
     <li><a href="../../technical/alarm/alarm.html#shelving-alarms" class="header">Shelving Alarms</a></li>
     <li><a href="../../technical/alarm/alarm.html#acknowledging-alarms" class="header">Acknowledging Alarms</a></li>
-    <li><a href="../../technical/alarm/alarm.html#api-structure" class="header">API Structure</a></li>
+    <li><a href="../../technical/alarm/alarm.html#api-and-implementation-structure" class="header">API and Implementation Structure</a></li>
     <li><a href="../../technical/alarm/alarm.html#architecture" class="header">Architecture</a></li>
   </ul></li>
 </ul>
@@ -255,7 +256,7 @@ tmtsoftware/csw
     <li><a href="../../technical/alarm/alarm.html#severity-latching" class="header">Severity Latching</a></li>
     <li><a href="../../technical/alarm/alarm.html#shelving-alarms" class="header">Shelving Alarms</a></li>
     <li><a href="../../technical/alarm/alarm.html#acknowledging-alarms" class="header">Acknowledging Alarms</a></li>
-    <li><a href="../../technical/alarm/alarm.html#api-structure" class="header">API Structure</a></li>
+    <li><a href="../../technical/alarm/alarm.html#api-and-implementation-structure" class="header">API and Implementation Structure</a></li>
     <li><a href="../../technical/alarm/alarm.html#architecture" class="header">Architecture</a></li>
   </ul></li>
 </ul>
@@ -269,7 +270,7 @@ tmtsoftware/csw
 <div class="md-content__searchable">
 <h1><a href="#alarm-service" name="alarm-service" class="anchor"><span class="anchor-link"></span></a>Alarm Service</h1>
 <h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
-<p>Alarm Service in TMT software is used by components to raise alarms. Alarms could be of different severities such as Warning, Critical, etc. The alarm system also provides mechanisms to monitor the health of all components and subsystems in TMT.</p>
+<p>Alarm Service in TMT software is used by components to raise alarms. Alarms are used exclusively to notify the operator of conditions that require operator intervention. Each alarms includes a severity that must be one of the supported severities such as Warning, Critical, etc. The Alarm Service also provides mechanisms to monitor the health of all components and subsystems in TMT.</p>
 <h2><a href="#technology" name="technology" class="anchor"><span class="anchor-link"></span></a>Technology</h2>
 <p>Alarm Service uses <a href="https://redis.io/">Redis</a> for persistence. Redis provides <a href="https://redis.io/topics/notifications">Keyspace Notifications</a> which allows clients to subscribe to Pub/Sub channels in order to receive events affecting the Redis data set in some way.</p>
 <p><img src="alarm-layers.png" alt="Alarm Dependencies" /></p>
@@ -310,6 +311,7 @@ tmtsoftware/csw
     </tr>
   </tbody>
 </table>
+<p>Severity can be for a single alarm or aggregated for a component or subsystem.</p>
 <h2><a href="#health" name="health" class="anchor"><span class="anchor-link"></span></a>Health</h2>
 <p>Health is a higher level abstraction created on top of severities. One or more alarms can be combined to calculate one of the following healths at a given time.</p>
 <ul>
@@ -317,7 +319,7 @@ tmtsoftware/csw
   <li><code>Ill</code></li>
   <li><code>Bad</code></li>
 </ul>
-<p>Health is calculated based on severity. A mapping between health and severities is shown in the figure below.</p>
+<p>Health is calculated based on severity. The current mapping between health and severities is shown in the figure below. Health can be for aggregated for a component, subsystem, or the entire TMT system.</p>
 <p><img src="alarm-health.png" alt="alarm-health" /></p>
 <h2><a href="#severity-health-aggregations" name="severity-health-aggregations" class="anchor"><span class="anchor-link"></span></a>Severity &amp; Health Aggregations</h2>
 <p>A severity can be associated with an alarm, a component or a sub-system.</p>
@@ -416,16 +418,40 @@ tmtsoftware/csw
 <p>Alarms can be in either <code>acknowledged</code> or <code>unacknowledged</code> state. See <a href="#acknowledgement-status">Acknowledgement Status</a> for more details. The state can be changed to <code>acknowledged</code> by simply using <code>acknowledge</code> api of alarm service. Apart from this api, setting severity can also change the Acknowledgement Status of an alarm.</p>
 <p>Alarm can either be auto-acknowledgeable or not auto-acknowledgeable. This behavior is driven from <a href="#metadata">alarm metadata</a>. When an alarm is not auto-acknowledgeable, whenever it&rsquo;s severity changes to anything except Okay, it&rsquo;s Acknowledgement Status becomes <code>acknowledged</code>. If it is changing from any severity to Okay, Acknowledgement Status remains same.</p>
 <p>When the alarm is auto-acknowledgeable, whenever it&rsquo;s severity changes to Okay, it&rsquo;s Acknowledgement Status becomes <code>acknowledged</code>. If it changes to anything else, Acknowledgement Status remains same.</p>
-<h2><a href="#api-structure" name="api-structure" class="anchor"><span class="anchor-link"></span></a>API Structure</h2>
+<h2><a href="#api-and-implementation-structure" name="api-and-implementation-structure" class="anchor"><span class="anchor-link"></span></a>API and Implementation Structure</h2>
 <p><img src="api-structure.png" alt="api-structure" /></p>
-<p>The Alarm Service is divided into two parts. First one is called, well, <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> and it is meant for Components that are provided with one API i.e. <code>SetSeverity</code></p>
-<p>The other API is <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a>. This API allows administrative operations such as shelving alarms, subscribing for severity changes, acknowledging alarms, etc. This API is consumed from <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-cli">alarm cli</a> and Alarm Server. This API is also used by administrative clients such as engineering user interfaces to set the active versions of files.</p>
+<p>The alarm functionality divided into two services <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> and <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a></p>
+<p><a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> is meant for &ldquo;Components&rdquo; that can only set their current alarm severity and hence for components, Alarm Service only exposes one api i.e. <code>setSeverity</code></p>
+<p><a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a> is meant for admin operations. </p>
+<p>The Alarm Service implementation is further divided into four internal modules.</p>
+<p><strong>1. <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/SeverityServiceModule.scala">SeverityServiceModule</a></strong></p>
+<p><code>SeverityServiceModule</code> allows reading, subscribing and modifying severity of alarms and subsystems.</p>
+<p><strong>2. <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/MetadataServiceModule.scala">MetadataServiceModule</a></strong></p>
+<p><code>MetadataServiceModule</code> allows read-only access to alarm metadata. Initialisation of alarms is also performed using this module.</p>
+<p><strong>3. <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/StatusServiceModule.scala">StatusServiceModule</a></strong></p>
+<p><code>StatusServiceModule</code> allows read-write access to alarm status via operations such as getStatus, shelveAlarm, reset, acknowledge, unshelve, etc.</p>
+<p>AlarmStatus is a logical entity which contains:</p>
+<ul>
+  <li><code>acknowledgementStatus</code></li>
+  <li><code>latchedSeverity</code></li>
+  <li><code>shelveStatus</code></li>
+  <li><code>alarmTime</code></li>
+  <li><code>initializing</code></li>
+</ul>
+<p><strong>4. <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/HealthServiceModule.scala">HealthServiceModule</a></strong></p>
+<p><code>HealthServiceModule</code> allows reading and subscribing to alarm and subsystem healths.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>These modules are interdependent on each other and use <a href="https://docs.scala-lang.org/tour/self-types.html">self-type</a> feature of scala</p></div>
+<p><img src="class-diagram.png" alt="class-diagram" /></p>
+<p><code>AlarmAdminService</code> is consumed from <a href="https://github.com/tmtsoftware/csw/tree/master/csw-alarm/csw-alarm-cli">alarm cli</a> and Alarm Server. This API is also used by administrative clients such as the future Alarm Server.</p>
 <p>The API doc for Alarm Service can be found <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmService.html">here</a> and <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/alarm/api/scaladsl/AlarmAdminService.html">here</a>.</p>
-<p>Detailed documentation about how to use these APIs is available <a href="../../services/alarm.html">here</a>. </p>
+<p>Detailed documentation about how to use these APIs is available <a href="../../services/alarm.html">here</a>.</p>
+<h3><a href="#setting-severity-execution-workflow" name="setting-severity-execution-workflow" class="anchor"><span class="anchor-link"></span></a>Setting severity execution workflow</h3>
+<p>The following diagram show execution sequence triggered when a component calls <code>setSeverityApi</code></p>
+<p><img src="setSeverity-sequence.png" alt="setSeverity-sequence" /></p>
 <h2><a href="#architecture" name="architecture" class="anchor"><span class="anchor-link"></span></a>Architecture</h2>
 <p><img src="alarm-architecture.png" alt="architecture" /></p><div class="callout warning "><div class="callout-title">Important</div>
 <p>At the time of writing this documentation, the Alarm Server does not exist. It will be developed in future as part of ESW.HCMS. Its description and scope of work is subjected to change</p></div>
-<p>For alarms to function, it is necessary that Redis instance is registered with Location Service. Redis here is configured similar to other services in CSW. There is a master Redis instance and a slave Redis instance. They are configured in &ldquo;replication&rdquo; mode. There is a Sentinel instance who&rsquo;s responsibility it is to promote the slave as master when master goes down. It is important to note that when master goes down, the &ldquo;location&rdquo; of Alarm Service remains the same because the location of Alarm Service is the location of Sentinel and not of master or slave. The master and slave Redis instances are dedicated for alarm, however Sentinel is shared across CSW Redis-based services.</p>
+<p>For alarms to function, it is necessary that the Alarm Service&rsquo;s Redis instance be registered with Location Service. Redis here is configured similar to other services in CSW. There is a master Redis instance and a slave Redis instance. They are configured in &ldquo;replication&rdquo; mode. There is a Sentinel instance who&rsquo;s responsibility it is to promote the slave as master when master goes down. It is important to note that when master goes down, the &ldquo;location&rdquo; of Alarm Service remains the same because the location of Alarm Service is the location of Sentinel and not of master or slave. The master and slave Redis instances are dedicated for alarm, however Sentinel is shared across CSW Redis-based services.</p>
 <p>Once location is registered, components, alarm CLI &amp; Alarm Server can resolve Redis location and start interacting with it using the component alarm API &amp; alarm admin API. While the interaction of components with Alarm Service is limited to the <code>setSeverity</code> API, Alarm CLI can perform all admin operations as discussed <a href="#api-structure">above</a>.</p>
 <p>Alarm Server is part of ESW.HCMS and is not yet built. When built, its functionality will be to watch all severity changes using the admin API and <a href="#severity-latching">latch</a> appropriate alarms to disconnected severity. Apart from this, it will also be responsible for logging alarms and generating alarm events for archiving in DMS.ENG. It provides an HTTP interface for various UI layer ESW.HCMS applications for alarm and health visualisations.</p>
 </div>

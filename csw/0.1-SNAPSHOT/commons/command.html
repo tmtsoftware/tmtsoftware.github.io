@@ -140,15 +140,15 @@ tmtsoftware/csw
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
-  <li><a href="../commons/messages.html" class="page">Messages</a>
+  <li><a href="../commons/params.html" class="page">Params</a>
   <ul>
-    <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
-    <li><a href="../messages/units.html" class="page">Units</a></li>
-    <li><a href="../messages/subsystem.html" class="page">Subsystem</a></li>
-    <li><a href="../messages/commands.html" class="page">Commands</a></li>
-    <li><a href="../messages/events.html" class="page">Events</a></li>
-    <li><a href="../messages/states.html" class="page">State Variables</a></li>
-    <li><a href="../messages/result.html" class="page">Result</a></li>
+    <li><a href="../params/keys-parameters.html" class="page">Keys and Parameters</a></li>
+    <li><a href="../params/units.html" class="page">Units</a></li>
+    <li><a href="../params/subsystem.html" class="page">Subsystem</a></li>
+    <li><a href="../params/commands.html" class="page">Commands</a></li>
+    <li><a href="../params/events.html" class="page">Events</a></li>
+    <li><a href="../params/states.html" class="page">State Variables</a></li>
+    <li><a href="../params/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
   <ul>
@@ -195,6 +195,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
     <li><a href="../technical/logging/logging.html" class="page">Logging Service</a></li>
@@ -262,7 +263,7 @@ tmtsoftware/csw
 </code></pre></dd>
 </dl>
 <h2><a href="#command-based-communication-between-components" name="command-based-communication-between-components" class="anchor"><span class="anchor-link"></span></a>Command-based Communication Between Components</h2>
-<p>A component can send <a href="../messages/commands.html">Commands</a> to other components. The commands can be sent as following with three types of messages: </p>
+<p>A component can send <a href="../params/commands.html">Commands</a> to other components. The commands can be sent as following with three types of messages: </p>
 <ul>
   <li><strong>submit</strong> - A command is sent as Submit when the result of completion is desired.</li>
   <li><strong>oneway</strong> - A command is sent as Oneway when the result of completion is not desired.</li>
@@ -298,7 +299,7 @@ tmtsoftware/csw
 </table>
 <p>Note that the developer code does not need to return <code>Locked</code>. If the component has been Locked, the component&rsquo;s Supervisor returns the <code>Locked</code> response to the caller and the <code>validateCommand</code> handler is not called.</p>
 <h3><a href="#the-submit-message" name="the-submit-message" class="anchor"><span class="anchor-link"></span></a>The Submit Message</h3>
-<p>A <code>submit</code> message is sent with its <a href="../messages/commands.html">command</a> to a component destination. A <code>SubmitResponse</code> is returned to the caller when the <code>submit</code> message is used. If the <code>validateCommand</code> handler returns <code>Accepted</code>, the framework calls the <code>onSubmit</code> handler of the Top Level Actor. The <code>onSubmit</code> handler always returns a <code>SubmitResponse</code>.</p>
+<p>A <code>submit</code> message is sent with its <a href="../params/commands.html">command</a> to a component destination. A <code>SubmitResponse</code> is returned to the caller when the <code>submit</code> message is used. If the <code>validateCommand</code> handler returns <code>Accepted</code>, the framework calls the <code>onSubmit</code> handler of the Top Level Actor. The <code>onSubmit</code> handler always returns a <code>SubmitResponse</code>.</p>
 <h4><a href="#immediate-completion-scenario" name="immediate-completion-scenario" class="anchor"><span class="anchor-link"></span></a>Immediate Completion Scenario</h4>
 <p>If the actions of the <code>submit</code> command take a very short time to complete they may be completed by the <code>onSubmit</code> handler. This is called <em>immediate completion</em>. The time for the actions to complete should be less than 1 second. (Note: The framework will timeout if the onSubmit handler does not return a response within 1 second.) In this scenario with <code>onSubmit</code>, the values of <code>SubmitResponse</code> can be <code>Completed</code>, <code>CompletedWithResult</code>, or <code>Error</code>. <code>Error</code> is returned when the actions could not be accomplished. This is different than <code>Invalid</code>, which indicates that the command could not be validated.</p>
 <p>The immediate completion behavior is similar to a remote procedure call although the execution is entirely asynchronous. If the actions do not produce a value for the client, the <code>Completed</code> <code>SubmitResponse</code> is returned. If there is a result, the <code>CompletedWithResult</code> <code>SubmitResult</code> is returned with a parameter set of <code>Result</code> type.</p>
@@ -346,7 +347,7 @@ tmtsoftware/csw
   </tbody>
 </table>
 <h3><a href="#the-oneway-message" name="the-oneway-message" class="anchor"><span class="anchor-link"></span></a>The Oneway Message</h3>
-<p>The other option for sending a <a href="../messages/commands.html">command</a> to a component destination is the <code>oneway</code> message. The central difference between <code>submit</code> and <code>oneway</code> is that <code>oneway</code> does not track or allow reporting of completion information. It supports a <em>fire and forget</em> type of communication approach.</p>
+<p>The other option for sending a <a href="../params/commands.html">command</a> to a component destination is the <code>oneway</code> message. The central difference between <code>submit</code> and <code>oneway</code> is that <code>oneway</code> does not track or allow reporting of completion information. It supports a <em>fire and forget</em> type of communication approach.</p>
 <p>A <code>OnewayResponse</code> is returned to the caller when the <code>oneway</code> message is used. <code>Oneway</code> does validate the command. If the component is not locked, the <code>validateCommand</code> handler is called.<br/>If the <code>validateCommand</code> handler returns <code>Accepted</code>, the framework calls the <code>onOneway</code> handler of the Top Level Actor. However, the <code>onOneway</code> handler does not return a value. The sender of the <code>oneway</code> message receives the result of the validation or the Locked indication. </p>
 <p>The following table summarizes all the possible values for <code>OnewayResponse</code>.</p>
 <table>
@@ -374,7 +375,7 @@ tmtsoftware/csw
 <p><code>Oneway</code> is available as a higher performance option when an Assembly needs to send commands to an HCD but doesn&rsquo;t really care about completion such as the case when demands are being sent to a motor. Validation is still present to ensure the HCD supports the standalone operation requirement and can check that it is not getting out of range values.</p>
 <p><code>Oneway</code> is can be used with a <em>matcher</em>. The matcher can use CurrentState or even events from Event Service to determine completion. This is more complicated than <code>submit</code> but may be useful in some scenarios.</p>
 <h3><a href="#the-validate-message" name="the-validate-message" class="anchor"><span class="anchor-link"></span></a>The Validate Message</h3>
-<p>The <code>validate</code> message is available when the sender wants to validate a <a href="../messages/commands.html">command</a> but does not want to execute any associated actions. <code>Validate</code> returns a <code>ValidateResponse</code>. If the component is not locked, the <code>validateCommand</code> handler of the Top Level Actor is called and the developer code evaluates the command and returns a <code>ValidateResponse</code> as shown in the following table. </p>
+<p>The <code>validate</code> message is available when the sender wants to validate a <a href="../params/commands.html">command</a> but does not want to execute any associated actions. <code>Validate</code> returns a <code>ValidateResponse</code>. If the component is not locked, the <code>validateCommand</code> handler of the Top Level Actor is called and the developer code evaluates the command and returns a <code>ValidateResponse</code> as shown in the following table. </p>
 <table>
   <thead>
     <tr>
@@ -735,7 +736,7 @@ Assert.assertTrue(submitAllResponse2.get(1) instanceof CommandResponse.Invalid);
 </dl>
 <p>In this case, the returned list is of length 2 rather than 3.</p>
 <h3><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>subscribeCurrentState</h3>
-<p>This method provided by <code>CommandService</code> can be used to subscribe to the <a href="../messages/states.html">CurrentState</a> of a component by providing a callback that is called with the arrival of every <code>CurrentState</code> item.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>This method provided by <code>CommandService</code> can be used to subscribe to the <a href="../params/states.html">CurrentState</a> of a component by providing a callback that is called with the arrival of every <code>CurrentState</code> item.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Callbacks are not thread-safe on the JVM. If you are doing side effects/mutations inside the callback, you should ensure that it is done in a thread-safe way inside an actor. Here is an <a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/ConcurrencyInCallbacksExample.scala">example</a> of how it can be done.</p></div>
 <p><code>SubscribeCurrentState</code> returns a handle of <code>CurrentStateSubscription</code> which should be used to unsubscribe the subscription.</p>
 <p>The following example code shows an Assembly that subscribes to all <code>CurrentState</code> of an HCD. The example sends a <code>Setup</code> with an encoder parameter value to the HCD as a <code>oneway</code> message.</p>

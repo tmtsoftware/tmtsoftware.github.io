@@ -140,15 +140,15 @@ tmtsoftware/csw
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
-  <li><a href="../commons/messages.html" class="page">Messages</a>
+  <li><a href="../commons/params.html" class="page">Params</a>
   <ul>
-    <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
-    <li><a href="../messages/units.html" class="page">Units</a></li>
-    <li><a href="../messages/subsystem.html" class="page">Subsystem</a></li>
-    <li><a href="../messages/commands.html" class="page">Commands</a></li>
-    <li><a href="../messages/events.html" class="page">Events</a></li>
-    <li><a href="../messages/states.html" class="page">State Variables</a></li>
-    <li><a href="../messages/result.html" class="page">Result</a></li>
+    <li><a href="../params/keys-parameters.html" class="page">Keys and Parameters</a></li>
+    <li><a href="../params/units.html" class="page">Units</a></li>
+    <li><a href="../params/subsystem.html" class="page">Subsystem</a></li>
+    <li><a href="../params/commands.html" class="page">Commands</a></li>
+    <li><a href="../params/events.html" class="page">Events</a></li>
+    <li><a href="../params/states.html" class="page">State Variables</a></li>
+    <li><a href="../params/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
   <ul>
@@ -195,6 +195,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
     <li><a href="../technical/logging/logging.html" class="page">Logging Service</a></li>
@@ -574,11 +575,11 @@ tmtsoftware/csw
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L184" target="_blank" title="Go to snippet source"></a><code class="language-scala">log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L154" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Find result: &quot; + connectionInfo(findResult.orElseThrow().connection()));</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L156" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Find result: &quot; + connectionInfo(findResult.orElseThrow().connection()));</code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L185" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.orElseThrow().connection()));</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L187" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.orElseThrow().connection()));</code></pre></dd>
 </dl>
 <p>The output of log statement will be:</p>
 <dl>
@@ -638,17 +639,17 @@ tmtsoftware/csw
 )</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L144-L148" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Attempting to find &quot; + exampleConnection,
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L146-L150" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Attempting to find &quot; + exampleConnection,
         Map.of(
-            JKeys.OBS_ID, &quot;foo_obs_id&quot;,
-            &quot;exampleConnection&quot;, exampleConnection.name()
+                JKeys.OBS_ID, &quot;foo_obs_id&quot;,
+                &quot;exampleConnection&quot;, exampleConnection.name()
         ));</code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L176-L179" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; Map.of(
-    JKeys.OBS_ID, &quot;foo_obs_id&quot;,
-    &quot;exampleConnection&quot;, exampleConnection.name()
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L178-L181" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; Map.of(
+        JKeys.OBS_ID, &quot;foo_obs_id&quot;,
+        &quot;exampleConnection&quot;, exampleConnection.name()
 ));</code></pre></dd>
 </dl>
 <p>The output of log statement will be: </p>
@@ -716,15 +717,15 @@ tmtsoftware/csw
 log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L285-L288" target="_blank" title="Go to snippet source"></a><code class="language-java">} catch (InterruptedException | ExecutionException ex) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L287-L290" target="_blank" title="Go to snippet source"></a><code class="language-java">} catch (InterruptedException | ExecutionException ex) {
     log.info(ex.getMessage(), ex);
     throw ex;
 }</code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L312-L313" target="_blank" title="Go to snippet source"></a><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
-log.info(() -&gt; runtimeException.getMessage(), runtimeException);</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L314-L315" target="_blank" title="Go to snippet source"></a><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
+log.info(runtimeException::getMessage, runtimeException);</code></pre></dd>
 </dl>
 <h2><a href="#create-loggerfactory" name="create-loggerfactory" class="anchor"><span class="anchor-link"></span></a>Create LoggerFactory</h2><div class="callout note "><div class="callout-title">Note</div>
 <p>This functionality is included in the framework code and users should not have to implement it themselves. Documentation is included for testing or further understanding.</p></div>
@@ -754,7 +755,7 @@ LoggerFactory loggerFactory = jLoggerFactory.asScala();</code></pre></dd>
 val loggingSystem: LoggingSystem = LoggingSystemFactory.start(&quot;LocationServiceExampleClient&quot;, &quot;0.1&quot;, host, typedSystem)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L330-L331" target="_blank" title="Go to snippet source"></a><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L332-L333" target="_blank" title="Go to snippet source"></a><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
 loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&quot;, &quot;0.1&quot;, host, typedSystem);</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <ul>
@@ -770,7 +771,7 @@ loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&
 Await.result(loggingSystem.stop, 30.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L293-L294" target="_blank" title="Go to snippet source"></a><code class="language-java">// Only call this once per application
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L295-L296" target="_blank" title="Go to snippet source"></a><code class="language-java">// Only call this once per application
 loggingSystem.javaStop().get();</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>

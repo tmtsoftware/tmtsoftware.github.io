@@ -140,15 +140,15 @@ tmtsoftware/csw
   <li><a href="../commons/multiple-components.html" class="page">Multiple Components</a></li>
   <li><a href="../commons/using-alarms.html" class="page">Using Alarms</a></li>
   <li><a href="../commons/unit-tests.html" class="page">Adding Unit Tests</a></li>
-  <li><a href="../commons/messages.html" class="page">Messages</a>
+  <li><a href="../commons/params.html" class="page">Params</a>
   <ul>
-    <li><a href="../messages/keys-parameters.html" class="page">Keys and Parameters</a></li>
-    <li><a href="../messages/units.html" class="page">Units</a></li>
-    <li><a href="../messages/subsystem.html" class="page">Subsystem</a></li>
-    <li><a href="../messages/commands.html" class="page">Commands</a></li>
-    <li><a href="../messages/events.html" class="page">Events</a></li>
-    <li><a href="../messages/states.html" class="page">State Variables</a></li>
-    <li><a href="../messages/result.html" class="page">Result</a></li>
+    <li><a href="../params/keys-parameters.html" class="page">Keys and Parameters</a></li>
+    <li><a href="../params/units.html" class="page">Units</a></li>
+    <li><a href="../params/subsystem.html" class="page">Subsystem</a></li>
+    <li><a href="../params/commands.html" class="page">Commands</a></li>
+    <li><a href="../params/events.html" class="page">Events</a></li>
+    <li><a href="../params/states.html" class="page">State Variables</a></li>
+    <li><a href="../params/result.html" class="page">Result</a></li>
   </ul></li>
   <li><a href="../commons/framework.html" class="page">Framework for creating components (HCD, Assembly, Container)</a>
   <ul>
@@ -195,6 +195,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
     <li><a href="../technical/logging/logging.html" class="page">Logging Service</a></li>
@@ -385,7 +386,7 @@ ZonedDateTime taiKolkataTime = TMTTimeHelper.atZone(taiTime, ZoneId.of(&quot;Asi
 private val scheduler: TimeServiceScheduler = TimeServiceSchedulerFactory.make()(actorSystem)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L24-L25" target="_blank" title="Go to snippet source"></a><code class="language-java">// create time service scheduler using the factory method
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L23-L24" target="_blank" title="Go to snippet source"></a><code class="language-java">// create time service scheduler using the factory method
 TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);</code></pre></dd>
 </dl>
 <p>For all scheduler calls, an instance of <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/Cancellable.html">Cancellable</a> is returned which can be used to cancel the execution of the future tasks.</p>
@@ -399,7 +400,7 @@ TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);<
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L36-L37" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L35-L36" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
 scheduler.scheduleOnce(utcTime, task);</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Warning</div>
 <p>Note that callbacks are asynchronous and can be potentially executed in an unknown thread. Therefore, if there is a need to mutate state when the time expires, it is recommended to send a message to an Actor, and keep any mutable state within the actor where it can be managed safely. This is true for any CSW API with a callback. The schedule once with ActorRef can often be used in this scenario.</p></div>
@@ -425,7 +426,7 @@ scheduler.scheduleOnce(utcTime, actorRef, UTCTime.now())
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L42-L54" target="_blank" title="Go to snippet source"></a><code class="language-java">static class SchedulingHandler {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L41-L53" target="_blank" title="Go to snippet source"></a><code class="language-java">static class SchedulingHandler {
 
     public static Behavior&lt;UTCTime&gt; behavior() {
         // handle the message to execute the task on scheduled time
@@ -447,7 +448,7 @@ Cancellable schedule() {
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.schedulePeriodically(Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L60-L62" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L59-L61" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
 scheduler.schedulePeriodically(Duration.ofMillis(50), task);</code></pre></dd>
 </dl>
 <h4><a href="#schedule-periodically-with-start-time" name="schedule-periodically-with-start-time" class="anchor"><span class="anchor-link"></span></a>Schedule Periodically with Start Time</h4>
@@ -458,7 +459,7 @@ scheduler.schedulePeriodically(Duration.ofMillis(50), task);</code></pre></dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.schedulePeriodically(utcTime, Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L60-L67" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L59-L66" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
 scheduler.schedulePeriodically(utcTime, Duration.ofMillis(50), task);</code></pre></dd>
 </dl>
 <p>As with the schedule once API, there is also a periodic schedule API that takes a message and ActorRef.</p>
