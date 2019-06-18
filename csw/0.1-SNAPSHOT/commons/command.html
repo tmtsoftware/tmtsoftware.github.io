@@ -653,16 +653,24 @@ CompletableFuture onewayF = hcdCmdService
 Await.result(validateCommandF, timeout.duration) shouldBe true</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L242-L251" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup onewaySetup = new Setup(prefix(), onewayCmd(), Optional.empty()).add(intParameter1);
-CompletableFuture onewayF = hcdCmdService
-        .oneway(onewaySetup, timeout)
-        .thenAccept(onewayResponse -&gt; {
-            if (onewayResponse instanceof CommandResponse.Invalid) {
-                // log an error here
-            } else {
-                // Ignore anything other than invalid
-            }
-        });</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L257-L274" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;Boolean&gt; validateCommandF =
+        hcdCmdService
+                .validate(immediateCmd)
+                .thenApply(
+                        response -&gt; {
+                            if (response instanceof CommandResponse.Accepted) {
+                                //do something with completed result
+                                return true;
+                            } else if (response instanceof CommandResponse.Invalid) {
+                                // do something with unexpected response
+                                return false;
+                            } else {
+                                // Locked
+                                return false;
+                            }
+                        }
+                );
+Assert.assertTrue(validateCommandF.get());</code></pre></dd>
 </dl>
 <h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>query</h3>
 <p>At any time, the <code>query</code> call of <code>CommandService</code> can be used to check the current status of a command that has been sent via the <code>submit</code> message using the command&rsquo;s <code>runId</code>. This is most useful with a long-running command but all commands that use <code>submit</code> are available.</p>
