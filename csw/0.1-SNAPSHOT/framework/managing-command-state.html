@@ -303,7 +303,8 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/McsAssemblyComponentHandlers.scala#L66-L74" target="_blank" title="Go to snippet source"></a><code class="language-scala">// When receiving the command, onSubmit adds three subCommands
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/McsAssemblyComponentHandlers.scala#L66-L75" target="_blank" title="Go to snippet source"></a><code class="language-scala">// When receiving the command, onSubmit adds three subCommands
+commandResponseManager.addOrUpdateCommand(Started(runId))
 shortSetup = Setup(prefix, shortRunning, controlCommand.maybeObsId)
 commandResponseManager.addSubCommand(runId, shortSetup.runId)
 
@@ -327,7 +328,7 @@ commandResponseManager.addSubCommand(sc.runId(), subCommand2.runId());</code></p
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/McsAssemblyComponentHandlers.scala#L127-L144" target="_blank" title="Go to snippet source"></a><code class="language-scala">// An original command is split into sub-commands and sent to a component.
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/McsAssemblyComponentHandlers.scala#L128-L145" target="_blank" title="Go to snippet source"></a><code class="language-scala">// An original command is split into sub-commands and sent to a component.
 // The current state publishing is not relevant to the updateSubCommand usage.
 case _: Completed ⇒
   controlCommand.runId match {
@@ -350,7 +351,7 @@ case _: Completed ⇒
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L207-L218" target="_blank" title="Go to snippet source"></a><code class="language-java">// An original command is split into sub-commands and sent to a component.
 // The result from submitting the sub-commands is used to update the CRM
 ICommandService componentCommandService = runningHcds.get(componentInfo.getConnections().get(0)).orElseThrow();
-componentCommandService.submit(subCommand2, Timeout.durationToTimeout(FiniteDuration.apply(5, TimeUnit.SECONDS)))
+componentCommandService.submitAndWait(subCommand2, Timeout.durationToTimeout(FiniteDuration.apply(5, TimeUnit.SECONDS)))
         .thenAccept(commandResponse -&gt; {
             if (commandResponse instanceof CommandResponse.Completed) {
                 // As the commands get completed, the results are updated in the commandResponseManager

@@ -276,7 +276,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L127-L137" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L126-L136" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
 override def initialize(): Future[Unit] = {
   log.info(&quot;In Assembly initialize&quot;)
   maybeEventSubscription = Some(subscribeToHcd())
@@ -289,7 +289,7 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L156-L168" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L155-L167" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
 @Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
     return CompletableFuture.runAsync(() -&gt; {
@@ -437,7 +437,7 @@ connectionType: akka
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L141-L149" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L140-L148" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
   log.debug(s&quot;onLocationTrackingEvent called: $trackingEvent&quot;)
   trackingEvent match {
     case LocationUpdated(location) =&gt;
@@ -448,7 +448,7 @@ connectionType: akka
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L172-L183" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L171-L182" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
     log.debug(() -&gt; &quot;onLocationTrackingEvent called: &quot; + trackingEvent.toString());
     if (trackingEvent instanceof LocationUpdated) {
@@ -501,7 +501,7 @@ eventualCommandService.thenAccept((jcommandService) -&gt; hcd = jcommandService)
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L37-L76" target="_blank" title="Go to snippet source"></a><code class="language-scala">sealed trait WorkerCommand                  extends TMTSerializable
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L36-L75" target="_blank" title="Go to snippet source"></a><code class="language-scala">sealed trait WorkerCommand
 case class SendCommand(hcd: CommandService) extends WorkerCommand
 
 private val commandSender =
@@ -528,7 +528,7 @@ def handle(hcd: CommandService): Unit = {
   val setupCommand                    = Setup(componentInfo.prefix, CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam)
 
   // submit command and handle response
-  hcd.submit(setupCommand).onComplete {
+  hcd.submitAndWait(setupCommand).onComplete {
     case scala.util.Success(value) =&gt;
       value match {
         case _: CommandResponse.Locked =&gt; log.error(&quot;Sleep command failed: HCD is locked.&quot;)
@@ -543,7 +543,7 @@ def handle(hcd: CommandService): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L60-L115" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand extends TMTSerializable {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L59-L114" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
 }
 
 private static final class SendCommand implements WorkerCommand {
@@ -581,7 +581,7 @@ private void handle(ICommandService hcd) {
     Timeout commandResponseTimeout = new Timeout(10, TimeUnit.SECONDS);
 
     // Submit command and handle response
-    hcd.submit(setupCommand, commandResponseTimeout)
+    hcd.submitAndWait(setupCommand, commandResponseTimeout)
             .exceptionally(ex -&gt; new CommandResponse.Error(setupCommand.runId(), &quot;Exception occurred when sending command: &quot; + ex.getMessage()))
             .thenAccept(commandResponse -&gt; {
                 if (commandResponse instanceof CommandResponse.Locked) {
@@ -599,8 +599,7 @@ private void handle(ICommandService hcd) {
                 }
             });
 }</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p>If the component developer creates new set of messages for worker actor then it is mandatory that those messages extend <code>TMTSerializable</code> which will enable messages to serialize on wire.</p></div>
+</dl>
 <h2><a href="#matchers" name="matchers" class="anchor"><span class="anchor-link"></span></a>Matchers</h2>
 <p>When a component sends a command as <code>Oneway</code> to another component, it may be interested in knowing the receiver component&rsquo;s <code>CurrentState</code> and match it against a desired state. In order to do that, the component developer can use the <code>onewayAndMatch</code> method of <code>CommandService</code> or use <code>oneway</code> and then use a <code>Matcher</code> explicitly to match a desired state with current state.</p>
 <p>More details on how to use <code>Matcher</code> can be found <a href="command.html#matching-state-for-command-completion">here</a>. </p>
@@ -615,7 +614,7 @@ private void handle(ICommandService hcd) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L153-L178" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val counterEventKey = EventKey(Prefix(&quot;nfiraos.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L152-L177" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val counterEventKey = EventKey(Prefix(&quot;nfiraos.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
 private val hcdCounterKey   = KeyType.IntKey.make(&quot;counter&quot;)
 
 private def processEvent(event: Event): Unit = {
@@ -643,7 +642,7 @@ private def unsubscribeHcd(): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L187-L214" target="_blank" title="Go to snippet source"></a><code class="language-java">private EventKey counterEventKey = new EventKey(new Prefix(&quot;nfiraos.samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L186-L213" target="_blank" title="Go to snippet source"></a><code class="language-java">private EventKey counterEventKey = new EventKey(new Prefix(&quot;nfiraos.samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
 private Key&lt;Integer&gt; hcdCounterKey = JKeyType.IntKey().make(&quot;counter&quot;);
 
 private void processEvent(Event event) {
@@ -677,7 +676,7 @@ private void unsubscribeHcd() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L127-L137" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L126-L136" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
 override def initialize(): Future[Unit] = {
   log.info(&quot;In Assembly initialize&quot;)
   maybeEventSubscription = Some(subscribeToHcd())
@@ -690,7 +689,7 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L156-L168" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L155-L167" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
 @Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
     return CompletableFuture.runAsync(() -&gt; {

@@ -404,46 +404,30 @@ tmtsoftware/csw
 <p>A <code>CommandService</code> instance is created using an <code>AkkaLocation</code> discovered from the Location Service. This <code>CommandService</code> instance will has methods for communicating with the component. A new <code>CommandService</code> is created for each component for which commands are to be sent.</p>
 <p>The API can be exercised as follows for different scenarios of command-based communication:</p>
 <h3><a href="#submit" name="submit" class="anchor"><span class="anchor-link"></span></a>submit</h3>
-<p>Sending a <code>submit</code> message with a command returns a <code>SubmitResponse</code> as a Future. The Future returned by <code>submit</code> will always be the final response, which may be a positive completion (Completed or CompletedWithResult) or a negative completion (<code>Invalid</code>, <code>Error</code>, <code>Cancelled</code>, <code>Locked</code>). The <code>Started</code> response is never seen by the programmer when using the <code>submit</code> of <code>CommandService</code>.</p>
-<p>This example shows an immediate completion command using <code>submit</code> that returns <code>Completed</code>.</p>
+<p>Sending a <code>submit</code> message with a command returns a <code>SubmitResponse</code> as a Future. The Future returned by <code>submit</code> will always be the final response in case of short running command, which may be a positive completion (Completed or CompletedWithResult) or a negative completion (<code>Invalid</code>, <code>Error</code>, <code>Cancelled</code>, <code>Locked</code>). In case of long running command, <code>Started</code> response is returned and then user can either <code>query</code> for response or <code>queryFinal</code> for final response.</p>
+<p>This example shows an immediate response command using <code>submit</code> that returns <code>Started</code>, and <code>queryFinal</code> to get the final response.</p>
 <dl>
   <dt>Scala/submit w/immediate-response
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L162-L172" target="_blank" title="Go to snippet source"></a><code class="language-scala">val immediateSetup = Setup(prefix, immediateCmd, obsId)
-val immediateCommandF = async {
-  await(assemblyCmdService.submit(immediateSetup)) match {
-    case response: Completed ⇒
-      //do something with completed result
-      response
-    case otherResponse ⇒
-      // do something with other response which is not expected
-      otherResponse
-  }
-}</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/LongRunningCommandTest.scala#L99-L101" target="_blank" title="Go to snippet source"></a><code class="language-scala">val setupForSubscribe = Setup(prefix, longRunning, Some(obsId))
+val response          = assemblyCommandService.submit(setupForSubscribe)
+val finalResponse     = assemblyCommandService.queryFinal(setupForSubscribe.runId)</code></pre></dd>
   <dt>Java/submit w/immediate-response
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L127-L139" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; immediateCommandF =
-        hcdCmdService
-                .submit(immediateCmd, timeout)
-                .thenApply(
-                        response -&gt; {
-                            if (response instanceof CommandResponse.Completed) {
-                                //do something with completed result
-                            } else {
-                                // do something with unexpected response
-                            }
-                            return response;
-                        }
-                );</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L192-L196" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup submitSetup = new Setup(prefix(), longRunningCmd(), Optional.empty()).add(intParameter1);
+
+CompletableFuture&lt;SubmitResponse&gt; submitResponse = hcdCmdService.submit(submitSetup, timeout);
+
+CompletableFuture&lt;SubmitResponse&gt; finalSubmitResponse = hcdCmdService.queryFinal(submitSetup.runId(), timeout);</code></pre></dd>
 </dl>
 <p>Note that the Scala examples are using <code>async/await</code> which simplifies handling the Futures, but is not necessary. The <code>async/await</code> library is not available in Java. If using <code>submit</code> and the validation fails in the destination component, the <code>Invalid</code> response is returned.</p>
 <dl>
   <dt>Scala/submit w/invalid response</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L144-L156" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
-val invalidCommandF = assemblyCmdService.submit(invalidSetup)
+val invalidCommandF = assemblyCmdService.submitAndWait(invalidSetup)
 async {
   await(invalidCommandF) match {
     case Completed(runId) =&gt;
@@ -458,14 +442,14 @@ async {
   <dt>Java/submit w/invalid response</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L146-L159" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup invalidSetup = new Setup(prefix(), invalidCmd(), Optional.empty()).add(intParameter2);
-CompletableFuture&lt;CommandResponse.SubmitResponse&gt; invalidCommandF =
-        hcdCmdService.submit(invalidSetup, timeout).thenApply(
+CompletableFuture&lt;SubmitResponse&gt; invalidCommandF =
+        hcdCmdService.submitAndWait(invalidSetup, timeout).thenApply(
                 response -&gt; {
-                    if (response instanceof CommandResponse.Completed) {
+                    if (response instanceof Completed) {
                         //do something with completed result
-                    } else if (response instanceof CommandResponse.Invalid) {
+                    } else if (response instanceof Invalid) {
                         // Cast the response to get the issue
-                        CommandResponse.Invalid invalid = (CommandResponse.Invalid) response;
+                        Invalid invalid = (Invalid) response;
                         assert (invalid.issue().reason().contains(&quot;failure&quot;));
                     }
                     return response;
@@ -479,7 +463,7 @@ CompletableFuture&lt;CommandResponse.SubmitResponse&gt; invalidCommandF =
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L177-L188" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup1 = Setup(prefix, longRunningCmd, obsId)
 
 val longRunningResultF = async {
-  await(assemblyCmdService.submit(longRunningSetup1)) match {
+  await(assemblyCmdService.submitAndWait(longRunningSetup1)) match {
     case CompletedWithResult(_, result) =&gt;
       Some(result(encoder).head)
 
@@ -493,11 +477,11 @@ val longRunningResultF = async {
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L170-L185" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup1 = new Setup(prefix(), longRunningCmd(), Optional.empty()).add(intParameter1);
 Key&lt;Integer&gt; encoder = JKeyType.IntKey().make(&quot;encoder&quot;);
 CompletableFuture&lt;Optional&lt;Integer&gt;&gt; longRunningResultF =
-        hcdCmdService.submit(longRunningSetup1, timeout)
+        hcdCmdService.submitAndWait(longRunningSetup1, timeout)
                 .thenCompose(response -&gt; {
-                    if (response instanceof CommandResponse.CompletedWithResult) {
+                    if (response instanceof CompletedWithResult) {
                         // This extracts and returns the the first value of parameter encoder
-                        Result result = ((CommandResponse.CompletedWithResult) response).result();
+                        Result result = ((CompletedWithResult) response).result();
                         Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
                         return CompletableFuture.completedFuture(rvalue);
                     } else {
@@ -514,7 +498,7 @@ CompletableFuture&lt;Optional&lt;Integer&gt;&gt; longRunningResultF =
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L196-L219" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup2 = longRunningSetup1.cloneCommand
 val longRunningQueryResultF = async {
   // The following val is set so we can do query and work and complete later
-  val longRunningF = assemblyCmdService.submit(longRunningSetup2)
+  val longRunningF = assemblyCmdService.submitAndWait(longRunningSetup2)
 
   await(assemblyCmdService.query(longRunningSetup2.runId)) match {
     case Started(runId) =&gt;
@@ -537,14 +521,14 @@ val longRunningQueryResultF = async {
 Await.result(longRunningQueryResultF, timeout.duration) shouldBe Some(20)</code></pre></dd>
   <dt>Java/submit long running/query</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L192-L219" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup2 = longRunningSetup1.cloneCommand();
-CompletableFuture&lt;CommandResponse.SubmitResponse&gt; longRunningQueryResultF =
-        hcdCmdService.submit(longRunningSetup2, timeout);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L206-L233" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup2 = longRunningSetup1.cloneCommand();
+CompletableFuture&lt;SubmitResponse&gt; longRunningQueryResultF =
+        hcdCmdService.submitAndWait(longRunningSetup2, timeout);
 
 // do some work before querying for the result of above command as needed
-CompletableFuture&lt;CommandResponse.QueryResponse&gt; queryResponseF = hcdCmdService.query(longRunningSetup2.runId(), timeout);
+CompletableFuture&lt;QueryResponse&gt; queryResponseF = hcdCmdService.query(longRunningSetup2.runId(), timeout);
 queryResponseF.thenAccept(r -&gt; {
-    if (r instanceof CommandResponse.Started) {
+    if (r instanceof Started) {
         // happy case - no action needed
         // Do some other work
     } else {
@@ -554,16 +538,16 @@ queryResponseF.thenAccept(r -&gt; {
 
 CompletableFuture&lt;Optional&lt;Integer&gt;&gt; intF =
         longRunningQueryResultF.thenCompose(response -&gt; {
-    if (response instanceof CommandResponse.CompletedWithResult) {
-        // This extracts and returns the the first value of parameter encoder
-        Result result = ((CommandResponse.CompletedWithResult) response).result();
-        Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
-        return CompletableFuture.completedFuture(rvalue);
-    } else {
-        // For some other response, return empty
-        return CompletableFuture.completedFuture(Optional.empty());
-    }
-});
+            if (response instanceof CompletedWithResult) {
+                // This extracts and returns the the first value of parameter encoder
+                Result result = ((CompletedWithResult) response).result();
+                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
+                return CompletableFuture.completedFuture(rvalue);
+            } else {
+                // For some other response, return empty
+                return CompletableFuture.completedFuture(Optional.empty());
+            }
+        });
 Assert.assertEquals(Optional.of(20), intF.get());</code></pre></dd>
 </dl>
 <p>It&rsquo;s also possible to use the runId of the <code>Setup</code> with <code>queryFinal</code> to determine when the actions are completed. This is equivalent to using the Future returned by <code>submit</code>, but in this case, the original Future from <code>submit</code> is not available.</p>
@@ -573,7 +557,7 @@ Assert.assertEquals(Optional.of(20), intF.get());</code></pre></dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L224-L239" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup3 = longRunningSetup1.cloneCommand
 val queryFinalF = async {
   // The following submit is made without saving the Future!
-  assemblyCmdService.submit(longRunningSetup3)
+  assemblyCmdService.submitAndWait(longRunningSetup3)
 
   // Use queryFinal and runId to wait for completion and result
   await(assemblyCmdService.queryFinal(longRunningSetup3.runId)) match {
@@ -588,14 +572,216 @@ val queryFinalF = async {
 Await.result(queryFinalF, timeout.duration) shouldBe Some(20)</code></pre></dd>
   <dt>Java/submit long running/queryFinal</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L223-L238" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup3 = longRunningSetup1.cloneCommand();
-hcdCmdService.submit(longRunningSetup3, timeout);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L237-L252" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup3 = longRunningSetup1.cloneCommand();
+hcdCmdService.submitAndWait(longRunningSetup3, timeout);
 
 CompletableFuture&lt;Optional&lt;Integer&gt;&gt; int3F =
         hcdCmdService.queryFinal(longRunningSetup3.runId(), timeout).thenCompose(response -&gt; {
-            if (response instanceof CommandResponse.CompletedWithResult) {
+            if (response instanceof CompletedWithResult) {
                 // This extracts and returns the the first value of parameter encoder
-                Result result = ((CommandResponse.CompletedWithResult) response).result();
+                Result result = ((CompletedWithResult) response).result();
+                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
+                return CompletableFuture.completedFuture(rvalue);
+            } else {
+                // For some other response, return empty
+                return CompletableFuture.completedFuture(Optional.empty());
+            }
+        });
+Assert.assertEquals(Optional.of(20), int3F.get());</code></pre></dd>
+</dl>
+<h3><a href="#submitandwait" name="submitandwait" class="anchor"><span class="anchor-link"></span></a>submitAndWait</h3>
+<p><code>submitAndWait</code> is wrapper method which sends <code>submit</code> message and waits for final response. Sending a <code>submit</code> message with a command returns a <code>SubmitResponse</code> as a Future. The Future returned by <code>submit</code> will always be the final response, which may be a positive completion (Completed or CompletedWithResult) or a negative completion (<code>Invalid</code>, <code>Error</code>, <code>Cancelled</code>, <code>Locked</code>). The <code>Started</code> response is never seen by the programmer when using the <code>submit</code> of <code>CommandService</code>.</p>
+<p>This example shows an immediate completion command using <code>submitAndWait</code> that returns <code>Completed</code>.</p>
+<dl>
+  <dt>Scala/submit w/immediate-response
+  </dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L162-L172" target="_blank" title="Go to snippet source"></a><code class="language-scala">val immediateSetup = Setup(prefix, immediateCmd, obsId)
+val immediateCommandF = async {
+  await(assemblyCmdService.submitAndWait(immediateSetup)) match {
+    case response: Completed ⇒
+      //do something with completed result
+      response
+    case otherResponse ⇒
+      // do something with other response which is not expected
+      otherResponse
+  }
+}</code></pre></dd>
+  <dt>Java/submit w/immediate-response
+  </dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L127-L139" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;SubmitResponse&gt; immediateCommandF =
+        hcdCmdService
+                .submitAndWait(immediateCmd, timeout)
+                .thenApply(
+                        response -&gt; {
+                            if (response instanceof Completed) {
+                                //do something with completed result
+                            } else {
+                                // do something with unexpected response
+                            }
+                            return response;
+                        }
+                );</code></pre></dd>
+</dl>
+<p>Note that the Scala examples are using <code>async/await</code> which simplifies handling the Futures, but is not necessary. The <code>async/await</code> library is not available in Java. If using <code>submit</code> and the validation fails in the destination component, the <code>Invalid</code> response is returned.</p>
+<dl>
+  <dt>Scala/submit w/invalid response</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L144-L156" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
+val invalidCommandF = assemblyCmdService.submitAndWait(invalidSetup)
+async {
+  await(invalidCommandF) match {
+    case Completed(runId) =&gt;
+    // Do Completed thing
+    case Invalid(runId, issue) =&gt;
+      issue shouldBe a[Invalid]
+    case other =&gt;
+      // Unexpected result
+      log.error(s&quot;Some other response: $other&quot;)
+  }
+}</code></pre></dd>
+  <dt>Java/submit w/invalid response</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L146-L159" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup invalidSetup = new Setup(prefix(), invalidCmd(), Optional.empty()).add(intParameter2);
+CompletableFuture&lt;SubmitResponse&gt; invalidCommandF =
+        hcdCmdService.submitAndWait(invalidSetup, timeout).thenApply(
+                response -&gt; {
+                    if (response instanceof Completed) {
+                        //do something with completed result
+                    } else if (response instanceof Invalid) {
+                        // Cast the response to get the issue
+                        Invalid invalid = (Invalid) response;
+                        assert (invalid.issue().reason().contains(&quot;failure&quot;));
+                    }
+                    return response;
+                }
+        );</code></pre></dd>
+</dl>
+<p>The handling of long-running and immediate completion commands look the same from the command sender&rsquo;s perspective. The following example shows a long-running command that returns a value when the command action completes with a result.</p>
+<dl>
+  <dt>Scala/submit long running</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L177-L188" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup1 = Setup(prefix, longRunningCmd, obsId)
+
+val longRunningResultF = async {
+  await(assemblyCmdService.submitAndWait(longRunningSetup1)) match {
+    case CompletedWithResult(_, result) =&gt;
+      Some(result(encoder).head)
+
+    case otherResponse =&gt;
+      // log a message?
+      None
+  }
+}</code></pre></dd>
+  <dt>Java/submit long running</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L170-L185" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup1 = new Setup(prefix(), longRunningCmd(), Optional.empty()).add(intParameter1);
+Key&lt;Integer&gt; encoder = JKeyType.IntKey().make(&quot;encoder&quot;);
+CompletableFuture&lt;Optional&lt;Integer&gt;&gt; longRunningResultF =
+        hcdCmdService.submitAndWait(longRunningSetup1, timeout)
+                .thenCompose(response -&gt; {
+                    if (response instanceof CompletedWithResult) {
+                        // This extracts and returns the the first value of parameter encoder
+                        Result result = ((CompletedWithResult) response).result();
+                        Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
+                        return CompletableFuture.completedFuture(rvalue);
+                    } else {
+                        // For some other response, return empty
+                        return CompletableFuture.completedFuture(Optional.empty());
+                    }
+
+                });</code></pre></dd>
+</dl>
+<p>If a command is long-running and the sender needs to determine that the actions have started properly, the <code>query</code> method of <code>CommandService</code> can be used as shown in the following example without using the Future returned by <code>submit</code>, which provides the final completion notification.</p>
+<dl>
+  <dt>Scala/submit long running/query</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L196-L219" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup2 = longRunningSetup1.cloneCommand
+val longRunningQueryResultF = async {
+  // The following val is set so we can do query and work and complete later
+  val longRunningF = assemblyCmdService.submitAndWait(longRunningSetup2)
+
+  await(assemblyCmdService.query(longRunningSetup2.runId)) match {
+    case Started(runId) =&gt;
+    // happy case - no action needed
+    // Do some other work
+    case a =&gt;
+    // log.error. This indicates that the command probably failed to start.
+  }
+
+  // Now wait for completion and result
+  await(longRunningF) match {
+    case CompletedWithResult(_, result) =&gt;
+      Some(result(encoder).head)
+
+    case otherResponse =&gt;
+      // log a message?
+      None
+  }
+}
+Await.result(longRunningQueryResultF, timeout.duration) shouldBe Some(20)</code></pre></dd>
+  <dt>Java/submit long running/query</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L206-L233" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup2 = longRunningSetup1.cloneCommand();
+CompletableFuture&lt;SubmitResponse&gt; longRunningQueryResultF =
+        hcdCmdService.submitAndWait(longRunningSetup2, timeout);
+
+// do some work before querying for the result of above command as needed
+CompletableFuture&lt;QueryResponse&gt; queryResponseF = hcdCmdService.query(longRunningSetup2.runId(), timeout);
+queryResponseF.thenAccept(r -&gt; {
+    if (r instanceof Started) {
+        // happy case - no action needed
+        // Do some other work
+    } else {
+        // log.error. This indicates that the command probably failed to start.
+    }
+});
+
+CompletableFuture&lt;Optional&lt;Integer&gt;&gt; intF =
+        longRunningQueryResultF.thenCompose(response -&gt; {
+            if (response instanceof CompletedWithResult) {
+                // This extracts and returns the the first value of parameter encoder
+                Result result = ((CompletedWithResult) response).result();
+                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
+                return CompletableFuture.completedFuture(rvalue);
+            } else {
+                // For some other response, return empty
+                return CompletableFuture.completedFuture(Optional.empty());
+            }
+        });
+Assert.assertEquals(Optional.of(20), intF.get());</code></pre></dd>
+</dl>
+<p>It&rsquo;s also possible to use the runId of the <code>Setup</code> with <code>queryFinal</code> to determine when the actions are completed. This is equivalent to using the Future returned by <code>submit</code>, but in this case, the original Future from <code>submit</code> is not available.</p>
+<dl>
+  <dt>Scala/submit long running/queryFinal</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L224-L239" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup3 = longRunningSetup1.cloneCommand
+val queryFinalF = async {
+  // The following submit is made without saving the Future!
+  assemblyCmdService.submitAndWait(longRunningSetup3)
+
+  // Use queryFinal and runId to wait for completion and result
+  await(assemblyCmdService.queryFinal(longRunningSetup3.runId)) match {
+    case CompletedWithResult(_, result) =&gt;
+      Some(result(encoder).head)
+
+    case otherResponse =&gt;
+      // log a message?
+      None
+  }
+}
+Await.result(queryFinalF, timeout.duration) shouldBe Some(20)</code></pre></dd>
+  <dt>Java/submit long running/queryFinal</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L237-L252" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup3 = longRunningSetup1.cloneCommand();
+hcdCmdService.submitAndWait(longRunningSetup3, timeout);
+
+CompletableFuture&lt;Optional&lt;Integer&gt;&gt; int3F =
+        hcdCmdService.queryFinal(longRunningSetup3.runId(), timeout).thenCompose(response -&gt; {
+            if (response instanceof CompletedWithResult) {
+                // This extracts and returns the the first value of parameter encoder
+                Result result = ((CompletedWithResult) response).result();
                 Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
                 return CompletableFuture.completedFuture(rvalue);
             } else {
@@ -624,11 +810,11 @@ val oneWayF = async {
 Await.ready(oneWayF, timeout.duration)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L242-L251" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup onewaySetup = new Setup(prefix(), onewayCmd(), Optional.empty()).add(intParameter1);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L256-L265" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup onewaySetup = new Setup(prefix(), onewayCmd(), Optional.empty()).add(intParameter1);
 CompletableFuture onewayF = hcdCmdService
         .oneway(onewaySetup, timeout)
         .thenAccept(onewayResponse -&gt; {
-            if (onewayResponse instanceof CommandResponse.Invalid) {
+            if (onewayResponse instanceof Invalid) {
                 // log an error here
             } else {
                 // Ignore anything other than invalid
@@ -653,15 +839,15 @@ CompletableFuture onewayF = hcdCmdService
 Await.result(validateCommandF, timeout.duration) shouldBe true</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L257-L274" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;Boolean&gt; validateCommandF =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L271-L288" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;Boolean&gt; validateCommandF =
         hcdCmdService
                 .validate(immediateCmd)
                 .thenApply(
                         response -&gt; {
-                            if (response instanceof CommandResponse.Accepted) {
+                            if (response instanceof Accepted) {
                                 //do something with completed result
                                 return true;
-                            } else if (response instanceof CommandResponse.Invalid) {
+                            } else if (response instanceof Invalid) {
                                 // do something with unexpected response
                                 return false;
                             } else {
@@ -683,16 +869,16 @@ val queryValue = Await.result(assemblyCmdService.query(longRunningSetup2.runId),
 queryValue shouldBe a[CompletedWithResult]</code></pre></dd>
   <dt>Java/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L278-L279" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;CommandResponse.QueryResponse&gt; queryResponseF2 = hcdCmdService.query(longRunningSetup2.runId(), timeout);
-Assert.assertTrue(queryResponseF2.get() instanceof CommandResponse.CompletedWithResult);</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L292-L293" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;QueryResponse&gt; queryResponseF2 = hcdCmdService.query(longRunningSetup2.runId(), timeout);
+Assert.assertTrue(queryResponseF2.get() instanceof CompletedWithResult);</code></pre></dd>
 </dl>
-<h3><a href="#submitall" name="submitall" class="anchor"><span class="anchor-link"></span></a>submitAll</h3>
-<p><code>SubmitAll</code> can be used to send multiple commands sequentially to the same component. This could be used to send initialization commands to an HCD, for instance. The argument for <code>submitAll</code> is a list of commands. <code>SubmitAll</code> returns a list of <code>SubmitResponse</code>s&ndash;one for each command in the list. While <code>submit</code> returns a <code>SubmitResponse</code> as a Future, <code>submitAll</code> returns a list of <code>SubmitResponse</code>s as a future, which completes when all the commands in the list have completed. </p>
+<h3><a href="#submitallandwait" name="submitallandwait" class="anchor"><span class="anchor-link"></span></a>submitAllAndWait</h3>
+<p><code>SubmitAll</code> can be used to send multiple commands sequentially to the same component. This could be used to send initialization commands to an HCD, for instance. The argument for <code>submitAllAndWait</code> is a list of commands. <code>SubmitAll</code> returns a list of <code>SubmitResponse</code>s&ndash;one for each command in the list. While <code>submitAndWait</code> returns a <code>SubmitResponse</code> as a Future, <code>submitAllAndWait</code> returns a list of <code>SubmitResponse</code>s as a future, which completes when all the commands in the list have completed. </p>
 <dl>
   <dt>Scala/query usage</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L285-L292" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF = async {
-  await(assemblyCmdService.submitAll(List(submitAllSetup1, submitAllSetup2, submitAllinvalidSetup)))
+  await(assemblyCmdService.submitAllAndWait(List(submitAllSetup1, submitAllSetup2, submitAllinvalidSetup)))
 }
 val submitAllResponse = Await.result(submitAllF, timeout.duration)
 submitAllResponse.length shouldBe 3
@@ -701,29 +887,29 @@ submitAllResponse(1) shouldBe a[CompletedWithResult]
 submitAllResponse(2) shouldBe a[Invalid]</code></pre></dd>
   <dt>Java/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L285-L299" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup submitAllSetup1 = new Setup(prefix(), immediateCmd(), Optional.empty()).add(encoderParam);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L299-L313" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup submitAllSetup1 = new Setup(prefix(), immediateCmd(), Optional.empty()).add(encoderParam);
 Setup submitAllSetup2 = new Setup(prefix(), longRunningCmd(), Optional.empty()).add(encoderParam);
 Setup submitAllSetup3 = new Setup(prefix(), invalidCmd(), Optional.empty()).add(encoderParam);
 
-CompletableFuture&lt;List&lt;CommandResponse.SubmitResponse&gt;&gt; submitAllF = hcdCmdService
-        .submitAll(
+CompletableFuture&lt;List&lt;SubmitResponse&gt;&gt; submitAllF = hcdCmdService
+        .submitAllAndWait(
                 List.of(submitAllSetup1, submitAllSetup2, submitAllSetup3),
                 timeout
         );
 
-List&lt;CommandResponse.SubmitResponse&gt; submitAllResponse = submitAllF.get();
+List&lt;SubmitResponse&gt; submitAllResponse = submitAllF.get();
 Assert.assertEquals(submitAllResponse.size(), 3);
-Assert.assertTrue(submitAllResponse.get(0) instanceof CommandResponse.Completed);
-Assert.assertTrue(submitAllResponse.get(1) instanceof CommandResponse.CompletedWithResult);
-Assert.assertTrue(submitAllResponse.get(2) instanceof CommandResponse.Invalid);</code></pre></dd>
+Assert.assertTrue(submitAllResponse.get(0) instanceof Completed);
+Assert.assertTrue(submitAllResponse.get(1) instanceof CompletedWithResult);
+Assert.assertTrue(submitAllResponse.get(2) instanceof Invalid);</code></pre></dd>
 </dl>
 <p>In the first example, three commands are sent and the result is a list with three <code>SubmitResponse</code>s. The last one returned invalid and was not executed.</p>
-<p>The commands in <code>submitAll</code> will execute sequentially, but each one must complete successfully for the subsequent commands to be executed. If any one of the commands fails, <code>submitAll</code> stops and the list is returned with the commands that are completed up to and including the command that failed. This is shown in the following example by making the invalidCmd second in the list.</p>
+<p>The commands in <code>submitAllAndWait</code> will execute sequentially, but each one must complete successfully for the subsequent commands to be executed. If any one of the commands fails, <code>submitAllAndWait</code> stops and the list is returned with the commands that are completed up to and including the command that failed. This is shown in the following example by making the invalidCmd second in the list.</p>
 <dl>
   <dt>Scala/query usage</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L296-L302" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF2 = async {
-  await(assemblyCmdService.submitAll(List(submitAllSetup1, submitAllinvalidSetup, submitAllSetup2)))
+  await(assemblyCmdService.submitAllAndWait(List(submitAllSetup1, submitAllinvalidSetup, submitAllSetup2)))
 }
 val submitAllResponse2 = Await.result(submitAllF2, timeout.duration)
 submitAllResponse2.length shouldBe 2
@@ -731,16 +917,16 @@ submitAllResponse2(0) shouldBe a[Completed]
 submitAllResponse2(1) shouldBe a[Invalid]</code></pre></dd>
   <dt>Java/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L303-L312" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;List&lt;CommandResponse.SubmitResponse&gt;&gt; submitAllF2 = hcdCmdService
-        .submitAll(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L317-L326" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;List&lt;SubmitResponse&gt;&gt; submitAllF2 = hcdCmdService
+        .submitAllAndWait(
                 List.of(submitAllSetup1, submitAllSetup3, submitAllSetup2),
                 timeout
         );
 
-List&lt;CommandResponse.SubmitResponse&gt; submitAllResponse2 = submitAllF2.get();
+List&lt;SubmitResponse&gt; submitAllResponse2 = submitAllF2.get();
 Assert.assertEquals(submitAllResponse2.size(), 2);
-Assert.assertTrue(submitAllResponse2.get(0) instanceof CommandResponse.Completed);
-Assert.assertTrue(submitAllResponse2.get(1) instanceof CommandResponse.Invalid);</code></pre></dd>
+Assert.assertTrue(submitAllResponse2.get(0) instanceof Completed);
+Assert.assertTrue(submitAllResponse2.get(1) instanceof Invalid);</code></pre></dd>
 </dl>
 <p>In this case, the returned list is of length 2 rather than 3.</p>
 <h3><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>subscribeCurrentState</h3>
@@ -762,7 +948,7 @@ val subscription         = hcdCmdService.subscribeCurrentState(cs =&gt; cstate =
 hcdCmdService.oneway(currStateSetup)
 
 // Wait for a bit for callback
-Thread.sleep(100)
+Thread.sleep(500)
 // Test to see if value was received
 cstate(encoder).head shouldBe expectedEncoderValue
 
@@ -770,7 +956,7 @@ cstate(encoder).head shouldBe expectedEncoderValue
 subscription.unsubscribe()</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L316-L479" target="_blank" title="Go to snippet source"></a><code class="language-java">// Subscriber code
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L330-L493" target="_blank" title="Go to snippet source"></a><code class="language-java">// Subscriber code
 int expectedEncoderValue = 234;
 Setup currStateSetup = new Setup(prefix(), hcdCurrentStateCmd(), Optional.empty()).add(encoder.set(expectedEncoderValue));
 // Setup a callback response to CurrentState - use AtomicInteger to capture final value
@@ -859,27 +1045,27 @@ val commandResponse = Await.result(matchResponseF, timeout.duration)
 commandResponse shouldBe Completed(setupWithMatcher.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L342-L375" target="_blank" title="Go to snippet source"></a><code class="language-java">Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;encoder&quot;).set(100);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L356-L389" target="_blank" title="Go to snippet source"></a><code class="language-java">Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;encoder&quot;).set(100);
 Setup setupWithMatcher = new Setup(prefix(), matcherCmd(), Optional.empty()).add(param);
 
 // create a StateMatcher which specifies the desired algorithm and state to be matched.
 DemandMatcher demandMatcher = new DemandMatcher(new DemandState(prefix(), new StateName(&quot;testStateName&quot;)).add(param), false, timeout);
 
 // create the matcher instance
-Matcher matcher = new Matcher(AkkaLocationExt.RichAkkaLocation(hcdLocation).componentRef().narrow(), demandMatcher, ec, mat);
+Matcher matcher = new Matcher(AkkaLocationExt.RichAkkaLocation(hcdLocation).componentRef(hcdActorSystem).narrow(), demandMatcher, ec, mat);
 
 // start the matcher so that it is ready to receive state published by the source
 CompletableFuture&lt;MatcherResponse&gt; matcherResponseFuture = matcher.jStart();
 
 // Submit command as a oneway and if the command is successfully validated,
 // check for matching of demand state against current state
-CompletableFuture&lt;CommandResponse.MatchingResponse&gt; matchResponseF = hcdCmdService
+CompletableFuture&lt;MatchingResponse&gt; matchResponseF = hcdCmdService
         .oneway(setupWithMatcher, timeout)
         .thenCompose(initialCommandResponse -&gt; {
-            if (initialCommandResponse instanceof CommandResponse.Accepted) {
+            if (initialCommandResponse instanceof Accepted) {
                 return matcherResponseFuture.thenApply(matcherResponse -&gt; {
                     if (matcherResponse.getClass().isAssignableFrom(MatcherResponses.jMatchCompleted().getClass()))
-                        return new CommandResponse.Completed(initialCommandResponse.runId());
+                        return new Completed(initialCommandResponse.runId());
                     else
                         return new CommandResponse.Error(initialCommandResponse.runId(), &quot;Match not completed&quot;);
                 });
@@ -890,8 +1076,8 @@ CompletableFuture&lt;CommandResponse.MatchingResponse&gt; matchResponseF = hcdCm
             }
         });
 
-CommandResponse.MatchingResponse actualResponse = matchResponseF.get();
-CommandResponse.Completed expectedResponse = new CommandResponse.Completed(setupWithMatcher.runId());
+MatchingResponse actualResponse = matchResponseF.get();
+Completed expectedResponse = new Completed(setupWithMatcher.runId());
 Assert.assertEquals(expectedResponse, actualResponse);</code></pre></dd>
 </dl>
 <p>One important point is that the <code>matcher</code> is created and must be shutdown when you are finished with it using the <code>stop</code> method of the matcher as shown in the example.</p>
@@ -923,17 +1109,17 @@ Assert.assertEquals(expectedResponse, actualResponse);</code></pre></dd>
 Await.result(onewayMatchF, timeout.duration) shouldBe Completed(setupWithMatcher.runId)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L379-L390" target="_blank" title="Go to snippet source"></a><code class="language-java"> // create a DemandMatcher which specifies the desired state to be matched.
- StateMatcher stateMatcher = new DemandMatcher(new DemandState(prefix(), new StateName(&quot;testStateName&quot;)).add(param), false, timeout);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L393-L404" target="_blank" title="Go to snippet source"></a><code class="language-java">// create a DemandMatcher which specifies the desired state to be matched.
+StateMatcher stateMatcher = new DemandMatcher(new DemandState(prefix(), new StateName(&quot;testStateName&quot;)).add(param), false, timeout);
 
- // create matcher instance
- //Matcher matcher1 = new Matcher(AkkaLocationExt.RichAkkaLocation(hcdLocation).componentRef().narrow(), demandMatcher, ec, mat);
+// create matcher instance
+//Matcher matcher1 = new Matcher(AkkaLocationExt.RichAkkaLocation(hcdLocation).componentRef().narrow(), demandMatcher, ec, mat);
 
- // start the matcher so that it is ready to receive state published by the source
+// start the matcher so that it is ready to receive state published by the source
 // CompletableFuture&lt;MatcherResponse&gt; matcherResponse = matcher1.jStart();
 
- CompletableFuture&lt;CommandResponse.MatchingResponse&gt; matchedCommandResponse =
-         hcdCmdService.onewayAndMatch(setupWithMatcher, stateMatcher, timeout);
+CompletableFuture&lt;MatchingResponse&gt; matchedCommandResponse =
+        hcdCmdService.onewayAndMatch(setupWithMatcher, stateMatcher, timeout);
 </code></pre></dd>
 </dl>
 </div>

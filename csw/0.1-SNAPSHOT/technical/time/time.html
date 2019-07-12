@@ -334,7 +334,7 @@ val ClockTAI      = 11 // It is basically defined as CLOCK_REALTIME(UTC) + tai_o
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-time/csw-time-clock/jvm/src/main/scala/csw/time/clock/natives/models/TMTClock.scala#L32-L53" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def now(clockId: Int): Instant = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-time/csw-time-clock/jvm/src/main/scala/csw/time/clock/natives/models/TMTClock.scala#L26-L37" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def now(clockId: Int): Instant = {
   val timeSpec = new TimeSpec()
   TimeLibrary.clock_gettime(clockId, timeSpec)
   Instant.ofEpochSecond(timeSpec.seconds.longValue(), timeSpec.nanoseconds.longValue())
@@ -343,18 +343,8 @@ val ClockTAI      = 11 // It is basically defined as CLOCK_REALTIME(UTC) + tai_o
 override def offset: Int = {
   val timeVal = new NTPTimeVal()
   TimeLibrary.ntp_gettimex(timeVal)
+  if (timeVal.tai == 0) printWarning()
   timeVal.tai
-}
-
-// sets the tai offset on kernel (needed when ptp is not setup)
-override def setTaiOffset(offset: Int): Unit = {
-  val timex = new Timex()
-  timex.modes = 128
-  timex.constant = new NativeLong(offset)
-  Try(TimeLibrary.ntp_adjtime(timex)).recover {
-    case NonFatal(e) =&gt;
-      throw new RuntimeException(&quot;Failed to set offset, make sure you have sudo access to perform this action.&quot;, e.getCause)
-  }
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Based on the <a href="https://tmt-project.atlassian.net/wiki/spaces/DEOPSCSW/pages/305102849/Comparative+study+of+JNI+vs+JNA">comparison between JNA and JNI</a> and stakeholder agreement, JNA was fixed to make the low level kernel calls.</p></div>
