@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -289,7 +291,8 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L155-L167" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L155-L168" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+
 @Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
     return CompletableFuture.runAsync(() -&gt; {
@@ -448,7 +451,7 @@ connectionType: akka
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L171-L182" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L172-L183" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
     log.debug(() -&gt; &quot;onLocationTrackingEvent called: &quot; + trackingEvent.toString());
     if (trackingEvent instanceof LocationUpdated) {
@@ -469,7 +472,7 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L191-L201" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val system: ActorSystem[Nothing] = ctx.system
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L192-L202" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val system: ActorSystem[Nothing] = ctx.system
 
 val eventualCommandService: Future[CommandService] =
   cswCtx.locationService.resolve(hcdConnection.of[AkkaLocation], 5.seconds).map {
@@ -477,7 +480,7 @@ val eventualCommandService: Future[CommandService] =
     case _                               =&gt; throw HcdNotFoundException()
   }
 
-eventualCommandService.foreach { commandService ⇒
+eventualCommandService.foreach { commandService =&gt;
   hcd = commandService
 }</code></pre></dd>
   <dt>Java</dt>
@@ -642,13 +645,13 @@ private def unsubscribeHcd(): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L186-L213" target="_blank" title="Go to snippet source"></a><code class="language-java">private EventKey counterEventKey = new EventKey(new Prefix(&quot;nfiraos.samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L187-L214" target="_blank" title="Go to snippet source"></a><code class="language-java">private EventKey counterEventKey = new EventKey(new Prefix(&quot;nfiraos.samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
 private Key&lt;Integer&gt; hcdCounterKey = JKeyType.IntKey().make(&quot;counter&quot;);
 
 private void processEvent(Event event) {
-    log.info(&quot;Event received: &quot;+ event.eventKey());
+    log.info(&quot;Event received: &quot; + event.eventKey());
     if (event instanceof SystemEvent) {
-        SystemEvent sysEvent = (SystemEvent)event;
+        SystemEvent sysEvent = (SystemEvent) event;
         if (event.eventKey().equals(counterEventKey)) {
             int counter = sysEvent.parameter(hcdCounterKey).head();
             log.info(&quot;Counter = &quot; + counter);
@@ -689,7 +692,8 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L155-L167" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L155-L168" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+
 @Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
     return CompletableFuture.runAsync(() -&gt; {

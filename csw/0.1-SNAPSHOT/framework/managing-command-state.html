@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -268,7 +270,7 @@ tmtsoftware/csw
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/McsHcdComponentHandlers.scala#L37-L45" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): SubmitResponse = {
   controlCommand.commandName match {
-    case `longRunning` ⇒
+    case `longRunning` =&gt;
       ctx.scheduleOnce(
         5.seconds,
         commandResponseManager.commandResponseManagerActor,
@@ -330,18 +332,18 @@ commandResponseManager.addSubCommand(sc.runId(), subCommand2.runId());</code></p
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/McsAssemblyComponentHandlers.scala#L128-L145" target="_blank" title="Go to snippet source"></a><code class="language-scala">// An original command is split into sub-commands and sent to a component.
 // The current state publishing is not relevant to the updateSubCommand usage.
-case _: Completed ⇒
+case _: Completed =&gt;
   controlCommand.runId match {
-    case id if id == shortSetup.runId ⇒
+    case id if id == shortSetup.runId =&gt;
       currentStatePublisher
         .publish(CurrentState(shortSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(shortCmdCompleted))))
       // As the commands get completed, the results are updated in the commandResponseManager
       commandResponseManager.updateSubCommand(Completed(id))
-    case id if id == mediumSetup.runId ⇒
+    case id if id == mediumSetup.runId =&gt;
       currentStatePublisher
         .publish(CurrentState(mediumSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(mediumCmdCompleted))))
       commandResponseManager.updateSubCommand(Completed(id))
-    case id if id == longSetup.runId ⇒
+    case id if id == longSetup.runId =&gt;
       currentStatePublisher
         .publish(CurrentState(longSetup.source, StateName(&quot;testStateName&quot;), Set(choiceKey.set(longCmdCompleted))))
       commandResponseManager.updateSubCommand(Completed(id))

@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -313,7 +315,7 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/nfiraos/samplehcd/SampleHcdTest.scala#L20-L34" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleHcdTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with FunSuiteLike with BeforeAndAfterEach {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/nfiraos/samplehcd/SampleHcdTest.scala#L21-L35" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleHcdTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with FunSuiteLike with BeforeAndAfterEach {
   import frameworkTestKit.frameworkWiring._
 
   override def beforeAll(): Unit = {
@@ -355,7 +357,7 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/nfiraos/samplehcd/SampleHcdTest.scala#L38-L73" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should be able to subscribe to HCD events&quot;) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/nfiraos/samplehcd/SampleHcdTest.scala#L39-L74" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should be able to subscribe to HCD events&quot;) {
   val counterEventKey = EventKey(Prefix(&quot;nfiraos.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
   val hcdCounterKey   = KeyType.IntKey.make(&quot;counter&quot;)
 
@@ -441,7 +443,7 @@ public void testShouldBeAbleToSubscribeToHCDEvents() throws InterruptedException
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/nfiraos/samplehcd/SampleHcdTest.scala#L77-L96" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val typedActorSystem: ActorSystem[_] = actorSystem
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/nfiraos/samplehcd/SampleHcdTest.scala#L78-L97" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val typedActorSystem: ActorSystem[_] = actorSystem
 test(&quot;should be able to send sleep command to HCD&quot;) {
   import scala.concurrent.duration._
   implicit val sleepCommandTimeout: Timeout = Timeout(10000.millis)
@@ -449,7 +451,7 @@ test(&quot;should be able to send sleep command to HCD&quot;) {
   // Construct Setup command
   val sleepTimeKey: Key[Long]         = KeyType.LongKey.make(&quot;SleepTime&quot;)
   val sleepTimeParam: Parameter[Long] = sleepTimeKey.set(5000).withUnits(Units.millisecond)
-  val setupCommand                    = Setup(Prefix(&quot;test&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam)
+  val setupCommand                    = Setup(Prefix(&quot;csw.move&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam)
 
   val connection = AkkaConnection(ComponentId(&quot;SampleHcd&quot;, ComponentType.HCD))
 
@@ -472,7 +474,7 @@ public void testShouldBeAbleToSendSleepCommandToHCD() throws ExecutionException,
     Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;);
     Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L).withUnits(JUnits.millisecond);
 
-    Setup setupCommand = new Setup(new Prefix(&quot;test&quot;), new CommandName(&quot;sleep&quot;), Optional.of(new ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam);
+    Setup setupCommand = new Setup(new Prefix(&quot;csw.move&quot;), new CommandName(&quot;sleep&quot;), Optional.of(new ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam);
 
     Timeout commandResponseTimeout = new Timeout(10, TimeUnit.SECONDS);
 
@@ -489,16 +491,16 @@ public void testShouldBeAbleToSendSleepCommandToHCD() throws ExecutionException,
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/nfiraos/samplehcd/SampleHcdTest.scala#L100-L120" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should get timeout exception if submit timeout is too small&quot;) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/nfiraos/samplehcd/SampleHcdTest.scala#L101-L121" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should get timeout exception if submit timeout is too small&quot;) {
   import scala.concurrent.duration._
   implicit val sleepCommandTimeout: Timeout = Timeout(1000.millis)
 
   // Construct Setup command
   val sleepTimeKey: Key[Long]         = KeyType.LongKey.make(&quot;SleepTime&quot;)
   val sleepTimeParam: Parameter[Long] = sleepTimeKey.set(5000).withUnits(Units.millisecond)
-  val setupCommand                    = Setup(Prefix(&quot;test&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam)
+  val setupCommand                    = Setup(Prefix(&quot;csw.move&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam)
 
-  val connection = AkkaConnection(ComponentId(&quot;SampleHcd&quot;, ComponentType.HCD))
+  val connection = AkkaConnection(models.ComponentId(&quot;SampleHcd&quot;, ComponentType.HCD))
 
   val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
@@ -522,7 +524,7 @@ public void testShouldGetExecutionExceptionIfSubmitTimeoutIsTooSmall() throws Ex
     Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;);
     Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L).withUnits(JUnits.millisecond);
 
-    Setup setupCommand = new Setup(new Prefix(&quot;test&quot;), new CommandName(&quot;sleep&quot;), Optional.of(new ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam);
+    Setup setupCommand = new Setup(new Prefix(&quot;csw.move&quot;), new CommandName(&quot;sleep&quot;), Optional.of(new ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam);
 
     Timeout commandResponseTimeout = new Timeout(1, TimeUnit.SECONDS);
 

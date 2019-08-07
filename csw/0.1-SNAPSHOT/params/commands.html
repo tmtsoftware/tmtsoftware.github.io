@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -282,29 +284,27 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L24-L35" target="_blank" title="Go to snippet source"></a><code class="language-scala">//using constructor, supplying subsystem and prefix both
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L24-L34" target="_blank" title="Go to snippet source"></a><code class="language-scala">//using constructor, supplying subsystem and prefix both
 val prefix1: Prefix = Prefix(&quot;nfiraos.ncc.trombone&quot;)
 
 //just by supplying prefix
 val prefix2: Prefix = Prefix(&quot;tcs.mobie.blue.filter&quot;)
 
-//invalid prefix string that cant be mapped to a valid subsystem,
-// will automatically get Subsystem.BAD
-val badPrefix: Prefix = Prefix(&quot;abcdefgh&quot;)
+//invalid prefix string which does not contain valid subsystem in the beginning will throw an exception,
+//val badPrefix: Prefix = Prefix(&quot;abcdefgh&quot;)
 
 //use implicit conversion to convert from String to Prefix
 val prefix3: Prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L36-L44" target="_blank" title="Go to snippet source"></a><code class="language-java">//using constructor, supplying subsystem and prefix both
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L36-L43" target="_blank" title="Go to snippet source"></a><code class="language-java">//using constructor, supplying subsystem and prefix both
 Prefix prefix1 = new Prefix(&quot;nfiraos.ncc.trombone&quot;);
 
 //just by supplying prefix
 Prefix prefix2 = new Prefix(&quot;tcs.mobie.blue.filter&quot;);
 
-//invalid prefix string that cant be mapped to a valid subsystem,
-// will automatically get Subsystem.BAD
-Prefix badPrefix = new Prefix(&quot;abcdefgh&quot;);</code></pre></dd>
+//invalid prefix string which does not contain valid subsystem in the beginning will throw an exception,
+// Prefix badPrefix = new Prefix(&quot;abcdefgh&quot;);</code></pre></dd>
 </dl>
 <h2><a href="#commandname" name="commandname" class="anchor"><span class="anchor-link"></span></a>CommandName</h2>
 <p>Each command has a name given as a string. The <code>CommandName</code> object wraps the string name. The string should be continuous with no spaces.</p>
@@ -319,7 +319,7 @@ Prefix badPrefix = new Prefix(&quot;abcdefgh&quot;);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L50-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L48-L92" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Int]    = KeyType.IntKey.make(&quot;encoder&quot;)
 val k2: Key[String] = KeyType.StringKey.make(&quot;stringThing&quot;)
 val k2bad: Key[Int] = KeyType.IntKey.make(&quot;missingKey&quot;)
@@ -366,7 +366,7 @@ val allKeys: Set[String] = sc4.paramSet.map(_.keyName)
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L56-L99" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L54-L97" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; k1 = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;String&gt; k2 = JKeyType.StringKey().make(&quot;stringThing&quot;);
 Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
@@ -416,7 +416,7 @@ java.util.List&lt;String&gt; allKeys = sc4.jParamSet().stream().map(Parameter::k
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L109-L143" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L107-L141" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Boolean] = KeyType.BooleanKey.make(&quot;repeat&quot;)
 val k2: Key[Int]     = KeyType.IntKey.make(&quot;expTime&quot;)
 val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;missingKey&quot;)
@@ -453,7 +453,7 @@ val oc4: Observe = oc2.remove(k4)
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L115-L152" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L113-L150" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(&quot;repeat&quot;);
 Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;expTime&quot;);
 Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
@@ -497,7 +497,7 @@ java.util.List&lt;String&gt; allKeys = oc4.jParamSet().stream().map(Parameter::k
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L157-L191" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L155-L189" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Boolean] = KeyType.BooleanKey.make(&quot;repeat&quot;)
 val k2: Key[Int]     = KeyType.IntKey.make(&quot;expTime&quot;)
 val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;missingKey&quot;)
@@ -534,7 +534,7 @@ val wc4: Wait = wc2.remove(k4)
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L167-L204" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L165-L202" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(&quot;repeat&quot;);
 Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;expTime&quot;);
 Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
@@ -578,7 +578,7 @@ java.util.List&lt;String&gt; allKeys = wc4.jParamSet().stream().map(Parameter::k
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L208-L244" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L206-L242" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
 
 //key
 val k1: Key[MatrixData[Double]] = DoubleMatrixKey.make(&quot;myMatrix&quot;)
@@ -617,7 +617,7 @@ val oc1: Observe = JsonSupport.readSequenceCommand[Observe](ocJson)
 val wc1: Wait    = JsonSupport.readSequenceCommand[Wait](wcJson)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L219-L247" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L217-L245" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
 Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyType.DoubleMatrixKey().make(&quot;myMatrix&quot;);
 
 //values
@@ -654,7 +654,7 @@ Wait wc1 = JavaJsonSupport.readSequenceCommand(wcJson);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L259-L303" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L257-L301" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val encoderKey: Key[Int] = KeyType.IntKey.make(&quot;encoder&quot;)
 val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc.&quot;)
@@ -701,7 +701,7 @@ val finalSetUp: Setup = setup.madd(Set(miscParam1, encParam1))
 val uniqueKeys3: List[String] = finalSetUp.paramSet.toList.map(_.keyName)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L258-L296" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L256-L294" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
@@ -746,7 +746,7 @@ Set&lt;String&gt; uniqueKeys3 = finalSetUp.jParamSet().stream().map(Parameter::k
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L323-L330" target="_blank" title="Go to snippet source"></a><code class="language-scala">val setup  = Setup(prefix, commandName, Some(obsId)).madd(i1)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L321-L328" target="_blank" title="Go to snippet source"></a><code class="language-scala">val setup  = Setup(prefix, commandName, Some(obsId)).madd(i1)
 val setup2 = setup.cloneCommand
 
 val observe  = Observe(prefix, commandName, Some(obsId)).madd(i1)
@@ -756,7 +756,7 @@ val wait  = Wait(prefix, commandName, Some(obsId)).madd(i1)
 val wait2 = wait.cloneCommand</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L313-L320" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup setup = new Setup(new Prefix(prefix), commandName, Optional.of(obsId)).add(encoderParam);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L311-L318" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup setup = new Setup(new Prefix(prefix), commandName, Optional.of(obsId)).add(encoderParam);
 Setup setup2 = setup.cloneCommand();
 
 Observe observe = new Observe(new Prefix(prefix), commandName, Optional.empty()).add(encoderParam);

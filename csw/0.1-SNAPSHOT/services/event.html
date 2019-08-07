@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -312,8 +314,8 @@ eventService.defaultPublisher().publish(event);</code></pre></dd>
 
   // this holds the logic for event generation, could be based on some computation or current state of HCD
   def eventGenerator(): Option[Event] = baseEvent match {
-    case e: SystemEvent  ⇒ Some(e.copy(eventId = Id(), eventTime = UTCTime.now()))
-    case e: ObserveEvent ⇒ Some(e.copy(eventId = Id(), eventTime = UTCTime.now()))
+    case e: SystemEvent  =&gt; Some(e.copy(eventId = Id(), eventTime = UTCTime.now()))
+    case e: ObserveEvent =&gt; Some(e.copy(eventId = Id(), eventTime = UTCTime.now()))
   }
 
   publisher.publish(eventGenerator(), interval)
@@ -342,10 +344,10 @@ private Optional&lt;Event&gt; eventGenerator(Event baseEvent) {
 
 val publisher = eventService.defaultPublisher
 val eventStream: Source[Event, Future[Done]] = Source(1 to n)
-  .map(id ⇒ makeEvent(id, componentInfo.prefix, EventName(&quot;filter_wheel&quot;)))
+  .map(id =&gt; makeEvent(id, componentInfo.prefix, EventName(&quot;filter_wheel&quot;)))
   .watchTermination()(Keep.right)
 
-publisher.publish(eventStream, failure ⇒ onError(failure))</code></pre></dd>
+publisher.publish(eventStream, failure =&gt; onError(failure))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/event/JEventPublishExamples.java#L44-L49" target="_blank" title="Go to snippet source"></a><code class="language-java">Source&lt;Event, CompletionStage&lt;Done&gt;&gt; eventStream = Source
@@ -373,7 +375,7 @@ return eventService.defaultPublisher().&lt;CompletionStage&lt;Done&gt;&gt;publis
 
   subscriber.subscribeCallback(
     Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))),
-    event ⇒ { /*do something*/ }
+    event =&gt; { /*do something*/ }
   )
 }</code></pre></dd>
   <dt>Java</dt>
@@ -426,11 +428,11 @@ private CompletableFuture&lt;String&gt; callback(Event event) {
 }
 
 object EventHandler {
-  val behavior: Behavior[Event] = Behaviors.setup { ctx ⇒
+  val behavior: Behavior[Event] = Behaviors.setup { ctx =&gt;
     //setup required for the actor
 
     Behaviors.receiveMessage {
-      case _ ⇒ //handle messages and return new behavior with changed state
+      case _ =&gt; //handle messages and return new behavior with changed state
         Behaviors.same
     }
   }
@@ -487,7 +489,7 @@ return subscriber.subscribe(Set.of(filterWheelEventKey)).to(Sink.foreach(event -
 
   subscriber.subscribeCallback(
     Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))),
-    event ⇒ { /*do something*/ },
+    event =&gt; { /*do something*/ },
     1.seconds,
     SubscriptionModes.RateAdapterMode
   )
@@ -513,7 +515,7 @@ return subscriber.subscribeCallback(Set.of(filterWheelEventKey), event -&gt; { /
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L91-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val subscriber = eventService.defaultSubscriber
-  subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event ⇒ { /*do something*/ })
+  subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event =&gt; { /*do something*/ })
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>

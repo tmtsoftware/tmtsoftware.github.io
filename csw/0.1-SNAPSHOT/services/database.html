@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="active page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -281,8 +283,8 @@ tmtsoftware/csw
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L26-L30" target="_blank" title="Go to snippet source"></a><code class="language-scala">val dbFactory = new DatabaseServiceFactory(ctx.system)
 
 dbFactory
-  .makeDsl(locationService, &quot;postgres&quot;)        // postgres is dbName
-  .foreach((dsl: DSLContext) ⇒ this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
+  .makeDsl(locationService, &quot;postgres&quot;)         // postgres is dbName
+  .foreach((dsl: DSLContext) =&gt; this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L37-L41" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory = new DatabaseServiceFactory(ctx.getSystem());
@@ -306,7 +308,7 @@ dbFactory
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L34-L36" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
   .makeDsl(locationService, &quot;postgres&quot;, &quot;DB_WRITE_USERNAME&quot;, &quot;DB_WRITE_PASSWORD&quot;)
-  .foreach((dsl: DSLContext) ⇒ this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
+  .foreach((dsl: DSLContext) =&gt; this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L45-L47" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory
@@ -321,7 +323,7 @@ dbFactory
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L40-L42" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
   .makeDsl()
-  .foreach((dsl: DSLContext) ⇒ this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
+  .foreach((dsl: DSLContext) =&gt; this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L51-L53" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory
@@ -377,7 +379,7 @@ dbFactory
 
 import csw.database.scaladsl.JooqExtentions.RichQuery
 val createResultF: Future[Integer] = createQuery.executeAsyncScala()
-createResultF.foreach(result ⇒ println(s&quot;Films table created with $result&quot;))</code></pre></dd>
+createResultF.foreach(result =&gt; println(s&quot;Films table created with $result&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L77-L79" target="_blank" title="Go to snippet source"></a><code class="language-java">Query createQuery = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;);
@@ -398,7 +400,7 @@ val queries = dsl.queries(
 
 import csw.database.scaladsl.JooqExtentions.RichQueries
 val batchResultF: Future[List[Int]] = queries.executeBatchAsync()
-batchResultF.foreach(results ⇒ println(s&quot;executed queries [$queries] with results [$results]&quot;))</code></pre></dd>
+batchResultF.foreach(results =&gt; println(s&quot;executed queries [$queries] with results [$results]&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L83-L92" target="_blank" title="Go to snippet source"></a><code class="language-java">String movie_2 = &quot;movie_2&quot;;
@@ -430,7 +432,7 @@ val selectQuery = dsl.resultQuery(&quot;SELECT id, name FROM films WHERE id = ?&
 
 import csw.database.scaladsl.JooqExtentions.RichResultQuery
 val selectResultF: Future[List[Films]] = selectQuery.fetchAsyncScala[Films]
-selectResultF.foreach(names ⇒ s&quot;Fetched names of films $names&quot;)</code></pre></dd>
+selectResultF.foreach(names =&gt; s&quot;Fetched names of films $names&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L96-L105" target="_blank" title="Go to snippet source"></a><code class="language-java">// domain model
@@ -462,7 +464,7 @@ selectResultF.thenAccept(names -&gt; System.out.println(&quot;Fetched names of f
   )
 
 val functionResultF: Future[Integer] = functionQuery.executeAsyncScala()
-functionResultF.foreach(result ⇒ println(s&quot;Function inc created with $result&quot;))</code></pre></dd>
+functionResultF.foreach(result =&gt; println(s&quot;Function inc created with $result&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L109-L116" target="_blank" title="Go to snippet source"></a><code class="language-java">Query functionQuery = dsl.query(&quot;CREATE FUNCTION inc(val integer) RETURNS integer AS $$\n&quot; +

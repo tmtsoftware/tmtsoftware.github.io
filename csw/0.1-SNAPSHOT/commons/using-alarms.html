@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -306,7 +308,7 @@ private def setCounterAlarm(counter: Int) = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlersAlarm.java#L193-L215" target="_blank" title="Go to snippet source"></a><code class="language-java">private AlarmSeverity getCounterSeverity(int counter) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlersAlarm.java#L194-L216" target="_blank" title="Go to snippet source"></a><code class="language-java">private AlarmSeverity getCounterSeverity(int counter) {
     if (counter &gt;= 0 &amp;&amp; counter &lt;= 10) {
         return JAlarmSeverity.Okay;
     } else if (counter &gt;= 11 &amp;&amp; counter &lt;= 15) {
@@ -323,7 +325,7 @@ private void setCounterAlarm(int counter) {
     cswCtx.alarmService().setSeverity(counterAlarmKey, severity)
             .whenComplete((d, ex) -&gt; {
                 if (ex != null) {
-                    log.error(&quot;Error setting severity for alarm &quot;+ counterAlarmKey.name() + &quot;: &quot; + ex.getMessage());
+                    log.error(&quot;Error setting severity for alarm &quot; + counterAlarmKey.name() + &quot;: &quot; + ex.getMessage());
                 } else {
                     log.info(&quot;Severity for alarm &quot; + counterAlarmKey.name() + &quot; set to &quot; + severity.toString());
                 }
@@ -357,10 +359,10 @@ private void setCounterAlarm(int counter) {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlersAlarm.java#L164-L179" target="_blank" title="Go to snippet source"></a><code class="language-java">private void processEvent(Event event) {
-    log.info(&quot;Event received: &quot;+ event.eventKey());
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlersAlarm.java#L165-L180" target="_blank" title="Go to snippet source"></a><code class="language-java">private void processEvent(Event event) {
+    log.info(&quot;Event received: &quot; + event.eventKey());
     if (event instanceof SystemEvent) {
-        SystemEvent sysEvent = (SystemEvent)event;
+        SystemEvent sysEvent = (SystemEvent) event;
         if (event.eventKey().equals(counterEventKey)) {
             int counter = sysEvent.parameter(hcdCounterKey).head();
             log.info(&quot;Counter = &quot; + counter);

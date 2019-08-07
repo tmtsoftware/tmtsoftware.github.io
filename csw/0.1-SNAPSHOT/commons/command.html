@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -426,7 +428,7 @@ CompletableFuture&lt;SubmitResponse&gt; finalSubmitResponse = hcdCmdService.quer
 <dl>
   <dt>Scala/submit w/invalid response</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L144-L156" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L146-L158" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
 val invalidCommandF = assemblyCmdService.submitAndWait(invalidSetup)
 async {
   await(invalidCommandF) match {
@@ -460,7 +462,7 @@ CompletableFuture&lt;SubmitResponse&gt; invalidCommandF =
 <dl>
   <dt>Scala/submit long running</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L177-L188" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup1 = Setup(prefix, longRunningCmd, obsId)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L179-L190" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup1 = Setup(prefix, longRunningCmd, obsId)
 
 val longRunningResultF = async {
   await(assemblyCmdService.submitAndWait(longRunningSetup1)) match {
@@ -495,7 +497,7 @@ CompletableFuture&lt;Optional&lt;Integer&gt;&gt; longRunningResultF =
 <dl>
   <dt>Scala/submit long running/query</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L196-L219" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup2 = longRunningSetup1.cloneCommand
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L198-L221" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup2 = longRunningSetup1.cloneCommand
 val longRunningQueryResultF = async {
   // The following val is set so we can do query and work and complete later
   val longRunningF = assemblyCmdService.submitAndWait(longRunningSetup2)
@@ -554,7 +556,7 @@ Assert.assertEquals(Optional.of(20), intF.get());</code></pre></dd>
 <dl>
   <dt>Scala/submit long running/queryFinal</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L224-L239" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup3 = longRunningSetup1.cloneCommand
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L226-L241" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup3 = longRunningSetup1.cloneCommand
 val queryFinalF = async {
   // The following submit is made without saving the Future!
   assemblyCmdService.submitAndWait(longRunningSetup3)
@@ -596,13 +598,13 @@ Assert.assertEquals(Optional.of(20), int3F.get());</code></pre></dd>
   <dt>Scala/submit w/immediate-response
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L162-L172" target="_blank" title="Go to snippet source"></a><code class="language-scala">val immediateSetup = Setup(prefix, immediateCmd, obsId)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L164-L174" target="_blank" title="Go to snippet source"></a><code class="language-scala">val immediateSetup = Setup(prefix, immediateCmd, obsId)
 val immediateCommandF = async {
   await(assemblyCmdService.submitAndWait(immediateSetup)) match {
-    case response: Completed ⇒
+    case response: Completed =&gt;
       //do something with completed result
       response
-    case otherResponse ⇒
+    case otherResponse =&gt;
       // do something with other response which is not expected
       otherResponse
   }
@@ -628,7 +630,7 @@ val immediateCommandF = async {
 <dl>
   <dt>Scala/submit w/invalid response</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L144-L156" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L146-L158" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
 val invalidCommandF = assemblyCmdService.submitAndWait(invalidSetup)
 async {
   await(invalidCommandF) match {
@@ -662,7 +664,7 @@ CompletableFuture&lt;SubmitResponse&gt; invalidCommandF =
 <dl>
   <dt>Scala/submit long running</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L177-L188" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup1 = Setup(prefix, longRunningCmd, obsId)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L179-L190" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup1 = Setup(prefix, longRunningCmd, obsId)
 
 val longRunningResultF = async {
   await(assemblyCmdService.submitAndWait(longRunningSetup1)) match {
@@ -697,7 +699,7 @@ CompletableFuture&lt;Optional&lt;Integer&gt;&gt; longRunningResultF =
 <dl>
   <dt>Scala/submit long running/query</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L196-L219" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup2 = longRunningSetup1.cloneCommand
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L198-L221" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup2 = longRunningSetup1.cloneCommand
 val longRunningQueryResultF = async {
   // The following val is set so we can do query and work and complete later
   val longRunningF = assemblyCmdService.submitAndWait(longRunningSetup2)
@@ -756,7 +758,7 @@ Assert.assertEquals(Optional.of(20), intF.get());</code></pre></dd>
 <dl>
   <dt>Scala/submit long running/queryFinal</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L224-L239" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup3 = longRunningSetup1.cloneCommand
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L226-L241" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningSetup3 = longRunningSetup1.cloneCommand
 val queryFinalF = async {
   // The following submit is made without saving the Future!
   assemblyCmdService.submitAndWait(longRunningSetup3)
@@ -796,14 +798,14 @@ Assert.assertEquals(Optional.of(20), int3F.get());</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L243-L254" target="_blank" title="Go to snippet source"></a><code class="language-scala">// `onewayCmd` is a sample to demonstrate oneway without any actions
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L245-L256" target="_blank" title="Go to snippet source"></a><code class="language-scala">// `onewayCmd` is a sample to demonstrate oneway without any actions
 val onewaySetup = Setup(prefix, onewayCmd, obsId)
 // Don&#39;t care about the futures from async
 val oneWayF = async {
   await(assemblyCmdService.oneway(onewaySetup)) match {
-    case invalid: Invalid ⇒
+    case invalid: Invalid =&gt;
     // Log an error here
-    case _ ⇒
+    case _ =&gt;
     // Ignore anything other than invalid
   }
 }
@@ -826,10 +828,10 @@ CompletableFuture onewayF = hcdCmdService
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L258-L268" target="_blank" title="Go to snippet source"></a><code class="language-scala">val validateCommandF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L260-L270" target="_blank" title="Go to snippet source"></a><code class="language-scala">val validateCommandF = async {
   await(assemblyCmdService.validate(immediateSetup)) match {
-    case response: Accepted ⇒ true
-    case Invalid(_, issue)  ⇒
+    case response: Accepted =&gt; true
+    case Invalid(_, issue)  =&gt;
       // do something with other response which is not expected
       log.error(s&quot;Command failed to validate with issue: $issue&quot;)
       false
@@ -864,7 +866,7 @@ Assert.assertTrue(validateCommandF.get());</code></pre></dd>
 <dl>
   <dt>Scala/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L275-L277" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Check on a command that was completed in the past
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L277-L279" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Check on a command that was completed in the past
 val queryValue = Await.result(assemblyCmdService.query(longRunningSetup2.runId), timeout.duration)
 queryValue shouldBe a[CompletedWithResult]</code></pre></dd>
   <dt>Java/query usage</dt>
@@ -877,7 +879,7 @@ Assert.assertTrue(queryResponseF2.get() instanceof CompletedWithResult);</code><
 <dl>
   <dt>Scala/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L285-L292" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L287-L294" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF = async {
   await(assemblyCmdService.submitAllAndWait(List(submitAllSetup1, submitAllSetup2, submitAllinvalidSetup)))
 }
 val submitAllResponse = Await.result(submitAllF, timeout.duration)
@@ -908,7 +910,7 @@ Assert.assertTrue(submitAllResponse.get(2) instanceof Invalid);</code></pre></dd
 <dl>
   <dt>Scala/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L296-L302" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF2 = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L298-L304" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF2 = async {
   await(assemblyCmdService.submitAllAndWait(List(submitAllSetup1, submitAllinvalidSetup, submitAllSetup2)))
 }
 val submitAllResponse2 = Await.result(submitAllF2, timeout.duration)
@@ -937,7 +939,7 @@ Assert.assertTrue(submitAllResponse2.get(1) instanceof Invalid);</code></pre></d
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L306-L322" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Subscriber code
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L308-L324" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Subscriber code
 val expectedEncoderValue = 234
 val currStateSetup       = Setup(prefix, hcdCurrentStateCmd, obsId).add(encoder.set(expectedEncoderValue))
 // Setup a callback response to CurrentState
@@ -1004,7 +1006,7 @@ currentStatePublisher.publish(currentState);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L329-L367" target="_blank" title="Go to snippet source"></a><code class="language-scala">val param: Parameter[Int] = encoder.set(100)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L331-L369" target="_blank" title="Go to snippet source"></a><code class="language-scala">val param: Parameter[Int] = encoder.set(100)
 val setupWithMatcher      = Setup(prefix, matcherCmd, obsId)
 
 // create a StateMatcher which specifies the desired algorithm and state to be matched.
@@ -1022,7 +1024,7 @@ val matcherResponseF: Future[MatcherResponse] = matcher.start
 val matchResponseF: Future[MatchingResponse] = async {
   val onewayResponse: OnewayResponse = await(assemblyCmdService.oneway(setupWithMatcher))
   onewayResponse match {
-    case Accepted(runId) ⇒
+    case Accepted(runId) =&gt;
       val matcherResponse = await(matcherResponseF)
       // create appropriate response if demand state was matched from among the published state or otherwise
       // this would allow the response to be used to complete a command received by the Assembly
@@ -1032,7 +1034,7 @@ val matchResponseF: Future[MatchingResponse] = async {
         case mf: MatchFailed =&gt;
           Error(setupWithMatcher.runId, mf.throwable.getMessage)
       }
-    case invalid: Invalid ⇒
+    case invalid: Invalid =&gt;
       matcher.stop()
       invalid
     case locked: Locked =&gt;
@@ -1086,7 +1088,7 @@ Assert.assertEquals(expectedResponse, actualResponse);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L371-L391" target="_blank" title="Go to snippet source"></a><code class="language-scala">val onewayMatchF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L373-L393" target="_blank" title="Go to snippet source"></a><code class="language-scala">val onewayMatchF = async {
   await(assemblyCmdService.onewayAndMatch(setupWithMatcher, demandMatcher)) match {
     case i: Invalid =&gt;
       // Command was not accepted

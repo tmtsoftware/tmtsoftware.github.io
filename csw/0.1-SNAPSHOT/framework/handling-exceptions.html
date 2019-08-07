@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -234,17 +236,17 @@ tmtsoftware/csw
       <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L153-L168" target="_blank" title="Go to snippet source"></a><code class="language-scala">case class HcdNotFoundException() extends FailureRestart(&quot;Could not resolve hcd location. Initialization failure.&quot;)
 
 private def resolveHcd(): Future[Option[AkkaLocation]] = {
-  val maybeConnection = componentInfo.connections.find(connection ⇒ connection.componentId.componentType == ComponentType.HCD)
+  val maybeConnection = componentInfo.connections.find(connection =&gt; connection.componentId.componentType == ComponentType.HCD)
   maybeConnection match {
-    case Some(hcd) ⇒
+    case Some(hcd) =&gt;
       cswCtx.locationService.resolve(hcd.of[AkkaLocation], 5.seconds).map {
-        case loc @ Some(akkaLocation) ⇒ loc
-        case None                     ⇒
+        case loc @ Some(akkaLocation) =&gt; loc
+        case None                     =&gt;
           // Hcd connection could not be resolved for this Assembly. One option to handle this could be to automatic restart which can give enough time
           // for the Hcd to be available
           throw HcdNotFoundException()
       }
-    case _ ⇒ Future.successful(None)
+    case _ =&gt; Future.successful(None)
   }
 }</code></pre></dd>
       <dt>Java</dt>
@@ -286,8 +288,8 @@ private CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolveHcd() {
 private def getAssemblyConfig: Future[ConfigData] = {
 
   configClientService.getActive(Paths.get(&quot;tromboneAssemblyContext.conf&quot;)).flatMap {
-    case Some(config) ⇒ Future.successful(config) // do work
-    case None         ⇒
+    case Some(config) =&gt; Future.successful(config) // do work
+    case None         =&gt;
       // required configuration could not be found in the configuration service. Component can choose to stop until the configuration is made available in the
       // configuration service and started again
       throw ConfigNotAvailableException()

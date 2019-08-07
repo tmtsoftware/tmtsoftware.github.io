@@ -173,6 +173,7 @@ tmtsoftware/csw
     <li><a href="../services/time.html" class="page">Time Service</a></li>
     <li><a href="../services/database.html" class="page">Database Service</a></li>
     <li><a href="../services/aas.html" class="page">Authentication and Authorization Service (AAS)</a></li>
+    <li><a href="../services/sequencerCommandService.html" class="page">Sequencer Command Service</a></li>
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
@@ -195,6 +196,7 @@ tmtsoftware/csw
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
+    <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
@@ -302,10 +304,10 @@ private val adminAPI2 = new AlarmServiceFactory().makeAdminApi(locationService)<
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/alarm/JAlarmServiceClientExampleApp.java#L29-L33" target="_blank" title="Go to snippet source"></a><code class="language-java">// create alarm client using host and port of alarm server
- IAlarmService jclientAPI1 = new AlarmServiceFactory().jMakeClientApi(&quot;localhost&quot;, 5227, actorSystem);
+IAlarmService jclientAPI1 = new AlarmServiceFactory().jMakeClientApi(&quot;localhost&quot;, 5227, actorSystem);
 
 // create alarm client using location service
- IAlarmService jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jLocationService, actorSystem);</code></pre></dd>
+IAlarmService jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jLocationService, actorSystem);</code></pre></dd>
 </dl>
 <h2><a href="#rules-and-checks" name="rules-and-checks" class="anchor"><span class="anchor-link"></span></a>Rules and checks</h2>
 <ul>
@@ -542,7 +544,7 @@ healthF.onComplete {
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L120-L125" target="_blank" title="Go to snippet source"></a><code class="language-scala">val alarmSubscription: AlarmSubscription = adminAPI.subscribeAggregatedSeverityCallback(
   ComponentKey(NFIRAOS, &quot;tromboneAssembly&quot;),
-  aggregatedSeverity ⇒ { /* do something*/ }
+  aggregatedSeverity =&gt; { /* do something*/ }
 )
 // to unsubscribe:
 val unsubscribe1F: Future[Done] = alarmSubscription.unsubscribe()</code></pre></dd>
@@ -566,7 +568,7 @@ val unsubscribe2F: Future[Done] = alarmSubscription2.unsubscribe()</code></pre><
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L138-L144" target="_blank" title="Go to snippet source"></a><code class="language-scala">val alarmSubscription3: AlarmSubscription = adminAPI.subscribeAggregatedHealthCallback(
   ComponentKey(IRIS, &quot;ImagerDetectorAssembly&quot;),
-  aggregatedHealth ⇒ { /* do something*/ }
+  aggregatedHealth =&gt; { /* do something*/ }
 )
 
 // to unsubscribe
