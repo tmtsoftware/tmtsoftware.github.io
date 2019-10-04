@@ -193,22 +193,25 @@ tmtsoftware/csw
 <h2><a href="#prerequisites" name="prerequisites" class="anchor"><span class="anchor-link"></span></a>Prerequisites</h2>
 <p>To run a client app with AAS access, we need</p>
 <ul>
-  <li>CSW Location Service running</li>
-  <li>AAS instance running and registered with Location Service</li>
-  <li>protected HTTP server running</li>
+  <li>The CSW Location Service running</li>
+  <li>An AAS instance running and registered with the Location Service</li>
+  <li>A protected HTTP server running</li>
 </ul>
 <p>All of these can be running on different machines. To start a Location Service and AAS server on a local machine, you can make use of the<code>csw-services.sh</code> script.</p>
 <h2><a href="#application-configurations" name="application-configurations" class="anchor"><span class="anchor-link"></span></a>Application Configurations</h2>
 <p>All AAS related configurations go inside an <code>auth-config</code> block in your <code>application.conf</code> file. There are two configurations applicable for a public client application: <code>realm</code> and <code>client-id</code>.</p>
 <p><code>realm</code> has a default value of <code>TMT</code> if not specified. Normally, all apps in TMT should not have to override this, however it might be useful to override this while testing your app.</p>
 <p><code>client-id</code> is a mandatory configuration which specifies the client ID of the app as per its registration in AAS.</p>
+<p><code>disabled</code> is an optional configuration with default value of <code>false</code>. This flag can be turned on for local development and testing purposes. It can greatly ease the process of testing business logic without having to go through the process of creating users, managing roles and logging in with user credentials to generate valid access tokens. For it to work, the same flag needs to turned on in the server application too.</p><div class="callout warning "><div class="callout-title">Caution</div>
+<p>This should not be used in production</p></div>
 <pre class="prettyprint"><code class="language-hocon">auth-config {
   realm = TMT # DEFAULT
   client-id = demo-cli # REQUIRED
+  disabled = false # DEFAULT
 }
 </code></pre>
 <h2><a href="#building-a-cli-application" name="building-a-cli-application" class="anchor"><span class="anchor-link"></span></a>Building a CLI Application</h2>
-<p>Let&rsquo;s say that we have an existing akka-http application which has some open and some protected routes, and we want to build a CLI client which accesses these routes.</p>
+<p>Let&rsquo;s say that we have an existing Akka HTTP application which has some open and some protected routes, and we want to build a CLI client which accesses these routes.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -279,7 +282,7 @@ val routes: Route =
 </dl>
 <p>The statement <code>LocationServerStatus.requireUpLocally()</code> ensures that the Location Service is up and running before proceeding further. If it is not running, an exception will be thrown and the application will exit.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>In a real application, you would ideally want to use <code>LocationServerStatus.requireUp</code> which takes <code>locationHost: String</code> parameter instead of looking for the Location Service on the localhost. </p></div>
-<p>Next, we will instantiate <code>InstalledAppAuthAdapter</code>. There is a factory already available to create the required instance. We will create a small factory on top this factory to keep our Main.scala clean.</p>
+<p>Next, we will instantiate <code>InstalledAppAuthAdapter</code>. There is a factory already available to create the required instance. We will create a small factory on top of this factory to keep our Main.scala clean.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -341,7 +344,7 @@ val routes: Route =
   }
 }</code></pre></dd>
 </dl>
-<p>Here the constructor takes an <code>InstalledAppAuthAdapter</code> as a parameter and in the <code>run</code> method, it calls <code>installedAppAuthAdapter.login()</code>. This method opens a browser and redirects the user to a TMT login screen (served by AAS). In the background, it starts an HTTP server on a random port. Once the user submits the correct credentials on the login screen, AAS redirects the user to <code>http://localhost:[SomePort]</code> with the access and refresh tokens in a query string. The <code>InstalledAppAuthAdapter</code> will then save these tokens to the file system using <code>FileAuthStore</code>. After this, <code>InstalledAppAuthAdapter</code> will shut down the local server since it is no longer needed. The user can then close the browser.</p>
+<p>Here the constructor takes an <code>InstalledAppAuthAdapter</code> as a parameter, and in the <code>run</code> method, it calls <code>installedAppAuthAdapter.login()</code>. This method opens a browser and redirects the user to a TMT login screen (served by AAS). In the background, it starts an HTTP server on a random port. Once the user submits the correct credentials on the login screen, AAS redirects the user to <code>http://localhost:[SomePort]</code> with the access and refresh tokens in a query string. The <code>InstalledAppAuthAdapter</code> will then save these tokens to the file system using <code>FileAuthStore</code>. After this, <code>InstalledAppAuthAdapter</code> will shut down the local server since it is no longer needed. The user can then close the browser.</p>
 <p>If you want to develop a CLI app that is not dependent on a browser, you can call <code>loginCommandLine()</code> method instead of <code>login()</code>. This will prompt the user to provide credentials in the CLI instead of opening a browser.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>While the <code>loginCommandLine()</code> method is available, a browser is generally more user-friendly since it can store cookies and remember passwords.</p></div>
 <h3><a href="#logout" name="logout" class="anchor"><span class="anchor-link"></span></a>Logout</h3>
@@ -378,9 +381,9 @@ val routes: Route =
 ) extends AppCommand {
   override def run(): Unit = {
 
-    installedAppAuthAdapter.getAccessTokenString() match {
+    installedAppAuthAdapter.getAccessToken() match {
       case Some(token) =&gt;
-        val bearerToken = headers.OAuth2BearerToken(token)
+        val bearerToken = headers.OAuth2BearerToken(token.value)
         val url         = s&quot;http://localhost:7000/data?value=$value&quot;
         val response =
           Await.result(
@@ -410,7 +413,7 @@ val routes: Route =
 </dl>
 <p>The WriteCommand constructor takes an <code>InstalledAppAuthAdapter</code> and a string value, passed in at the command line. Since the post route is protected by a realm role policy in our example server, we need to pass a bearer token in the request header. </p>
 <p><code>installedAppAuthAdapter.getAccessTokenString()</code> checks the <code>FileAuthStore</code> and returns an <code>Option[String]</code>. If the Option is <code>None</code>, it means that user has not logged in and an error message is displayed. If the token is found, the bearer token is obtained and passed in the header of the request to the HTTP server. The HTTP server uses this token to determine whether the client has the proper permissions to perform the request.</p>
-<p>If the response status code is 200, it means authentication and authorization were successful. In our example, authorization required that the user had <code>admin</code> role. </p>
+<p>If the response status code is 200, it means authentication and authorization were successful. In our example, authorization required that the user had the <code>admin</code> role. </p>
 <p>If the response is 401 (<code>StatusCodes.Unauthorized</code>), there is something wrong with the token. It could indicate that token has expired or does not have a valid signature. <code>InstalledAppAuthAdapter</code> ensures that you don&rsquo;t send a request with an expired token. If the access token is expired, it refreshes the access token with the help of a <code>refresh</code> token. If the refresh token has also expired, it returns <code>None</code> which means that user has to log in again.</p>
 <p>If the response is 403 (<code>StatusCodes.Forbidden</code>), the token is valid but the token is not authorized to perform that action. In our example, this would occur if the user does not have the <code>admin</code> role.</p>
 <h2><a href="#source-code-for-above-examples" name="source-code-for-above-examples" class="anchor"><span class="anchor-link"></span></a>Source code for above examples</h2>
