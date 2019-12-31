@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -217,6 +216,7 @@ tmtsoftware/csw
     <li><a href="../framework/handling-lifecycle.html#shutting-down" class="header">Shutting Down</a></li>
     <li><a href="../framework/handling-lifecycle.html#component-online-and-offline" class="header">Component Online and Offline</a></li>
     <li><a href="../framework/handling-lifecycle.html#handling-commands" class="header">Handling commands</a></li>
+    <li><a href="../framework/handling-lifecycle.html#handling-diagnostic-data" class="header">Handling Diagnostic Data</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -244,6 +244,7 @@ tmtsoftware/csw
     <li><a href="../framework/handling-lifecycle.html#shutting-down" class="header">Shutting Down</a></li>
     <li><a href="../framework/handling-lifecycle.html#component-online-and-offline" class="header">Component Online and Offline</a></li>
     <li><a href="../framework/handling-lifecycle.html#handling-commands" class="header">Handling commands</a></li>
+    <li><a href="../framework/handling-lifecycle.html#handling-diagnostic-data" class="header">Handling Diagnostic Data</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -257,18 +258,17 @@ tmtsoftware/csw
 <h1><a href="#component-handlers" name="component-handlers" class="anchor"><span class="anchor-link"></span></a>Component Handlers</h1>
 <p>A component developer creates a Top Level Actor (TLA) by inheriting from an abstract class <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/framework/scaladsl/ComponentHandlers.html">ComponentHandlers</a> or <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/java/?csw/framework/javadsl/JComponentHandlers.html">JComponentHandlers</a> for Scala or Java, respectively. Each of these abstract classes provides several <strong>handler</strong> methods that can be overridden by the developer to provide component-specific code as described below. </p>
 <h2><a href="#component-lifecycle" name="component-lifecycle" class="anchor"><span class="anchor-link"></span></a>Component Lifecycle</h2>
-<p>For each component, the CSW framework creates a <code>Supervisor</code> that creates the TLA, and along with the abstract behavior class provided by the framework, it starts up and intiailizes the component in a standardized way. At the conclusion of the startup of the component, it is ready to receive commands from the outside world. The following figure is used to describe the startup lifecycle interactions between the framework and the TLA.</p>
+<p>For each component, the CSW framework creates a <code>Supervisor</code> that creates the TLA, and along with the abstract behavior class provided by the framework, it starts up and initializes the component in a standardized way. At the conclusion of the startup of the component, it is ready to receive commands from the outside world. The following figure is used to describe the startup lifecycle interactions between the framework and the TLA.</p>
 <p><img src="../images/framework/Lifecycle.png" alt="lifecycle" /></p>
-<p>As described in <a href="../commons/create-component.html">Creating a Component</a>, in either standalone or when running within a container, a <code>Supervisor</code> is created with a <a href="describing-components.html">ComponentInfo</a> file. The figure shows that the Supervisor in the framework creates the specified TLA. Once the TLA is created, the framework calls the <code>initialize</code> handler. This is the oportunity for the component to perform initialization needed before it is ready to receive commands.</p>
-<p>The TLA indicates a successful <code>initialize</code> by returning. If it cannot initialize, it can throw an exception, which will be caught and logged. The Supervisor will retry the creation and initialization of the TLA three times. If it fails after three times processing stops.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>After failing to create and initialize three times, the Supervisor will log a message and stop. In the future when the Alarm Service exists, there will probably be an alarm that will be set to notify the operator of a failure since there is serious problem.</p></div>
-<p>When <code>initialize</code> succeeds, the Supervisor in the framework and the component itself enter the Running state. When in the Running state, commands received from outside the component are passed to the TLA (see below).</p>
 <h3><a href="#initialize" name="initialize" class="anchor"><span class="anchor-link"></span></a>initialize</h3>
-<p>The <code>initialize</code> handler is invoked when the component is created. This is different than constructor initialization to allow non-blocking asynchronous operations. The component can initialize state such as configuration to be fetched from Configuration Service, location of components or services to be fetched from Location Service etc. These vary from component to component.</p>
+<p>As described in <a href="../commons/create-component.html">Creating a Component</a>, a <code>Supervisor</code> is created based on the contents of the <a href="describing-components.html">ComponentInfo</a> file. The figure shows that the Supervisor in the framework creates the specified TLA. Once the TLA is created, the framework calls the <code>initialize</code> handler. This is the opportunity for the component to perform any initialization needed before it is ready to receive commands.</p>
+<p>The implementation of the <code>initialize</code> handler is up to the developer. A common task will be for the component to fetch a configuration from the Configuration Service. It may also determine the location of components or services it needs from the Location Service.</p>
+<p>The TLA indicates a successful <code>initialize</code> by returning normally. If it cannot initialize, the handler should throw an exception, which will be caught and logged. The Supervisor will retry the creation and initialization of the TLA three times. If it fails after three times, the Supervisor will log a message and stop.</p>
+<p>When <code>initialize</code> succeeds, the Supervisor in the framework and the component itself enter the Running state. When in the Running state, commands received from outside the component are passed to the TLA (see below).</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L38-L67" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def initialize(): Future[Unit] = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L40-L69" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def initialize(): Future[Unit] = async {
 
   // Initialization could include following steps :
 
@@ -300,7 +300,7 @@ tmtsoftware/csw
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L76-L104" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L75-L103" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
 
     // fetch config (preferably from configuration service)
@@ -312,7 +312,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 
     // find a Hcd connection from the connections provided in componentInfo
     Optional&lt;Connection&gt; mayBeConnection = componentInfo.getConnections().stream()
-            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD)
+            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD())
             .findFirst();
 
     // If an Hcd is found as a connection, resolve its location from location service and create other
@@ -330,7 +330,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L43-L55" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def initialize(): Future[Unit] = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L45-L57" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def initialize(): Future[Unit] = async {
 
   // fetch config (preferably from configuration service)
   val hcdConfig = await(getHcdConfig)
@@ -345,7 +345,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L64-L82" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L66-L84" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
 
     // fetch config (preferably from configuration service)
@@ -371,32 +371,31 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 <p>Once the Supervisor and TLA are in the Running state, the Supervisor registers the component with the Location Service. This allows the component to be located so it can be contacted. Registration with Location Service happens only if locationServiceUsage in <a href="describing-components.html">ComponentInfo</a> is not set to <code>DoNotRegister</code>.</p>
 <p>If the component has connections and locationServiceUsage in <a href="describing-components.html">ComponentInfo</a> is set to <code>RegisterAndTrackServices</code>, the framework will resolve the components and deliver <code>TrackingEvent</code>s to the TLA through the <code>onTrackingEvent</code> <a href="tracking-connections.html"><code>onTrackingEvent</code></a> handler. </p>
 <h2><a href="#shutting-down" name="shutting-down" class="anchor"><span class="anchor-link"></span></a>Shutting Down</h2>
-<p>A component may be shutdown by an external administrative program whether it is deployed in a container or standalone. Shutting down may occur when the component is <code>Running</code>/<code>onLine</code> or <code>offLine</code> (see below).</p>
-<p>The TLA provides a handler called <code>onShutdown</code> that is called by the Supervisor when shutting down to give the TLA an opportunity to perform any clean up it may require such as freeing resources.</p>
-<p>As with <code>initialize</code> the framework will only wait for 10 seconds for the component to return from <code>doShutdown</code>. If it does not return, it is assumed the TLA is damaged. After successful return from <code>doShutdown</code>, the Supervisor deletes the component. The <code>doShutdown</code> timeout cannot be changed.</p>
+<p>A component may be shutdown by an external administrative program whether it is deployed in a container or standalone. Shutting down may occur when the component is in the <code>Running</code> state, either <code>online</code> or <code>offline</code> (see below).</p>
 <h3><a href="#onshutdown" name="onshutdown" class="anchor"><span class="anchor-link"></span></a>onShutdown</h3>
-<p>The <code>onShutdown</code> handler can be used for carrying out the tasks which will allow the component to shutdown gracefully. </p>
+<p>The TLA provides a handler called <code>onShutdown</code> that is called by the Supervisor when shutting down to give the TLA an opportunity to perform any clean up it may require, such as freeing resources.</p>
+<p>As with <code>initialize</code>, there is a timeout that the framework will wait for the component to return from <code>onShutdown</code>. This is currently set to 10 seconds and cannot be overridden. If it does not return, it is assumed that the TLA is damaged and the TLA is destroyed immediately. After a successful return from <code>onShutdown</code>, the Supervisor deletes the component. </p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L104-L106" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onShutdown(): Future[Unit] = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L106-L108" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onShutdown(): Future[Unit] = async {
   // clean up resources
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L159-L163" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L167-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public CompletableFuture&lt;Void&gt; jOnShutdown() {
     // clean up resources
     return new CompletableFuture&lt;&gt;();
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L92-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onShutdown(): Future[Unit] = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L94-L96" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onShutdown(): Future[Unit] = async {
   // clean up resources
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L136-L141" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L146-L151" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public CompletableFuture&lt;Void&gt; jOnShutdown() {
     return CompletableFuture.runAsync(() -&gt; {
         // clean up resources
@@ -404,13 +403,14 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 }</code></pre></dd>
 </dl>
 <h3><a href="#restarting" name="restarting" class="anchor"><span class="anchor-link"></span></a>Restarting</h3>
-<p>A component may be restarted by an external administrative program whether it is deployed in a container or standalone. A restart may occur when the component is <code>Running</code>/<code>onLine</code> or <code>offLine</code> (see below).</p>
+<p>A component may be restarted by an external administrative program whether it is deployed in a container or standalone. A restart may occur when the component is in the <code>Running</code> state, either <code>online</code> or <code>offline</code> (see below).</p>
 <p>A <code>restart</code> causes the component to be destroyed and re-created with a new TLA. The <code>onShutdown</code> handler is called to allow the component to tidy up before it is destroyed. Then the Supervisor creates a new TLA and the startup proceeds as with <code>initialize</code> above.</p>
 <h2><a href="#component-online-and-offline" name="component-online-and-offline" class="anchor"><span class="anchor-link"></span></a>Component Online and Offline</h2>
 <p><code>Online</code> describes a component that is currently part of the observing system that is in use. When a component enters the Running state it is also &ldquo;online&rdquo;.</p>
 <p>A component is <code>offline</code> when it is operating and available for active observing but is not currently in use.</p>
 <p>If a component is to transition from the online state to the offline state, the <code>onGoOffLine</code> handler is called. The component should make any changes in its operation for offline use.</p>
-<p>If a component is to transition from the offline state to the online state, the <code>onGoOnline</code> handler is called. The component should make any changes in its operation needed for online use.</p>
+<p>If a component is to transition from the offline state to the online state, the <code>onGoOnline</code> handler is called. The component should make any changes in its operation needed for online use.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Unless implemented by the developer, there is no fundamental difference in the inherent behavior of a component when in either state. These two states provide a standard way for code to be implemented via these handlers for the transition from one state to another, allowing the component to prepare itself to be online (ready for operations) or offline (stowed or dormant). Any call to transition to a online/offline state when the component is already in that state is a no op.</p></div>
 <h3><a href="#isonline" name="isonline" class="anchor"><span class="anchor-link"></span></a>isOnline</h3>
 <p>A component has access to the <code>isOnline</code> boolean flag, which can be used to determine if the component is in the online or offline state.</p>
 <h3><a href="#ongooffline" name="ongooffline" class="anchor"><span class="anchor-link"></span></a>onGoOffline</h3>
@@ -418,7 +418,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L92-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOffline(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L94-L96" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOffline(): Unit = {
   // do something when going offline
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
@@ -429,12 +429,12 @@ public void onGoOffline() {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L80-L82" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOffline(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L82-L84" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOffline(): Unit = {
   // do something when going offline
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L122-L125" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L124-L127" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public void onGoOffline() {
     // do something when going offline
 }</code></pre></dd>
@@ -444,7 +444,7 @@ public void onGoOffline() {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L98-L100" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOnline(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L100-L102" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOnline(): Unit = {
   // do something when going online
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
@@ -455,83 +455,85 @@ public void onGoOnline() {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L86-L88" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOnline(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L88-L90" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOnline(): Unit = {
   // do something when going online
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L129-L132" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L131-L134" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public void onGoOnline() {
     // do something when going online
 }</code></pre></dd>
 </dl>
 <h2><a href="#handling-commands" name="handling-commands" class="anchor"><span class="anchor-link"></span></a>Handling commands</h2>
 <p>The remaining handlers are associated with handling incoming commands. There is a handler for submit commands called <code>onSubmit</code> and a handler for oneway called <code>onOneway</code>.</p>
+<p>This section gives an introduction to the command handlers. For more information on how to send and monitor commands, see the <a href="../commons/command.html">Communication using Commands</a> page.</p>
 <h3><a href="#validatecommand" name="validatecommand" class="anchor"><span class="anchor-link"></span></a>validateCommand</h3>
-<p>Whenever a command is received by a component it is first validated. The component should inspect the command and its parameters to determine if the actions related to the command can be executed or started. For instance, if an Assembly or HCD can only handle one command at a time, <code>validateCommand</code> should return an return <code>Invalid</code> if a second command is received.</p>
-<p>A command can be sent as a <code>Submit</code> or <code>Oneway</code> message to the component. The <code>onSubmit</code> and <code>onOneway</code> handlers are only called if <code>validateCommand</code> returns <code>Accepted</code>. <code>Oneway</code> messages return their validation response or indicate the component is currently locked as a <code>OnewayResponse</code>. The <code>onSubmit</code> handler can complete the actions immediately by returning a <code>SubmitResponse</code> indicating the final response (<code>Completed</code>, <code>CompletedWithResult</code>, <code>Error</code>). If the command actions require time for processing, the <code>onSubmit</code> handler returns <code>Started</code> indicating to the framework that there are long-running actions. More information about sending commands using <code>CommandService</code> is <a href="../commons/command.html">here</a></p>
+<p>The <code>validateCommand</code> handler allows the component to inspect a command and its parameters to determine if the actions related to the command can be executed or started. If it is okay, an <code>Accepted</code> response is returned. If not, <code>Invalid</code> is returned. Validation may also take into consideration the state of the component. For instance, if an Assembly or HCD can only handle one command at a time, <code>validateCommand</code> should return an return <code>Invalid</code> if a second command is received.</p>
+<p>The handler is called whenever a command is sent as a <code>Submit</code> or <code>Oneway</code> message to the component. If the handler returns <code>Accepted</code>, the corresponding <code>onSubmit</code> or <code>onOneway</code> handler is called. This handler can also be called when the Command Service method <code>validateCommand</code> is used, to preview the acceptance of a command before it is sent using <code>submit</code> or <code>oneway</code>. In this case, the <code>onSubmit</code> or <code>onOneway</code> handler is not called.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L71-L74" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): ValidateCommandResponse = controlCommand match {
-  case _: Setup   =&gt; Accepted(controlCommand.runId) // validation for setup goes here
-  case _: Observe =&gt; Accepted(controlCommand.runId) // validation for observe goes here
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L73-L76" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = controlCommand match {
+  case _: Setup   =&gt; Accepted(runId) // validation for setup goes here
+  case _: Observe =&gt; Accepted(runId) // validation for observe goes here
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L108-L119" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
-public CommandResponse.ValidateCommandResponse validateCommand(ControlCommand controlCommand) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L107-L118" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+public CommandResponse.ValidateCommandResponse validateCommand(Id runId, ControlCommand controlCommand) {
     if (controlCommand instanceof Setup) {
         // validation for setup goes here
-        return new CommandResponse.Accepted(controlCommand.runId());
+        return new CommandResponse.Accepted(runId);
     } else if (controlCommand instanceof Observe) {
         // validation for observe goes here
-        return new CommandResponse.Accepted(controlCommand.runId());
+        return new CommandResponse.Accepted(runId);
     } else {
-        return new CommandResponse.Invalid(controlCommand.runId(), new CommandIssue.AssemblyBusyIssue(&quot;Command not supported&quot;));
+        return new CommandResponse.Invalid(runId, new CommandIssue.AssemblyBusyIssue(&quot;Command not supported&quot;));
     }
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L59-L62" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(controlCommand: ControlCommand): ValidateCommandResponse = controlCommand match {
-  case _: Setup   =&gt; Accepted(controlCommand.runId) // validation for setup goes here
-  case _: Observe =&gt; Accepted(controlCommand.runId) // validation for observe goes here
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L61-L64" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = controlCommand match {
+  case _: Setup   =&gt; Accepted(runId) // validation for setup goes here
+  case _: Observe =&gt; Accepted(runId) // validation for observe goes here
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L85-L96" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
-public CommandResponse.ValidateCommandResponse validateCommand(ControlCommand controlCommand) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L87-L98" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+public CommandResponse.ValidateCommandResponse validateCommand(Id runId, ControlCommand controlCommand) {
     if (controlCommand instanceof Setup) {
         // validation for setup goes here
-        return new CommandResponse.Accepted(controlCommand.runId());
+        return new CommandResponse.Accepted(runId);
     } else if (controlCommand instanceof Observe) {
         // validation for observe goes here
-        return new CommandResponse.Accepted(controlCommand.runId());
+        return new CommandResponse.Accepted(runId);
     } else {
-        return new CommandResponse.Invalid(controlCommand.runId(), new CommandIssue.UnsupportedCommandIssue(controlCommand.commandName().name()));
+        return new CommandResponse.Invalid(runId, new CommandIssue.UnsupportedCommandIssue(controlCommand.commandName().name()));
     }
 }</code></pre></dd>
 </dl>
-<p>If a response can be provided immediately, a final <code>CommandResponse</code> such as <code>CommandCompleted</code> or <code>Error</code> can be sent from this handler.</p>
 <h3><a href="#onsubmit" name="onsubmit" class="anchor"><span class="anchor-link"></span></a>onSubmit</h3>
-<p>On receiving a command sent using the <code>submit</code> message, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. The <code>onSubmit</code> handler returns a <code>SubmitResponse</code> indicating if the command is completed immediately, or if it is long-running by returning a <code>Started</code> response. The example shows one way to process <code>Setup</code> and <code>Observe</code> commands separately.</p>
+<p>On receiving a command sent using the <code>submit</code> message, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. The <code>onSubmit</code> handler returns a <code>SubmitResponse</code> indicating if the command is completed immediately, or if it is long-running by returning a <code>Started</code> response. Completion of a long running command is then tracked using the <code>CommandResponseManager</code>, described in more detail in the <a href="managing-command-state.html">Managing Command State</a> page. </p>
+<p>The example shows one way to process <code>Setup</code> and <code>Observe</code> commands separately.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L78-L81" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(controlCommand: ControlCommand): SubmitResponse = controlCommand match {
-  case setup: Setup     =&gt; submitSetup(setup)     // includes logic to handle Submit with Setup config command
-  case observe: Observe =&gt; submitObserve(observe) // includes logic to handle Submit with Observe config command
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L80-L83" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(runId: Id, controlCommand: ControlCommand): SubmitResponse = controlCommand match {
+  case setup: Setup     =&gt; submitSetup(runId, setup)     // includes logic to handle Submit with Setup config command
+  case observe: Observe =&gt; submitObserve(runId, observe) // includes logic to handle Submit with Observe config command
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L123-L131" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
-public CommandResponse.SubmitResponse onSubmit(ControlCommand controlCommand) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L122-L131" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+public CommandResponse.SubmitResponse onSubmit(Id runId, ControlCommand controlCommand) {
     if (controlCommand instanceof Setup)
-        return submitSetup((Setup) controlCommand); // includes logic to handle Submit with Setup config command
+        return submitSetup(runId, (Setup) controlCommand); // includes logic to handle Submit with Setup config command
     else if (controlCommand instanceof Observe)
-        return submitObserve((Observe) controlCommand); // includes logic to handle Submit with Observe config command
+        return submitObserve(runId, (Observe) controlCommand); // includes logic to handle Submit with Observe config command
     else
-        return new CommandResponse.Error(controlCommand.runId(), &quot;Submitted command not supported: &quot; + controlCommand.commandName().name());
+        return new CommandResponse.Error(runId,
+                &quot;Submitted command not supported: &quot; + controlCommand.commandName().name());
 }</code></pre></dd>
 </dl>
 <h3><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h3>
@@ -539,21 +541,79 @@ public CommandResponse.SubmitResponse onSubmit(ControlCommand controlCommand) {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L85-L88" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onOneway(controlCommand: ControlCommand): Unit = controlCommand match {
-  case setup: Setup     =&gt; onewaySetup(setup)     // includes logic to handle Oneway with Setup config command
-  case observe: Observe =&gt; onewayObserve(observe) // includes logic to handle Oneway with Observe config command
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L87-L90" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onOneway(runId: Id, controlCommand: ControlCommand): Unit = controlCommand match {
+  case setup: Setup     =&gt; onewaySetup(runId, setup)     // includes logic to handle Oneway with Setup config command
+  case observe: Observe =&gt; onewayObserve(runId, observe) // includes logic to handle Oneway with Observe config command
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L135-L141" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
-public void onOneway(ControlCommand controlCommand) {
+public void onOneway(Id runId, ControlCommand controlCommand) {
     if (controlCommand instanceof Setup)
-        onewaySetup((Setup) controlCommand); // includes logic to handle Oneway with Setup config command
+        onewaySetup(runId, (Setup) controlCommand); // includes logic to handle Oneway with Setup config command
     else if (controlCommand instanceof Observe)
-        onewayObserve((Observe) controlCommand); // includes logic to handle Oneway with Observe config command
+        onewayObserve(runId, (Observe) controlCommand); // includes logic to handle Oneway with Observe config command
 }</code></pre></dd>
 </dl>
-<p>More information on handling commands is provided <a href="../commons/command.html">here</a>.</p>
+<h2><a href="#handling-diagnostic-data" name="handling-diagnostic-data" class="anchor"><span class="anchor-link"></span></a>Handling Diagnostic Data</h2>
+<h3><a href="#ondiagnosticmode" name="ondiagnosticmode" class="anchor"><span class="anchor-link"></span></a>onDiagnosticMode</h3>
+<p>A Component can receive a <code>DiagnosticMode</code> command from other components at any time. The <code>onDiagnosticMode</code> handler of the component is invoked on receiving the command. Inside the handler, the components can start publishing some diagnostic data as desired. The <code>DiagnosticMode</code> command can be received by a component only in the Running state and is ignored otherwise. The diagnosticMode handler contains a <code>startTime</code> which is a <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/core/models/UTCTime.html">UTCTime</a> and a String parameter called <code>hint</code> with the name of the technical data mode. The component should read the hint and publish events accordingly.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>A component developer should be careful to make any changes in the component&rsquo;s internal state in any callbacks. For example,  while calling <code>timeServiceScheduler.schedule</code> or <code>eventPublisher.publish</code>, if you are trying to mutate state in  the callbacks passed to them, you might run into concurrency issues. Hence, in such scenarios, it is recommended to  use a <code>WorkerActor</code> to manage the state.</p></div>
+<p>The startTime is included so a diagnosticMode can be synchronized in time with diagnosticMode starting in other components. The Time Service can be used to schedule execution of some tasks at the specified startTime. Event Service publish Api can also be used in order to start publishing events at the specified startTime. A component can only be in one technical data mode at a time. If the component is in one technical data, then on receiving command to go in another technical mode, the component should stop/halt the previous<br/>diagnosticMode handler, and should enter the new technical data mode. Even if the component does not define any diagnostic modes, it must be prepared to receive and process diagnosticMode handler without an error by completing with no changes.</p>
+<p>The supported diagnostic mode hints of a component are published in the component&rsquo;s model files. Unsupported hints should be rejected by a component.</p>
+<p>The example shows one usage of <code>onDiagnosticMode</code> handler.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/framework/SampleComponentHandlers.scala#L115-L127" target="_blank" title="Go to snippet source"></a><code class="language-scala">// While dealing with mutable state, make sure you create a worker actor to avoid concurrency issues
+// For functionality demonstration, we have simply used a mutable variable without worker actor
+var diagModeCancellable: Option[Cancellable] = None
+
+override def onDiagnosticMode(startTime: UTCTime, hint: String): Unit = {
+  hint match {
+    case &quot;engineering&quot; =&gt;
+      val event = SystemEvent(prefix, diagnosticDataEventName).add(diagnosticModeParam)
+      diagModeCancellable.foreach(_.cancel()) // cancel previous diagnostic publishing
+      diagModeCancellable = Some(eventService.defaultPublisher.publish(Some(event), startTime, 200.millis))
+    case _ =&gt;
+  }
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L261-L277" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+public void onDiagnosticMode(UTCTime startTime, String hint) {
+    if (hint.equals(&quot;engineering&quot;)) {
+        var event = new SystemEvent(new Prefix(JSubsystem.TCS(), &quot;prefix&quot;), new EventName(&quot;eventName&quot;))
+                .add(JKeyType.IntKey().make(&quot;diagnostic-data&quot;).set(1));
+        diagModeCancellable.map(Cancellable::cancel); // cancel previous diagnostic publishing
+        diagModeCancellable = Optional.of(
+                eventService.defaultPublisher().publish(
+                        () -&gt; Optional.of(event),
+                        startTime,
+                        Duration.ofMillis(200)
+                )
+
+        );
+    }
+    // other supported diagnostic modes go here
+}</code></pre></dd>
+</dl>
+<h3><a href="#onoperationsmode" name="onoperationsmode" class="anchor"><span class="anchor-link"></span></a>onOperationsMode</h3>
+<p>Components can receive an <code>OperationsMode</code> command which is used to halt all diagnostic modes. The <code>onOperationsMode</code> handler of the component will be invoked on receiving this command. Similar to <code>DiagnosticMode</code> command, the <code>OperationsMode</code> command is also handled only in the Running state and is ignored otherwise. If in a technical data mode, the component should immediately halt its diagnostic mode and return to normal operations behavior. Even if the component does not define any diagnostic modes, it must be prepared to receive and process an <code>onOperationsMode</code> handler call. The component should return completion without error.</p>
+<p>The example shows one usage of <code>onOperationsMode</code> handler.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/framework/SampleComponentHandlers.scala#L131-L133" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onOperationsMode(): Unit = {
+  diagModeCancellable.foreach(_.cancel())
+}</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L281-L284" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+public void onOperationsMode() {
+    diagModeCancellable.map(Cancellable::cancel); // cancel diagnostic mode
+}</code></pre></dd>
+</dl>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/framework/handling-lifecycle.md" title="Edit this page" class="md-source-file md-edit">

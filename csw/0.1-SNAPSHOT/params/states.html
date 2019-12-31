@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -257,15 +256,15 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#state-variables" name="state-variables" class="anchor"><span class="anchor-link"></span></a>State Variables</h1>
-<p>These state variables are used when an Assembly wants to track the status of a command sent to an HCD using a matcher. For more information, see <a href="../framework/publishing-state.html">Publishing State</a>.</p>
-<p>A states represent a component&rsquo;s internal state. There are two types called <code>CurrentState</code> and <code>DemandState</code>. They both share the same structural features. All state variables have <strong><a href="commands.html#Prefix">Prefix</a></strong> and <strong>ParameterSet</strong>.</p>
+<p>State variables are used when an Assembly wants to track the status of a command sent to an HCD using a matcher. For more information, see <a href="../framework/publishing-state.html">Publishing State</a>.</p>
+<p>A state represents some aspect of a component&rsquo;s internal state. There are two types called <code>CurrentState</code> and <code>DemandState</code>. They both share the same structural features. All state variables have <strong><a href="commands.html#Prefix">Prefix</a></strong> and <strong>ParameterSet</strong>.</p>
 <p>The PubSub feature of the HCD provides <code>CurrentState</code> values to the PubSub subscriber.</p>
 <h2><a href="#demandstate" name="demandstate" class="anchor"><span class="anchor-link"></span></a>DemandState</h2>
 <p>A state variable that indicates the demand or requested state.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/StateVariablesTest.scala#L18-L63" target="_blank" title="Go to snippet source"></a><code class="language-scala">//prefix
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/StateVariablesTest.scala#L19-L64" target="_blank" title="Go to snippet source"></a><code class="language-scala">//prefix
 val prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)
 
 //key
@@ -313,8 +312,8 @@ val ds5: DemandState = ds3.add(utcTimeKey.set(UTCTime(UTCTime.now().value.minusS
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JStateVariablesTest.java#L31-L77" target="_blank" title="Go to snippet source"></a><code class="language-java">//prefix
-Prefix prefix = new Prefix(&quot;wfos.prog.cloudcover&quot;);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JStateVariablesTest.java#L34-L80" target="_blank" title="Go to snippet source"></a><code class="language-java">//prefix
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;prog.cloudcover&quot;);
 
 //keys
 Key&lt;Character&gt; charKey = JKeyType.CharKey().make(&quot;charKey&quot;);
@@ -327,8 +326,8 @@ Key&lt;String&gt; notUsedKey = JKeyType.StringKey().make(&quot;notUsed&quot;);
 ObsId obsId = new ObsId(&quot;Obs001&quot;);
 
 //parameters
-Parameter&lt;Character&gt; charParam = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits);
-Parameter&lt;Integer&gt; intParam = intKey.set(1, 2, 3).withUnits(meter);
+Parameter&lt;Character&gt; charParam = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits());
+Parameter&lt;Integer&gt; intParam = intKey.set(1, 2, 3).withUnits(meter());
 Parameter&lt;Boolean&gt; booleanParam = booleanKey.set(true, false);
 Parameter&lt;UTCTime&gt; timestamp = utcTimeKey.set(UTCTime.now());
 
@@ -365,7 +364,7 @@ DemandState ds5 = ds3.add(utcTimeKey.set(new UTCTime(UTCTime.now().value().minus
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/StateVariablesTest.scala#L78-L124" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>//prefix
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/StateVariablesTest.scala#L79-L125" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>//prefix
 val prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)
 
 //key
@@ -413,8 +412,8 @@ val cs5 = cs3.add(utcTimeKey.set(UTCTime(UTCTime.now().value.minusSeconds(3600))
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JStateVariablesTest.java#L93-L139" target="_blank" title="Go to snippet source"></a><code class="language-java">//prefix
-Prefix prefix = new Prefix(&quot;wfos.prog.cloudcover&quot;);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JStateVariablesTest.java#L96-L142" target="_blank" title="Go to snippet source"></a><code class="language-java">//prefix
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;prog.cloudcover&quot;);
 
 //keys
 Key&lt;Character&gt; charKey = JKeyType.CharKey().make(&quot;charKey&quot;);
@@ -427,8 +426,8 @@ Key&lt;String&gt; notUsedKey = JKeyType.StringKey().make(&quot;notUsed&quot;);
 ObsId obsId = new ObsId(&quot;Obs001&quot;);
 
 //parameters
-Parameter&lt;Character&gt; charParam = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits);
-Parameter&lt;Integer&gt; intParam = intKey.set(1, 2, 3).withUnits(meter);
+Parameter&lt;Character&gt; charParam = charKey.set(&#39;A&#39;, &#39;B&#39;, &#39;C&#39;).withUnits(NoUnits());
+Parameter&lt;Integer&gt; intParam = intKey.set(1, 2, 3).withUnits(meter());
 Parameter&lt;Boolean&gt; booleanParam = booleanKey.set(true, false);
 Parameter&lt;UTCTime&gt; timestamp = timestampKey.set(UTCTime.now());
 
@@ -465,7 +464,7 @@ CurrentState cs5 = cs3.add(timestampKey.set(new UTCTime(UTCTime.now().value().mi
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/StateVariablesTest.scala#L141-L171" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/StateVariablesTest.scala#L142-L172" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
 
 //key
 val k1: Key[MatrixData[Double]] = DoubleMatrixKey.make(&quot;myMatrix&quot;)
@@ -498,19 +497,19 @@ val ds1: DemandState  = JsonSupport.readStateVariable[DemandState](dsJson)
 val cs1: CurrentState = JsonSupport.readStateVariable[CurrentState](csJson)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JStateVariablesTest.java#L155-L181" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JStateVariablesTest.java#L158-L184" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
 Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyType.DoubleMatrixKey().make(&quot;myMatrix&quot;);
 
 //values
 Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
-MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
+MatrixData&lt;Double&gt; m1 = MatrixData.fromArrays(doubles);
 
 //parameter
 Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
 
 //state variables
-DemandState ds = new DemandState(new Prefix(&quot;wfos.blue.filter&quot;), new StateName(&quot;testStateName&quot;)).add(i1);
-CurrentState cs = new CurrentState(new Prefix(&quot;wfos.blue.filter&quot;), new StateName(&quot;testStateName&quot;)).add(i1);
+DemandState ds = new DemandState(new Prefix(JSubsystem.WFOS(), &quot;blue.filter&quot;), new StateName(&quot;testStateName&quot;)).add(i1);
+CurrentState cs = new CurrentState(new Prefix(JSubsystem.WFOS(), &quot;blue.filter&quot;), new StateName(&quot;testStateName&quot;)).add(i1);
 
 //json support - write
 JsValue dsJson = JavaJsonSupport.writeStateVariable(ds);
@@ -533,7 +532,7 @@ CurrentState cs1 = JavaJsonSupport.readStateVariable(csJson);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/StateVariablesTest.scala#L185-L227" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/StateVariablesTest.scala#L186-L228" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val encoderKey: Key[Int] = KeyType.IntKey.make(&quot;encoder&quot;)
 val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc.&quot;)
@@ -578,13 +577,13 @@ val finalStatusEvent = statusEvent.madd(Set(miscParam1, encParam1))
 val uniqueKeys3 = finalStatusEvent.paramSet.toList.map(_.keyName)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JStateVariablesTest.java#L193-L231" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JStateVariablesTest.java#L196-L234" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
 
 //prefix
-Prefix prefix = new Prefix(&quot;wfos.blue.filter&quot;);
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;blue.filter&quot;);
 
 //params
 Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);

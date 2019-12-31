@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -264,7 +263,7 @@ tmtsoftware/csw
 <div class="md-content__searchable">
 <h1><a href="#testing" name="testing" class="anchor"><span class="anchor-link"></span></a>Testing</h1>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
-<p>To use Csw Testkit, you must add the following dependency in your project:</p>
+<p>To use the CSW Testkit, you must add the following dependency in your project:</p>
 <dl>
   <dt>sbt</dt>
   <dd>
@@ -274,19 +273,19 @@ tmtsoftware/csw
 <h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
 <p>CSW comes with a dedicated <code>csw-testkit</code> module for supporting tests. This module includes following multiple individual testkits:</p>
 <ul>
-  <li><code>LocationTestKit</code> : starts and stops location server</li>
-  <li><code>ConfigTestKit</code> : starts and stops config server</li>
-  <li><code>EventTestKit</code> : starts and stops event service (Note : This uses <code>embedded-redis</code> to start redis sentinel and master)</li>
-  <li><code>AlarmTestKit</code> : starts and stops alarm service (Note : This uses <code>embedded-redis</code> to start redis sentinel and master)</li>
-  <li><code>FrameworkTestKit</code> : in most of the cases, you will end up using this testkit. <code>FrameworkTestKit</code> is created by composing all the above mentioned testkits. Hence it supports starting and stopping all provided csw services.</li>
+  <li><code>LocationTestKit</code> : starts and stops the Location Server</li>
+  <li><code>ConfigTestKit</code> : starts and stops the Config Server</li>
+  <li><code>EventTestKit</code> : starts and stops the Event Service (Note : This uses <code>embedded-redis</code> to start redis sentinel and master)</li>
+  <li><code>AlarmTestKit</code> : starts and stops the Alarm Service (Note : This uses <code>embedded-redis</code> to start redis sentinel and master)</li>
+  <li><code>FrameworkTestKit</code> : in most of the cases, you will end up using this testkit. <code>FrameworkTestKit</code> is created by composing all the above mentioned testkits. Hence it supports starting and stopping all provided CSW services.</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
-<p>All the testkits requires location server to be up and running. Hence first thing all testkits does is to start location server. You do not need to start it explicitly.</p></div>
+<p>All of the testkits require the Location Server to be up and running. Hence, the first thing all testkits do is to start a Location Server. You do not need to start it explicitly.</p></div>
 <h2><a href="#testkits" name="testkits" class="anchor"><span class="anchor-link"></span></a>TestKits</h2>
-<p>When you really want a granular level access to testkits then only you would want to use <code>LocationTestKit</code>|<code>ConfigTestKit</code>|<code>EventTestKit</code>|<code>AlarmTestKit</code>|<code>FrameworkTestKit</code> directly. You can create instance of <code>FrameworkTestKit</code> as shown below:</p>
+<p>When you really want granular level access to testkits, then only you would want to use <code>LocationTestKit</code>|<code>ConfigTestKit</code>|<code>EventTestKit</code>|<code>AlarmTestKit</code>|<code>FrameworkTestKit</code> directly. You can create instance of <code>FrameworkTestKit</code> as shown below:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L23-L30" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create instance of framework testkit
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L24-L31" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create instance of framework testkit
 private val frameworkTestKit = FrameworkTestKit()
 
 // starts Config Server and Event Service
@@ -308,14 +307,14 @@ public static void afterAll() {
     frameworkTestKit.shutdown();
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>Similarly you can use other testkits. Please refer API docs for more details.</p></div>
+<p>Similarly, you can use other testkits. Please refer to API docs for more details.</p></div>
 <h3><a href="#spawning-components" name="spawning-components" class="anchor"><span class="anchor-link"></span></a>Spawning components</h3>
-<p><code>FrameworkTestKit</code> provides easy way to spawn components in <code>Container</code> or <code>Standalone</code> mode. Use <code>spawnContainer</code> method provided by <code>FrameworkTestKit</code> to start components in container mode and<code>spawnStandalone</code> method to start component in standalone mode.</p>
-<p>Below example show how to spawn container or component in standalone mode using framework testkit.</p>
+<p><code>FrameworkTestKit</code> provides an easy way to spawn components in <code>Container</code> or <code>Standalone</code> mode. Use the <code>spawnContainer</code> method provided by <code>FrameworkTestKit</code> to start components in container mode and<code>spawnStandalone</code> method to start a component in standalone mode.</p>
+<p>The example below shows how to spawn container or component in standalone mode using the Framework testkit.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L38-L45" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>// starting container from container config using testkit
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L39-L46" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>// starting container from container config using testkit
 frameworkTestKit.spawnContainer(ConfigFactory.load(&quot;SampleContainer.conf&quot;))
 
 // starting standalone component from config using testkit
@@ -339,9 +338,9 @@ frameworkTestKit.spawnContainer(ConfigFactory.load(&quot;JSampleContainer.conf&q
 </ul>
 <h2><a href="#test-framework-integration" name="test-framework-integration" class="anchor"><span class="anchor-link"></span></a>Test framework integration</h2>
 <h3><a href="#scalatest" name="scalatest" class="anchor"><span class="anchor-link"></span></a>ScalaTest</h3>
-<p>If you are using ScalaTest then you can extend <code>csw.testkit.scaladsl.ScalaTestFrameworkTestKit</code> to have framework test kit automatically start provided services before running tests and shutdown it when the test is complete. This is done in <code>beforeAll</code> and <code>afterAll</code> from the <code>BeforeAndAfterAll</code> trait. If you override that method you should call <code>super.beforeAll</code> to start services and <code>super.afterAll</code> to shutdown the test kit.</p>
+<p>If you are using ScalaTest, then you can extend <code>csw.testkit.scaladsl.ScalaTestFrameworkTestKit</code> to have the Framework testkit automatically start the provided services before running tests and shut them down when the tests are complete. This is done in <code>beforeAll</code> and <code>afterAll</code> from the <code>BeforeAndAfterAll</code> trait. If you override that method you should call <code>super.beforeAll</code> to start services and <code>super.afterAll</code> to shutdown the test kit.</p>
 <h3><a href="#junit" name="junit" class="anchor"><span class="anchor-link"></span></a>JUnit</h3>
-<p>If you are using JUnit then you can use <code>csw.testkit.javadsl.FrameworkTestKitJunitResource</code> to have the framework test kit automatically start provided services before running tests and shutdown it when the test is complete.</p>
+<p>If you are using JUnit then you can use <code>csw.testkit.javadsl.FrameworkTestKitJunitResource</code> to have the framework test kit automatically start the provided services before running tests and shut them down when the tests are complete.</p>
 <h3><a href="#supported-csw-services-by-frameworktestkit" name="supported-csw-services-by-frameworktestkit" class="anchor"><span class="anchor-link"></span></a>Supported CSW Services by FrameworkTestKit</h3>
 <p><code>ScalaTestFrameworkTestKit</code> and <code>FrameworkTestKitJunitResource</code> both support starting one or more of the following services.</p>
 <ul>
@@ -350,7 +349,7 @@ frameworkTestKit.spawnContainer(ConfigFactory.load(&quot;JSampleContainer.conf&q
   <li><code>CSWService.EventServer</code> | <code>JCSWService.EventServer</code></li>
   <li><code>CSWService.AlarmServer</code> | <code>JCSWService.AlarmServer</code></li>
 </ul>
-<p>Below example show&rsquo;s the usage of <code>ScalaTestFrameworkTestKit</code> and <code>FrameworkTestKitJunitResource</code> and how you can start above mentioned services as per your need.</p>
+<p>The example below shows the usage of <code>ScalaTestFrameworkTestKit</code> and <code>FrameworkTestKitJunitResource</code> and how you can start the above mentioned services as per your need.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -394,10 +393,10 @@ public class JUnitIntegrationExampleTest extends JUnitSuite {
     }
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>You do not need to externally start any services like event, config, location etc. via <code>csw-services.sh</code> script. Testkits will start required services as a part of initialization. For event and alarm service, it uses <code>embedded-redis</code>. </p></div>
+<p>You do not need to externally start any services like the Event Service, Config Service, Location Service etc. via <code>csw-services.sh</code> script. Testkits will start required services as a part of initialization. For the Event and Alarm service, it uses an instance of <code>embedded-redis</code>. </p></div>
 <h2><a href="#unit-tests" name="unit-tests" class="anchor"><span class="anchor-link"></span></a>Unit Tests</h2>
-<p>The goal of unit testing is to break your application into the smallest testable units, and test them individually, isolating a specific piece of functionality and ensuring it is working correctly. It is always a good idea to write more unit test cases and relatively fewer component and integration tests. If you want to get an idea of how many tests you should have in different types of testing phases (Unit/Component/Integration), refer this <a href="https://martinfowler.com/articles/practical-test-pyramid.html">blog</a></p>
-<p>Unit testing simple scala/java classes or objects is straight forward. You can mock external dependencies using Mockito. Refer to the <a href="#mockito">Mockito</a> section for more details. </p>
+<p>The goal of unit testing is to break your application into the smallest testable units and test them individually, isolating a specific piece of functionality and ensuring it is working correctly. It is always a good idea to write more unit test cases and relatively fewer component and integration tests. If you want to get an idea of how many tests you should have in different types of testing phases (Unit/Component/Integration), refer to this <a href="https://martinfowler.com/articles/practical-test-pyramid.html">blog</a></p>
+<p>Unit testing simple Scala/Java classes or objects is straightforward. You can mock external dependencies using Mockito. Refer to the <a href="#mockito">Mockito</a> section for more details. </p>
 <p>The following links provide guides for testing applications using different modules of Akka:</p>
 <ul>
   <li><a href="https://doc.akka.io/docs/akka/current/testing.html">Akka Untyped Actors</a></li>
@@ -407,49 +406,49 @@ public class JUnitIntegrationExampleTest extends JUnitSuite {
 <h2><a href="#multi-jvm-tests" name="multi-jvm-tests" class="anchor"><span class="anchor-link"></span></a>Multi-JVM Tests</h2>
 <p>Testing asynchronous distributed systems requires special tooling/framework support. Sbt has a plugin called <a href="https://github.com/sbt/sbt-multi-jvm">sbt-multi-jvm</a> which helps to test systems across multiple JVMs or machines. This is especially useful for integration testing where multiple systems communicate with each other.</p>
 <p>You can find more details on multi-JVM tests <a href="https://doc.akka.io/docs/akka/current/multi-jvm-testing.html">here</a>.</p>
-<p>You can also refer <a href="https://github.com/tmtsoftware/csw">csw</a> for writing your own multi-JVM tests. For example: <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> </p>
-<p>In case you want to run your multi-JVM tests across machines, refer this multi-node testing guide <a href="https://doc.akka.io/docs/akka/current/multi-node-testing.html">here</a>. </p>
+<p>You can also refer to some examples in <a href="https://github.com/tmtsoftware/csw">CSW</a> for writing your own multi-JVM tests. For example: <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> </p>
+<p>In case you want to run your multi-JVM tests across machines, refer to this multi-node testing guide <a href="https://doc.akka.io/docs/akka/current/multi-node-testing.html">here</a>. </p>
 <h2><a href="#mockito" name="mockito" class="anchor"><span class="anchor-link"></span></a>Mockito</h2>
-<p>Mocks are used so that unit tests can be written independent of dependencies.<br/><a href="https://github.com/tmtsoftware/csw">csw</a> uses <a href="http://site.mockito.org/">Mockito</a> for writing unit tests. ScalaTest comes with <a href="http://www.scalatest.org/user_guide/testing_with_mock_objects#mockito">MockitoSugar</a> trait which provides some basic syntax sugar for Mockito.</p>
+<p>Mocks are used so that unit tests can be written independent of dependencies.<br/><a href="https://github.com/tmtsoftware/csw">CSW</a> uses <a href="http://site.mockito.org/">Mockito</a> for writing unit tests. ScalaTest comes with the <a href="http://www.scalatest.org/user_guide/testing_with_mock_objects#mockito">MockitoSugar</a> trait which provides some basic syntax sugar for Mockito.</p>
 <p>For example: <a href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/framework/internal/container/ContainerBehaviorTest.scala">ContainerBehaviorTest.scala</a></p>
 <h2><a href="#acceptance-tests" name="acceptance-tests" class="anchor"><span class="anchor-link"></span></a>Acceptance Tests</h2>
-<p>This section explains how and where csw maintains and executes acceptance tests. If you are a component writer and want to maintain acceptance tests, you can create a repo similar to <a href="https://github.com/tmtsoftware/csw-acceptance">csw-acceptance</a> and update dependencies, projects as per your need. </p>
-<p>As required by TMT Systems Engineering, the acceptance pipeline runs all the existing Java and Scala tests from <a href="https://github.com/tmtsoftware/csw">csw</a> repo on published bintray binaries rather than directly on source code.</p>
+<p>This section explains how and where CSW maintains and executes acceptance tests. If you are a component writer and want to maintain acceptance tests, you can create a repo similar to <a href="https://github.com/tmtsoftware/csw-acceptance">csw-acceptance</a> and update dependencies, projects as per your need. </p>
+<p>As required by TMT Systems Engineering, the acceptance pipeline runs all the existing Java and Scala tests from the <a href="https://github.com/tmtsoftware/csw">CSW</a> repo on published binaries rather than directly on source code.</p>
 <p>More information can be found <a href="https://github.com/tmtsoftware/csw-acceptance/blob/master/README.md">here</a>.</p>
 <p>Below are the two separate Jenkins pipelines to run <code>csw</code> acceptance tests:</p>
 <ol>
   <li>
     <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev-nightly-build/">Acceptance Dev Pipeline</a></p>
     <ul>
-      <li>Automatically triggered every night to get fast feedback and intended for developer&rsquo;s visibility.</li>
+      <li>Automatically triggered every night to get fast feedback and intended for developer visibility.</li>
     </ul>
   </li>
   <li>
     <p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">Acceptance Release Pipeline</a></p>
     <ul>
-      <li>Automatically triggered on completion of <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod/">csw-prod</a> pipeline.</li>
-      <li><code>csw-prod-release</code> pipeline published CSW artifacts to bintray, and must be manually triggered by an administrator.</li>
+      <li>Automatically triggered on completion of the <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod/">csw-prod</a> pipeline.</li>
+      <li><code>csw-prod-release</code> pipeline publishes CSW artifacts to bintray, and must be manually triggered by an administrator.</li>
     </ul>
   </li>
 </ol><div class="callout note "><div class="callout-title">Note</div>
-<p><a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod/">csw-prod</a> pipeline is responsible for following tasks:</p>
+<p>The <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/csw-prod/">csw-prod</a> pipeline is responsible for following tasks:</p>
 <ul>
   <li>build and run <code>csw</code> tests</li>
   <li>publish binaries to bintray</li>
   <li>publish paradox documentation</li>
-  <li>publish apps and release notes to github releases</li>
-  <li>trigger <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">acceptance-release</a> pipeline</li>
+  <li>publish apps and release notes to Github releases</li>
+  <li>trigger the <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-release/">acceptance-release</a> pipeline</li>
 </ul></div>
-<p>Acceptance pipelines can also be triggered manually via an HTTP end point, for STIL acceptance tesing, for example. Using the security token obtained from the Jenkins pipeline settings (available upon request), run the <code>curl</code> cmd as shown below:</p>
+<p>Acceptance pipelines can also be triggered manually via an HTTP endpoint, for STIL acceptance tesing, for example. Using the security token obtained from the Jenkins pipeline settings (available upon request), run the <code>curl</code> cmd as shown below:</p>
 <ul>
-  <li>For triggering <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev-nightly-build/">acceptance-dev</a> pipeline, run below</li>
+  <li>For triggering the <a href="http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev-nightly-build/">acceptance-dev</a> pipeline, run:</li>
 </ul>
 <pre><code>curl -G &#39;http://ec2-35-154-215-191.ap-south-1.compute.amazonaws.com:8080/job/acceptance-dev/buildWithParameters&#39;  \
     --data-urlencode token=$DEV_TOKEN \
     --data-urlencode CSW_VERSION=0.1-SNAPSHOT
 </code></pre>
 <ul>
-  <li>For triggering <code>acceptance-release</code> pipeline, run below: (Modify parameters as applicable)</li>
+  <li>For triggering an <code>acceptance-release</code> pipeline, run: (Modify parameters as applicable)</li>
 </ul>
 <pre><code>curl -G &#39;$REMOTE_JENKINS_URL/job/$JOB_NAME/buildWithParameters&#39; \
     --data-urlencode token=$RELEASE_TOKEN \

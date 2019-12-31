@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -275,8 +274,8 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#logging-service" name="logging-service" class="anchor"><span class="anchor-link"></span></a>Logging Service</h1>
-<p>The Logging Service library provides an advanced logging facility for csw components and services. </p><div class="callout note "><div class="callout-title">Note</div>
-<p>This page explains local logging only. To understand centralized logging facility refer to <a href="../commons/logging_aggregator.html">this page</a>.</p></div>
+<p>The Logging Service library provides an advanced logging facility for CSW components and services. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>This page explains local logging only. To understand centralized logging facility, refer to <a href="../commons/logging_aggregator.html">this page</a>.</p></div>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the Logging Service without using the framework, add this to your <code>build.sbt</code> file:</p>
 <dl>
@@ -291,69 +290,73 @@ tmtsoftware/csw
   <dt>logging.conf
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-logging/csw-logging-client/src/main/resources/logging.conf#L27-L90" target="_blank" title="Go to snippet source"></a><code class="language-conf">csw-logging {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-logging/csw-logging-client/src/main/resources/logging.conf#L27-L94" target="_blank" title="Go to snippet source"></a><code class="language-conf">csw-logging {
 
-    # Default appender and is recommended only for dev setup.
-    # To use multiple appenders give comma separated list of appenders.
-    appenders = [&quot;csw.logging.client.appenders.StdOutAppender$&quot;]
+  # Default appender and is recommended only for dev setup.
+  # To use multiple appenders give comma separated list of appenders.
+  appenders = [&quot;csw.logging.client.appenders.StdOutAppender$&quot;]
 
-    # Recommended for production setup - Uncomment below line and comment above to enable FileAppender
-    #appenders = [&quot;csw.logging.client.appenders.FileAppender$&quot;]
+  # Recommended for production setup - Uncomment below line and comment above to enable FileAppender
+  #appenders = [&quot;csw.logging.client.appenders.FileAppender$&quot;]
 
-    component-log-levels {
-      # By default each compoent will use log level specified by `csw-logging.logLevel`. If required, this block allows
-      # overriding log level configuration for one/more components.
-      # -- Example --
-      # TromboneHcd = debug
-      # TromboneAssembly = error
+  component-log-levels {
+    # By default each compoent will use log level specified by `csw-logging.logLevel`. If required, this block allows
+    # overriding log level configuration for one/more components.
+    # -- Example --
+    # tcs.filter = debug
+    # nfiraos {
+    #      tromboneassembly = error
+    #      trombonehcd = info
+    #  }
+    #
+  }
+
+  appender-config {
+    file {
+      # Include standard headers
+      fullHeaders = true
+      # Sort the fields in Json objects
+      sorted = true
+      # Base path directory to hold log files from tmt apps. The value is picked from env var `TMT_LOG_HOME`. It is necessary
+      # to have `TMT_LOG_HOME` set as env var otherwise an exception will be thrown when FileAppender gets initialized.
+      baseLogPath = ${?TMT_LOG_HOME}
+      # Directory to hold log files under base path $TMT_LOG_HOME i.e. basePath/logPath
+      logPath = &quot;&quot;
+      # Common log messages below this level are removed, none removed when set to trace
+      logLevelLimit = trace
+      # Flag to turn file rotation ON or OFF. Currently log file is rotated daily at 12:00 pm UTC time. By turning this flag off
+      # file rotation will not happen.
+      rotate = true
     }
-
-    appender-config {
-      file {
-        # Include standard headers
-        fullHeaders = true
-        # Sort the fields in Json objects
-        sorted = true
-        # Base path directory to hold log files from tmt apps. The value is picked from env var `TMT_LOG_HOME`. It is necessary
-        # to have `TMT_LOG_HOME` set as env var otherwise an exception will be thrown when FileAppender gets initialized.
-        baseLogPath = ${?TMT_LOG_HOME}
-        # Directory to hold log files under base path $TMT_LOG_HOME i.e. basePath/logPath
-        logPath = &quot;&quot;
-        # Common log messages below this level are removed, none removed when set to trace
-        logLevelLimit = trace
-        # Flag to turn file rotation ON or OFF. Currently log file is rotated daily at 12:00 pm UTC time. By turning this flag off
-        # file rotation will not happen.
-        rotate = true
-      }
-      stdout {
-        # Include standard headers
-        fullHeaders = false
-        # Use colors for log levels
-        color = true
-        # The maximum number of character that should be on a line
-        # This is only a goal; in practice some may contain more characters.
-        width = 80
-        # Print summary counts when logger is closed
-        summary = true
-        # pretty output - multiple line json
-        pretty = false
-        # Messages below this level are removed, none removed when set to trace
-        logLevelLimit = trace
-        # false Json output; true simple one line text output
-        oneLine = false
-      }
+    stdout {
+      # Include standard headers
+      fullHeaders = false
+      # Use colors for log levels
+      color = true
+      # The maximum number of character that should be on a line
+      # This is only a goal; in practice some may contain more characters.
+      width = 80
+      # Print summary counts when logger is closed
+      summary = true
+      # pretty output - multiple line json
+      pretty = false
+      # Messages below this level are removed, none removed when set to trace
+      logLevelLimit = trace
+      # false Json output; true simple one line text output
+      oneLine = false
     }
-    # If component does not specify their log level in component-log-levels block,
-    # Then this will be considered as default log level for that component.
-    logLevel = info
-    # Log level for slf4j messages
-    slf4jLogLevel = info
-    # Log level for Akka messages
-    akkaLogLevel = warn
-    # Enable timing logging
-    time = false
-    # Enable garbage collection logging
-    gc = false
+  }
+  # If component does not specify their log level in component-log-levels block,
+  # Then this will be considered as default log level for that component.
+  logLevel = info
+  # Log level for slf4j messages
+  slf4jLogLevel = info
+  # Log level for Akka messages
+  akkaLogLevel = warn
+  # Enable timing logging
+  time = false
+  # Enable garbage collection logging
+  gc = false
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">IMPORTANT !!!</div>
 <p>It is required to include <code>logging.conf</code> that is shipped with this library in <code>application.conf</code> as follows:</p>
@@ -362,29 +365,33 @@ tmtsoftware/csw
 <p>Default configuration values can be then overridden in <code>application.conf</code>. </p></div><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>
-  <p>Logs generated by components will be by default stored at <code>$TMT_LOG_HOME/tmt/logs</code>. In case $TMT_LOG_HOME is not set as environment variable, then they will be stored at <code>/tmp/tmt/logs</code>. When logs are stored in /tmp folder they will not be persisted in case of machine reboot. Hence, for production, it is recommended to have $TMT_LOG_HOME set as environment variable.</p></li>
+  <p>Logs generated by components will be by default stored at <code>$TMT_LOG_HOME/tmt/logs</code>. In case $TMT_LOG_HOME is not set as environment variable, then they will be stored at <code>/tmp/tmt/logs</code>. When logs are stored in the /tmp folder, they will not be persisted in case of machine reboot. Hence, for production, it is recommended to have $TMT_LOG_HOME set as environment variable.</p></li>
   <li>
-  <p><code>csw-logging.appender-config.file.logPath</code> from <code>logging.conf</code> will treated as subdirectory under base directory ($TMT_LOG_HOME/tmt/logs or  /tmp/tmt/logs) to store the logs. It can be also overridden in <code>application.conf</code> for each component.</p></li>
+  <p><code>csw-logging.appender-config.file.logPath</code> from <code>logging.conf</code> will treated as subdirectory under the base directory ($TMT_LOG_HOME/tmt/logs or  /tmp/tmt/logs) to store the logs. It can be also overridden in <code>application.conf</code> for each component.</p></li>
 </ul></div>
 <p>Also <code>logLevel</code> for each component can be set in application.conf as follows:</p>
 <pre><code>component-log-levels {
-    tromboneHcd = debug
-    tromboneAssembly = error
+    tcs {
+        trombonehcd = debug
+        tromboneassembly = error
+    }
   }
   
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>Here <code>tromboneHcd</code> and <code>tromboneAssembly</code> is the name of component that will be registered with <code>LocationService</code>, which is the <code>name</code> field in the ComponentInfo file (see <a href="../framework/deploying-components.html">DeployingComponents</a>). By default, all components will log at level specified by <code>csw-logging.logLevel</code>. </p></div>
-<p>The library provides <code>StdOutAppender</code> as default logging appender. To use <code>FileAppender</code> or some custom appender along-with <code>StdOutAppender</code>, override <code>appenders</code> property to include multiple appender in csv format as follows:</p>
+<p>Here <code>trombonehcd</code> and <code>tromboneassembly</code> is the name of component that will be registered with <code>LocationService</code>, which is the <code>name</code> field in the ComponentInfo file (see <a href="../framework/deploying-components.html">DeployingComponents</a>). By default, all components will log at level specified by <code>csw-logging.logLevel</code>. Also, the component specific log levels will be case-insensitive i.e <code>TCS.tromboneHcd</code> and <code>tcs.trombonehcd</code> will represent the same component and the one specified later will take preference. </p></div>
+<p>The library provides <code>StdOutAppender</code> as the default logging appender. To use <code>FileAppender</code> or some custom appender along with <code>StdOutAppender</code>, override the <code>appenders</code> property to include multiple appenders in CSV format as follows:</p>
 <pre><code><br/>appenders = [&quot;csw.logging.client.appenders.FileAppender$&quot;, &quot;csw.logging.client.appenders.StdOutAppender$&quot;]
 
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>Make sure to provide full path of the appender since it will be spawned using java reflection. In csw code base, a working example of custom appender can be found at: <a href="https://github.com/tmtsoftware/csw/tree/master/csw-logging/csw-logging-client/src/test/scala/csw/logging/client/appenders/CustomAppenderTest.scala">Custom Appender</a></p></div>
-<p>For <code>StdOutAppender</code> specify the format of log statements in <code>csw-logging.stdout</code> via <code>csw-logging.stdout.pretty</code> and <code>csw-logging.stdout.oneLine</code>. </p>
+<p>Make sure to provide full path of the appender since it will be spawned using Java reflection. In the CSW code base, a working example of a custom appender can be found at: <a href="https://github.com/tmtsoftware/csw/tree/master/csw-logging/csw-logging-client/src/test/scala/csw/logging/client/appenders/CustomAppenderTest.scala">Custom Appender</a></p></div>
+<p>For <code>StdOutAppender</code>, specify the format of log statements in <code>csw-logging.stdout</code> via <code>csw-logging.stdout.pretty</code> and <code>csw-logging.stdout.oneLine</code>. </p>
 <p>Turning <code>pretty</code> <strong>on</strong> or <strong>off</strong> will produce log statements in following format:</p>
 <dl>
   <dt>pretty=true</dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+  <pre><code>{&quot;@prefix&quot;:&quot;my-subsystem.my-component-name&quot;,
+ &quot;@subsystem&quot;:&quot;my-subsystem&quot;,
+ &quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@host&quot;:&quot;INsaloni.local&quot;,
  &quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
@@ -400,7 +407,7 @@ tmtsoftware/csw
 </code></pre></dd>
   <dt>pretty=false</dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,&quot;@host&quot;:&quot;INsaloni.local&quot;,&quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,&quot;@severity&quot;:&quot;INFO&quot;,&quot;@version&quot;:&quot;0.1&quot;,&quot;actor&quot;:&quot;akka://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,&quot;class&quot;:&quot;csw.location.LocationServiceExampleClient&quot;,&quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,&quot;line&quot;:149,&quot;message&quot;:&quot;Result of the find call: None&quot;,&quot;timestamp&quot;:&quot;2017-11-24T04:16:42.108Z&quot;}
+  <pre><code>{&quot;@prefix&quot;:&quot;my-subsystem.my-component-name&quot;,&quot;@subsystem&quot;:&quot;my-subsystem&quot;,&quot;@componentName&quot;:&quot;my-component-name&quot;,&quot;@host&quot;:&quot;INsaloni.local&quot;,&quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,&quot;@severity&quot;:&quot;INFO&quot;,&quot;@version&quot;:&quot;0.1&quot;,&quot;actor&quot;:&quot;akka://csw-examples-locationServiceClient@10.131.23.195:53618/user/$a&quot;,&quot;class&quot;:&quot;csw.location.LocationServiceExampleClient&quot;,&quot;file&quot;:&quot;LocationServiceExampleClientApp.scala&quot;,&quot;line&quot;:149,&quot;message&quot;:&quot;Result of the find call: None&quot;,&quot;timestamp&quot;:&quot;2017-11-24T04:16:42.108Z&quot;}
 </code></pre></dd>
 </dl>
 <p>Similarly, turning <code>oneLine</code> on will produce log statements in following format:</p>
@@ -423,12 +430,14 @@ tmtsoftware/csw
   <li>DEBUG</li>
   <li>TRACE</li>
 </ul>
-<p>The library allows separate log levels for the logging API(logLevel), Akka logging(akkaLogLevel), and Slf4J(slf4jLogLevel). The initial values of these are set in the configuration file as seen above. These can be overriden in the application.conf file.</p>
+<p>The library allows separate log levels for the component logging API (logLevel), Akka logging (akkaLogLevel), and Slf4J (slf4jLogLevel). The initial values of these are set in the configuration file as seen above. These can be overridden in the application.conf file.</p>
 <p>These values can also be changed dynamically by calling methods on <code>LoggingSystem</code> class.</p>
 <h2><a href="#log-structure" name="log-structure" class="anchor"><span class="anchor-link"></span></a>Log Structure</h2>
 <p>All messages are logged by default as Json. Logs can contain following fields:</p>
 <ul>
-  <li><code>@componentName</code>: The name of the component if present</li>
+  <li><code>@prefix</code>: The combination of @subsystem and @componentName of the component for e.g. <code>tcs.filter.wheel</code></li>
+  <li><code>@subsystem</code>: The name of the subsystem, if present</li>
+  <li><code>@componentName</code>: The name of the component, if present</li>
   <li><code>@host</code>: The local host name</li>
   <li><code>@name</code>: The name of the application being run</li>
   <li><code>@version</code>: The version of the application being run</li>
@@ -447,17 +456,17 @@ tmtsoftware/csw
   <li><code>file</code> and <code>line</code> will appear only in log statements from Scala classes/actors. This is typical for Java logging tools, and is due to the lack of macro support in Java.</li>
 </ul></div>
 <h2><a href="#enable-component-logging" name="enable-component-logging" class="anchor"><span class="anchor-link"></span></a>Enable Component Logging</h2>
-<p>Component developers will have an instance of <code>LoggerFactory</code> available from <code>csw-framework</code>. This instance will already have a <code>componentName</code> set by <code>csw-framework</code> which will appear in log statements against <code>@componentName</code> tag. Next, to get the <code>Logger</code> from <code>LoggerFactory</code> use one of the following ways: </p>
+<p>Component developers will have an instance of <code>LoggerFactory</code> available from <code>csw-framework</code>. This instance will already have a <code>prefix</code> set by <code>csw-framework</code> which will appear in log statements in the <code>@prefix</code>,<code>@subsystem</code> and <code>@componentName</code> tags. To get the <code>Logger</code> instance from the <code>LoggerFactory</code>, use one of the following: </p>
 <dl>
   <dt>Scala Class</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/componentlogger/loggers.scala#L10-L13" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleClass(loggerFactory: LoggerFactory) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/componentlogger/loggers.scala#L11-L14" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleClass(loggerFactory: LoggerFactory) {
 
   val log: Logger = loggerFactory.getLogger
 }</code></pre></dd>
   <dt>Java Class</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/logging/client/componentlogger/JSampleClass.java#L10-L15" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JSampleClass {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/logging/client/componentlogger/JSampleClass.java#L11-L16" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JSampleClass {
 
     public JSampleClass(JLoggerFactory loggerFactory) {
         ILogger log = loggerFactory.getLogger(getClass());
@@ -467,7 +476,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala Actor</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/componentlogger/loggers.scala#L17-L23" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleActor(loggerFactory: LoggerFactory) extends akka.actor.Actor {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/componentlogger/loggers.scala#L18-L24" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleActor(loggerFactory: LoggerFactory) extends akka.actor.Actor {
 
   //context is available from akka.actor.Actor
   val log: Logger = loggerFactory.getLogger(context)
@@ -476,7 +485,7 @@ tmtsoftware/csw
 }</code></pre></dd>
   <dt>Java Actor</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/logging/client/componentlogger/JSampleClass.java#L19-L31" target="_blank" title="Go to snippet source"></a><code class="language-java">class JSampleActor extends akka.actor.AbstractActor {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/logging/client/componentlogger/JSampleClass.java#L20-L32" target="_blank" title="Go to snippet source"></a><code class="language-java">class JSampleActor extends akka.actor.AbstractActor {
 
     public JSampleActor(JLoggerFactory loggerFactory) {
 
@@ -493,13 +502,13 @@ tmtsoftware/csw
 <dl>
   <dt>Scala Typed Actor</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/componentlogger/loggers.scala#L27-L30" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleTypedActor(loggerFactory: LoggerFactory, ctx: ActorContext[ComponentMessage]) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/componentlogger/loggers.scala#L28-L31" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleTypedActor(loggerFactory: LoggerFactory, ctx: ActorContext[ComponentMessage]) {
 
   val log: Logger = loggerFactory.getLogger(ctx)
 }</code></pre></dd>
   <dt>Java Typed Actor</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/logging/client/componentlogger/JSampleClass.java#L35-L40" target="_blank" title="Go to snippet source"></a><code class="language-java">class JSampleTypedActor {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/logging/client/componentlogger/JSampleClass.java#L36-L41" target="_blank" title="Go to snippet source"></a><code class="language-java">class JSampleTypedActor {
 
     public JSampleTypedActor(JLoggerFactory loggerFactory, ActorContext&lt;ComponentMessage&gt; ctx) {
         ILogger log = loggerFactory.getLogger(ctx, getClass());
@@ -508,7 +517,7 @@ tmtsoftware/csw
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>The <code>LoggerFactory</code> can be changed to <code>JLoggerFactory</code> by using <code>asJava</code> method and <code>JLoggerFactory</code> can be changed to <code>LoggerFactory</code> by using <code>asScala</code> method </p></div>
 <h2><a href="#enable-generic-logging" name="enable-generic-logging" class="anchor"><span class="anchor-link"></span></a>Enable Generic Logging</h2>
-<p>In case there is a need to log statements without <code>@componentName</code> tag, which can be due to unavailability of componentName in some utility code, then use the <code>GenericLoggerFactory</code> as follows:</p>
+<p>In case there is a need to log statements without having a <code>@prefix</code>, <code>@subsystem</code> and <code>@componentName</code> tags, which can be due to unavailability of componentName in some utility code, then use the <code>GenericLoggerFactory</code> as follows:</p>
 <dl>
   <dt>Scala Class</dt>
   <dd>
@@ -567,27 +576,29 @@ tmtsoftware/csw
     }
 }</code></pre></dd>
 </dl>
-<p><code>log</code> variable is now available in scala and java classes to write log statements as explained in next segment.</p>
+<p>The Logger <code>log</code> is now available in Scala and Java classes to write log statements as explained in next section.</p>
 <h2><a href="#log-statements" name="log-statements" class="anchor"><span class="anchor-link"></span></a>Log Statements</h2>
 <p>Logging statements are used very much like existing logging services such as log4j. For Java, there is an additional way of writing log messages using Supplier methods (lambdas). The use of lambdas is more efficient since the computations in a message (e.g. string concatenation) are not performed unless the message is actually being logged. Therefore, these supplier methods should be used in cases where high performance is required (see <a href="#java-logging-string-vs-supplier-api-performance">performance results below</a>).</p>
 <p>A basic info statement can be written as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L190" target="_blank" title="Go to snippet source"></a><code class="language-scala">log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L183" target="_blank" title="Go to snippet source"></a><code class="language-scala">log.info(s&quot;Result of the find call: $findResult&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L161" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Find result: &quot; + connectionInfo(findResult.orElseThrow().connection()));</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L155" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Find result: &quot; + connectionInfo(findResult.orElseThrow().connection()));</code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L192" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.orElseThrow().connection()));</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L186" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Resolve result: &quot; + connectionInfo(resolveResult.orElseThrow().connection()));</code></pre></dd>
 </dl>
 <p>The output of log statement will be:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+  <pre><code>{&quot;@prefix&quot;:&quot;my-subsystem.my-component-name&quot;,
+ &quot;@subsystem&quot;:&quot;my-subsystem&quot;,
+ &quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@host&quot;:&quot;INsaloni.local&quot;,
  &quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
@@ -603,7 +614,9 @@ tmtsoftware/csw
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+  <pre><code>{&quot;@prefix&quot;:&quot;my-subsystem.my-component-name&quot;,
+ &quot;@subsystem&quot;:&quot;my-subsystem&quot;,
+ &quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@host&quot;:&quot;INsaloni.local&quot;,
  &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
@@ -618,7 +631,9 @@ tmtsoftware/csw
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+  <pre><code>{&quot;@prefix&quot;:&quot;my-subsystem.my-component-name&quot;,
+ &quot;@subsystem&quot;:&quot;my-subsystem&quot;,
+ &quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@host&quot;:&quot;INsaloni.local&quot;,
  &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
@@ -635,13 +650,13 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L182-L185" target="_blank" title="Go to snippet source"></a><code class="language-scala">log.info(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L175-L178" target="_blank" title="Go to snippet source"></a><code class="language-scala">log.info(
   s&quot;Attempting to find $exampleConnection&quot;,
   Map(Keys.OBS_ID -&gt; &quot;foo_obs_id&quot;, &quot;exampleConnection&quot; -&gt; exampleConnection.name)
 )</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L151-L155" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Attempting to find &quot; + exampleConnection,
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L145-L149" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(&quot;Attempting to find &quot; + exampleConnection,
         Map.of(
                 JKeys.OBS_ID, &quot;foo_obs_id&quot;,
                 &quot;exampleConnection&quot;, exampleConnection.name()
@@ -649,7 +664,7 @@ tmtsoftware/csw
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L183-L186" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; Map.of(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L177-L180" target="_blank" title="Go to snippet source"></a><code class="language-java">log.info(() -&gt; &quot;Attempting to resolve &quot; + exampleConnection + &quot; with a wait of &quot; + waitForResolveLimit + &quot;...&quot;, () -&gt; Map.of(
         JKeys.OBS_ID, &quot;foo_obs_id&quot;,
         &quot;exampleConnection&quot;, exampleConnection.name()
 ));</code></pre></dd>
@@ -658,7 +673,9 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+  <pre><code>{&quot;@prefix&quot;:&quot;my-subsystem.my-component-name&quot;,
+ &quot;@subsystem&quot;:&quot;my-subsystem&quot;,
+ &quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@host&quot;:&quot;INsaloni.local&quot;,
  &quot;@name&quot;:&quot;LocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
@@ -677,7 +694,9 @@ tmtsoftware/csw
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+  <pre><code>{&quot;@prefix&quot;:&quot;my-subsystem.my-component-name&quot;,
+ &quot;@subsystem&quot;:&quot;my-subsystem&quot;,
+ &quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@host&quot;:&quot;INsaloni.local&quot;,
  &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
@@ -695,7 +714,9 @@ tmtsoftware/csw
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre><code>{&quot;@componentName&quot;:&quot;my-component-name&quot;,
+  <pre><code>{&quot;@prefix&quot;:&quot;my-subsystem.my-component-name&quot;,
+ &quot;@subsystem&quot;:&quot;my-subsystem&quot;,
+ &quot;@componentName&quot;:&quot;my-component-name&quot;,
  &quot;@host&quot;:&quot;INsaloni.local&quot;,
  &quot;@name&quot;:&quot;JLocationServiceExampleClient&quot;,
  &quot;@severity&quot;:&quot;INFO&quot;,
@@ -715,49 +736,49 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L326-L327" target="_blank" title="Go to snippet source"></a><code class="language-scala">val runtimeException = new RuntimeException(s&quot;Received unexpected message $x&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L319-L320" target="_blank" title="Go to snippet source"></a><code class="language-scala">val runtimeException = new RuntimeException(s&quot;Received unexpected message $x&quot;)
 log.error(runtimeException.getMessage, ex = runtimeException)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L292-L295" target="_blank" title="Go to snippet source"></a><code class="language-java">} catch (InterruptedException | ExecutionException ex) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L286-L289" target="_blank" title="Go to snippet source"></a><code class="language-java">} catch (InterruptedException | ExecutionException ex) {
     log.info(ex.getMessage(), ex);
     throw ex;
 }</code></pre></dd>
   <dt>Java (Supplier)
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L319-L320" target="_blank" title="Go to snippet source"></a><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L313-L314" target="_blank" title="Go to snippet source"></a><code class="language-java">RuntimeException runtimeException = new RuntimeException(&quot;Received unexpected message &quot; + x);
 log.info(runtimeException::getMessage, runtimeException);</code></pre></dd>
 </dl>
 <h2><a href="#create-loggerfactory" name="create-loggerfactory" class="anchor"><span class="anchor-link"></span></a>Create LoggerFactory</h2><div class="callout note "><div class="callout-title">Note</div>
 <p>This functionality is included in the framework code and users should not have to implement it themselves. Documentation is included for testing or further understanding.</p></div>
-<p>In order to create a LoggerFactory with a custom componentName refer the following code:</p>
+<p>In order to create a LoggerFactory with a custom prefix, refer to the following code:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/componentlogger/loggers.scala#L35-L38" target="_blank" title="Go to snippet source"></a><code class="language-scala">val loggerFactory: LoggerFactory = new LoggerFactory(&quot;my-component-name&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/client/componentlogger/loggers.scala#L36-L39" target="_blank" title="Go to snippet source"></a><code class="language-scala">val loggerFactory: LoggerFactory = new LoggerFactory(Prefix(&quot;csw.my-component-name&quot;))
 
 // convert a scala LoggerFactory to java JLoggerFactory
 val jLoggerFactory: JLoggerFactory = loggerFactory.asJava</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/logging/client/componentlogger/JSampleClass.java#L47-L50" target="_blank" title="Go to snippet source"></a><code class="language-java">JLoggerFactory jLoggerFactory = new JLoggerFactory(&quot;my-component-name&quot;);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/logging/client/componentlogger/JSampleClass.java#L48-L51" target="_blank" title="Go to snippet source"></a><code class="language-java">JLoggerFactory jLoggerFactory = new JLoggerFactory(Prefix.apply(&quot;csw.my-component-name&quot;));
 
 // convert a java JLoggerFactory to scala LoggerFactory
 LoggerFactory loggerFactory = jLoggerFactory.asScala();</code></pre></dd>
 </dl>
 <h2><a href="#create-loggingsystem" name="create-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Create LoggingSystem</h2><div class="callout note "><div class="callout-title">Note</div>
 <p>This functionality is included in the framework code and users should not have to implement it themselves. Documentation is included for testing or further understanding.</p></div>
-<p>For logging statements to appear in the program, start <code>LoggingSystem</code> at an earliest location in an application. <strong>Also note, <code>LoggingSystem</code> should be started only once in an application.</strong> The name used while creating <code>LoggingSystem</code> will be used to create the folder and dump all logging files.</p>
+<p>For logging statements to appear in the program, start <code>LoggingSystem</code> at an earliest location in an application. <strong>Also note, <code>LoggingSystem</code> should be started only once in an application.</strong> The name used while creating <code>LoggingSystem</code> will be used to create the folder that will contain all logging files.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L60-L62" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val host = InetAddress.getLocalHost.getHostName
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L55-L57" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val host = InetAddress.getLocalHost.getHostName
 // Only call this once per application
 val loggingSystem: LoggingSystem = LoggingSystemFactory.start(&quot;LocationServiceExampleClient&quot;, &quot;0.1&quot;, host, typedSystem)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L337-L338" target="_blank" title="Go to snippet source"></a><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L331-L332" target="_blank" title="Go to snippet source"></a><code class="language-java">String host = InetAddress.getLocalHost().getHostName();
 loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&quot;, &quot;0.1&quot;, host, typedSystem);</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <ul>
@@ -765,15 +786,15 @@ loggingSystem = JLoggingSystemFactory.start(&quot;JLocationServiceExampleClient&
 </ul></div>
 <h2><a href="#stop-loggingsystem" name="stop-loggingsystem" class="anchor"><span class="anchor-link"></span></a>Stop LoggingSystem</h2><div class="callout note "><div class="callout-title">Note</div>
 <p>This functionality is included in the framework code and users should not have to implement it themselves. Documentation is included for testing or further understanding.</p></div>
-<p>Please ensure to stop <code>LoggingSystem</code> before application exits.</p>
+<p>Please ensure the <code>LoggingSystem</code> is stopped before the application exits.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L306-L307" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Only call this once per application
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L299-L300" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Only call this once per application
 Await.result(loggingSystem.stop, 30.seconds)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L300-L301" target="_blank" title="Go to snippet source"></a><code class="language-java">// Only call this once per application
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L294-L295" target="_blank" title="Go to snippet source"></a><code class="language-java">// Only call this once per application
 loggingSystem.javaStop().get();</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
@@ -782,8 +803,8 @@ loggingSystem.javaStop().get();</code></pre></dd>
   <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java">Java Example</a></li>
 </ul>
 <h2><a href="#performance" name="performance" class="anchor"><span class="anchor-link"></span></a>Performance</h2>
-<p>Performance results documented on this page is measured in terms of Throughput and obtained with the JMH Java benchmark harness. Sourcecode for all the JMH benchmarks can be found here at <a href="https://github.com/tmtsoftware/csw/tree/master/csw-benchmark/src/main">CSW Benchmarks</a> </p>
-<p><a href="https://en.wikipedia.org/wiki/Throughput">Wikipedia</a> definition of Throughput is the maximum rate of production or the maximum rate at which something can be processed. In our case, throughput is defined as how many messages can be logged in a certain period of time.</p>
+<p>Performance results documented on this page is measured in terms of throughput and obtained with the JMH Java benchmark harness. Sourcecode for all the JMH benchmarks can be found here at <a href="https://github.com/tmtsoftware/csw/tree/master/csw-benchmark/src/main">CSW Benchmarks</a> </p>
+<p><a href="https://en.wikipedia.org/wiki/Throughput">Wikipedia</a> definition of &ldquo;throughput&rdquo; is the maximum rate of production or the maximum rate at which something can be processed. In our case, throughput is defined as how many messages can be logged in a certain period of time.</p>
 <h3><a href="#test-machine-configuration-" name="test-machine-configuration-" class="anchor"><span class="anchor-link"></span></a>Test Machine Configuration :</h3>
 <ul>
   <li>MacBook Pro (Retina, 15-inch, Mid 2015)</li>
@@ -798,22 +819,22 @@ loggingSystem.javaStop().get();</code></pre></dd>
 </ul>
 <h3><a href="#scala-logging-appenders-throughput" name="scala-logging-appenders-throughput" class="anchor"><span class="anchor-link"></span></a>Scala Logging : Appender&rsquo;s Throughput</h3>
 <p><img src="../images/logging-perf/logging-appenders-perf-results-play-json.png" alt="Logging Appenders Throughput" /></p>
-<p>Above graph includes the throughput results for File and StdOut appender&rsquo;s using scala&rsquo;s logging API. Java&rsquo;s logging API throughput results are included further down this page.<br/>As shown in the above graph, experiment was carried out for 1, 2, 4, 8 and 16 threads. That means, multiple threads are logging messages concurrently. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>Above graph includes the throughput results for File and StdOut appenders using the Scala logging API. The Java logging API throughput results are included further down this page.<br/>As shown in the above graph, the experiment was carried out for 1, 2, 4, 8 and 16 threads. That means, multiple threads are logging messages concurrently. </p><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>Numbers indicated in the graph does not mean that those number of messages are actually written to file or console. These are the number of logging messages sent to LogActor asynchronously for the period of one second.</li>
   <li>It is the responsibility of LogActor to write these messages to file or console.</li>
   <li>LogActor uses BoundedMailbox with a mailbox-capacity = 262144, messages are dropped if mailbox gets full.</li>
 </ul></div>
 <h3><a href="#scala-and-java-logging-throughput-comparision-log-level-enabled-vs-disabled-" name="scala-and-java-logging-throughput-comparision-log-level-enabled-vs-disabled-" class="anchor"><span class="anchor-link"></span></a>Scala And Java Logging : Throughput Comparision (Log Level Enabled vs Disabled)</h3>
-<p>Below graph depicts the throughput of Java&rsquo;s logging API (String and Supplier) and scala&rsquo;s logging API when log level was enabled and disabled. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>Below graph depicts the throughput of the Java logging API (String and Supplier) and the Scala logging API when the log level was enabled and disabled. </p><div class="callout note "><div class="callout-title">Note</div>
 <ul>
-  <li><strong>Log Level Enabled</strong> : Results are obtained for <code>log.info</code> when default log level was set to info, that means the logging messages were sent to LogActor for writing it to file.</li>
-  <li><strong>Log Level Disabled</strong> : Results are obtained for <code>log.trace</code> when default log level was set to info, that means the logging messages were not written to file.</li>
+  <li><strong>Log Level Enabled</strong> : Results are obtained for <code>log.info</code> when the default log level was set to <code>info</code>, which means the logging messages were sent to LogActor for writing it to file.</li>
+  <li><strong>Log Level Disabled</strong> : Results are obtained for <code>log.trace</code> when the default log level was set to <code>info</code>, which means the logging messages were not written to file.</li>
 </ul></div>
 <p><img src="../images/logging-perf/java-scala-logging-throughput-comparision-play-json.png" alt="Java Scala Throughput Comparision" /></p>
 <p>This graph is produced based on the result generated by <a href="https://github.com/tmtsoftware/csw/tree/master/csw-benchmark/src/main/java/csw/logging/perf/jmh/JE2ELoggingBenchmark.java">JE2ELoggingBenchmark</a> and <a href="https://github.com/tmtsoftware/csw/tree/master/csw-benchmark/src/main/scala/csw/logging/perf/jmh/E2ELoggingBenchmark.scala">E2ELoggingBenchmark</a></p><div class="callout note "><div class="callout-title">Note</div>
 <ul>
-  <li>As you can see in the above graph, Supplier version of Java log API and by name of scala API is very efficient and throughput is much higher than String version. It is recommended to use Supplier API by java developers.</li>
+  <li>As you can see in the above graph, the Supplier version of the Java log API and the &ldquo;by name&rdquo; version of Scala API are very efficient and throughput is much higher than the String version. Therefore, it is recommended that Java developers use the Supplier API.</li>
 </ul></div>
 <h2><a href="#technical-description" name="technical-description" class="anchor"><span class="anchor-link"></span></a>Technical Description</h2>
 <p>See <a href="../technical/logging/logging.html">Logging Service Technical Description</a>.</p>

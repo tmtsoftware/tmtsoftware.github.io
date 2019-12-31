@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -226,14 +225,14 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#handling-exceptions" name="handling-exceptions" class="anchor"><span class="anchor-link"></span></a>Handling Exceptions</h1>
-<p>A component should create exceptions belonging to following two types:</p>
+<p>A component should create exceptions belonging to one of the two following types:</p>
 <ol>
   <li>
     <p><strong>FailureRestart</strong> : As a part of any handler, if an exception can be handled by restarting the component, an exception of type <code>FailureRestart</code> should be thrown to let the framework restart the component. The component&rsquo;s state will be cleared/reinitialized. The <code>onInitialize</code> handler will be invoked again.</p>
     <dl>
       <dt>Scala</dt>
       <dd>
-      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L153-L168" target="_blank" title="Go to snippet source"></a><code class="language-scala">case class HcdNotFoundException() extends FailureRestart(&quot;Could not resolve hcd location. Initialization failure.&quot;)
+      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L163-L178" target="_blank" title="Go to snippet source"></a><code class="language-scala">case class HcdNotFoundException() extends FailureRestart(&quot;Could not resolve hcd location. Initialization failure.&quot;)
 
 private def resolveHcd(): Future[Option[AkkaLocation]] = {
   val maybeConnection = componentInfo.connections.find(connection =&gt; connection.componentId.componentType == ComponentType.HCD)
@@ -251,7 +250,7 @@ private def resolveHcd(): Future[Option[AkkaLocation]] = {
 }</code></pre></dd>
       <dt>Java</dt>
       <dd>
-      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L275-L299" target="_blank" title="Go to snippet source"></a><code class="language-java">class HcdNotFoundException extends FailureRestart {
+      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L287-L311" target="_blank" title="Go to snippet source"></a><code class="language-java">class HcdNotFoundException extends FailureRestart {
     HcdNotFoundException() {
         super(&quot;Could not resolve hcd location. Initialization failure.&quot;);
     }
@@ -260,7 +259,7 @@ private def resolveHcd(): Future[Option[AkkaLocation]] = {
 private CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolveHcd() {
     // find a Hcd connection from the connections provided in componentInfo
     Optional&lt;Connection&gt; mayBeConnection = componentInfo.getConnections().stream()
-            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD)
+            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD())
             .findFirst();
 
     // If an Hcd is found as a connection, resolve its location from location service and create other
@@ -283,7 +282,7 @@ private CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolveHcd() {
     <dl>
       <dt>Scala</dt>
       <dd>
-      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L172-L183" target="_blank" title="Go to snippet source"></a><code class="language-scala">case class ConfigNotAvailableException() extends FailureStop(&quot;Configuration not available. Initialization failure.&quot;)
+      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L182-L193" target="_blank" title="Go to snippet source"></a><code class="language-scala">case class ConfigNotAvailableException() extends FailureStop(&quot;Configuration not available. Initialization failure.&quot;)
 
 private def getAssemblyConfig: Future[ConfigData] = {
 
@@ -297,7 +296,7 @@ private def getAssemblyConfig: Future[ConfigData] = {
 }</code></pre></dd>
       <dt>Java</dt>
       <dd>
-      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L303-L316" target="_blank" title="Go to snippet source"></a><code class="language-java">class ConfigNotAvailableException extends FailureStop {
+      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L315-L328" target="_blank" title="Go to snippet source"></a><code class="language-java">class ConfigNotAvailableException extends FailureStop {
     ConfigNotAvailableException() {
         super(&quot;Configuration not available. Initialization failure.&quot;);
     }

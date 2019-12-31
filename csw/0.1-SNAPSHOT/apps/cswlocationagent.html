@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="active page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -251,15 +250,15 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#csw-location-agent" name="csw-location-agent" class="anchor"><span class="anchor-link"></span></a>csw-location-agent</h1>
-<p>A utility application that starts a given external program, registers a comma separated list of services with the Location Service and unregisters them when the program exits.</p>
+<p>A utility application that starts a given external (non-CSW) program, registers a comma separated list of services with the Location Service, and unregisters them when the program exits.</p>
 <h2><a href="#command-line-parameter-options" name="command-line-parameter-options" class="anchor"><span class="anchor-link"></span></a>Command line parameter options</h2>
 <ul>
   <li><strong><code>--names</code></strong> is a required parameter. It needs to be a list of comma separated service names without a space after comma.</li>
-  <li><strong><code>--command</code></strong> is an optional parameter. The command that starts the target application. Use use %port to specify the port number. If parameter is not provided value $name.command from config file will be picked up. If value in config file is not found, the service names provided will be registered with Location Service.</li>
-  <li><strong><code>--port</code></strong> the optional port number the application listens on (default: use value of $name.port from config file, or use a random, free port.)</li>
+  <li><strong><code>--command</code></strong> is an optional parameter. The command that starts the target application. Use use %port to specify the port number. If the parameter is not provided, the value $name.command from the config file will be picked up. If the value in the config file is not found, the service names provided will be registered with Location Service.</li>
+  <li><strong><code>--port</code></strong> the optional port number the application listens on (default: use the value of $name.port from the config file, or use a random, free port.)</li>
   <li><strong><app-config></strong> an optional config file in HOCON format. Will be automatically picked based on &ndash;names parameter (Options specified as: $name.command, $name.port, etc.)</li>
-  <li><strong><code>--delay</code></strong> the number of milliseconds to wait for the app to start before registering it with the Location Service (default: 1000)</li>
-  <li><strong><code>--http</code></strong> is an optional parameter. To register services as Http with provided path. (default: none, i.e Services will be registered as Tcp)</li>
+  <li><strong><code>--delay</code></strong> the number of milliseconds to wait for the app to start before registering itself with the Location Service (default: 1000)</li>
+  <li><strong><code>--http</code></strong> is an optional parameter. To register services as HTTP with the provided path. (default: none, i.e Services will be registered as Tcp)</li>
   <li><strong><code>--no-exit</code></strong> For testing: prevents application from exiting after running command</li>
   <li><strong><code>--help</code></strong> Prints the help message.</li>
   <li><strong><code>--version</code></strong> Prints the version of the application.</li>
@@ -269,19 +268,19 @@ tmtsoftware/csw
   <li>
   <p>
   <pre><code>csw-location-agent --name &quot;redis&quot; --command &quot;redis-server /usr/local/etc/redis.conf&quot; --port 6379
-</code></pre>Application will start redis server on port 6379 (default redis port) and will register a TcpConnection for the same with Location Service</p></li>
+</code></pre>Application will start a Redis server on port 6379 (the default Redis port) and will register a TcpConnection for it with the Location Service</p></li>
   <li>
   <pre><code>csw-location-agent --name &quot;foo&quot; --command &quot;sleep 30&quot;
 </code></pre>
-  <p>Application will sleep for 30 seconds. It will be registered as a service named foo on a random port with Location Service. Once sleep is over after 30 seconds, will unregister foo service.</p></li>
+  <p>Application will sleep for 30 seconds. It will be registered as a service named <code>foo</code> on a random port with the Location Service. After the sleep is over in 30 seconds, it will unregister the <code>foo</code> service.</p></li>
   <li>
   <pre><code>csw-location-agent --name &quot;myHttpServiceAsTcp&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080
 </code></pre>
-  <p>Application will start a simple HTTP service on port 8080. This will register myHttpServiceAsTcp as a TCP service with Location Service.</p></li>
+  <p>Application will start a simple HTTP service on port 8080. This will register <code>myHttpServiceAsTcp</code> as a TCP service with the Location Service.</p></li>
   <li>
   <pre><code>csw-location-agent --name &quot;myHttpServiceAsHttp&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080 --http &quot;path&quot;
 </code></pre>
-  <p>Application will start a simple HTTP service on port 8080. This will register myHttpServiceAsHttp as a Http service with provided path with Location Service.</p></li>
+  <p>Application will start a simple HTTP service on port 8080. This will register <code>myHttpServiceAsHttp</code> as a HTTP service with the provided path with the Location Service.</p></li>
   <li>
   <pre><code>csw-location-agent --help
 </code></pre>
@@ -291,7 +290,7 @@ tmtsoftware/csw
 </code></pre>
   <p>Prints application version</p></li>
 </ol><div class="callout note "><div class="callout-title">Note</div>
-<p>Before running <code>csw-location-agent</code>, make sure that <code>csw-location-server</code> is running on local machine at <code>localhost:7654</code>. As location agent uses local HTTP location client which expect location server running locally.</p></div>
+<p>Before running <code>csw-location-agent</code>, make sure that <code>csw-location-server</code> is running on the local machine at <code>localhost:7654</code>, since the location agent uses a local HTTP location client which expects the Location Server to be running locally.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/apps/cswlocationagent.md" title="Edit this page" class="md-source-file md-edit">
@@ -310,7 +309,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../apps/cswadminserver.html" title="csw-admin-server" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../apps/cswlocationserver.html" title="csw-location-server" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -319,7 +318,7 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-csw-admin-server
+csw-location-server
 </span>
 </div>
 </a>

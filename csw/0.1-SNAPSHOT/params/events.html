@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -257,29 +256,23 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#events" name="events" class="anchor"><span class="anchor-link"></span></a>Events</h1>
-<p>Events are the most basic type of asynchronous notification in TMT when an activity occurs somewhere in the TMT system and other components need to be notified. Each type of event has a unique purpose and unique information, but they all share same structural features. All events have <strong>EventInfo</strong> and <strong>ParameterSet</strong>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p><code>csw-params</code> library offers out of the box support to serialize Events using <strong>Cbor</strong>, so that events can be produced and consumed by JVM(Java virtual machine) as well as Non-JVM applications.</p>
-<p>For more on Cbor refer <a href="../technical/params/params.html">technical doc</a>.</p></div>
+<p>Events are the most basic type of asynchronous notification in TMT when an activity occurs somewhere in the TMT system and other components need to be notified. Each type of event has a unique purpose and unique information, but they all share same structural features. All events have <strong>EventInfo</strong> and a <strong>ParameterSet</strong>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>The <code>csw-params</code> library offers out of the box support to serialize Events using <strong>Cbor</strong>, so that events can be produced and consumed by JVM (Java virtual machine) as well as Non-JVM applications.</p>
+<p>For more on Cbor, refer to the <a href="../technical/params/params.html">technical doc</a>.</p></div>
 <h2><a href="#eventtime" name="eventtime" class="anchor"><span class="anchor-link"></span></a>EventTime</h2>
-<p>Each event includes its time of creation in UTC format. To create an event instance at the current time use the default constructor. For other utility functions, see below examples:</p>
+<p>Each event includes its time of creation in UTC format. You can access that eventTime as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L19-L30" target="_blank" title="Go to snippet source"></a><code class="language-scala">//default constructor will return current time in UTC
-val now: UTCTime = UTCTime.now()
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L18-L23" target="_blank" title="Go to snippet source"></a><code class="language-scala">val source    = Prefix(&quot;iris.filter.wheel&quot;)
+val eventName = EventName(&quot;temperatures&quot;)
+val event     = SystemEvent(source, eventName)
 
-//using constructor
-val anHourAgo: UTCTime = UTCTime(Instant.now().minusSeconds(3600))
-
-//current event time using utility function
-val currentTime: UTCTime = UTCTime.now()
-
-//some past time using utility function
-val aDayAgo = UTCTime(Instant.now.minusSeconds(86400))
-</code></pre></dd>
+// accessing eventTime
+val eventTime = event.eventTime</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L33-L45" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>//apply returns current time in UTC
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L35-L47" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>//apply returns current time in UTC
 UTCTime now = UTCTime.now();
 
 //using constructor
@@ -297,7 +290,7 @@ UTCTime aDayAgo = new UTCTime(Instant.now().minusSeconds(86400));
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L97-L142" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L90-L135" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Int]    = KeyType.IntKey.make(&quot;encoder&quot;)
 val k2: Key[Int]    = KeyType.IntKey.make(&quot;speed&quot;)
 val k3: Key[String] = KeyType.StringKey.make(&quot;filter&quot;)
@@ -345,16 +338,16 @@ val se6: SystemEvent = se5.add(k2.set(5, 6, 7, 8))
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L57-L94" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L59-L96" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; k1 = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;speed&quot;);
 Key&lt;String&gt; k3 = JKeyType.StringKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; k4 = JKeyType.IntKey().make(&quot;notUsed&quot;);
 
 //prefixes
-Prefix prefix1 = new Prefix(&quot;wfos.red.filter&quot;);
+Prefix prefix1 = new Prefix(JSubsystem.WFOS(), &quot;red.filter&quot;);
 EventName name1 = new EventName(&quot;filterWheel&quot;);
-Prefix prefix2 = new Prefix(&quot;iris.imager.filter&quot;);
+Prefix prefix2 = new Prefix(JSubsystem.IRIS(), &quot;imager.filter&quot;);
 EventName name2 = new EventName(&quot;status&quot;);
 
 //parameters
@@ -385,12 +378,12 @@ Set&lt;String&gt; missingKeys = se3.jMissingKeys(k1, k2, k3, k4);
 SystemEvent se4 = se3.remove(k3);</code></pre></dd>
 </dl>
 <h2><a href="#observe-event" name="observe-event" class="anchor"><span class="anchor-link"></span></a>Observe Event</h2>
-<p>ObserveEvent are standardized events used to describe an activities within the data acquisition process. These events are ublished only by Science Detector Assemblies, which emit ObserveEvents during their exposures to signal the occurrence of specific activities/actions during the acquisition of data. Observe Events are published by the detector system using the Event Service.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>The current ObserveEvents do not match the descriptions of the ESW Phase 1 review. The model files and documents can be used to create standard ObserveEvents.</p></div>
+<p>ObserveEvent are standardized events used to describe an activities within the data acquisition process. These events are typically published by Science Detector Assemblies, which emit ObserveEvents during their exposures to signal the occurrence of specific activities/actions during the acquisition of data. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>The example ObserveEvents do not match the descriptions of the ESW Phase 1 review. The model files and documents can be used to create standard ObserveEvents.</p></div>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L44-L82" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L36-L74" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Int]    = KeyType.IntKey.make(&quot;readoutsCompleted&quot;)
 val k2: Key[Int]    = KeyType.IntKey.make(&quot;coaddsCompleted&quot;)
 val k3: Key[String] = KeyType.StringKey.make(&quot;fileID&quot;)
@@ -431,22 +424,22 @@ val se4: ObserveEvent = se3.remove(k3)
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L107-L144" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L109-L146" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; k1 = JKeyType.IntKey().make(&quot;readoutsCompleted&quot;);
 Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;coaddsCompleted&quot;);
 Key&lt;String&gt; k3 = JKeyType.StringKey().make(&quot;fileID&quot;);
 Key&lt;Integer&gt; k4 = JKeyType.IntKey().make(&quot;notUsed&quot;);
 
 //prefixes
-Prefix prefix1 = new Prefix(&quot;iris.ifu.detectorAssembly&quot;);
+Prefix prefix1 = new Prefix(JSubsystem.IRIS(), &quot;ifu.detectorAssembly&quot;);
 EventName name1 = new EventName(&quot;readoutEnd&quot;);
-Prefix prefix2 = new Prefix(&quot;wfos.red.detector&quot;);
+Prefix prefix2 = new Prefix(JSubsystem.WFOS(), &quot;red.detector&quot;);
 EventName name2 = new EventName(&quot;exposureStarted&quot;);
 
 //parameters
 Parameter&lt;Integer&gt; p1 = k1.set(4);
 Parameter&lt;Integer&gt; p2 = k2.set(2);
-Parameter&lt;String&gt; p3 = k3.set(&quot;WFOS-RED-0001&quot;);
+Parameter&lt;String&gt; p3 = k3.set(&quot;WFOS()-RED-0001&quot;);
 
 //Create ObserveEvent using madd
 ObserveEvent oc1 = new ObserveEvent(prefix1, name1).madd(p1, p2);
@@ -475,7 +468,7 @@ ObserveEvent oc4 = oc3.remove(k3);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L161-L193" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L154-L186" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
 
 //key
 val k1: Key[MatrixData[Double]] = DoubleMatrixKey.make(&quot;myMatrix&quot;)
@@ -510,16 +503,16 @@ val observeEvent1: ObserveEvent = JsonSupport.readEvent[ObserveEvent](observeJso
 val systemEvent1: SystemEvent   = JsonSupport.readEvent[SystemEvent](systemJson)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L157-L188" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L159-L190" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
 Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyType.DoubleMatrixKey().make(&quot;myMatrix&quot;);
 
 //prefixes
-Prefix prefix1 = new Prefix(&quot;aoesw.rpg&quot;);
+Prefix prefix1 = new Prefix(JSubsystem.AOESW(), &quot;rpg&quot;);
 EventName name1 = new EventName(&quot;correctionInfo&quot;);
 
 //values
 Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
-MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
+MatrixData&lt;Double&gt; m1 = MatrixData.fromArrays(doubles);
 
 //parameter
 Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
@@ -550,7 +543,7 @@ SystemEvent systemEvent1 = JavaJsonSupport.readEvent(systemJson);</code></pre></
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L207-L248" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L200-L241" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val encoderKey: Key[Int] = KeyType.IntKey.make(&quot;encoder&quot;)
 val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc&quot;)
@@ -594,13 +587,13 @@ val finalStatusEvent = systemEvent.madd(Set(miscParam1, encParam1))
 val uniqueKeys3 = finalStatusEvent.paramSet.toList.map(_.keyName)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L200-L239" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L202-L241" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc&quot;);
 
 //prefix
-Prefix prefix1 = new Prefix(&quot;wfos.blue.filter&quot;);
+Prefix prefix1 = new Prefix(JSubsystem.WFOS(), &quot;blue.filter&quot;);
 EventName name1 = new EventName(&quot;filterWheel&quot;);
 
 //params

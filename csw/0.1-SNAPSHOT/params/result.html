@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -253,7 +252,7 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#result" name="result" class="anchor"><span class="anchor-link"></span></a>Result</h1>
-<p>Components use <strong>Results</strong> to return results in the form of a <strong>ParameterSet</strong>. <code>Result</code> is the value that is returned as an argument to the <code>CompletedWithResult</code> <code>SubmitResponse</code>. </p>
+<p>Components use <strong>Results</strong> to return results of a command in the form of a <strong>ParameterSet</strong>. <code>Result</code> is the value that is returned as an argument to the <code>Completed</code> <code>SubmitResponse</code>. </p>
 <p>Creating a Result Requires:</p>
 <ul>
   <li><strong><a href="commands.html#Prefix">Prefix</a></strong></li>
@@ -262,7 +261,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/ResultTest.scala#L20-L54" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/ResultTest.scala#L21-L55" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Int]    = KeyType.IntKey.make(&quot;encoder&quot;)
 val k2: Key[Int]    = KeyType.IntKey.make(&quot;windspeed&quot;)
 val k3: Key[String] = KeyType.StringKey.make(&quot;filter&quot;)
@@ -277,11 +276,11 @@ val p2: Parameter[Int]    = k2.set(44)
 val p3: Parameter[String] = k3.set(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;)
 
 //Create Result using madd
-val r1: Result = Result(prefix).madd(p1, p2)
+val r1: Result = Result().madd(p1, p2)
 //Create Result using apply
-val r2: Result = Result(prefix, Set(p1, p2))
+val r2: Result = Result(p1, p2)
 //Create Result and use add
-val r3: Result = Result(prefix).add(p1).add(p2).add(p3)
+val r3: Result = Result().add(p1).add(p2).add(p3)
 
 //access keys
 val k1Exists: Boolean = r1.exists(k1) //true
@@ -299,16 +298,11 @@ val missingKeys: Set[String] = r3.missingKeys(k1, k2, k3, k4)
 val r4: Result = r3.remove(k3)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JResultTest.java#L29-L67" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JResultTest.java#L33-L65" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; k1 = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;windspeed&quot;);
 Key&lt;String&gt; k3 = JKeyType.StringKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; k4 = JKeyType.IntKey().make(&quot;notUsed&quot;);
-
-//prefix
-String prefix = &quot;wfos.prog.cloudcover&quot;;
-
-ObsId obsId = new ObsId(&quot;Obs001&quot;);
 
 //parameters
 Parameter&lt;Integer&gt; p1 = k1.set(22);
@@ -316,11 +310,11 @@ Parameter&lt;Integer&gt; p2 = k2.set(44);
 Parameter&lt;String&gt; p3 = k3.set(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;);
 
 //Create Result using madd
-Result r1 = new Result(prefix).madd(p1, p2);
-//Create Result using madd
-Result r2 = new Result(prefix).madd(p1, p2);
+Result r1 = new Result().madd(p1, p2);
+//Create Result in line
+Result r2 = new Result().madd(p1, p2);
 //Create Result and use madd, add
-Result r3 = new Result(prefix).madd(p1, p2).add(p3);
+Result r3 = new Result().madd(p1, p2).add(p3);
 
 //access keys
 boolean k1Exists = r1.exists(k1); //true
@@ -343,7 +337,7 @@ Result r4 = r3.remove(k3);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/ResultTest.scala#L71-L101" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/ResultTest.scala#L102-L132" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
 
 //key
 val k1: Key[MatrixData[Double]] = DoubleMatrixKey.make(&quot;myMatrix&quot;)
@@ -361,7 +355,7 @@ val prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)
 val i1: Parameter[MatrixData[Double]] = k1.set(m1)
 
 //result
-val result: Result = Result(prefix).add(i1)
+val result: Result = Result().add(i1)
 
 //json support - write
 val resultJson: JsValue = JsonSupport.writeResult(result)
@@ -376,12 +370,12 @@ val scFromPrettyStr: Result = JsonSupport.readResult(Json.parse(str))
 val result1: Result = JsonSupport.readResult(resultJson)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JResultTest.java#L81-L107" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JResultTest.java#L79-L105" target="_blank" title="Go to snippet source"></a><code class="language-java">//key
 Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyType.DoubleMatrixKey().make(&quot;myMatrix&quot;);
 
 //values
 Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
-MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
+MatrixData&lt;Double&gt; m1 = MatrixData.fromArrays(doubles);
 
 //parameter
 Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
@@ -390,10 +384,10 @@ Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
 ObsId obsId = new ObsId(&quot;Obs001&quot;);
 
 //prefix
-String prefix = &quot;wfos.prog.cloudcover&quot;;
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;prog.cloudcover&quot;);
 
 //result
-Result result = new Result(prefix).add(i1);
+Result result = new Result().add(i1);
 
 //json support - write
 JsValue resultJson = JavaJsonSupport.writeResult(result);
@@ -411,7 +405,7 @@ Result result1 = JavaJsonSupport.readResult(Json.parse(str));</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/ResultTest.scala#L114-L152" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/ResultTest.scala#L145-L183" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val encoderKey: Key[Int] = KeyType.IntKey.make(&quot;encoder&quot;)
 val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc.&quot;)
@@ -431,7 +425,7 @@ val filterParam3 = filterKey.set(3)
 val miscParam1 = miscKey.set(100)
 
 //Setup command with duplicate key via constructor
-val result = Result(prefix, Set(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3))
+val result = Result(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3)
 //four duplicate keys are removed; now contains one Encoder and one Filter key
 val uniqueKeys1 = result.paramSet.toList.map(_.keyName)
 
@@ -452,7 +446,7 @@ val finalResult = result.madd(Set(miscParam1, encParam1))
 val uniqueKeys3 = finalResult.paramSet.toList.map(_.keyName)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JResultTest.java#L116-L151" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JResultTest.java#L114-L149" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;);
 Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
@@ -461,7 +455,7 @@ Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
 ObsId obsId = new ObsId(&quot;Obs001&quot;);
 
 //prefix
-String prefix = &quot;wfos.blue.filter&quot;;
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;blue.filter&quot;);
 
 //params
 Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);
@@ -475,7 +469,7 @@ Parameter&lt;Integer&gt; filterParam3 = filterKey.set(3);
 Parameter&lt;Integer&gt; miscParam1 = miscKey.set(100);
 
 //Setup command with duplicate key via madd
-Result result = new Result(prefix).madd(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3);
+Result result = new Result().madd(encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3);
 //four duplicate keys are removed; now contains one Encoder and one Filter key
 Set&lt;String&gt; uniqueKeys1 = result.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toUnmodifiableSet());
 

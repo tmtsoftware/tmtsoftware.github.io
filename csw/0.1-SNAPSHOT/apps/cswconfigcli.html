@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="active page">csw-config-cli</a></li>
@@ -259,7 +258,7 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#csw-config-cli" name="csw-config-cli" class="anchor"><span class="anchor-link"></span></a>csw-config-cli</h1>
-<p>A command line application that facilitates interaction with Configuration Service. It accepts various commands to store, retrieve, list and manage configuration files.</p>
+<p>A command line application that facilitates interaction with the Configuration Service. It accepts various commands to store, retrieve, list and manage configuration files.</p>
 <h2><a href="#supported-commands" name="supported-commands" class="anchor"><span class="anchor-link"></span></a>Supported Commands</h2>
 <ul>
   <li>login</li>
@@ -279,17 +278,28 @@ tmtsoftware/csw
   <li>getActive</li>
 </ul>
 <h2><a href="#login" name="login" class="anchor"><span class="anchor-link"></span></a>login</h2>
-<p><code>create, update, delete, setActiveVersion &amp; resetActiveVersion</code> commands are admin protected. In order to use those, you need to login first. You need to have valid user name and password to login which has admin role assigned to it.</p>
+<p><code>create, update, delete, setActiveVersion &amp; resetActiveVersion</code> commands are protected behind authorization  and require admin role. In order to use those, you need to login a with an account having <code>admin</code> privileges.</p>
+<p>For development and testing purposes, AAS comes pre-bundled with a user account for config service</p>
+<pre class="prettyprint"><code class="language-yaml">username = config-admin
+password = config-admin
+</code></pre><div class="callout note "><div class="callout-title">Note</div>
+<p>These credentials will not be available in actual production environment.</p></div>
+<p>For development and testing purposes, AAS comes pre-bundled with the following user accounts for config service:</p>
+<ol>
+  <li>username: <code>admin</code> password: <code>tmt-admin</code> role: <code>admin</code></li>
+  <li>username: <code>dev</code> password: <code>tmt-dev</code> role: NONE</li>
+</ol><div class="callout note "><div class="callout-title">Note</div>
+<p>These credentials will not be available in actual production environment.</p></div>
 <h3><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h3>
 <ol>
   <li>
   <p>
   <pre><code>csw-config-cli login
-</code></pre>This opens up default browser on your machine and asks to provide username and password. Once you provide valid credentials, auth server will respond with access token, refresh token etc. which gets stored in local filesystem. So next time when you use any of the above admin protected commands, this access token gets retrieved from local filesystem and implicitly passed in a request sent to config server.</p></li>
+</code></pre>This opens up default browser on your machine and asks you to provide username and password. Once you provide valid credentials, AAS will respond with an access token, refresh token etc. which get stored on the local filesystem. So next time when you use any of the above admin protected commands, this access token gets retrieved from local filesystem and is implicitly passed in a request sent to the Config Server.</p></li>
   <li>
   <pre><code>csw-config-cli login --consoleLogin
 </code></pre>
-  <p>Instead of opening default browser on your machine, this will prompt for username and password on the console. (You do not need to leave console in this case.)</p></li>
+  <p>Instead of opening the default browser on your machine, this will prompt for username and password on the console. (You do not need to leave console in this case.)</p></li>
 </ol>
 <h2><a href="#logout" name="logout" class="anchor"><span class="anchor-link"></span></a>logout</h2>
 <p>Use this command to logout if you are already logged in or you want to re-login with different credentials.</p>
@@ -304,7 +314,7 @@ tmtsoftware/csw
 <ul>
   <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
   <li><code>-i</code>, <code>--in</code> is input file path</li>
-  <li><code>--annex</code> is optional parameter. Add this option to specify if the input file must be save to annex store. It usually is the case if file is binary/large(&gt;10 MiB)</li>
+  <li><code>--annex</code> is optional parameter. Add this option to specify if the input file must be saved to annex store. This is usually the case if file is binary/large(&gt;10 MiB)</li>
   <li><code>-c, --comment</code> optional create comment</li>
 </ul>
 <h4><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h4>
@@ -312,11 +322,11 @@ tmtsoftware/csw
   <li>
   <p>
   <pre><code>csw-config-cli create /path/hcd/trombone.conf -i /Users/admin/configs/trombone.conf -c &quot;Initial version&quot;
-</code></pre>Creates a config file at path <code>/path/hcd/trombone.conf</code>, using local file at <code>/Users/admin/configs/trombone.conf</code>, with <code>Initial version</code> as a comment.</p></li>
+</code></pre>Creates a config file at path <code>/path/hcd/trombone.conf</code>, using the local file at <code>/Users/admin/configs/trombone.conf</code>, with <code>Initial version</code> as a comment.</p></li>
   <li>
   <pre><code>csw-config-cli create /path/hcd/trombone.conf -i /Users/admin/large-configs/bigBinary.conf --annex
 </code></pre>
-  <p>Creates a config file at path <code>/path/hcd/trombone.conf</code>, using local file at <code>/Users/admin/large-configs/bigBinary.conf</code>, file will be stored in annex store.</p></li>
+  <p>Creates a config file at path <code>/path/hcd/trombone.conf</code>, using the local file at <code>/Users/admin/large-configs/bigBinary.conf</code>, file will be stored in annex store.</p></li>
 </ol>
 <h3><a href="#update" name="update" class="anchor"><span class="anchor-link"></span></a>update</h3>
 <p>Overwrites the file specified in the repository by the input file.</p>
@@ -328,7 +338,7 @@ tmtsoftware/csw
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli update /path/hcd/trombone.conf -i /Users/foo/new_trombone.conf -c &quot;new conf for next observation&quot;
 </code></pre>
-<p>Updates repository file <code>/path/hcd/trombone.conf</code>, with a local file at <code>/Users/foo/new_trombone.conf</code>, using a specified comment.</p>
+<p>Updates repository file <code>/path/hcd/trombone.conf</code>, with a local file at <code>/Users/foo/new_trombone.conf</code>, using the specified comment.</p>
 <h3><a href="#get" name="get" class="anchor"><span class="anchor-link"></span></a>get</h3>
 <p>Retrieves a file for a given path and saves it to the output file. The latest file is fetched if neither date nor id is specified.</p>
 <ul>
@@ -341,11 +351,11 @@ tmtsoftware/csw
 <p>1.</p>
 <pre><code>csw-config-cli get /path/hcd/trombone.conf -o /Users/bar/temp/latest_trombone.conf
 </code></pre>
-<p>Gets repository file <code>/path/hcd/trombone.conf</code>, stores at local disk location <code>/Users/bar/temp/latest_trombone.conf</code></p>
+<p>Gets repository file <code>/path/hcd/trombone.conf</code>, stores at the local disk location <code>/Users/bar/temp/latest_trombone.conf</code></p>
 <p>2.</p>
 <pre><code>csw-config-cli get /path/hcd/trombone.conf -o /Users/bar/temp/old_trombone.conf --id 10
 </code></pre>
-<p>Gets version revision 10 of repository file <code>/path/hcd/trombone.conf</code>, stores at local disk location <code>/Users/bar/temp/old_trombone.conf</code></p>
+<p>Gets version revision 10 of the repository file <code>/path/hcd/trombone.conf</code>, stores at the local disk location <code>/Users/bar/temp/old_trombone.conf</code></p>
 <h3><a href="#delete" name="delete" class="anchor"><span class="anchor-link"></span></a>delete</h3>
 <p>Deletes the file at the specified path in the repository.</p>
 <ul>
@@ -355,7 +365,7 @@ tmtsoftware/csw
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli delete /path/hcd/outdated_trombone.conf -c monthly maintainance activity
 </code></pre>
-<p>Deletes repository file <code>/path/hcd/outdated_trombone.conf</code> if it exists using a comment</p>
+<p>Deletes the repository file <code>/path/hcd/outdated_trombone.conf</code>, if it exists, using a comment</p>
 <h3><a href="#list" name="list" class="anchor"><span class="anchor-link"></span></a>list</h3>
 <p>Lists the files in the repository. Can&rsquo;t use &lsquo;&ndash;annex&rsquo; and &lsquo;&ndash;normal&rsquo; together.</p>
 <ul>
@@ -367,23 +377,23 @@ tmtsoftware/csw
 <p>Shows the version history of the file in the repository.</p>
 <ul>
   <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
-  <li><code>--max</code> optional parameter. maximum no of files to be retrieved</li>
+  <li><code>--max</code> optional parameter, indicating the maximum number of files to be retrieved</li>
 </ul>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli history /path/hcd/trombone.conf --max 25
 </code></pre>
-<p>Prints history of repository file <code>/path/hcd/trombone.conf</code>, with only 25 entries.</p>
+<p>Prints the history of repository file <code>/path/hcd/trombone.conf</code>, with only 25 entries.</p>
 <h3><a href="#setactiveversion" name="setactiveversion" class="anchor"><span class="anchor-link"></span></a>setActiveVersion</h3>
 <p>Sets the active version of the file in the repository.</p>
 <ul>
   <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
-  <li><code>--id</code> optional parameter. version id of the repository file to set as active.</li>
+  <li><code>--id</code> optional parameter, specifying the version ID of the repository file to set as active.</li>
   <li><code>-c, --comment</code> optional delete comment</li>
 </ul>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli setActiveVersion /path/hcd/trombone.conf --id 4 -c restoring last successful version.
 </code></pre>
-<p>Sets revision 4 to be active for repository file <code>/path/hcd/trombone.conf</code>, using a comment.</p>
+<p>Sets revision 4 to be active for the repository file <code>/path/hcd/trombone.conf</code>, using a comment.</p>
 <h3><a href="#resetactiveversion" name="resetactiveversion" class="anchor"><span class="anchor-link"></span></a>resetActiveVersion</h3>
 <p>Resets the active version to the latest version for the specified file path.</p>
 <ul>
@@ -393,29 +403,29 @@ tmtsoftware/csw
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli resetActiveVersion /path/hcd/trombone.conf -c testing most recent config
 </code></pre>
-<p>Sets latest revision to be active for repository file <code>/path/hcd/trombone.conf</code>, using a comment.</p>
+<p>Sets latest revision to be active for the repository file <code>/path/hcd/trombone.conf</code>, using a comment.</p>
 <h3><a href="#getactiveversion" name="getactiveversion" class="anchor"><span class="anchor-link"></span></a>getActiveVersion</h3>
-<p>Gets the id of the active version of the file in the repository.</p>
+<p>Gets the ID of the active version of the file in the repository.</p>
 <ul>
   <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
 </ul>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli getActiveVersion /path/hcd/trombone.conf
 </code></pre>
-<p>Gets active version ID for repository file <code>/path/hcd/trombone.conf</code>.</p>
+<p>Gets active version ID for the repository file <code>/path/hcd/trombone.conf</code>.</p>
 <h3><a href="#getactivebytime" name="getactivebytime" class="anchor"><span class="anchor-link"></span></a>getActiveByTime</h3>
 <p>Gets the file that was active at a specified time.</p>
 <ul>
   <li>&lsquo;relativeRepoPath&rsquo; is path in the repository</li>
   <li><code>-o</code>, <code>--out</code> is output file path</li>
-  <li><code>--date</code> optional. if specified will get the active file matching this date. Format: 2017-04-16T16:15:23.503Z</li>
+  <li><code>--date</code> optional. If specified, will get the active file matching this date. Format: 2017-04-16T16:15:23.503Z</li>
 </ul>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli getActiveByTime /path/hcd/trombone.conf -o /usr/tmp/last_week_trombone.conf --date 2017-05-09T07:29:53.242Z
 </code></pre>
-<p>Gets version of repository file <code>/path/hcd/trombone.conf</code>, that was active on <code>2017-05-09T07:29:53.242Z</code> and saves it on local disk.</p>
+<p>Gets version of teh repository file <code>/path/hcd/trombone.conf</code>, that was active on <code>2017-05-09T07:29:53.242Z</code>, and saves it to local disk.</p>
 <h3><a href="#getmetadata" name="getmetadata" class="anchor"><span class="anchor-link"></span></a>getMetadata</h3>
-<p>Gets the metadata of Configuration Service server e.g. repository directory, annex directory, min annex file size, max config file size.</p>
+<p>Gets the metadata of the Configuration Service server e.g. repository directory, annex directory, min annex file size, max config file size.</p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli getMetadata
 </code></pre>
@@ -432,17 +442,17 @@ tmtsoftware/csw
 </code></pre>
 <p>True if repository file <code>/path/hcd/trombone.conf</code> exists, false otherwise</p>
 <h3><a href="#getactive" name="getactive" class="anchor"><span class="anchor-link"></span></a>getActive</h3>
-<p>Retrieves active file for a given path from Configuration Service and writes it to the output file.  * &lsquo;relativeRepoPath&rsquo; is path in the repository  * <code>-o</code>, <code>--out</code> is output file path</p>
+<p>Retrieves active file for a given path from the Configuration Service and writes it to the output file.  * &lsquo;relativeRepoPath&rsquo; is path in the repository  * <code>-o</code>, <code>--out</code> is output file path</p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <pre><code>csw-config-cli getActive /path/hcd/trombone.conf -o /Users/bar/temp/scheduled_trombone.conf
 </code></pre>
-<p>Gets currently active version of repository file <code>/path/hcd/trombone.conf</code>, stores at local disk location <code>/Users/bar/temp/scheduled_trombone.conf</code></p>
+<p>Gets currently active version of the repository file <code>/path/hcd/trombone.conf</code>, stores to the local disk location <code>/Users/bar/temp/scheduled_trombone.conf</code></p>
 <h2><a href="#about-this-application" name="about-this-application" class="anchor"><span class="anchor-link"></span></a>About this application</h2>
 <h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>&ndash;help</h3>
 <p>Prints the help message.</p>
 <h3><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a>&ndash;version</h3>
 <p>Prints the version of the application.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>All the above examples require that <code>csw-location-server</code> is running on local machine at <code>localhost:7654</code>. If <code>csw-location-server</code> is running on remote machine having Ip address <code>172.1.1.2</code>, then you need to pass additional <code>--locationHost 172.1.1.2</code> command line argument. Example: <code>csw-config-cli getMetadata --locationHost 172.1.1.2</code></p></div>
+<p>All the above examples require that <code>csw-location-server</code> is running on local machine at <code>localhost:7654</code>. If <code>csw-location-server</code> is running on a remote machine with an IP address or <code>172.1.1.2</code>, then you need to pass the additional <code>--locationHost 172.1.1.2</code> command line argument. Example: <code>csw-config-cli getMetadata --locationHost 172.1.1.2</code></p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/apps/cswconfigcli.md" title="Edit this page" class="md-source-file md-edit">

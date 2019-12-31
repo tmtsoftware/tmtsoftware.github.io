@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -265,7 +264,7 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#alarm-service" name="alarm-service" class="anchor"><span class="anchor-link"></span></a>Alarm Service</h1>
-<p>The Alarm Service provides API to manage alarms in the TMT software system. The service uses Redis to store Alarm data, including the alarm status and associated metadata. Alarm &ldquo;keys&rdquo; are used to access information about an alarm.</p>
+<p>The Alarm Service provides an API to manage alarms in the TMT software system. The service uses Redis to store Alarm data, including the alarm status and associated metadata. Alarm &ldquo;keys&rdquo; are used to access information about an alarm.</p>
 <!-- introduction to the service -->
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>The Alarm Service comes bundled with the Framework, no additional dependency needs to be added to your <code>build.sbt</code>  file if using it. To use the Alarm service without using the framework, add this to your <code>build.sbt</code> file:</p>
@@ -277,11 +276,11 @@ tmtsoftware/csw
 </dl>
 <h2><a href="#api-flavors" name="api-flavors" class="anchor"><span class="anchor-link"></span></a>API Flavors</h2>
 <p>There are two APIs provided in the Alarm Service: a client API, and an administrative (admin) API. The client API is the API used by component developers to set the severity of an alarm. This is the only functionality needed by component developers. As per TMT policy, the severity of an alarm must be set periodically (within some time limit) in order to maintain the integrity of the alarm status. If an alarm severity is not refreshed within the time limit, currently set at 9 seconds, the severity is set to <code>Disconnected</code> by the Alarm Service, which indicates to the operator that there is some problem with the component&rsquo;s ability to evaluate the alarm status.</p>
-<p>The admin API provides all of the functions needed manage the alarm store, as well as providing access to monitor alarms for use by an operator or instrument specialist. The admin API provides the ability to load alarm data into alarm store, set severity of an alarm, acknowledge alarms, shelve or unshelve alarms, reset a latched alarm, get the metadata/status/severity of an alarm, and get or subscribe to aggregations of severity and health of the alarm, a component&rsquo;s alarms, a subsystem&rsquo;s alarms, or the alarms of the whole TMT System. </p>
-<p>A command line tool is provided as part of the Alarm Service that implements this API can provides low level control over the Alarm Service. More details about alarm CLI can be found here: <a href="../apps/cswalarmcli.html">CSW Alarm Client CLI application</a></p>
+<p>The admin API provides all of the functions needed manage the alarm store, as well as providing access to monitor alarms for use by an operator or instrument specialist. The admin API provides the ability to load alarm data into the alarm store, set the severity of an alarm, acknowledge alarms, shelve or unshelve alarms, reset a latched alarm, get the metadata/status/severity of an alarm, and get or subscribe to aggregations of severity and health of the alarm, a component&rsquo;s alarms, a subsystem&rsquo;s alarms, or the alarms of the whole TMT System. </p>
+<p>A command line tool is provided as part of the Alarm Service that implements this API and provides low level control over the Alarm Service. More details about alarm CLI can be found here: <a href="../apps/cswalarmcli.html">CSW Alarm Client CLI application</a></p>
 <p>Eventually, operators will use Graphical User Interfaces that access the admin API through a UI gateway. This will be delivered as part of the ESW HCMS package.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Since the admin API will primarily be used with the CLI and HCMS applications, it is only supported in Scala, and not Java.</p></div>
-<p>To summarize, the APIs are as follows: * <strong>client API (AlarmService)</strong> : Must be used by component. Available method is : <code>{setSeverity}</code> * <strong>admin API (AlarmAdminService)</strong> : Expected to be used by administrator. Available methods are: <code>{initAlarm | setSeverity | acknowledge | shelve | unshelve | reset | getMetaData
+<p>To summarize, the APIs are as follows: * <strong>client API (AlarmService)</strong> : Must be used by component. Available method is: <code>{setSeverity}</code> * <strong>admin API (AlarmAdminService)</strong> : Expected to be used by administrator. Available methods are: <code>{initAlarm | setSeverity | acknowledge | shelve | unshelve | reset | getMetaData
 | getStatus | getCurrentSeverity | getAggregatedSeverity | getAggregatedHealth | subscribeAggregatedSeverityCallback
 | subscribeAggregatedSeverityActorRef | subscribeAggregatedHealthCallback | subscribeAggregatedHealthActorRef }</code></p>
 <h2><a href="#creating-clientapi-and-adminapi" name="creating-clientapi-and-adminapi" class="anchor"><span class="anchor-link"></span></a>Creating clientAPI and adminAPI</h2>
@@ -290,7 +289,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L34-L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create alarm client using host and port of alarm server
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L32-L42" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create alarm client using host and port of alarm server
 private val clientAPI1 = new AlarmServiceFactory().makeClientApi(&quot;localhost&quot;, 5225)
 
 // create alarm client using location service
@@ -303,7 +302,7 @@ private val adminAPI1 = new AlarmServiceFactory().makeAdminApi(&quot;localhost&q
 private val adminAPI2 = new AlarmServiceFactory().makeAdminApi(locationService)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/alarm/JAlarmServiceClientExampleApp.java#L29-L33" target="_blank" title="Go to snippet source"></a><code class="language-java">// create alarm client using host and port of alarm server
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/alarm/JAlarmServiceClientExampleApp.java#L30-L34" target="_blank" title="Go to snippet source"></a><code class="language-java">// create alarm client using host and port of alarm server
 IAlarmService jclientAPI1 = new AlarmServiceFactory().jMakeClientApi(&quot;localhost&quot;, 5227, actorSystem);
 
 // create alarm client using location service
@@ -331,12 +330,12 @@ IAlarmService jclientAPI2 = new AlarmServiceFactory().jMakeClientApi(jLocationSe
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L51-L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">val alarmKey              = AlarmKey(NFIRAOS, &quot;trombone&quot;, &quot;tromboneAxisLowLimitAlarm&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L49-L50" target="_blank" title="Go to snippet source"></a><code class="language-scala">val alarmKey              = AlarmKey(Prefix(NFIRAOS, &quot;trombone&quot;), &quot;tromboneAxisLowLimitAlarm&quot;)
 val resultF: Future[Done] = clientAPI.setSeverity(alarmKey, Okay)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/alarm/JAlarmServiceClientExampleApp.java#L37-L38" target="_blank" title="Go to snippet source"></a><code class="language-java">private AlarmKey alarmKey = new AlarmKey(NFIRAOS, &quot;trombone&quot;, &quot;tromboneAxisLowLimitAlarm&quot;);
-Future&lt;Done&gt; doneF = jclientAPI1.setSeverity(alarmKey, Okay);</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/alarm/JAlarmServiceClientExampleApp.java#L38-L39" target="_blank" title="Go to snippet source"></a><code class="language-java">private AlarmKey alarmKey = new AlarmKey(Prefix.apply(NFIRAOS(), &quot;trombone&quot;), &quot;tromboneAxisLowLimitAlarm&quot;);
+Future&lt;Done&gt; doneF = jclientAPI1.setSeverity(alarmKey, JAlarmSeverity.Okay());</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <ul>
   <li>If the alarm is not refreshed within 9 seconds, it will be inferred as <code>Disconnected</code></li>
@@ -348,7 +347,7 @@ Future&lt;Done&gt; doneF = jclientAPI1.setSeverity(alarmKey, Okay);</code></pre>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L56-L58" target="_blank" title="Go to snippet source"></a><code class="language-scala">val resource               = &quot;test-alarms/valid-alarms.conf&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L54-L56" target="_blank" title="Go to snippet source"></a><code class="language-scala">val resource               = &quot;test-alarms/valid-alarms.conf&quot;
 val alarmsConfig: Config   = ConfigFactory.parseResources(resource)
 val result2F: Future[Done] = adminAPI.initAlarms(alarmsConfig)</code></pre></dd>
 </dl>
@@ -359,7 +358,21 @@ val result2F: Future[Done] = adminAPI.initAlarms(alarmsConfig)</code></pre></dd>
   <li><strong>name:</strong> name of the alarm</li>
   <li><strong>description:</strong> a description of what the alarm represents</li>
   <li><strong>location:</strong> physical location within observatory or instrument in which the alarm condition is occuring</li>
-  <li><strong>alarmType:</strong> the general category for the alarm.</li>
+  <li><strong>alarmType:</strong> the general category for the alarm. Must be one of the following:
+    <ul>
+      <li><strong>Absolute:</strong> An alarm generated when a setpoint is exceeded.</li>
+      <li><strong>BitPattern:</strong> An alarm generated when a pattern of digital signals matches a predetermined pattern.</li>
+      <li><strong>Calculated:</strong> An alarm generated from a calculated value instead of a direct process measurement.</li>
+      <li><strong>Deviation:</strong> An alarm generated when the difference between two analog values exceeds a limit (e.g., deviation between primary and  redundant instruments or a deviation between process variable and setpoint).</li>
+      <li><strong>Discrepancy:</strong> An alarm generated by error between the comparison of an  expected plant or device state to its actual state (e.g., when a  motor fails to start after it is command to the on state).</li>
+      <li><strong>Instrument:</strong> An alarm generated by a field device to indicate a fault (e.g.,  a sensor failure).</li>
+      <li><strong>RateChange:</strong> An alarm generated when the change in a process variable  per unit time, (dPV/dt), exceeds a defined limit.</li>
+      <li><strong>RecipeDriven:</strong> An alarm with limits that depend on the recipe that is  currently being executed.</li>
+      <li><strong>Safety:</strong> An alarm that is tied to and echoing an action or interlock in  the subsystem’s safety controller. (Note: At TMT Alarm  Service can not a primary hazard control for severe hazards).</li>
+      <li><strong>Statistical:</strong> An alarm generated based on statistical properties of one or  more process variables.</li>
+      <li><strong>System:</strong> An alarm generated by the control system to indicate a fault  within the system hardware, software, or components (e.g.,  unrecoverable communication error).</li>
+    </ul>
+  </li>
   <li><strong>supportedSeverities:</strong> list of non-Okay severities the alarm may become (Warning, Major, Critical). All alarms are assumed to support Okay, Disconnected, and Indeterminate.</li>
   <li><strong>probableCause:</strong> a description of the likely cause of the alarm reaching each severity level</li>
   <li><strong>operatorResponse:</strong> instructions or information to help the operator respond to the alarm.</li>
@@ -435,14 +448,14 @@ val result2F: Future[Done] = adminAPI.initAlarms(alarmsConfig)</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L62" target="_blank" title="Go to snippet source"></a><code class="language-scala">val result3F: Future[Done] = adminAPI.acknowledge(alarmKey)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L60" target="_blank" title="Go to snippet source"></a><code class="language-scala">val result3F: Future[Done] = adminAPI.acknowledge(alarmKey)</code></pre></dd>
 </dl>
 <h3><a href="#shelve" name="shelve" class="anchor"><span class="anchor-link"></span></a>shelve</h3>
-<p>Shelves the given alarm. Alarms will be un-shelved automatically at a specific time(i.e. 8 AM local time by default) if it is not un-shelved manually before that. The time to automatically un-shelve can be configured in application.conf for e.g csw-alarm.shelve-timeout = h:m:s a .</p>
+<p>Shelves the given alarm. Alarms will be unshelved automatically at a specific time (8 AM local time by default) if it is not unshelved manually before that. The time to automatically un-shelve can be configured in application.conf for e.g <code>csw-alarm.shelve-timeout = h:m:s a</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L66" target="_blank" title="Go to snippet source"></a><code class="language-scala">val result4F: Future[Done] = adminAPI.shelve(alarmKey)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L64" target="_blank" title="Go to snippet source"></a><code class="language-scala">val result4F: Future[Done] = adminAPI.shelve(alarmKey)</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Shelved alarms are also considered in aggregation severity or health calculation of alarms.</p></div>
 <h3><a href="#unshelve" name="unshelve" class="anchor"><span class="anchor-link"></span></a>unshelve</h3>
@@ -450,14 +463,14 @@ val result2F: Future[Done] = adminAPI.initAlarms(alarmsConfig)</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">val result5F: Future[Done] = adminAPI.unshelve(alarmKey)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L68" target="_blank" title="Go to snippet source"></a><code class="language-scala">val result5F: Future[Done] = adminAPI.unshelve(alarmKey)</code></pre></dd>
 </dl>
 <h3><a href="#reset" name="reset" class="anchor"><span class="anchor-link"></span></a>reset</h3>
 <p>Resets the status of the given latched alarm by updating the latched severity same as current severity and acknowledgement status to acknowledged without changing any other properties of the alarm.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L74" target="_blank" title="Go to snippet source"></a><code class="language-scala">val result6F: Future[Done] = adminAPI.reset(alarmKey)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L72" target="_blank" title="Go to snippet source"></a><code class="language-scala">val result6F: Future[Done] = adminAPI.reset(alarmKey)</code></pre></dd>
 </dl>
 <h3><a href="#getmetadata" name="getmetadata" class="anchor"><span class="anchor-link"></span></a>getMetadata</h3>
 <p>Gets the metadata of an alarm, component, subsystem, or whole TMT system. The following information is returned for each alarm:</p>
@@ -478,7 +491,7 @@ val result2F: Future[Done] = adminAPI.initAlarms(alarmsConfig)</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L78-L82" target="_blank" title="Go to snippet source"></a><code class="language-scala">val metadataF: Future[AlarmMetadata] = adminAPI.getMetadata(alarmKey)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L76-L80" target="_blank" title="Go to snippet source"></a><code class="language-scala">val metadataF: Future[AlarmMetadata] = adminAPI.getMetadata(alarmKey)
 metadataF.onComplete {
   case Success(metadata)  =&gt; println(s&quot;${metadata.name}: ${metadata.description}&quot;)
   case Failure(exception) =&gt; println(s&quot;Error getting metadata: ${exception.getMessage}&quot;)
@@ -496,7 +509,7 @@ metadataF.onComplete {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L86-L90" target="_blank" title="Go to snippet source"></a><code class="language-scala">val statusF: Future[AlarmStatus] = adminAPI.getStatus(alarmKey)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L84-L88" target="_blank" title="Go to snippet source"></a><code class="language-scala">val statusF: Future[AlarmStatus] = adminAPI.getStatus(alarmKey)
 statusF.onComplete {
   case Success(status)    =&gt; println(s&quot;${status.alarmTime}: ${status.latchedSeverity}&quot;)
   case Failure(exception) =&gt; println(s&quot;Error getting status: ${exception.getMessage}&quot;)
@@ -507,18 +520,18 @@ statusF.onComplete {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L94-L98" target="_blank" title="Go to snippet source"></a><code class="language-scala">val severityF: Future[FullAlarmSeverity] = adminAPI.getCurrentSeverity(alarmKey)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L92-L96" target="_blank" title="Go to snippet source"></a><code class="language-scala">val severityF: Future[FullAlarmSeverity] = adminAPI.getCurrentSeverity(alarmKey)
 severityF.onComplete {
   case Success(severity)  =&gt; println(s&quot;${severity.name}: ${severity.level}&quot;)
   case Failure(exception) =&gt; println(s&quot;Error getting severity: ${exception.getMessage}&quot;)
 }</code></pre></dd>
 </dl>
 <h3><a href="#getaggregatedseverity" name="getaggregatedseverity" class="anchor"><span class="anchor-link"></span></a>getAggregatedSeverity</h3>
-<p>Gets the aggregated severity for the given alarm/component/subsystem/whole TMT system. Aggregation of the severity represents the most severe alarm amongst multiple alarms.</p>
+<p>Gets the aggregated severity for the given alarm/component/subsystem/whole TMT system. Aggregation of the severity represents the most severe alarm amongst the aggregated alarms.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L102-L107" target="_blank" title="Go to snippet source"></a><code class="language-scala">val componentKey                                   = ComponentKey(NFIRAOS, &quot;tromboneAssembly&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L100-L105" target="_blank" title="Go to snippet source"></a><code class="language-scala">val componentKey                                   = ComponentKey(Prefix(NFIRAOS, &quot;tromboneassembly&quot;))
 val aggregatedSeverityF: Future[FullAlarmSeverity] = adminAPI.getAggregatedSeverity(componentKey)
 aggregatedSeverityF.onComplete {
   case Success(severity)  =&gt; println(s&quot;aggregate severity: ${severity.name}: ${severity.level}&quot;)
@@ -526,11 +539,11 @@ aggregatedSeverityF.onComplete {
 }</code></pre></dd>
 </dl>
 <h3><a href="#getaggregatedhealth" name="getaggregatedhealth" class="anchor"><span class="anchor-link"></span></a>getAggregatedHealth</h3>
-<p>Gets the aggregated health for the given alarm/component/subsystem/whole TMT system. Aggregation of health is either <code>Good</code>, <code>ill</code> or <code>Bad</code> based on the most severe alarm amongst multiple alarms.</p>
+<p>Gets the aggregated health for the given alarm/component/subsystem/whole TMT system. Aggregation of health is either <code>Good</code>, <code>ill</code> or <code>Bad</code> based on the most severe alarm amongst the aggregated alarms.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L111-L116" target="_blank" title="Go to snippet source"></a><code class="language-scala">val subsystemKey                 = SubsystemKey(IRIS)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L109-L114" target="_blank" title="Go to snippet source"></a><code class="language-scala">val subsystemKey                 = SubsystemKey(IRIS)
 val healthF: Future[AlarmHealth] = adminAPI.getAggregatedHealth(subsystemKey)
 healthF.onComplete {
   case Success(health)    =&gt; println(s&quot;${subsystemKey.subsystem.name} health = ${health.entryName}&quot;)
@@ -542,8 +555,8 @@ healthF.onComplete {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L120-L125" target="_blank" title="Go to snippet source"></a><code class="language-scala">val alarmSubscription: AlarmSubscription = adminAPI.subscribeAggregatedSeverityCallback(
-  ComponentKey(NFIRAOS, &quot;tromboneAssembly&quot;),
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L118-L123" target="_blank" title="Go to snippet source"></a><code class="language-scala">val alarmSubscription: AlarmSubscription = adminAPI.subscribeAggregatedSeverityCallback(
+  ComponentKey(Prefix(NFIRAOS, &quot;tromboneAssembly&quot;)),
   aggregatedSeverity =&gt; { /* do something*/ }
 )
 // to unsubscribe:
@@ -554,7 +567,7 @@ val unsubscribe1F: Future[Done] = alarmSubscription.unsubscribe()</code></pre></
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L129-L134" target="_blank" title="Go to snippet source"></a><code class="language-scala">val severityActorRef = typed.ActorSystem(behaviour[FullAlarmSeverity], &quot;fullSeverityActor&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L127-L132" target="_blank" title="Go to snippet source"></a><code class="language-scala">val severityActorRef = typed.ActorSystem(behaviour[FullAlarmSeverity], &quot;fullSeverityActor&quot;)
 val alarmSubscription2: AlarmSubscription =
   adminAPI.subscribeAggregatedSeverityActorRef(SubsystemKey(NFIRAOS), severityActorRef)
 
@@ -566,8 +579,8 @@ val unsubscribe2F: Future[Done] = alarmSubscription2.unsubscribe()</code></pre><
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L138-L144" target="_blank" title="Go to snippet source"></a><code class="language-scala">val alarmSubscription3: AlarmSubscription = adminAPI.subscribeAggregatedHealthCallback(
-  ComponentKey(IRIS, &quot;ImagerDetectorAssembly&quot;),
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L136-L142" target="_blank" title="Go to snippet source"></a><code class="language-scala">val alarmSubscription3: AlarmSubscription = adminAPI.subscribeAggregatedHealthCallback(
+  ComponentKey(Prefix(IRIS, &quot;ImagerDetectorAssembly&quot;)),
   aggregatedHealth =&gt; { /* do something*/ }
 )
 
@@ -579,7 +592,7 @@ val unsubscribe3F: Future[Done] = alarmSubscription3.unsubscribe()</code></pre><
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L148-L152" target="_blank" title="Go to snippet source"></a><code class="language-scala">val healthActorRef                        = typed.ActorSystem(behaviour[AlarmHealth], &quot;healthActor&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/alarm/AlarmServiceClientExampleApp.scala#L146-L150" target="_blank" title="Go to snippet source"></a><code class="language-scala">val healthActorRef                        = typed.ActorSystem(behaviour[AlarmHealth], &quot;healthActor&quot;)
 val alarmSubscription4: AlarmSubscription = adminAPI.subscribeAggregatedHealthActorRef(SubsystemKey(IRIS), healthActorRef)
 
 // to unsubscribe

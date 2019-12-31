@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="active page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -250,20 +249,20 @@ tmtsoftware/csw
 <div class="md-content__searchable">
 <h1><a href="#csw-location-server" name="csw-location-server" class="anchor"><span class="anchor-link"></span></a>csw-location-server</h1>
 <p>Note: Normally you will not need to start this application manually. The csw-services.sh script does this for you. </p>
-<p>This application will start a HTTP CSW location server on port 7654 which is required for all Location service consumers who uses HTTP Location client. All the components (HCD&rsquo;s, Assemblies, Services etc.) uses local HTTP location client which expects location server running at localhost:7654. In a production environment, it is required that all machines running components should have HTTP location server running locally.</p>
+<p>This application will start a HTTP CSW Location Server on port 7654 which is required for all Location Service consumers who uses HTTP Location client. All components (HCD&rsquo;s, Assemblies, Services etc.) use a local HTTP Location client which expects the Location Server running at localhost:7654. In a production environment, it is required that all machines running components should have the HTTP Location Server running locally.</p>
 <h2><a href="#prerequisite" name="prerequisite" class="anchor"><span class="anchor-link"></span></a>Prerequisite</h2>
-<p>The CSW location server application can be installed as binaries or constructed from source. To download the application, go to the <a href="https://tmtsoftware.github.com/csw/releases/">CSW Release page</a> and follow instructions.</p>
-<p>To install from source, the command <code>sbt csw-location-server/universal:publishLocal</code> will publish necessary artifacts to run csw-location-server application. The target of above command is a zip file titled &ldquo;csw-location-server.zip&rdquo; and its path will be printed on console. </p>
+<p>The CSW Location Server application can be installed as binaries or constructed from source. To download the application, go to the <a href="https://tmtsoftware.github.com/csw/releases/">CSW Release page</a> and follow instructions.</p>
+<p>To install from source, the command <code>sbt csw-location-server/universal:publishLocal</code> will publish necessary artifacts to run the csw-location-server application. The target of the above command is a zip file titled &ldquo;csw-location-server.zip&rdquo; and its path will be printed on console. </p>
 <p>Note: An alternative method is to run <code>sbt publishLocal stage</code>, which installs all the dependencies locally and also installs all the csw applications  in <code>target/universal/stage/bin</code>.</p>
-<p>Unzip either the downloaded or constructed zip file and switch current working directory to the extracted folder. Choose appropriate instructions from below based on requirement ie single machine or multiple machines.</p>
+<p>Unzip either the downloaded or constructed zip file and switch current working directory to the extracted folder. Choose appropriate instructions from below based on requirement (i.e. single machine or multiple machines).</p>
 <h3><a href="#starting-location-server-on-a-single-machine" name="starting-location-server-on-a-single-machine" class="anchor"><span class="anchor-link"></span></a>Starting Location Server on a single machine</h3>
-<p>The steps below describe how to run location server on a single machine. This can be a requirement for testing or demo purpose.</p>
-<p><strong>Preparation</strong>: Find out the IP address and dedicated port for running the location server. Assume that IP is 192.168.1.21 and port is 3552.</p>
+<p>The steps below describe how to run the Location Server on a single machine. This can be a requirement for testing or demo purposes.</p>
+<p><strong>Preparation</strong>: Find out the IP address and dedicated port for running the Location Server. Assume that IP is 192.168.1.21 and port is 3552.</p>
 <p><strong>Provisioning</strong>: Make sure you set all necessary <a href="../deployment/env-vars.html">environment variables</a>. </p>
-<p><strong>Running</strong>: Switch to application directory and run this command - <code>./bin/csw-location-server --clusterPort=3552</code></p>
+<p><strong>Running</strong>: Switch to the application directory and run this command - <code>./bin/csw-location-server --clusterPort=3552</code></p>
 <h3><a href="#starting-location-server-on-two-machines" name="starting-location-server-on-two-machines" class="anchor"><span class="anchor-link"></span></a>Starting Location Server on two machines</h3>
-<p>The steps below describe how to run location server on multiple machines, which is the recommended set-up for production usage.</p>
-<p><strong>Preparation</strong>: Identify machines which are running location server and whose IP and port are known. Let&rsquo;s assume they are two for now, and the IP address for machine1 is 192.168.1.21 and for machine2 is 192.168.1.22. Also, they will both have dedicated port 3552 to run the location server. </p>
+<p>The steps below describe how to run the Location Server on multiple machines, which is the recommended set-up for production usage.</p>
+<p><strong>Preparation</strong>: Identify machines which are running the Location Server and whose IP and port are known. Let&rsquo;s assume they are two for now, and the IP address for machine1 is 192.168.1.21 and for machine2 is 192.168.1.22. Also, they will both have dedicated port 3552 to run the Location Server. </p>
 <p><strong>Provisioning</strong>: Make sure you set all necessary <a href="../deployment/env-vars.html">environment variables</a>.</p>
 <p>Switch to application directory and run this command on <strong>machine1 and machine2</strong> - <code>./bin/csw-location-server --clusterPort=3552</code></p>
 <h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>Help</h3>
@@ -272,6 +271,8 @@ tmtsoftware/csw
 <h3><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a>Version</h3>
 <p>Use the following command to get version information for this app.</p>
 <p><code>./bin/csw-location-server --version</code></p>
+<h3><a href="#accessing-location-server-via-http" name="accessing-location-server-via-http" class="anchor"><span class="anchor-link"></span></a>Accessing location server via http</h3>
+<p>Once the server is up and running it can be accessed via http as shown <a href="cswlocationroutes.html">here</a>.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/apps/cswlocationserver.md" title="Edit this page" class="md-source-file md-edit">
@@ -303,13 +304,13 @@ Applications
 </span>
 </div>
 </a>
-<a href="../apps/cswadminserver.html" title="csw-admin-server" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../apps/cswlocationagent.html" title="csw-location-agent" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-csw-admin-server
+csw-location-agent
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

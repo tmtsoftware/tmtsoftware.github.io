@@ -139,7 +139,7 @@ tmtsoftware/csw
     <li><a href="../../services/aas/csw-aas-http.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#prerequisites" class="header">Prerequisites</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#application-configurations" class="header">Application Configurations</a></li>
-    <li><a href="../../services/aas/csw-aas-http.html#building-a-secure-akka-http-server-application" class="header">Building a Secure Akka-HTTP server application</a></li>
+    <li><a href="../../services/aas/csw-aas-http.html#building-a-secure-akka-http-server-application" class="header">Building a Secure Akka HTTP server application</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#authorization-policies" class="header">Authorization Policies</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#security-directives" class="header">Security Directives</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#using-access-token" class="header">Using Access Token</a></li>
@@ -172,7 +172,7 @@ tmtsoftware/csw
     <li><a href="../../services/aas/csw-aas-http.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#prerequisites" class="header">Prerequisites</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#application-configurations" class="header">Application Configurations</a></li>
-    <li><a href="../../services/aas/csw-aas-http.html#building-a-secure-akka-http-server-application" class="header">Building a Secure Akka-HTTP server application</a></li>
+    <li><a href="../../services/aas/csw-aas-http.html#building-a-secure-akka-http-server-application" class="header">Building a Secure Akka HTTP server application</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#authorization-policies" class="header">Authorization Policies</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#security-directives" class="header">Security Directives</a></li>
     <li><a href="../../services/aas/csw-aas-http.html#using-access-token" class="header">Using Access Token</a></li>
@@ -190,7 +190,7 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#akka-http-adapter-csw-aas-http-" name="akka-http-adapter-csw-aas-http-" class="anchor"><span class="anchor-link"></span></a>Akka HTTP Adapter (csw-aas-http)</h1>
-<p>This library is a security adapter for akka-http server applications. <code>csw-aas</code> uses <a href="https://openid.net/connect/">OpenId Connect</a> for authentication and authorization. The authentication server used by AAS is <a href="https://www.keycloak.org/">Keycloak</a>. We recommended that you get familiar with Keycloak&rsquo;s documentation and configurations to fully leverage this adapter&rsquo;s features.</p>
+<p>This library is a security adapter for Akka HTTP server applications. <code>csw-aas</code> uses <a href="https://openid.net/connect/">OpenId Connect</a> for authentication and authorization. The authentication server used by AAS is <a href="https://www.keycloak.org/">Keycloak</a>. We recommended that you get familiar with Keycloak&rsquo;s documentation and configurations to fully leverage this adapter&rsquo;s features.</p>
 <p>This adapter provides authentication via security directives such as <code>sGet</code>, <code>sPost</code>, <code>sPut</code>, etc. These directives are used in routing and replace the default <code>get</code>, <code>post</code>, <code>put</code>, etc. directives from Akka HTTP. This allows custom policies to be enforced at the routing level. For authorization, these secure directives accept a wide range of policy expressions. The usage of these directives are described below.</p>
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To use the Akka HTTP Adapter (csw-aas-http), add this to your <code>build.sbt</code> file:</p>
@@ -201,33 +201,35 @@ tmtsoftware/csw
 </code></pre></dd>
 </dl>
 <h2><a href="#prerequisites" name="prerequisites" class="anchor"><span class="anchor-link"></span></a>Prerequisites</h2>
-<p>To run an akka-http server app, which uses this adapter, we need</p>
+<p>To run an Akka HTTP server app, which uses this adapter, we need</p>
 <ul>
-  <li>Location Service running</li>
-  <li>AAS instance running and registered with Location Service</li>
+  <li>The Location Service running</li>
+  <li>An AAS instance running and registered with the Location Service</li>
 </ul>
-<p>Location Service and AAS can be running on different machines. To start Location Service and AAS server on a local machine, you can make use of the csw-services.sh script.</p>
+<p>The Location Service and AAS can be running on different machines. To start the Location Service and AAS server on a local machine, you can make use of the csw-services.sh script.</p>
 <h2><a href="#application-configurations" name="application-configurations" class="anchor"><span class="anchor-link"></span></a>Application Configurations</h2>
-<p>All auth related configurations go inside an <code>auth-config</code> block. There are three configurations applicable for a akka-http server application i.e. <code>realm</code>, <code>client-id</code> &amp; <code>enable-permissions</code>. </p>
-<p><code>realm</code> has a default value of <code>TMT</code> if not specified. Ideally all apps in TMT should not have to override this, however it might be useful to override this while testing your app.</p>
-<p><code>enable-permissions</code> is optional config with a default value of <code>false</code>. Typically, roles are used for authorization and specific permissions is not needed. However, if your akka-http server application uses permission based authorization policies, this config needs to be set to true.</p>
-<p><code>client-id</code> is a mandatory configuration which specifies the client id of the app as per registration in AAS.</p>
+<p>All auth related configurations go inside an <code>auth-config</code> block. There are three configurations applicable for an Akka HTTP server application i.e. <code>realm</code>, <code>client-id</code> &amp; <code>enable-permissions</code>. </p>
+<p>THe <code>realm</code> has a default value of <code>TMT</code>, if not specified. Ideally all apps in TMT should not have to override this, however it might be useful to override this while testing your app.</p>
+<p><code>enable-permissions</code> is optional config with a default value of <code>false</code>. Typically, roles are used for authorization and specific permissions are not needed. However, if your Akka HTTP server application uses permission based authorization policies, this config needs to be set to true.</p>
+<p><code>client-id</code> is a mandatory configuration which specifies the client ID of the app as per its registration in AAS.</p>
+<p><code>disabled</code> is an optional config with default value of <code>false</code>. This flag can be turned on for local development and testing purposes. When turned on, all http requests bypass all security policies. Clients don&rsquo;t have to pass any token in the requests. It can greatly ease the process of testing business logic without having to go through the process of creating users, managing roles and logging in with user credentials to generate valid access tokens.</p><div class="callout warning "><div class="callout-title">Caution</div>
+<p>Please use <code>disabled</code> flag with caution. If accidentally turned on in production, confidential data can be compromised </p></div>
 <pre class="prettyprint"><code class="language-hocon">auth-config {
   realm = TMT # DEFAULT
   enable-permissions = false # DEFAULT
   client-id = demo-cli # REQUIRED
+  disabled = false # DEFAULT
 } 
 </code></pre>
-<h2><a href="#building-a-secure-akka-http-server-application" name="building-a-secure-akka-http-server-application" class="anchor"><span class="anchor-link"></span></a>Building a Secure Akka-HTTP server application</h2>
+<h2><a href="#building-a-secure-akka-http-server-application" name="building-a-secure-akka-http-server-application" class="anchor"><span class="anchor-link"></span></a>Building a Secure Akka HTTP server application</h2>
 <p>The core of this adapter is the <code>SecurityDirectives</code> class. The recommended way to instantiate <code>SecurityDirectives</code> is as shown below.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L187-L210" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SampleHttpApp extends HttpApp with App {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L183-L205" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SampleHttpApp extends HttpApp with App {
 
-  implicit val actorSystem: ActorSystem[SpawnProtocol] = typed.ActorSystem(SpawnProtocol.behavior, &quot;sample-http-app&quot;)
-  implicit val ec: ExecutionContext                    = actorSystem.executionContext
-  implicit val mat: Materializer                       = scaladsl.ActorMaterializer()
+  implicit val actorSystem: ActorSystem[SpawnProtocol.Command] = typed.ActorSystem(SpawnProtocol(), &quot;sample-http-app&quot;)
+  implicit val ec: ExecutionContext                            = actorSystem.executionContext
 
   val locationService = HttpLocationServiceFactory.makeLocalClient
   val directives      = SecurityDirectives(locationService)
@@ -254,20 +256,20 @@ tmtsoftware/csw
   <li>
   <p><code>GET http://localhost:9003/api</code> does not use any security directive and hence is accessible to all.</p></li>
   <li>
-  <p><code>POST http://localhost:9003/api</code> uses <code>sPost</code> which is secure directive. This directive takes care of authentication (access token signature and expiration validation). For authorization, it needs an <a href="#authorization-policies">authorization policy</a>. Authorizing policy specifies one or more conditions for request validation. </p></li>
+  <p><code>POST http://localhost:9003/api</code> uses <code>sPost</code> which is secure directive. This directive takes care of authentication (access token signature and expiration validation). For authorization, it needs an <a href="#authorization-policies">authorization policy</a>. The authorizing policy specifies one or more conditions for request validation. </p></li>
 </ul>
-<p>In this instance, <code>sPost</code> directive has been given <code>RealmRolePolicy</code> policy with parameter value <code>admin</code>.</p>
-<p>This results into following sequence of actions when a request arrives for a secure directive route</p>
+<p>In this instance, the <code>sPost</code> directive has been given a <code>RealmRolePolicy</code> policy with the parameter value <code>admin</code>.</p>
+<p>This results into following sequence of actions when a request arrives for a secure directive route:</p>
 <ol>
   <li>Check request header to look for an access token</li>
   <li>Validate the token signature and expiry</li>
-  <li>Check the token for roles and validate that it has <code>admin</code> <a href="https://www.keycloak.org/docs/latest/server_admin/index.html#realm-roles">realm role</a></li>
+  <li>Check the token for roles and validate that it has the <code>admin</code> <a href="https://www.keycloak.org/docs/latest/server_admin/index.html#realm-roles">realm role</a></li>
   <li>After all the above checks/validations pass, execute the route logic</li>
 </ol>
-<p>If any of the validations fails, an appropriate HTTP status code is returned to the requester. For authentication failure <code>401</code> is sent and for authorization failure <code>403</code> is sent.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>If any of the validations fails, an appropriate HTTP status code is returned to the requester. For authentication failure, <code>401</code> is sent and for authorization failure, <code>403</code> is sent.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>To know more about realm roles, check out the <a href="https://www.keycloak.org/docs/latest/server_admin/index.html#realm-roles">Keycloak documentation</a></p></div>
 <h2><a href="#authorization-policies" name="authorization-policies" class="anchor"><span class="anchor-link"></span></a>Authorization Policies</h2>
-<p>An authorization policy is a way to provide filter incoming HTTP requests based on standard rules. Following policies can be applied to protect routes.</p>
+<p>An authorization policy is a way to provide filtering on incoming HTTP requests based on standard rules. Following policies can be applied to protect routes.</p>
 <ul>
   <li><a href="#realmrolepolicy">ReamRolePolicy</a></li>
   <li><a href="#clientrolepolicy">ClientRolePolicy</a></li>
@@ -277,51 +279,51 @@ tmtsoftware/csw
   <li><a href="#emptypolicy">EmptyPolicy</a></li>
 </ul>
 <h3><a href="#realmrolepolicy" name="realmrolepolicy" class="anchor"><span class="anchor-link"></span></a>RealmRolePolicy</h3>
-<p>This policy filters requests based on Realm Role. A Realm Role is global and is applicable for all clients within realm.</p>
-<p>In the following example policy will authorize request if user has assigned <code>admin</code></p>
+<p>This policy filters requests based on Realm Role. A Realm Role is global and is applicable for all clients within a realm.</p>
+<p>In the following example, the policy will authorize a request if the user has been assigned the <code>admin</code> role</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L137-L139" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithRealmRolePolicy: Route = sGet(RealmRolePolicy(&quot;admin&quot;)) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L133-L135" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithRealmRolePolicy: Route = sGet(RealmRolePolicy(&quot;admin&quot;)) {
   complete(&quot;OK&quot;)
 }</code></pre></dd>
 </dl>
 <h3><a href="#clientrolepolicy" name="clientrolepolicy" class="anchor"><span class="anchor-link"></span></a>ClientRolePolicy</h3>
 <p>Client roles are basically a namespace dedicated to a client. Each client gets its own namespace.</p>
-<p>This policy filters requests based on Client Role. In the following example policy will authorize request if user has assigned <code>accounts-admin</code> for clientId specified in configurations</p>
+<p>This policy filters requests based on Client Role. In the following example, the policy will authorize amrequest if user has been assigned the <code>accounts-admin</code> role for the clientId specified in the configuration.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L143-L145" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithClientRolePolicy: Route = sGet(ClientRolePolicy(&quot;accounts-admin&quot;)) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L139-L141" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithClientRolePolicy: Route = sGet(ClientRolePolicy(&quot;accounts-admin&quot;)) {
   complete(&quot;OK&quot;)
 }</code></pre></dd>
 </dl>
 <h3><a href="#permissionpolicy" name="permissionpolicy" class="anchor"><span class="anchor-link"></span></a>PermissionPolicy</h3>
-<p>This policy filters requests based on permissions. It expects name of scope and name of resource on which permission is created in AAS. </p>
-<p>In the following example policy will authorize request if user has appropriate permission associated in AAS which specifies <code>delete</code> scope for <code>account</code> resource.</p>
+<p>This policy filters requests based on permissions. It expects the name of the scope and the name of the resource on which the permission is created in AAS. </p>
+<p>In the following example policy will authorize a request if the user has the appropriate permission associated in AAS which specifies the <code>delete</code> scope for the <code>account</code> resource.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L155-L157" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithPermissions: Route = sDelete(PermissionPolicy(&quot;delete&quot;, &quot;account&quot;)) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L151-L153" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithPermissions: Route = sDelete(PermissionPolicy(&quot;delete&quot;, &quot;account&quot;)) {
   complete(&quot;OK&quot;)
 }</code></pre></dd>
 </dl>
 <h3><a href="#custompolicy" name="custompolicy" class="anchor"><span class="anchor-link"></span></a>CustomPolicy</h3>
-<p>This policy allows custom request filtering based on access token properties. It expects predicate function which accepts an access token and returns a boolean. If the predicate returns true, it indicates user is authorized.</p>
-<p>In the following example policy will authorize request if user&rsquo;s given name contains <code>test-user</code></p>
+<p>This policy allows custom request filtering based on access token properties. It expects a predicate function which accepts an access token and returns a boolean. If the predicate returns true, it indicates the user is authorized.</p>
+<p>In the following example, the policy will authorize a request if the user&rsquo;s given name contains <code>test-user</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L149-L151" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithCustomPolicy: Route = sPost(CustomPolicy(token =&gt; token.given_name.contains(&quot;test-user&quot;))) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L145-L147" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithCustomPolicy: Route = sPost(CustomPolicy(token =&gt; token.given_name.contains(&quot;test-user&quot;))) {
   complete(&quot;OK&quot;)
 }</code></pre></dd>
 </dl>
 <h3><a href="#custompolicyasync" name="custompolicyasync" class="anchor"><span class="anchor-link"></span></a>CustomPolicyAsync</h3>
-<p>This policy is similar to CustomPolicy with only difference that it expects a predicate which returns a Future of Boolean instead of a Boolean. This could be very useful for custom validations which need to make an IO call. For example,</p>
+<p>This policy is similar to CustomPolicy, with only difference being that it expects a predicate which returns a Future of Boolean instead of a Boolean. This could be very useful for custom validations which need to make an IO call. For example,</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L118-L124" target="_blank" title="Go to snippet source"></a><code class="language-scala">//GET http://[host]:[port]/files?fileId=[fileId]
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L114-L120" target="_blank" title="Go to snippet source"></a><code class="language-scala">//GET http://[host]:[port]/files?fileId=[fileId]
 val route: Route =
   path(&quot;files&quot; / LongNumber) { fileId =&gt;
     sGet(CustomPolicyAsync(token =&gt; Database.doesUserOwnFile(token.preferred_username, fileId))) {
@@ -329,13 +331,13 @@ val route: Route =
     }
   }</code></pre></dd>
 </dl>
-<p>This forms a an http route for a secure GET request for path <code>/files/[fileId]</code> and expects a path parameter of type <code>Long</code>. The async custom policy makes an async database call to check whether the file being requested belongs to the user who made http request.</p>
+<p>This forms an HTTP route for a secure GET request for the path <code>/files/[fileId]</code> and expects a path parameter of type <code>Long</code>. The async custom policy makes an async database call to check whether the file being requested belongs to the user who made the HTTP request.</p>
 <h3><a href="#emptypolicy" name="emptypolicy" class="anchor"><span class="anchor-link"></span></a>EmptyPolicy</h3>
 <p>This policy is used this when only authentication is needed but not authorization. EmptyPolicy is an object and not a class like other policies and it does not need any parameters.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L128-L133" target="_blank" title="Go to snippet source"></a><code class="language-scala">val authenticationOnlyRoute: Route = // GET http://[host]:[post]/api
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L124-L129" target="_blank" title="Go to snippet source"></a><code class="language-scala">val authenticationOnlyRoute: Route = // GET http://[host]:[post]/api
   path(&quot;api&quot;) {
     sGet(EmptyPolicy) {
       complete(&quot;OK&quot;)
@@ -343,7 +345,7 @@ val route: Route =
   }</code></pre></dd>
 </dl>
 <h2><a href="#security-directives" name="security-directives" class="anchor"><span class="anchor-link"></span></a>Security Directives</h2>
-<p><code>csw-aas-http</code> adapter supports following secure HTTP verbs:</p>
+<p>The <code>csw-aas-http</code> adapter supports following secure HTTP verbs:</p>
 <table>
   <thead>
     <tr>
@@ -354,37 +356,37 @@ val route: Route =
   <tbody>
     <tr>
       <td>sGet </td>
-      <td>Rejects all un-authorized and non-GET requests </td>
+      <td>Rejects all unauthorized and non-GET requests </td>
     </tr>
     <tr>
       <td>sPost </td>
-      <td>Rejects all un-authorized and non-POST requests </td>
+      <td>Rejects all unauthorized and non-POST requests </td>
     </tr>
     <tr>
       <td>sPut </td>
-      <td>Rejects all un-authorized and non-PUT requests </td>
+      <td>Rejects all unauthorized and non-PUT requests </td>
     </tr>
     <tr>
       <td>sDelete </td>
-      <td>Rejects all un-authorized and non-DELETE requests </td>
+      <td>Rejects all unauthorized and non-DELETE requests </td>
     </tr>
     <tr>
       <td>sHead </td>
-      <td>Rejects all un-authorized and non-HEAD requests </td>
+      <td>Rejects all unauthorized and non-HEAD requests </td>
     </tr>
     <tr>
       <td>sConnect </td>
-      <td>Rejects all un-authorized and non-CONNECT requests </td>
+      <td>Rejects all unauthorized and non-CONNECT requests </td>
     </tr>
   </tbody>
 </table>
 <h2><a href="#using-access-token" name="using-access-token" class="anchor"><span class="anchor-link"></span></a>Using Access Token</h2>
-<p>A handle of access token type is given to to all secure routes. It is optional to define parameter for it.</p>
+<p>A handle of the access token type is given to all secure routes. It is optional to define a parameter for it.</p>
 <p>For example:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L101-L113" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeExampleWithToken: Route = sDelete(EmptyPolicy) { token =&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L97-L109" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeExampleWithToken: Route = sDelete(EmptyPolicy) { token =&gt;
   parameter(&quot;entityId&quot;.as[Long]) { entityId =&gt;
     ThirdPartyService.deleteEntity(entityId, token.preferred_username)
     complete(s&quot;user ${token.given_name} ${token.family_name} deleted entity $entityId&quot;)
@@ -398,14 +400,15 @@ val routeExampleWithoutToken: Route = sDelete(EmptyPolicy) {
   }
 }</code></pre></dd>
 </dl>
-<p>Both of the above approaches compile and are valid. Access token holds basic information about the user or the client who has made request.</p>
-<p>Please go through API documentation to know more about Access Token.</p>
+<p>Both of the above approaches compile and are valid. The access token holds basic information about the user or the client who has made the request.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>When <code>disabled</code> flag is true in <code>auth-config</code>, all fields of access token will be set to <code>None</code></p></div>
+<p>Please go through the API documentation to know more about Access Tokens.</p>
 <h2><a href="#policy-expressions" name="policy-expressions" class="anchor"><span class="anchor-link"></span></a>Policy Expressions</h2>
-<p>So far, we have seen that security directives can accept an authorization policy. It can however accept an expression of multiple authorization policies too. This could be useful to express complex authorization logic. For example:</p>
+<p>So far, we have seen that security directives can accept an authorization policy. It can however also accept an expression of multiple authorization policies. This could be useful to express complex authorization logic. For example:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L163-L169" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routes: Route =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L159-L165" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routes: Route =
   sGet(RealmRolePolicy(&quot;admin&quot;) | CustomPolicy(_.email.contains(&quot;super-admin@tmt.org&quot;))) {
     complete(&quot;OK&quot;)
   } ~
@@ -413,24 +416,24 @@ val routeExampleWithoutToken: Route = sDelete(EmptyPolicy) {
       complete(&quot;OK&quot;)
     }</code></pre></dd>
 </dl>
-<p>Note the <code>|</code> , <code>&amp;</code> operators which helps compose an expression. A Policy expression could be more complex than this and can contain braces to group more expressions. For example:</p>
+<p>Note the <code>|</code> , <code>&amp;</code> operators which help compose an expression. A Policy expression could be more complex than this and can contain braces to group more expressions. For example:</p>
 <pre class="prettyprint"><code class="language-scala">val policy = policy1 | (policy2 &amp; (policy3 | policy4)) | policy5
 </code></pre>
 <h2><a href="#directive-composition" name="directive-composition" class="anchor"><span class="anchor-link"></span></a>Directive Composition</h2>
-<p>Since security directives extend from <code>akka.http.scaladsl.server.Directive</code> they give you all the benefits of a usual directive. These benefits include being able to label and <a href="https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/custom-directives.html#custom-directives">compose higher level directives</a>.</p>
+<p>Since security directives extend from <code>akka.http.scaladsl.server.Directive</code>, they give you all the benefits of a usual directive. These benefits include being able to label and <a href="https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/custom-directives.html#custom-directives">compose higher level directives</a>.</p>
 <p>With the help of directive labeling you could write a route like below:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L179" target="_blank" title="Go to snippet source"></a><code class="language-scala">sGet(RealmRolePolicy(&quot;admin&quot;)) &amp; sGet(ClientRolePolicy(&quot;sales_admin&quot;))</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L175" target="_blank" title="Go to snippet source"></a><code class="language-scala">sGet(RealmRolePolicy(&quot;admin&quot;)) &amp; sGet(ClientRolePolicy(&quot;sales_admin&quot;))</code></pre></dd>
 </dl>
 <p>The same can be achieved via <a href="csw-aas-http.html#policy-expressions">Policy Expressions</a> as shown below</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L175" target="_blank" title="Go to snippet source"></a><code class="language-scala">sGet(RealmRolePolicy(&quot;admin&quot;) &amp; ClientRolePolicy(&quot;sales_admin&quot;))</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala#L171" target="_blank" title="Go to snippet source"></a><code class="language-scala">sGet(RealmRolePolicy(&quot;admin&quot;) &amp; ClientRolePolicy(&quot;sales_admin&quot;))</code></pre></dd>
 </dl>
-<p>If you want to combine two directives <strong><em>and both of them are CSW security directives</em></strong>, we strongly recommend that you use <a href="csw-aas-http.html#policy-expressions">Policy Expressions</a>. The reason for this is that, when you combine two CSW security directives, the authentication check happens twice (or multiple times based on how many CSW security directives are combined). Since this was meant to happen only once, it causes performance slowdown. You can however combine CSW security directives with other directives freely without worrying about performance.</p>
+<p>If you want to combine two directives <strong><em>and both of them are CSW security directives</em></strong>, we strongly recommend that you use <a href="csw-aas-http.html#policy-expressions">Policy Expressions</a>. The reason for this is that when you combine two CSW security directives, the authentication check happens twice (or multiple times based on how many CSW security directives are combined). Since this was meant to happen only once, it causes performance slowdown. You can however combine CSW security directives with other directives freely without worrying about performance.</p>
 <h2><a href="#source-code-for-above-examples" name="source-code-for-above-examples" class="anchor"><span class="anchor-link"></span></a>Source code for above examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/ExampleServer.scala">Example http server</a></li>

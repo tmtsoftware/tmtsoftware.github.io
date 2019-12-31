@@ -263,7 +263,7 @@ val routes: Route =
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/Main.scala#L10-L25" target="_blank" title="Go to snippet source"></a><code class="language-scala">object Main extends App {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/Main.scala#L10-L26" target="_blank" title="Go to snippet source"></a><code class="language-scala">object Main extends App {
 
   LocationServerStatus.requireUpLocally()
 
@@ -275,7 +275,8 @@ val routes: Route =
 
   try {
     command.foreach(_.run())
-  } finally {
+  }
+  finally {
     actorSystem.terminate()
   }
 }</code></pre></dd>
@@ -286,11 +287,10 @@ val routes: Route =
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/AdapterFactory.scala#L17-L25" target="_blank" title="Go to snippet source"></a><code class="language-scala">object AdapterFactory {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/AdapterFactory.scala#L15-L22" target="_blank" title="Go to snippet source"></a><code class="language-scala">object AdapterFactory {
   def makeAdapter(implicit actorSystem: typed.ActorSystem[_]): InstalledAppAuthAdapter = {
     implicit val ec: ExecutionContextExecutor = actorSystem.executionContext
-    implicit val mat: Materializer            = ActorMaterializer()
-    val locationService: LocationService      = HttpLocationServiceFactory.makeLocalClient(actorSystem, mat)
+    val locationService: LocationService      = HttpLocationServiceFactory.makeLocalClient(actorSystem)
     val authStore                             = new FileAuthStore(Paths.get(&quot;/tmp/demo-cli/auth&quot;))
     InstalledAppAuthAdapterFactory.make(locationService, authStore)
   }
@@ -363,10 +363,10 @@ val routes: Route =
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/commands/ReadCommand.scala#L16-L22" target="_blank" title="Go to snippet source"></a><code class="language-scala">class ReadCommand(implicit val actorSystem: typed.ActorSystem[_]) extends AppCommand {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/installed/commands/ReadCommand.scala#L14-L20" target="_blank" title="Go to snippet source"></a><code class="language-scala">class ReadCommand(implicit val actorSystem: typed.ActorSystem[_]) extends AppCommand {
   override def run(): Unit = {
     val url      = &quot;http://localhost:7000/data&quot;
-    val response = Await.result(Http(actorSystem.toUntyped).singleRequest(HttpRequest(uri = Uri(url))), 2.seconds)
+    val response = Await.result(Http(actorSystem.toClassic).singleRequest(HttpRequest(uri = Uri(url))), 2.seconds)
     println(convertToString(response.entity))
   }
 }</code></pre></dd>
@@ -387,7 +387,7 @@ val routes: Route =
         val url         = s&quot;http://localhost:7000/data?value=$value&quot;
         val response =
           Await.result(
-            Http(actorSystem.toUntyped).singleRequest(
+            Http(actorSystem.toClassic).singleRequest(
               HttpRequest(
                 method = HttpMethods.POST,
                 uri = Uri(url),

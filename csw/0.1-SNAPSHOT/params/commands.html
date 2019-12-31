@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -269,11 +268,11 @@ tmtsoftware/csw
 <h1><a href="#commands" name="commands" class="anchor"><span class="anchor-link"></span></a>Commands</h1>
 <p>Commands are parameter sets called Setup, Observe, and Wait. A command is created with the source of the command, given by a prefix, the name of the command, and an optional ObsId. Parameters are added to the command as needed. As the ESW design is developed, these command structures may evolve.</p>
 <h2><a href="#obsid" name="obsid" class="anchor"><span class="anchor-link"></span></a>ObsId</h2>
-<p>An ObsID, or observation Id, indicates the observation the command is associated with. It can be constructed by creating an instance of <code>ObsId</code>. </p>
+<p>An <code>ObsID</code>, or observation ID, indicates the observation the command is associated with. It can be constructed by creating an instance of <code>ObsId</code>. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L17" target="_blank" title="Go to snippet source"></a><code class="language-scala">val obsId: ObsId = ObsId(&quot;Obs001&quot;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L19" target="_blank" title="Go to snippet source"></a><code class="language-scala">val obsId: ObsId = ObsId(&quot;Obs001&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L30" target="_blank" title="Go to snippet source"></a><code class="language-java">ObsId obsId = new ObsId(&quot;Obs001&quot;);</code></pre></dd>
@@ -284,7 +283,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L24-L34" target="_blank" title="Go to snippet source"></a><code class="language-scala">//using constructor, supplying subsystem and prefix both
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L26-L36" target="_blank" title="Go to snippet source"></a><code class="language-scala">//using constructor, supplying subsystem and prefix both
 val prefix1: Prefix = Prefix(&quot;nfiraos.ncc.trombone&quot;)
 
 //just by supplying prefix
@@ -298,10 +297,10 @@ val prefix3: Prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L36-L43" target="_blank" title="Go to snippet source"></a><code class="language-java">//using constructor, supplying subsystem and prefix both
-Prefix prefix1 = new Prefix(&quot;nfiraos.ncc.trombone&quot;);
+Prefix prefix1 = new Prefix(JSubsystem.NFIRAOS(), &quot;ncc.trombone&quot;);
 
 //just by supplying prefix
-Prefix prefix2 = new Prefix(&quot;tcs.mobie.blue.filter&quot;);
+Prefix prefix2 = new Prefix(JSubsystem.TCS(), &quot;mobie.blue.filter&quot;);
 
 //invalid prefix string which does not contain valid subsystem in the beginning will throw an exception,
 // Prefix badPrefix = new Prefix(&quot;abcdefgh&quot;);</code></pre></dd>
@@ -309,7 +308,7 @@ Prefix prefix2 = new Prefix(&quot;tcs.mobie.blue.filter&quot;);
 <h2><a href="#commandname" name="commandname" class="anchor"><span class="anchor-link"></span></a>CommandName</h2>
 <p>Each command has a name given as a string. The <code>CommandName</code> object wraps the string name. The string should be continuous with no spaces.</p>
 <h2><a href="#setup-command" name="setup-command" class="anchor"><span class="anchor-link"></span></a>Setup Command</h2>
-<p>This command is used to describe a goal that a system should match. Component developer will require to supply following arguments to create a <code>Setup</code> command.</p>
+<p>This command is used to describe a goal that a system should match. The component developer is required to supply following arguments to create a <code>Setup</code> command.</p>
 <ul>
   <li><strong><a href="commands.html#Prefix">Prefix:</a></strong> the source of the command as described above</li>
   <li><strong><a href="commands.html#CommandName">CommandName:</a></strong> a simple string name for the command (no spaces)</li>
@@ -319,7 +318,7 @@ Prefix prefix2 = new Prefix(&quot;tcs.mobie.blue.filter&quot;);
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L48-L92" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L50-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Int]    = KeyType.IntKey.make(&quot;encoder&quot;)
 val k2: Key[String] = KeyType.StringKey.make(&quot;stringThing&quot;)
 val k2bad: Key[Int] = KeyType.IntKey.make(&quot;missingKey&quot;)
@@ -374,14 +373,14 @@ Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Float&gt; k4 = JKeyType.FloatKey().make(&quot;correction&quot;);
 
 //prefix
-String prefixName = &quot;wfos.red.detector&quot;;
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;red.detector&quot;);
 
 //parameters
 Parameter&lt;Integer&gt; i1 = k1.set(22);
 Parameter&lt;String&gt; i2 = k2.set(&quot;A&quot;);
 
 //create setup, add sequentially using add
-Setup sc1 = new Setup(new Prefix(prefixName), new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1).add(i2);
+Setup sc1 = new Setup(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1).add(i2);
 
 //access keys
 boolean k1Exists = sc1.exists(k1); //true
@@ -391,7 +390,7 @@ Optional&lt;Parameter&lt;Integer&gt;&gt; optParam1 = sc1.jGet(k1); //present
 Optional&lt;Parameter&lt;Integer&gt;&gt; optK2Bad = sc1.jGet(k2bad); //absent
 
 //add more than one parameters, using madd
-Setup sc2 = sc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(1.0f, 2.0f));
+Setup sc2 = sc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day()), k4.set(1.0f, 2.0f));
 int paramSize = sc2.size();
 
 //add binary payload
@@ -403,7 +402,7 @@ Byte[] bytes2 = {30, 40};
 Parameter&lt;Byte&gt; b1 = byteKey1.set(bytes1);
 Parameter&lt;Byte&gt; b2 = byteKey2.set(bytes2);
 
-Setup sc3 = new Setup(new Prefix(prefixName), new CommandName(&quot;move&quot;), Optional.of(obsId)).add(b1).add(b2);
+Setup sc3 = new Setup(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(b1).add(b2);
 
 //remove a key
 Setup sc4 = sc3.remove(b1);
@@ -412,11 +411,11 @@ Setup sc4 = sc3.remove(b1);
 java.util.List&lt;String&gt; allKeys = sc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h2><a href="#observe-command" name="observe-command" class="anchor"><span class="anchor-link"></span></a>Observe Command</h2>
-<p>This command describes a science observation. Sent only to Science Detector Assemblies and Sequencers.</p>
+<p>This command describes a science observation. It is intended to only be sent to Science Detector Assemblies and Sequencers.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L107-L141" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L109-L143" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Boolean] = KeyType.BooleanKey.make(&quot;repeat&quot;)
 val k2: Key[Int]     = KeyType.IntKey.make(&quot;expTime&quot;)
 val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;missingKey&quot;)
@@ -461,7 +460,7 @@ Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;UTCTime&gt; k4 = JKeyType.UTCTimeKey().make(&quot;creation-time&quot;);
 
 //prefix
-String prefixName = &quot;wfos.red.detector&quot;;
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;red.detector&quot;);
 
 //parameters
 Boolean[] boolArray = {true, false, true, false};
@@ -469,7 +468,7 @@ Parameter&lt;Boolean&gt; i1 = k1.set(boolArray);
 Parameter&lt;Integer&gt; i2 = k2.set(1, 2, 3, 4);
 
 //create Observe, add sequentially using add
-Observe oc1 = new Observe(new Prefix(prefixName), new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1).add(i2);
+Observe oc1 = new Observe(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1).add(i2);
 
 //access parameters
 Optional&lt;Parameter&lt;Boolean&gt;&gt; k1Param = oc1.jGet(k1); //present
@@ -479,7 +478,7 @@ java.util.List&lt;Boolean&gt; values = k1Param.orElseThrow().jValues();
 Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = oc1.jGet(k2bad.keyName(), JKeyType.FloatArrayKey());
 
 //add more than one parameters, using madd
-Observe oc2 = oc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(UTCTime.now()));
+Observe oc2 = oc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day()), k4.set(UTCTime.now()));
 int paramSize = oc2.size();
 
 //update existing key with set
@@ -493,11 +492,11 @@ Observe oc4 = oc2.remove(k4);
 java.util.List&lt;String&gt; allKeys = oc4.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toList());</code></pre></dd>
 </dl>
 <h2><a href="#wait-command" name="wait-command" class="anchor"><span class="anchor-link"></span></a>Wait Command</h2>
-<p>This command causes a Sequencer to wait until notified.</p>
+<p>This command causes a Sequencer to wait until notified. It can only be sent to Sequencers.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L155-L189" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L157-L191" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val k1: Key[Boolean] = KeyType.BooleanKey.make(&quot;repeat&quot;)
 val k2: Key[Int]     = KeyType.IntKey.make(&quot;expTime&quot;)
 val k2bad: Key[Int]  = KeyType.IntKey.make(&quot;missingKey&quot;)
@@ -542,7 +541,7 @@ Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;UTCTime&gt; k4 = JKeyType.UTCTimeKey().make(&quot;creation-time&quot;);
 
 //prefix
-String prefixName = &quot;wfos.red.detector&quot;;
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;red.detector&quot;);
 
 //parameters
 Boolean[] boolArray = {true, false, true, false};
@@ -550,7 +549,7 @@ Parameter&lt;Boolean&gt; i1 = k1.set(boolArray);
 Parameter&lt;Integer&gt; i2 = k2.set(1, 2, 3, 4);
 
 //create Wait, add sequentially using add
-Wait wc1 = new Wait(new Prefix(prefixName), new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1).add(i2);
+Wait wc1 = new Wait(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1).add(i2);
 
 //access parameters using jGet
 Optional&lt;Parameter&lt;Boolean&gt;&gt; k1Param = wc1.jGet(k1); //present
@@ -560,7 +559,7 @@ java.util.List&lt;Boolean&gt; values = k1Param.orElseThrow().jValues();
 Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = wc1.jGet(&quot;absentKeyHere&quot;, JKeyType.FloatArrayKey());
 
 //add more than one parameters, using madd
-Wait wc2 = wc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(UTCTime.now()));
+Wait wc2 = wc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day()), k4.set(UTCTime.now()));
 int paramSize = wc2.size();
 
 //update existing key with set
@@ -578,7 +577,7 @@ java.util.List&lt;String&gt; allKeys = wc4.jParamSet().stream().map(Parameter::k
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L206-L242" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L208-L244" target="_blank" title="Go to snippet source"></a><code class="language-scala">import play.api.libs.json.{JsValue, Json}
 
 //key
 val k1: Key[MatrixData[Double]] = DoubleMatrixKey.make(&quot;myMatrix&quot;)
@@ -622,17 +621,17 @@ Key&lt;MatrixData&lt;Double&gt;&gt; k1 = JKeyType.DoubleMatrixKey().make(&quot;m
 
 //values
 Double[][] doubles = {{1.0, 2.0, 3.0}, {4.1, 5.1, 6.1}, {7.2, 8.2, 9.2}};
-MatrixData&lt;Double&gt; m1 = MatrixData.fromJavaArrays(Double.class, doubles);
+MatrixData&lt;Double&gt; m1 = MatrixData.fromArrays(doubles);
 
 //parameter
 Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
 
-String prefixName = &quot;wfos.blue.filter&quot;;
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;blue.filter&quot;);
 
 //commands
-Setup sc = new Setup(new Prefix(prefixName), new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1);
-Observe oc = new Observe(new Prefix(prefixName), new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1);
-Wait wc = new Wait(new Prefix(prefixName), new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1);
+Setup sc = new Setup(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1);
+Observe oc = new Observe(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1);
+Wait wc = new Wait(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1);
 
 //json support - write
 JsValue scJson = JavaJsonSupport.writeSequenceCommand(sc);
@@ -654,7 +653,7 @@ Wait wc1 = JavaJsonSupport.readSequenceCommand(wcJson);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L257-L301" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L259-L303" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val encoderKey: Key[Int] = KeyType.IntKey.make(&quot;encoder&quot;)
 val filterKey: Key[Int]  = KeyType.IntKey.make(&quot;filter&quot;)
 val miscKey: Key[Int]    = KeyType.IntKey.make(&quot;misc.&quot;)
@@ -707,7 +706,7 @@ Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
 
 //prefix
-String prefix = &quot;wfos.blue.filter&quot;;
+Prefix prefix = new Prefix(JSubsystem.WFOS(), &quot;blue.filter&quot;);
 
 //params
 Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);
@@ -721,7 +720,7 @@ Parameter&lt;Integer&gt; filterParam3 = filterKey.set(3);
 Parameter&lt;Integer&gt; miscParam1 = miscKey.set(100);
 
 //Setup command with duplicate key via madd
-Setup setup = new Setup(new Prefix(prefix), new CommandName(&quot;move&quot;), Optional.of(obsId)).madd(
+Setup setup = new Setup(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).madd(
         encParam1,
         encParam2,
         encParam3,
@@ -742,11 +741,11 @@ Setup finalSetUp = setup.madd(miscParam1, encParam1);
 Set&lt;String&gt; uniqueKeys3 = finalSetUp.jParamSet().stream().map(Parameter::keyName).collect(Collectors.toUnmodifiableSet());</code></pre></dd>
 </dl>
 <h2><a href="#cloning-a-command" name="cloning-a-command" class="anchor"><span class="anchor-link"></span></a>Cloning a Command</h2>
-<p>In order to track the completion of a command, every command that is sent must have a unique RunId. If you wish to resubmit a previously sent Setup, the <code>cloneCommand</code> method must be used prior to submission to create a new command from existing parameters, but with a new RunId.</p>
+<p>In order to track the completion of a command, every command that is sent must have a unique <code>RunId</code>. If you wish to resubmit a previously sent Setup, the <code>cloneCommand</code> method must be used prior to submission to create a new command from existing parameters, but with a new <code>RunId</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L321-L328" target="_blank" title="Go to snippet source"></a><code class="language-scala">val setup  = Setup(prefix, commandName, Some(obsId)).madd(i1)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/CommandsTest.scala#L323-L330" target="_blank" title="Go to snippet source"></a><code class="language-scala">val setup  = Setup(prefix, commandName, Some(obsId)).madd(i1)
 val setup2 = setup.cloneCommand
 
 val observe  = Observe(prefix, commandName, Some(obsId)).madd(i1)
@@ -756,13 +755,13 @@ val wait  = Wait(prefix, commandName, Some(obsId)).madd(i1)
 val wait2 = wait.cloneCommand</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L311-L318" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup setup = new Setup(new Prefix(prefix), commandName, Optional.of(obsId)).add(encoderParam);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L311-L318" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup setup = new Setup(prefix, commandName, Optional.of(obsId)).add(encoderParam);
 Setup setup2 = setup.cloneCommand();
 
-Observe observe = new Observe(new Prefix(prefix), commandName, Optional.empty()).add(encoderParam);
+Observe observe = new Observe(prefix, commandName, Optional.empty()).add(encoderParam);
 Observe observe2 = observe.cloneCommand();
 
-Wait wait = new Wait(new Prefix(prefix), commandName, Optional.of(obsId)).add(encoderParam);
+Wait wait = new Wait(prefix, commandName, Optional.of(obsId)).add(encoderParam);
 Wait wait2 = wait.cloneCommand();</code></pre></dd>
 </dl>
 <h1><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h1>

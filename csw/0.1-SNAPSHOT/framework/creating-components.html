@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -230,16 +229,16 @@ tmtsoftware/csw
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L24-L25" target="_blank" title="Go to snippet source"></a><code class="language-scala">class AssemblyComponentHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L26-L27" target="_blank" title="Go to snippet source"></a><code class="language-scala">class AssemblyComponentHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext)
     extends ComponentHandlers(ctx, cswCtx)</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L44-L72" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JAssemblyComponentHandlers extends JComponentHandlers {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L43-L71" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JAssemblyComponentHandlers extends JComponentHandlers {
 
     private final ActorContext&lt;TopLevelActorMessage&gt; ctx;
     private final ComponentInfo componentInfo;
-    private final CommandResponseManager commandResponseManager;
     private final CurrentStatePublisher currentStatePublisher;
+    private final CommandResponseManager commandResponseManager;
     private final ILocationService locationService;
     private final IEventService eventService;
     private ILogger log;
@@ -265,11 +264,11 @@ tmtsoftware/csw
     }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L27-L28" target="_blank" title="Go to snippet source"></a><code class="language-scala">class HcdComponentHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L29-L30" target="_blank" title="Go to snippet source"></a><code class="language-scala">class HcdComponentHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext)
     extends ComponentHandlers(ctx, cswCtx)</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L32-L59" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JHcdComponentHandlers extends JComponentHandlers {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L34-L61" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JHcdComponentHandlers extends JComponentHandlers {
 
     private final ActorContext&lt;TopLevelActorMessage&gt; ctx;
     private final ComponentInfo componentInfo;
@@ -299,9 +298,12 @@ tmtsoftware/csw
     }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><strong>Converting a typed actor system to an untyped actor system</strong> </p>
-<p>The <code>ctx</code> available to the component is of type <code>akka.actor.typed.scaladsl.ActorContext</code> in Scala or <code>akka.actor.typed.javadsl.ActorContext</code> in Java. This context can be used to get resources such as actor system which is also typed. In order to get the untyped version of an actor system or actor references, Akka has provided some implicit extension methods in Scala and static methods in Java which can be used by adding the following import: </p>
-<p><code>import akka.actor.typed.scaladsl.adapter._</code> for Scala and, <code>import akka.actor.typed.javadsl.Adapter.*</code> for Java</p></div>
-<p>A component can be created by a factory which extends <code>ComponentBehaviorFactory</code> base class and provides a definition of <code>handlers</code> method to return the appropriate implementation of <code>ComponentHandlers</code>.</p>
+<p>The <code>ctx</code> available to the component is of type <code>akka.actor.typed.scaladsl.ActorContext</code> in Scala or <code>akka.actor.typed.javadsl.ActorContext</code> in Java. This context can be used to get resources such as an actor system which is also typed. In order to get the untyped version of an actor system or actor references, Akka has provided some implicit extension methods in Scala and static methods in Java which can be used by adding the following import: </p>
+<ul>
+  <li>Scala: <code>import akka.actor.typed.scaladsl.adapter._</code></li>
+  <li>Java: <code>import akka.actor.typed.javadsl.Adapter.*</code></li>
+</ul></div>
+<p>A component can be created by a factory which extends the <code>ComponentBehaviorFactory</code> base class and provides a definition of the <code>handlers</code> method to return the appropriate implementation of <code>ComponentHandlers</code>.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>

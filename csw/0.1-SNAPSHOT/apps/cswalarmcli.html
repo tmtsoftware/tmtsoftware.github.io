@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -275,7 +274,7 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#csw-alarm-cli" name="csw-alarm-cli" class="anchor"><span class="anchor-link"></span></a>csw-alarm-cli</h1>
-<p>A command line application that facilitates interaction with Alarm Service. It accepts various commands to load and retrieve alarm data, to subscribe to severity and health activities of alarm, and to change current of the state of alarms.</p>
+<p>A command line application that facilitates interaction with the Alarm Service. It accepts various commands to load and retrieve alarm data, to subscribe to severity and health activities of alarm, and to change current of the state of alarms.</p>
 <h2><a href="#supported-commands" name="supported-commands" class="anchor"><span class="anchor-link"></span></a>Supported Commands</h2>
 <ul>
   <li>init</li>
@@ -291,20 +290,20 @@ tmtsoftware/csw
   <li>health</li>
 </ul>
 <h2><a href="#admin-api" name="admin-api" class="anchor"><span class="anchor-link"></span></a>Admin API</h2>
-<p>The commands listed below will be used by administrators of the alarm service.</p>
+<p>The commands listed below will be used by administrators of the Alarm Service.</p>
 <h2><a href="#init" name="init" class="anchor"><span class="anchor-link"></span></a>init</h2>
 <p>Loads the alarm data in the alarm store</p>
 <ul>
-  <li><code>file path</code> - is a required parameter. Can be of local disk or config server (by default it will be picked from the config service.</li>
-  <li><code>--local</code> - this specifies that config file must be picked up from local disk</li>
-  <li><code>--reset</code> - this is an optional parameter to clear previous data before loading the new one. By default it will be <code>false</code>.</li>
+  <li><code>file path</code> - is a required parameter. Can be on local disk or in the Config Service server (by default it will be picked from the Config Service.)</li>
+  <li><code>--local</code> - this specifies that the config file must be read from the local disk</li>
+  <li><code>--reset</code> - this is an optional parameter to clear previous data before loading the new one. By default, it is <code>false</code>.</li>
 </ul>
 <h4><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h4>
 <pre><code>csw-alarm-cli init /path/allAlarms.conf --local --reset
 </code></pre>
-<p>Clears the alarm store and loads alarm data to alarm store from <code>/path/allAlarms.conf</code> which is a path of a local file.</p>
+<p>Clears the alarm store and loads alarm data to the alarm store from <code>/path/allAlarms.conf</code>, which is the path of a local file.</p>
 <h2><a href="#list" name="list" class="anchor"><span class="anchor-link"></span></a>list</h2>
-<p>Gets the data of alarms from alarm store. If none of the optional parameters are given then by default, data of all alarms will be displayed.</p>
+<p>Gets the data of alarms from the alarm store. If none of the optional parameters are given, then by default, data of all alarms will be displayed.</p>
 <ul>
   <li><code>--subsystem</code> - is an optional parameter to get the data of a specific subsystem&rsquo;s alarms</li>
   <li><code>--component</code> - is an optional parameter to get the data of a specific component&rsquo;s alarms. <code>--subsystem</code> must be specified with this parameter.</li>
@@ -320,7 +319,7 @@ tmtsoftware/csw
 <p>2.</p>
 <pre><code>csw-alarm-cli list --subsystem nfiraos --metadata --status
 </code></pre>
-<p>Displays metadata and status of all alarms which belong to <code>nfiraos</code> subsystem.</p>
+<p>Displays metadata and status of all alarms which belong to the <code>nfiraos</code> subsystem.</p>
 <h3><a href="#operations-specific-to-an-alarm" name="operations-specific-to-an-alarm" class="anchor"><span class="anchor-link"></span></a>Operations specific to an alarm</h3>
 <p>Commands given below are specific to an alarm. All of commands must be provided with <code>--subsystem</code>,<code>--component</code> and <code>--name</code> as parameters.</p>
 <ul>
@@ -373,7 +372,7 @@ tmtsoftware/csw
 <h2><a href="#severity" name="severity" class="anchor"><span class="anchor-link"></span></a>severity</h2>
 <p>Severity command contains 3 sub-commands.</p>
 <h3><a href="#get" name="get" class="anchor"><span class="anchor-link"></span></a>get</h3>
-<p>Used to get the severity of the subsystem, component or alarm. If none of the optional parameters are given then severity of whole TMT system will be displayed.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Used to get the severity of the subsystem, component or alarm. If none of the optional parameters are given, then the severity of whole TMT system will be displayed.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>For a single alarm, current severity will be displayed. For a system, subsystem or component, aggregated severity will be displayed.</p></div>
 <ul>
   <li><code>--subsystem</code> - is an optional parameter to get the severity of a specific subsystem&rsquo;s alarms</li>
@@ -384,13 +383,13 @@ tmtsoftware/csw
 <p>1.</p>
 <pre><code>csw-alarm-cli severity get --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
-<p>Displays severity of alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
+<p>Displays the severity of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
 <p>2.</p>
 <pre><code>csw-alarm-cli severity get --subsystem nfiraos --component trombone
 </code></pre>
-<p>Displays aggregated severity of component with name <code>trombone</code> of subsystem <code>nfiraos</code>.</p>
+<p>Displays the aggregated severity of the component with name <code>trombone</code> of subsystem <code>nfiraos</code>.</p>
 <h3><a href="#set" name="set" class="anchor"><span class="anchor-link"></span></a>set</h3>
-<p>Sets the given severity for the alarms</p>
+<p>Sets the given severity for the specified alarm</p>
 <ul>
   <li>severity to which given alarm needs to be set</li>
   <li><code>--subsystem</code> - is a parameter to specify the subsystem of alarm</li>
@@ -402,14 +401,14 @@ tmtsoftware/csw
 <p>1.</p>
 <pre><code>csw-alarm-cli severity set major --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
-<p>Sets <code>Major</code> as the severity of alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
+<p>Sets <code>Major</code> as the severity of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
 <p>2.</p>
 <pre><code>csw-alarm-cli severity set major --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm --refresh
 </code></pre>
-<p>Refresh <code>Major</code> as the severity of alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code> after every 3 seconds.</p>
+<p>Refresh <code>Major</code> as the severity of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code> every 3 seconds.</p>
 <h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
 <p>Subscribes to the severity changes of the whole TMT system, subsystem, component or an alarm. If none of the optional parameters are given then the severity of the whole TMT system will be displayed.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>For a single alarm, current severity will be displayed. For system, subsystem or component, aggregated severity will be displayed.</p></div>
+<p>For a single alarm, the current severity will be displayed. For system, subsystem or component, the aggregated severity will be displayed.</p></div>
 <ul>
   <li><code>--subsystem</code> - is an optional parameter to get the severity of a specific subsystem&rsquo;s alarms</li>
   <li><code>--component</code> - is an optional parameter to get the severity of a specific component&rsquo;s alarms. <code>--subsystem</code> must be specified with this parameter.</li>
@@ -423,8 +422,8 @@ tmtsoftware/csw
 <h2><a href="#health" name="health" class="anchor"><span class="anchor-link"></span></a>health</h2>
 <p>Health command contains two sub-commands. </p>
 <h3><a href="#get" name="get" class="anchor"><span class="anchor-link"></span></a>get</h3>
-<p>Gets the health of the whole TMT system, subsystem, component or alarm. If none of the optional parameters are given then the health of the whole TMT system will be displayed.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>For a single alarm, current health will be displayed. For system, subsystem or component, aggregated health will be displayed.</p></div>
+<p>Gets the health of the whole TMT system, subsystem, component or alarm. If none of the optional parameters are given, then the health of the whole TMT system will be displayed.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>For a single alarm, the current health will be displayed. For the system, subsystem or component, the aggregated health will be displayed.</p></div>
 <ul>
   <li><code>--subsystem</code> - is an optional parameter to get the health of a specific subsystem&rsquo;s alarms</li>
   <li><code>--component</code> - is an optional parameter to get the health of a specific component&rsquo;s alarms. <code>--subsystem</code> must be specified with this parameter.</li>
@@ -434,14 +433,14 @@ tmtsoftware/csw
 <p>1.</p>
 <pre><code>csw-alarm-cli health get --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
-<p>Displays health of alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
+<p>Displays the health of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
 <p>2.</p>
 <pre><code>csw-alarm-cli health get --subsystem nfiraos
 </code></pre>
-<p>Displays aggregated health of subsystem with name <code>nfiraos</code>.</p>
+<p>Displays the aggregated health of the subsystem with name <code>nfiraos</code>.</p>
 <h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
-<p>Subscribes to the health changes of the whole TMT system, subsystem, component or an alarm. If none of the optional parameters are given then the health of the whole TMT system will be displayed.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>For a single alarm, current health will be displayed. For system, subsystem or component, aggregated health will be displayed.</p></div>
+<p>Subscribes to the health changes of the whole TMT system, subsystem, component or an alarm. If none of the optional parameters are given, then the health of the whole TMT system will be displayed.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>For a single alarm, current health will be displayed. For the system, subsystem or component, the aggregated health will be displayed.</p></div>
 <ul>
   <li><code>--subsystem</code> - is an optional parameter to get the health of a specific subsystem&rsquo;s alarms</li>
   <li><code>--component</code> - is an optional parameter to get the health of a specific component&rsquo;s alarms. <code>--subsystem</code> must be specified with this parameter.</li>
@@ -451,13 +450,13 @@ tmtsoftware/csw
 <p>1.</p>
 <pre><code>csw-alarm-cli health subscribe --subsystem nfiraos --component trombone
 </code></pre>
-<p>Subscribes to the aggregated health of subsystem with name <code>nfiraos</code>.</p>
+<p>Subscribes to the aggregated health of the subsystem with name <code>nfiraos</code>.</p>
 <h2><a href="#about-this-application" name="about-this-application" class="anchor"><span class="anchor-link"></span></a>About this application</h2>
 <h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>&ndash;help</h3>
 <p>Prints the help message.</p>
 <h3><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a>&ndash;version</h3>
 <p>Prints the version of the application.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>All the above examples require that <code>csw-location-server</code> is running on local machine at <code>localhost:7654</code>. If <code>csw-location-server</code> is running on remote machine having Ip address <code>172.1.1.2</code>, then you need to pass additional <code>--locationHost 172.1.1.2</code> command line argument. Example: <code>csw-alarm-cli list --locationHost 172.1.1.2</code></p></div>
+<p>All the above examples require that <code>csw-location-server</code> is running on local machine at <code>localhost:7654</code>. If <code>csw-location-server</code> is running on remote machine having Ip address <code>172.1.1.2</code>, then you need to pass an additional <code>--locationHost 172.1.1.2</code> command line argument. Example: <code>csw-alarm-cli list --locationHost 172.1.1.2</code></p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/apps/cswalarmcli.md" title="Edit this page" class="md-source-file md-edit">

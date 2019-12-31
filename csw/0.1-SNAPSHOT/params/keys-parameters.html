@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -269,7 +268,7 @@ tmtsoftware/csw
 <ul>
   <li>choose an appropriate KeyType from the tables below for your language(Scala/Java).</li>
   <li>calling the <code>make</code> method on KeyType and supplying a String keyName will return a suitably typed Key instance.</li>
-  <li>explore the overloaded <code>set</code> and <code>-&gt;</code> methods, which will allow you to store values of the based on chosen KeyType. e.g. <code>JKeyType.BooleanKey</code> will allow storing only <code>java.lang.Boolean</code> values.</li>
+  <li>exploit the overloaded <code>set</code> and <code>-&gt;</code> methods, which will allow you to store values of the based on chosen KeyType. e.g. <code>JKeyType.BooleanKey</code> will allow storing only <code>java.lang.Boolean</code> values.</li>
 </ul>
 <h2><a href="#primitive-datatypes" name="primitive-datatypes" class="anchor"><span class="anchor-link"></span></a>Primitive Datatypes</h2>
 <table>
@@ -336,7 +335,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L17-L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">//declare keyname
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L18-L49" target="_blank" title="Go to snippet source"></a><code class="language-scala">//declare keyname
 val s1: String = &quot;encoder&quot;
 
 //making 3 keys
@@ -370,7 +369,7 @@ val allValues: Array[Short] = paramWithShorts1.values
 val head: Short = paramWithShorts1.head</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L25-L54" target="_blank" title="Go to snippet source"></a><code class="language-java">//making 3 keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L27-L56" target="_blank" title="Go to snippet source"></a><code class="language-java">//making 3 keys
 String keyName = &quot;encoder&quot;;
 Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(keyName);
 Key&lt;Short&gt; k2 = JKeyType.ShortKey().make(keyName);
@@ -386,14 +385,14 @@ Parameter&lt;Short&gt; paramWithManyShorts2 = k2.set((short) 1, (short) 2, (shor
 
 //associating units
 String[] weekDays = {&quot;Sunday&quot;, &quot;Monday&quot;, &quot;Tuesday&quot;};
-Parameter&lt;String&gt; paramWithUnits1 = k3.set(weekDays, JUnits.day);
-Parameter&lt;String&gt; paramWithUnits2 = k3.set(weekDays).withUnits(JUnits.day);
+Parameter&lt;String&gt; paramWithUnits1 = k3.set(weekDays, JUnits.day());
+Parameter&lt;String&gt; paramWithUnits2 = k3.set(weekDays).withUnits(JUnits.day());
 
-//deault unit is NoUnits
-boolean hasDefaultUnit = booleanParam.units() == JUnits.NoUnits; //true
+//deault unit is NoUnits()
+boolean hasDefaultUnit = booleanParam.units() == JUnits.NoUnits(); //true
 
 //set units explicitly on an existing Parameter
-Parameter&lt;Short&gt; paramWithUnits3 = paramWithManyShorts1.withUnits(JUnits.meter);
+Parameter&lt;Short&gt; paramWithUnits3 = paramWithManyShorts1.withUnits(JUnits.meter());
 
 //retrieve values from Parameter
 Short[] allValues = (Short[]) paramWithManyShorts1.values();
@@ -446,7 +445,7 @@ Short head = paramWithManyShorts1.head();</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L62-L81" target="_blank" title="Go to snippet source"></a><code class="language-scala">//make some arrays
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L63-L82" target="_blank" title="Go to snippet source"></a><code class="language-scala">//make some arrays
 val arr1: Array[Double] = Array(1.0, 2.0, 3.0, 4.0, 5.0)
 val arr2: Array[Double] = Array(10.0, 20.0, 30.0, 40.0, 50.0)
 
@@ -468,7 +467,7 @@ val head: Array[Double]                 = p1.head.data.toArray
 val allValues: Array[ArrayData[Double]] = p1.values</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L72-L92" target="_blank" title="Go to snippet source"></a><code class="language-java">//make some arrays
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L74-L94" target="_blank" title="Go to snippet source"></a><code class="language-java">//make some arrays
 Double[] arr1 = {1.0, 2.0, 3.0, 4.0, 5.0};
 Double[] arr2 = {10.0, 20.0, 30.0, 40.0, 50.0};
 
@@ -476,14 +475,14 @@ Double[] arr2 = {10.0, 20.0, 30.0, 40.0, 50.0};
 Key&lt;ArrayData&lt;Double&gt;&gt; filterKey = JKeyType.DoubleArrayKey().make(&quot;filter&quot;);
 
 //Store some values using helper method in ArrayData
-Parameter&lt;ArrayData&lt;Double&gt;&gt; p1 = filterKey.set(ArrayData.fromJavaArray(arr1), ArrayData.fromJavaArray(arr2));
-Parameter&lt;ArrayData&lt;Double&gt;&gt; p2 = filterKey.set(ArrayData.fromJavaArray(arr2)).withUnits(JUnits.liter);
+Parameter&lt;ArrayData&lt;Double&gt;&gt; p1 = filterKey.set(ArrayData.fromArray(arr1), ArrayData.fromArray(arr2));
+Parameter&lt;ArrayData&lt;Double&gt;&gt; p2 = filterKey.set(ArrayData.fromArray(arr2)).withUnits(JUnits.liter());
 
 //add units to existing parameters
-Parameter&lt;ArrayData&lt;Double&gt;&gt; p1AsCount = p1.withUnits(JUnits.count);
+Parameter&lt;ArrayData&lt;Double&gt;&gt; p1AsCount = p1.withUnits(JUnits.count());
 
-//default unit is NoUnits
-boolean bDefaultUnit = JUnits.NoUnits == p1.units();
+//default unit is NoUnits()
+boolean bDefaultUnit = JUnits.NoUnits() == p1.units();
 
 //retrieving values
 List&lt;Double&gt; head = p1.head().jValues();
@@ -535,7 +534,7 @@ Double[] arrayOfDoubles = (Double[]) p2.jValues().get(0).values();</code></pre><
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L93-L112" target="_blank" title="Go to snippet source"></a><code class="language-scala">//make some arrays
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L94-L113" target="_blank" title="Go to snippet source"></a><code class="language-scala">//make some arrays
 val m1: Array[Array[Byte]] = Array(Array[Byte](1, 2, 3), Array[Byte](4, 5, 6), Array[Byte](7, 8, 9))
 val m2: Array[Array[Byte]] = Array(Array[Byte](1, 2, 3, 4, 5), Array[Byte](10, 20, 30, 40, 50))
 
@@ -557,7 +556,7 @@ val head: Array[Array[Byte]]           = p1.head.data.map(_.toArray).toArray
 val allValues: Array[MatrixData[Byte]] = p1.values</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L110-L135" target="_blank" title="Go to snippet source"></a><code class="language-java">//make some arrays
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L112-L137" target="_blank" title="Go to snippet source"></a><code class="language-java">//make some arrays
 Byte[][] m1 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 Byte[][] m2 = {{1, 2, 3, 4, 5}, {10, 20, 30, 40, 50}};
 
@@ -566,17 +565,17 @@ Key&lt;MatrixData&lt;Byte&gt;&gt; encoderKey = JKeyType.ByteMatrixKey().make(&qu
 
 //Store some values using helper method in ArrayData
 Parameter&lt;MatrixData&lt;Byte&gt;&gt; p1 = encoderKey.set(
-        MatrixData.fromJavaArrays(Byte.class, m1),
-        MatrixData.fromJavaArrays(Byte.class, m2));
+        MatrixData.fromArrays(m1),
+        MatrixData.fromArrays(m2));
 Parameter&lt;MatrixData&lt;Byte&gt;&gt; p2 = encoderKey.set(
-        MatrixData.fromJavaArrays(Byte.class, m2)
-).withUnits(JUnits.liter);
+        MatrixData.fromArrays(m2)
+).withUnits(JUnits.liter());
 
 //add units to existing parameters
-Parameter&lt;MatrixData&lt;Byte&gt;&gt; p1AsLiter = p1.withUnits(JUnits.liter);
+Parameter&lt;MatrixData&lt;Byte&gt;&gt; p1AsLiter = p1.withUnits(JUnits.liter());
 
-//default unit is NoUnits
-boolean bDefaultUnit = JUnits.NoUnits == p1.units();
+//default unit is NoUnits()
+boolean bDefaultUnit = JUnits.NoUnits() == p1.units();
 
 //retrieving values
 MatrixData&lt;Byte&gt; head = p1.head();
@@ -659,7 +658,7 @@ List&lt;MatrixData&lt;Byte&gt;&gt; matrixData2 = p2.jValues();
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L189-L210" target="_blank" title="Go to snippet source"></a><code class="language-scala">import Angle._
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L190-L211" target="_blank" title="Go to snippet source"></a><code class="language-scala">import Angle._
 import Coords._
 
 // Coordinate types
@@ -683,7 +682,7 @@ assert(posParam.values(3) == cometCoord)
 assert(posParam.values(4) == altAzCoord)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L225-L257" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>//import csw.params.core.models.Coords.*;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L229-L261" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>//import csw.params.core.models.Coords.*;
 //import static csw.params.core.models.JCoords.*;
 //import static csw.params.core.models.Coords.*;
 
@@ -691,15 +690,15 @@ assert(posParam.values(4) == altAzCoord)</code></pre></dd>
 ProperMotion pm = new ProperMotion(0.5, 2.33);
 
 EqCoord eqCoord = new EqCoord(&quot;12:13:14.15&quot;, &quot;-30:31:32.3&quot;, FK5(), BASE(),
-    DEFAULT_CATNAME(), pm.pmx(), pm.pmy());
+        DEFAULT_CATNAME(), pm.pmx(), pm.pmy());
 
 SolarSystemCoord solarSystemCoord = new SolarSystemCoord(BASE(), Venus());
 
 MinorPlanetCoord minorPlanetCoord = new MinorPlanetCoord(GUIDER1(), 2000, JAngle.degree(90),
-    JAngle.degree(2), JAngle.degree(100), 1.4, 0.234, JAngle.degree(220));
+        JAngle.degree(2), JAngle.degree(100), 1.4, 0.234, JAngle.degree(220));
 
 CometCoord cometCoord = new CometCoord(BASE(), 2000.0, JAngle.degree(90),
-    JAngle.degree(2), JAngle.degree(100), 1.4, 0.234);
+        JAngle.degree(2), JAngle.degree(100), 1.4, 0.234);
 
 AltAzCoord altAzCoord = new AltAzCoord(BASE(), JAngle.degree(301), JAngle.degree(42.5));
 
@@ -709,19 +708,19 @@ Key&lt;Coord&gt; basePosKey = JKeyType.CoordKey().make(&quot;BasePosition&quot;)
 Parameter&lt;Coord&gt; posParam = basePosKey.set(eqCoord, solarSystemCoord, minorPlanetCoord, cometCoord, altAzCoord);
 
 //retrieving values
-assert(posParam.jValues().size() == 5);
-assert(posParam.jValues().get(0).equals(eqCoord));
-assert(posParam.jValues().get(1).equals(solarSystemCoord));
-assert(posParam.jValues().get(2).equals(minorPlanetCoord));
-assert(posParam.jValues().get(3).equals(cometCoord));
-assert(posParam.jValues().get(4).equals(altAzCoord));</code></pre></dd>
+assert (posParam.jValues().size() == 5);
+assert (posParam.jValues().get(0).equals(eqCoord));
+assert (posParam.jValues().get(1).equals(solarSystemCoord));
+assert (posParam.jValues().get(2).equals(minorPlanetCoord));
+assert (posParam.jValues().get(3).equals(cometCoord));
+assert (posParam.jValues().get(4).equals(altAzCoord));</code></pre></dd>
 </dl>
 <h3><a href="#choice" name="choice" class="anchor"><span class="anchor-link"></span></a>Choice</h3>
 <p>A key for a choice item similar to an enumeration.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L124-L149" target="_blank" title="Go to snippet source"></a><code class="language-scala">//Choice
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L125-L150" target="_blank" title="Go to snippet source"></a><code class="language-scala">//Choice
 val choices = Choices.from(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;)
 
 //keys
@@ -749,7 +748,7 @@ val values: Array[Choice] = p2.values
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L152-L176" target="_blank" title="Go to snippet source"></a><code class="language-java">//Choice
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L156-L180" target="_blank" title="Go to snippet source"></a><code class="language-java">//Choice
 final Choices choices = Choices.from(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);
 
 //keys
@@ -762,25 +761,25 @@ GChoiceKey choice2Key = JKeyType.ChoiceKey().make(
                 new Choice(&quot;a&quot;)));
 
 //store values
-Parameter&lt;Choice&gt; p1 = choice1Key.set(new Choice(&quot;A&quot;)).withUnits(JUnits.foot);
+Parameter&lt;Choice&gt; p1 = choice1Key.set(new Choice(&quot;A&quot;)).withUnits(JUnits.foot());
 Parameter&lt;Choice&gt; p2 = choice2Key.set(new Choice(&quot;c&quot;));
 
 //add units
-Parameter&lt;Choice&gt; paramWithFoot = p1.withUnits(JUnits.foot);
+Parameter&lt;Choice&gt; paramWithFoot = p1.withUnits(JUnits.foot());
 
-//default unit is NoUnits
-boolean bDefaultUnit = JUnits.NoUnits == p2.units();
+//default unit is NoUnits()
+boolean bDefaultUnit = JUnits.NoUnits() == p2.units();
 
 //retrieving values
 Choice head = p1.head();
 List&lt;Choice&gt; values = p2.jValues();</code></pre></dd>
 </dl>
 <h3><a href="#struct" name="struct" class="anchor"><span class="anchor-link"></span></a>Struct</h3>
-<p>Stores a set of Parameters for telescope and instrument control. Lot of utility functions available for store, add, remove, list Keys and Paramete</p>
+<p>Structs can be used to create a hierarchy of parameters. The following snippet also demonstrates some of the utility functions available for manipulating parameter sets:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L216-L258" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L217-L259" target="_blank" title="Go to snippet source"></a><code class="language-scala">//keys
 val skey: Key[Struct] = StructKey.make(&quot;myStruct&quot;)
 
 val ra    = KeyType.StringKey.make(&quot;ra&quot;)
@@ -825,7 +824,7 @@ assert(missingKeySet === Set(&quot;ra&quot;, &quot;missingKey&quot;))
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L264-L309" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L268-L313" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Struct&gt; skey = JKeyType.StructKey().make(&quot;myStruct&quot;);
 
 Key&lt;String&gt; ra = JKeyType.StringKey().make(&quot;ra&quot;);
@@ -847,10 +846,10 @@ Parameter&lt;Struct&gt; p1 = skey.set(struct1);
 Parameter&lt;Struct&gt; p2 = skey.set(struct1, struct2);
 
 //add units
-Parameter&lt;Struct&gt; paramWithLightYear = p1.withUnits(JUnits.lightyear);
+Parameter&lt;Struct&gt; paramWithLightYear = p1.withUnits(JUnits.lightyear());
 
-//default unit is NoUnits
-boolean bDefaultUnit = JUnits.NoUnits == p1.units();
+//default unit is NoUnits()
+boolean bDefaultUnit = JUnits.NoUnits() == p1.units();
 
 //retrieving values
 Struct head = p1.head();

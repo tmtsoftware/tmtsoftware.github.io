@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -257,11 +256,11 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#database-service" name="database-service" class="anchor"><span class="anchor-link"></span></a>Database Service</h1>
-<p>The Database Service is included in TMT Common Software for use by components that need the features of a relational database. CSW Database Service provides a TMT-standard relational database and connection library. Databases created by Database Service will be stored reliably at the site during operations.</p>
+<p>The Database Service is included in TMT Common Software for use by components that need the features of a relational database. The CSW Database Service provides a TMT-standard relational database and connection library. Databases created by the Database Service will be stored reliably at the site during operations.</p>
 <p>The Database Service provides an API to manage database connections and access data in the TMT Software System. The service provides <code>PostgreSQL</code> as the underlying database server. It uses the <code>Jooq</code> library underneath to manage database access, connection pooling, etc.</p><div class="callout note "><div class="callout-title">Note</div>
 <p><code>Jooq</code> is a Java library that provides a higher level API for accessing data i.e. DDL support, DML support, fetch, batch execution, prepared statements, safety against sql injection, connection pooling, etc. To know more about Jooq and its features, please refer to this <a href="https://www.jooq.org/learn/">link</a>.</p></div>
-<p>Database Service requires <code>PostgreSQL</code> server to be running on a machine. To start the PostgreSQL server for development and testing purposes, refer to <a href="../commons/apps.html#starting-apps-for-development">Starting Apps for Development</a>.</p>
-<p>Once the PostgreSQL is up and running, Database Service can be used to connect and access data. It is assumed that there will be more than one user types registered with PostgreSQL i.e. for read access, for write access, for admin access, etc.</p>
+<p>The Database Service requires <code>PostgreSQL</code> server to be running on a machine. To start the PostgreSQL server for development and testing purposes, refer to <a href="../commons/apps.html#starting-apps-for-development">Starting Apps for Development</a>.</p>
+<p>Once the PostgreSQL database is up and running, the Database Service can be used to connect and access data. It is assumed that there will be more than one user type registered with PostgreSQL i.e. for read access, for write access, for admin access, etc.</p>
 <!-- introduction to the service -->
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
 <p>To include the Database Service in a component, add this to your <code>build.sbt</code> file:</p>
@@ -272,30 +271,30 @@ tmtsoftware/csw
 </code></pre></dd>
 </dl>
 <h2><a href="#accessing-database-service" name="accessing-database-service" class="anchor"><span class="anchor-link"></span></a>Accessing Database Service</h2>
-<p>Database Service is accessed differently than other CSW services in that it is not passed to a component through <code>CswContext/JCswContext</code> in the component&rsquo;s ComponentHandlers. To access Database Service, developers create a <code>DatabaseServiceFactory</code>. DatabaseServiceFactory can be created anywhere in the code using an <code>ActorSystem</code> and its creation is explained in next section. </p><div class="callout note "><div class="callout-title">Note</div>
-<p>Creating a new DatabaseServiceFactory does not mean a new connection to PostgreSQL server will be created. Database connections are managed in a pool by the underlying Database Service implementation. Hence, creating multiple DatabaseServiceFactory per component can be considered pretty cheap and harmless. But it is also possible to save what is returned by DatabaseServiceFactory and pass it around your component.</p></div>
+<p>The Database Service is accessed differently than other CSW services in that it is not passed to a component through <code>CswContext/JCswContext</code> in the component&rsquo;s ComponentHandlers. To access Database Service, developers create a <code>DatabaseServiceFactory</code>. A <code>DatabaseServiceFactory</code> can be created anywhere in the code using an <code>ActorSystem</code> and its creation is explained in next section. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>Creating a new <code>DatabaseServiceFactory</code> does not mean a new connection to PostgreSQL server will be created. Database connections are managed in a pool by the underlying Database Service implementation. Hence, creating multiple <code>DatabaseServiceFactory</code> instances per component can be considered pretty cheap and harmless. But it is also possible to save the instance returned by <code>DatabaseServiceFactory</code> and pass it around your component.</p></div>
 <h4><a href="#connect-with-read-access" name="connect-with-read-access" class="anchor"><span class="anchor-link"></span></a>Connect with Read Access</h4>
-<p>Our access approach is that all components can read any Database Service database and clients that only need read access use the following factory method. But a writer will need a special username/password with write access as shown below.</p>
-<p>By default while connecting to PostgreSQL, Database Service will provide read access for data. To achieve that, create an instance of <code>DatabaseServiceFactory</code> and use it as shown below:</p>
+<p>Our access approach is that all components can read any Database Service database, and clients that only need read access use the following factory method. However, a writer will need a special username/password with write access as shown below.</p>
+<p>By default while connecting to PostgreSQL database, the Database Service will provide read access for data. To achieve that, create an instance of <code>DatabaseServiceFactory</code> and use it as shown below:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L26-L30" target="_blank" title="Go to snippet source"></a><code class="language-scala">val dbFactory = new DatabaseServiceFactory(ctx.system)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L28-L32" target="_blank" title="Go to snippet source"></a><code class="language-scala">val dbFactory = new DatabaseServiceFactory(ctx.system)
 
 dbFactory
   .makeDsl(locationService, &quot;postgres&quot;)         // postgres is dbName
   .foreach((dsl: DSLContext) =&gt; this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L37-L41" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory = new DatabaseServiceFactory(ctx.getSystem());
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L39-L43" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory = new DatabaseServiceFactory(ctx.getSystem());
 
 dbFactory
         .jMakeDsl(cswCtx.locationService(), &quot;postgres&quot;) // postgres is dbName
         .thenAccept((DSLContext dsl) -&gt; this.dsl = dsl);        // save the returned dsl to a local variable</code></pre></dd>
 </dl>
-<p>The underlying database server is registered with the Location Service. <code>makeDsl</code>/<code>jMakeDsl</code> takes <code>locationService</code> to locate the PostgreSQL server running and connect to it. It connects to the database by the provided <code>dbName</code>. It picks the database username and password for read access profile from TMT-standard environment variables called <code>DB_READ_USERNAME</code> for username and <code>DB_READ_PASSWORD</code> for password, hence it is expected that developers will set these environment variables prior to using <code>DatabaseServiceFactory</code>. PostgreSQL should also be initialized with a read-only user and password that agrees with the values in the environment variables. This approach is used to keep from putting database login information in the source code. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>The underlying database server is registered with the Location Service. <code>makeDsl</code>/<code>jMakeDsl</code> uses <code>locationService</code> to locate the PostgreSQL server running and connect to it. It connects to the database by the provided <code>dbName</code>. It picks the database username and password for read access profile from TMT-standard environment variables called <code>DB_READ_USERNAME</code> for username and <code>DB_READ_PASSWORD</code> for password, hence it is expected that developers will set these environment variables prior to using <code>DatabaseServiceFactory</code>. PostgreSQL should also be initialized with a read-only user and password that agrees with the values in the environment variables. This approach is used to keep from putting database login information in the source code. </p><div class="callout note "><div class="callout-title">Note</div>
 <p>See the <a href="https://www.postgresql.org/docs/8.0/sql-createuser.html">PostgreSQL docs</a> or <a href="https://www.a2hosting.com/kb/developer-corner/postgresql/managing-postgresql-databases-and-users-from-the-command-line">this site</a> for help with creating users, passwords, and roles in PostgreSQL.</p>
-<p>The <a href="https://www.postgresql.org/docs/current/app-psql.html">psql interactive CLI client</a> is provided with PostgreSQL. It can be used to connect to PostgreSQL and create users (as well as many other maintenance commands). If Database Service is started with csw-services.sh, the database server is started on port <em>5432</em>.</p>
+<p>The <a href="https://www.postgresql.org/docs/current/app-psql.html">psql interactive CLI client</a> is provided with PostgreSQL. It can be used to connect to PostgreSQL and create users (as well as many other maintenance commands). If the Database Service is started with csw-services.sh, the database server is started on port <em>5432</em>.</p>
 <p>Eventually, all TMT user logins will all have these environment variables set with the agreed upon read-only user and password. </p></div>
 <p><code>makeDsl</code>/<code>jMakeDsl</code> returns a <code>Jooq</code> type <code>DSLContext</code>. DSLContext provides the mechanism to access the data stored in PostgreSQL using the selected JDBC driver underneath. The usage of DSLContext in component development will be explained in later sections. </p><div class="callout note "><div class="callout-title">Hint</div>
 <ul>
@@ -306,12 +305,12 @@ dbFactory
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L34-L36" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L36-L38" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
   .makeDsl(locationService, &quot;postgres&quot;, &quot;DB_WRITE_USERNAME&quot;, &quot;DB_WRITE_PASSWORD&quot;)
   .foreach((dsl: DSLContext) =&gt; this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L45-L47" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L47-L49" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory
         .jMakeDsl(cswCtx.locationService(), &quot;postgres&quot;, &quot;DB_WRITE_USERNAME&quot;, &quot;DB_WRITE_PASSWORD&quot;)
         .thenAccept((DSLContext dsl) -&gt; this.dsl = dsl);        // save the returned dsl to a local variable</code></pre></dd>
 </dl>
@@ -321,12 +320,12 @@ dbFactory
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L40-L42" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L42-L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
   .makeDsl()
   .foreach((dsl: DSLContext) =&gt; this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L51-L53" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L53-L55" target="_blank" title="Go to snippet source"></a><code class="language-java">dbFactory
         .jMakeDsl()
         .thenAccept((DSLContext dsl) -&gt; this.dsl = dsl);        // save the returned dsl to a local variable</code></pre></dd>
 </dl>
@@ -336,7 +335,6 @@ dbFactory
   </dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-database/src/main/resources/reference.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">csw-database = {
-  databaseDialect = POSTGRES_10
   hikari-datasource {
     dataSourceClassName = org.postgresql.ds.PGSimpleDataSource
 //    dataSource {
@@ -357,7 +355,7 @@ dbFactory
   }
 }</code></pre></dd>
 </dl>
-<p>In order to override any property shown above, it needs to be defined in <code>application.conf</code> for e.g. a sample application.conf can look as follows:</p>
+<p>In order to override any property shown above, it needs to be defined in <code>application.conf</code>. For example. a sample application.conf can look as follows:</p>
 <pre><code>csw-database.hikari-datasource.dataSource {
   serverName = localhost
   portNumber = 5432
@@ -366,32 +364,32 @@ dbFactory
   password = postgres
 }
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p>By default CSW configures <code>HikariCP</code> connection pool for managing connections with PostgreSQL server. To know more about <code>HikariCP</code> please refer this <a href="http://brettwooldridge.github.io/HikariCP/">link</a>. </p></div>
+<p>By default, CSW configures <code>HikariCP</code> connection pool for managing connections with PostgreSQL server. To know more about <code>HikariCP</code> please refer to this <a href="http://brettwooldridge.github.io/HikariCP/">link</a>. </p></div>
 <h2><a href="#using-dslcontext" name="using-dslcontext" class="anchor"><span class="anchor-link"></span></a>Using DSLContext</h2>
-<p>Once the DSLContext is returned from <code>makeDsl/jMakeDsl</code>, it can be used to provide plain SQL to Database Service and get it executed on the PostgreSQL server.</p>
+<p>Once the DSLContext is returned from <code>makeDsl/jMakeDsl</code>, it can be used to provide plain SQL to the Database Service and get it executed on the PostgreSQL server.</p>
 <p>The following sections show examples of most typical SQL use cases.</p>
 <h4><a href="#create" name="create" class="anchor"><span class="anchor-link"></span></a>Create</h4>
 <p>To create a table, use the DSLContext as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L49-L53" target="_blank" title="Go to snippet source"></a><code class="language-scala">val createQuery: Query = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L51-L55" target="_blank" title="Go to snippet source"></a><code class="language-scala">val createQuery: Query = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;)
 
 import csw.database.scaladsl.JooqExtentions.RichQuery
 val createResultF: Future[Integer] = createQuery.executeAsyncScala()
 createResultF.foreach(result =&gt; println(s&quot;Films table created with $result&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L77-L79" target="_blank" title="Go to snippet source"></a><code class="language-java">Query createQuery = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L87-L89" target="_blank" title="Go to snippet source"></a><code class="language-java">Query createQuery = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;);
 CompletionStage&lt;Integer&gt; createResultF = createQuery.executeAsync();
 createResultF.thenAccept(result -&gt; System.out.println(&quot;Films table created with &quot; + result));</code></pre></dd>
 </dl>
 <h4><a href="#insert" name="insert" class="anchor"><span class="anchor-link"></span></a>Insert</h4>
-<p>To insert data in batch, use the DSLContext as follows:</p>
+<p>To insert data in a batch, use the DSLContext as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L57-L66" target="_blank" title="Go to snippet source"></a><code class="language-scala">val movie_2 = &quot;movie_2&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L59-L68" target="_blank" title="Go to snippet source"></a><code class="language-scala">val movie_2 = &quot;movie_2&quot;
 
 val queries = dsl.queries(
   dsl.query(&quot;INSERT INTO films(name) VALUES (?)&quot;, &quot;movie_1&quot;),
@@ -403,7 +401,7 @@ val batchResultF: Future[List[Int]] = queries.executeBatchAsync()
 batchResultF.foreach(results =&gt; println(s&quot;executed queries [$queries] with results [$results]&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L83-L92" target="_blank" title="Go to snippet source"></a><code class="language-java">String movie_2 = &quot;movie_2&quot;;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L93-L102" target="_blank" title="Go to snippet source"></a><code class="language-java">String movie_2 = &quot;movie_2&quot;;
 
 Queries queries = dsl.queries(
         dsl.query(&quot;INSERT INTO films(name) VALUES (?)&quot;, &quot;movie_1&quot;),
@@ -424,7 +422,7 @@ batchResultF.thenAccept(results -&gt;
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L70-L78" target="_blank" title="Go to snippet source"></a><code class="language-scala">// domain model
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L72-L80" target="_blank" title="Go to snippet source"></a><code class="language-scala">// domain model
 case class Films(id: Int, name: String) // variable name and type should be same as column&#39;s name and type in database
 
 // fetch data from table and map it to Films class
@@ -435,7 +433,7 @@ val selectResultF: Future[List[Films]] = selectQuery.fetchAsyncScala[Films]
 selectResultF.foreach(names =&gt; s&quot;Fetched names of films $names&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L96-L105" target="_blank" title="Go to snippet source"></a><code class="language-java">// domain model
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L106-L115" target="_blank" title="Go to snippet source"></a><code class="language-java">// domain model
 class Films {
     private Integer id;  // variable name (id) and type (Integer) should be same as column&#39;s name and type in database
     private String name; // variable name (name) and type (String) should be same as column&#39;s name and type in database
@@ -452,7 +450,7 @@ selectResultF.thenAccept(names -&gt; System.out.println(&quot;Fetched names of f
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L82-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">val functionQuery = dsl
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L84-L96" target="_blank" title="Go to snippet source"></a><code class="language-scala">val functionQuery = dsl
   .query(
     &quot;&quot;&quot;
     |CREATE FUNCTION inc(val integer) RETURNS integer AS $$
@@ -467,7 +465,7 @@ val functionResultF: Future[Integer] = functionQuery.executeAsyncScala()
 functionResultF.foreach(result =&gt; println(s&quot;Function inc created with $result&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L109-L116" target="_blank" title="Go to snippet source"></a><code class="language-java">Query functionQuery = dsl.query(&quot;CREATE FUNCTION inc(val integer) RETURNS integer AS $$\n&quot; +
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L119-L126" target="_blank" title="Go to snippet source"></a><code class="language-java">Query functionQuery = dsl.query(&quot;CREATE FUNCTION inc(val integer) RETURNS integer AS $$\n&quot; +
         &quot;BEGIN\n&quot; +
         &quot;RETURN val + 1;\n&quot; +
         &quot;END; $$\n&quot; +
@@ -477,7 +475,7 @@ CompletionStage&lt;Integer&gt; functionResultF = functionQuery.executeAsync();
 functionResultF.thenAccept(result -&gt; System.out.println(&quot;Function inc created with  &quot; + result));</code></pre></dd>
 </dl>
 <p>Similarly, any SQL queries can be written with the help of DSLContext including stored procedures.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>If there is a syntax error in SQL queries the <code>Future/CompletableFuture</code> returned will fail with <code>CompletionException</code> and <code>CompletionStage</code> will fail with <code>ExecutionException</code>. But both <code>CompletionException</code> and <code>ExecutionException</code> will have Jooq&rsquo;s <code>DataAccessException</code> underneath as cause. </p></div>
+<p>If there is a syntax error in SQL queries, the <code>Future/CompletableFuture</code> returned will fail with <code>CompletionException</code> and the <code>CompletionStage</code> will fail with an <code>ExecutionException</code>. But both <code>CompletionException</code> and <code>ExecutionException</code> will have Jooq&rsquo;s <code>DataAccessException</code> underneath as cause. </p></div>
 <p>These examples are just a start. Any SQL statement can be created and executed using the DSLContext.</p>
 <h2><a href="#technical-description" name="technical-description" class="anchor"><span class="anchor-link"></span></a>Technical Description</h2>
 <p>See <a href="../technical/database/database.html">Database Service Technical Description</a>.</p>

@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -287,7 +286,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlersAlarm.scala#L131-L149" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val safeRange  = 0 to 10
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlersAlarm.scala#L133-L151" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val safeRange  = 0 to 10
 private val warnRange  = 11 to 15
 private val majorRange = 16 to 20
 private def getCounterSeverity(counter: Int) = counter match {
@@ -297,7 +296,7 @@ private def getCounterSeverity(counter: Int) = counter match {
   case _                          =&gt; AlarmSeverity.Critical
 }
 
-private val counterAlarmKey = AlarmKey(NFIRAOS, componentInfo.name, &quot;CounterTooHighAlarm&quot;)
+private val counterAlarmKey = AlarmKey(componentInfo.prefix, &quot;CounterTooHighAlarm&quot;)
 private def setCounterAlarm(counter: Int) = {
   // fire alarm according to counter value
   val severity = getCounterSeverity(counter)
@@ -308,19 +307,19 @@ private def setCounterAlarm(counter: Int) = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlersAlarm.java#L194-L216" target="_blank" title="Go to snippet source"></a><code class="language-java">private AlarmSeverity getCounterSeverity(int counter) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlersAlarm.java#L196-L218" target="_blank" title="Go to snippet source"></a><code class="language-java">private AlarmSeverity getCounterSeverity(int counter) {
     if (counter &gt;= 0 &amp;&amp; counter &lt;= 10) {
-        return JAlarmSeverity.Okay;
+        return JAlarmSeverity.Okay();
     } else if (counter &gt;= 11 &amp;&amp; counter &lt;= 15) {
-        return JAlarmSeverity.Warning;
+        return JAlarmSeverity.Warning();
     } else if (counter &gt;= 16 &amp;&amp; counter &lt;= 20) {
-        return JAlarmSeverity.Major;
+        return JAlarmSeverity.Major();
     }
-    return JAlarmSeverity.Critical;
+    return JAlarmSeverity.Critical();
 }
 
 private void setCounterAlarm(int counter) {
-    AlarmKey counterAlarmKey = new AlarmKey(NFIRAOS, cswCtx.componentInfo().name(), &quot;CounterTooHighAlarm&quot;);
+    AlarmKey counterAlarmKey = new AlarmKey(cswCtx.componentInfo().prefix(), &quot;CounterTooHighAlarm&quot;);
     AlarmSeverity severity = getCounterSeverity(counter);
     cswCtx.alarmService().setSeverity(counterAlarmKey, severity)
             .whenComplete((d, ex) -&gt; {
@@ -343,7 +342,7 @@ private void setCounterAlarm(int counter) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlersAlarm.scala#L114-L127" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def processEvent(event: Event): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlersAlarm.scala#L116-L129" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def processEvent(event: Event): Unit = {
   log.info(s&quot;Event received: ${event.eventKey}&quot;)
   event match {
     case e: SystemEvent =&gt;
@@ -359,7 +358,7 @@ private void setCounterAlarm(int counter) {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlersAlarm.java#L165-L180" target="_blank" title="Go to snippet source"></a><code class="language-java">private void processEvent(Event event) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlersAlarm.java#L167-L182" target="_blank" title="Go to snippet source"></a><code class="language-java">private void processEvent(Event event) {
     log.info(&quot;Event received: &quot; + event.eventKey());
     if (event instanceof SystemEvent) {
         SystemEvent sysEvent = (SystemEvent) event;

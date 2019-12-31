@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -278,7 +277,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L126-L136" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L129-L139" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
 override def initialize(): Future[Unit] = {
   log.info(&quot;In Assembly initialize&quot;)
   maybeEventSubscription = Some(subscribeToHcd())
@@ -291,7 +290,7 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L155-L168" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L158-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
 
 @Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
@@ -349,24 +348,20 @@ connections = [
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/resources/SampleContainer.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">name = &quot;SampleContainer&quot;
 components: [
   {
-    name = &quot;SampleAssembly&quot;
+    prefix = &quot;nfiraos.sampleassembly&quot;
     componentType = assembly
     behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.SampleAssemblyBehaviorFactory&quot;
-    prefix = &quot;nfiraos.sample&quot;
     locationServiceUsage = RegisterAndTrackServices
-    connections = [
-      {
-        name: &quot;SampleHcd&quot;
-        componentType: hcd
-        connectionType: akka
-      }
-    ]
+    connections = [{
+      prefix: &quot;nfiraos.samplehcd&quot;
+      componentType: hcd
+      connectionType: akka
+    }]
   },
   {
-    name = &quot;SampleHcd&quot;
+    prefix = &quot;nfiraos.samplehcd&quot;
     componentType = hcd
     behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
-    prefix = &quot;nfiraos.samplehcd&quot;
     locationServiceUsage = RegisterOnly
   }
 ]</code></pre></dd>
@@ -375,24 +370,22 @@ components: [
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/resources/JSampleContainer.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">name = &quot;JSampleContainer&quot;
 components: [
   {
-    name = &quot;JSampleAssembly&quot;
+    prefix = &quot;nfiraos.jsampleassembly&quot;
     componentType = assembly
     behaviorFactoryClassName = &quot;org.tmt.nfiraos.sampleassembly.JSampleAssemblyBehaviorFactory&quot;
-    prefix = &quot;nfiraos.sample&quot;
     locationServiceUsage = RegisterAndTrackServices
     connections = [
       {
-        name: &quot;JSampleHcd&quot;
+        prefix: &quot;nfiraos.jsamplehcd&quot;
         componentType: hcd
         connectionType: akka
       }
     ]
   },
   {
-    name = &quot;JSampleHcd&quot;
+    prefix = &quot;nfiraos.jsamplehcd&quot;
     componentType = hcd
     behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
-    prefix = &quot;nfiraos.samplehcd&quot;
     locationServiceUsage = RegisterOnly
   }
 ]</code></pre></dd>
@@ -419,7 +412,7 @@ connectionType: akka
 }
 </code></pre></dd>
 </dl>
-<p>The name of the component, the type(hcd, service, etc) and the connection(akka, http, tcp) will be used to create a <code>Connection</code> object. The Connection object will be then used to track the location of a component using location service.</p>
+<p>The name of the component, the type (hcd, service, etc) and the connection (akka, http, tcp) will be used to create a <code>Connection</code> object. The Connection object will be then used to track the location of a component using location service.</p>
 <p>The <code>Location</code> object has one of the following types:</p>
 <ul>
   <li>AkkaLocation: Contains the remote address of the actorRef. The actorRef will be the Supervisor actor of a component.</li>
@@ -436,11 +429,11 @@ connectionType: akka
 <p>Whenever such an event is generated, the Top level actor will call the <code>onLocationTrackingEvent</code> hook of <code>ComponentHandlers</code> with the event(LocationUpdated or LocationRemoved) as parameter of the hook.</p>
 <p>More details about tracking connections can be found <a href="../framework/tracking-connections.html">here</a>.</p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an Assembly</em></h4>
-<p>For our sample component, we will set it up so that when the HCD is found by the location service, we will immediately send a command to it. We will do this by using the location to obtain a <code>CommandService</code> reference (see <a href="multiple-components.html#sending-commands">below</a>) to the HCD, and then pass this reference to a worker actor to send and monitor the command (we will get more into this command actor later), so that we don&rsquo;t block our Assembly from receiving messages. If we are notified that the HCD is removed, log a message. </p>
+<p>For our sample component, we will set it up so that when the HCD is found by the Location Service, we will immediately send a command to it. We will do this by using the location to obtain a <code>CommandService</code> reference (see <a href="multiple-components.html#sending-commands">below</a>) to the HCD, and then pass this reference to a worker actor to send and monitor the command (we will get more into this command actor later), so that we don&rsquo;t block our Assembly from receiving messages. If we are notified that the HCD is removed, log a message. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L140-L148" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L143-L151" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
   log.debug(s&quot;onLocationTrackingEvent called: $trackingEvent&quot;)
   trackingEvent match {
     case LocationUpdated(location) =&gt;
@@ -451,7 +444,7 @@ connectionType: akka
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L172-L183" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L175-L186" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
     log.debug(() -&gt; &quot;onLocationTrackingEvent called: &quot; + trackingEvent.toString());
     if (trackingEvent instanceof LocationUpdated) {
@@ -466,13 +459,13 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 </dl>
 <h2><a href="#trackconnection" name="trackconnection" class="anchor"><span class="anchor-link"></span></a>trackConnection</h2>
 <p>If the component developer wants to track a connection that is not configured in its configuration file then it can use the <code>trackConnection</code> method provided by <code>csw-framework</code> in <code>ComponentHandlers</code>. The <code>trackConnection</code> method will take the <code>Connection</code> instance. Information on how to create a connection instance can be found <a href="../services/location.html#creating-components-connections-and-registrations">here</a>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>Connections tracked by <code>csw-framework</code> (from a configuration file) or by a component developer using the <code>trackConnection</code> method both will be received in the <code>onLocationTrackingEvent</code> hook of <code>ComponentHandlers</code>. </p></div>
+<p>Connections tracked by <code>csw-framework</code> (from the configuration file) or by a component developer using the <code>trackConnection</code> method both will be received in the <code>onLocationTrackingEvent</code> hook of <code>ComponentHandlers</code>. </p></div>
 <h2><a href="#sending-commands" name="sending-commands" class="anchor"><span class="anchor-link"></span></a>Sending Commands</h2>
 <p>From the location information obtained either by tracking dependencies or manually resolving a location, a <code>CommandService</code> instance can be created to provide a command interface to the component. The following snippet, not from our tutorial, shows how  to obtain a <code>CommandService</code> reference using by resolving a location using the Location Service.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L192-L202" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val system: ActorSystem[Nothing] = ctx.system
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L202-L212" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val system: ActorSystem[Nothing] = ctx.system
 
 val eventualCommandService: Future[CommandService] =
   cswCtx.locationService.resolve(hcdConnection.of[AkkaLocation], 5.seconds).map {
@@ -485,7 +478,7 @@ eventualCommandService.foreach { commandService =&gt;
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L328-L337" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolvedHcdLocation = locationService.resolve(hcdConnection, Duration.ofSeconds(5));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L340-L349" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolvedHcdLocation = locationService.resolve(hcdConnection, Duration.ofSeconds(5));
 
 CompletableFuture&lt;ICommandService&gt; eventualCommandService = resolvedHcdLocation.thenApply((Optional&lt;AkkaLocation&gt; hcdLocation) -&gt; {
     if (hcdLocation.isPresent())
@@ -498,13 +491,13 @@ eventualCommandService.thenAccept((jcommandService) -&gt; hcd = jcommandService)
 </dl>
 <p>If a component wants to send a command to another component, it uses a <code>CommandService</code> instance. The creation of a<code>CommandService</code> instance and its usage can be found <a href="command.html#commandservice">here</a>.</p>
 <h2><a href="#tracking-long-running-commands" name="tracking-long-running-commands" class="anchor"><span class="anchor-link"></span></a>Tracking Long Running Commands</h2>
-<p>The <code>submit</code> method has been written so that it will return a Future response encapsulating a <code>SubmitResponse</code> type. If the Future completes, no matter whether the command has an immediate response or is long-running, is invalid, or encounters an error at any point, the Future completes with the final response. If there is an exception, which may occur if the <code>submit</code> times out, that must be handled explicity using Future exception handling (this can be done many ways; an example is given below).</p>
+<p>The Command Service provides a few different ways of performing <code>Submit</code> commands. In particular, for sending single commands, there are two flavors: <code>submit</code> and <code>submitAndWait</code>. Both commands take a <code>Setup</code> or <code>Observe</code> and return a Future response encapsulating a <code>SubmitResponse</code> type. The difference is when handling long running commands. If the command is short, in both cases, the Future returned by the command is expected to complete quickly with the response as a <code>Completed</code> (or some error response). If the command is long running, the <code>submit</code> command should return a <code>Started</code> response. Then the final response of the command must be obtained from the <code>CommandResponseManager</code> through polling (<code>query</code>) or subscribing (<code>queryFinal</code>). A <code>submitAndWait</code> combines the <code>submit</code> with the <code>queryFinal</code>, so that the Future returned from the command doesn&rsquo;t complete until the long running command completes and returns the final <code>SubmitResponse</code>. That is to say, if the Future completes, no matter whether the command has an immediate response or is long-running, is invalid, or encounters an error at any point, the Future completes with the final response. If there is an exception, which may occur if the command times out, that must be handled explicitly using Future exception handling (this can be done many ways; an example is given below).</p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an Assembly</em></h4>
-<p>We use our worker actor to submit the command to the HCD, and then subscribe to the HCD&rsquo;s <code>CommandResponseManager</code> for command completion.</p>
+<p>We use our worker actor to submit the command to the HCD, and then subscribe to the HCD&rsquo;s <code>CommandResponseManager</code> for command completion, using the shortcut <code>submitAndWait</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L36-L75" target="_blank" title="Go to snippet source"></a><code class="language-scala">sealed trait WorkerCommand
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L38-L77" target="_blank" title="Go to snippet source"></a><code class="language-scala">sealed trait WorkerCommand
 case class SendCommand(hcd: CommandService) extends WorkerCommand
 
 private val commandSender =
@@ -546,7 +539,7 @@ def handle(hcd: CommandService): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L59-L114" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L62-L117" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
 }
 
 private static final class SendCommand implements WorkerCommand {
@@ -577,18 +570,18 @@ private void handle(ICommandService hcd) {
 
     // Construct Setup command
     Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;);
-    Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L).withUnits(JUnits.millisecond);
+    Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L).withUnits(JUnits.millisecond());
 
     Setup setupCommand = new Setup(cswCtx.componentInfo().prefix(), new CommandName(&quot;sleep&quot;), Optional.of(new ObsId(&quot;2018A-001&quot;))).add(sleepTimeParam);
 
     Timeout commandResponseTimeout = new Timeout(10, TimeUnit.SECONDS);
 
     // Submit command and handle response
-    hcd.submitAndWait(setupCommand, commandResponseTimeout)
-            .exceptionally(ex -&gt; new CommandResponse.Error(setupCommand.runId(), &quot;Exception occurred when sending command: &quot; + ex.getMessage()))
+    hcd.submitAndWait(setupCommand, commandResponseTimeout)   // FIXME -- NEED to ask about exceptionally runId
+            .exceptionally(ex -&gt; new CommandResponse.Error(Id.apply(), &quot;Exception occurred when sending command: &quot; + ex.getMessage()))
             .thenAccept(commandResponse -&gt; {
                 if (commandResponse instanceof CommandResponse.Locked) {
-                    log.error(&quot;Sleed command failed: HCD is locked&quot;);
+                    log.error(&quot;Sleep command failed: HCD is locked&quot;);
                 } else if (commandResponse instanceof CommandResponse.Invalid) {
                     CommandResponse.Invalid inv = (CommandResponse.Invalid) commandResponse;
                     log.error(&quot;Sleep command invalid (&quot; + inv.issue().getClass().getSimpleName() + &quot;): &quot; + inv.issue().reason());
@@ -607,17 +600,17 @@ private void handle(ICommandService hcd) {
 <p>When a component sends a command as <code>Oneway</code> to another component, it may be interested in knowing the receiver component&rsquo;s <code>CurrentState</code> and match it against a desired state. In order to do that, the component developer can use the <code>onewayAndMatch</code> method of <code>CommandService</code> or use <code>oneway</code> and then use a <code>Matcher</code> explicitly to match a desired state with current state.</p>
 <p>More details on how to use <code>Matcher</code> can be found <a href="command.html#matching-state-for-command-completion">here</a>. </p>
 <h2><a href="#pubsub-connection" name="pubsub-connection" class="anchor"><span class="anchor-link"></span></a>PubSub Connection</h2>
-<p>A component might need to subscribe to the current state of any other component provided it knows the location of that component. In order to subscribe to current state, it may use the <code>subscribeCurrentState</code> method of the <code>CommandService</code>. More details about the usage of <code>subscribeCurrentState</code> can ber found <a href="command.html#subscribecurrentstate">here</a>.</p>
+<p>A component might need to subscribe to the current state of any other component provided it knows the location of that component. In order to subscribe to current state, it may use the <code>subscribeCurrentState</code> method of the <code>CommandService</code>. More details about the usage of <code>subscribeCurrentState</code> can be found <a href="command.html#subscribecurrentstate">here</a>.</p>
 <p>If a component wants to publish its current state then it can use the <code>currentStatePublisher</code> provided by <code>csw-framework</code> in the <code>CswContext</code> object passed into <code>ComponentHandlers</code>. More details about the usage of <code>currentStatePublisher</code> can be found <a href="../framework/publishing-state.html">here</a>.</p>
 <h2><a href="#subscribing-to-events" name="subscribing-to-events" class="anchor"><span class="anchor-link"></span></a>Subscribing to Events</h2>
-<p>To subscribe to events, a subscriber is accessed done in a similar way to publishing. Typically a <code>defaultSubscriber</code> is obtained, but additional subscribers with their own connection can be created.</p>
+<p>To subscribe to events, a subscriber is accessed in a similar way to publishing. Typically a <code>defaultSubscriber</code> is obtained, but additional subscribers with their own connection can be created.</p>
 <p>The subscribe API specifies a set of <code>Events</code> to subscribe to and then specifies how the events should be handled. This can be a callback, an Actor reference to receive the <code>Event</code> as a message, or as a stream to allow flow operations to be applied. </p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an Assembly</em></h4>
 <p>We will setup our subscription to the counter events generated by our HCD in the <code>subscribeToHCD</code> method. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L152-L177" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val counterEventKey = EventKey(Prefix(&quot;nfiraos.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L155-L180" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val counterEventKey = EventKey(Prefix(&quot;nfiraos.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
 private val hcdCounterKey   = KeyType.IntKey.make(&quot;counter&quot;)
 
 private def processEvent(event: Event): Unit = {
@@ -645,7 +638,7 @@ private def unsubscribeHcd(): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L187-L214" target="_blank" title="Go to snippet source"></a><code class="language-java">private EventKey counterEventKey = new EventKey(new Prefix(&quot;nfiraos.samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L190-L217" target="_blank" title="Go to snippet source"></a><code class="language-java">private EventKey counterEventKey = new EventKey(new Prefix(JSubsystem.NFIRAOS(), &quot;samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
 private Key&lt;Integer&gt; hcdCounterKey = JKeyType.IntKey().make(&quot;counter&quot;);
 
 private void processEvent(Event event) {
@@ -679,7 +672,7 @@ private void unsubscribeHcd() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L126-L136" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/sampleassembly/SampleAssemblyHandlers.scala#L129-L139" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
 override def initialize(): Future[Unit] = {
   log.info(&quot;In Assembly initialize&quot;)
   maybeEventSubscription = Some(subscribeToHcd())
@@ -692,7 +685,7 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L155-L168" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/sampleassembly/JSampleAssemblyHandlers.java#L158-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
 
 @Override
 public CompletableFuture&lt;Void&gt; jInitialize() {

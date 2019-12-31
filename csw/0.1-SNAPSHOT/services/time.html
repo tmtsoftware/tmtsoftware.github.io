@@ -178,7 +178,6 @@ tmtsoftware/csw
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
-    <li><a href="../apps/cswadminserver.html" class="page">csw-admin-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
     <li><a href="../apps/cswconfigcli.html" class="page">csw-config-cli</a></li>
@@ -257,8 +256,8 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#time-service" name="time-service" class="anchor"><span class="anchor-link"></span></a>Time Service</h1>
-<p>The Time Service provides APIs to access time in Coordinated Universal Time (UTC) and International Atomic Time (TAI) time scales with up to nano second precision when available. It also provides APIs for scheduling periodic and non-periodic tasks in the future, which are optimised for scheduling at up to 1KHz frequency.</p>
-<p>TMT has standardised on the use of <a href="https://en.wikipedia.org/wiki/Precision_Time_Protocol">Precision Time Protocol (PTP)</a> as the basis of time to achieve sub-microsecond accuracy and precision between computers. The Time Service provides each participating computer with access to time synchronized by PTP. </p>
+<p>The Time Service provides APIs to access time in Coordinated Universal Time (UTC) and International Atomic Time (TAI) time scales with up to nanosecond precision when available. It also provides APIs for scheduling periodic and non-periodic tasks in the future, which are optimized for scheduling at up to 1KHz frequency.</p>
+<p>TMT has standardized on the use of <a href="https://en.wikipedia.org/wiki/Precision_Time_Protocol">Precision Time Protocol (PTP)</a> as the basis of time to achieve sub-microsecond accuracy and precision between computers. The Time Service provides each participating computer with access to time synchronized by PTP. </p>
 <p>At the telescope site, the Global Positioning System (GPS) provides an absolute time base, and a PTP grand master clock (a hardware device) synchronized to the GPS broadcasts the PTP protocol. Each computer system participating in the PTP system is synchronized with GPS and each other using the PTP protocol. For higher accuracy in time measurements hardware time stamping is required, and those computers should be fitted with PTP capable Network Interface Cards (NIC).</p>
 <p>In order to read the time with high precision, the Time Service relies on making native calls to the Linux kernel libraries, since Java 8 supports only millisecond precision. <a href="https://github.com/java-native-access/jna">Java Native Access (JNA)</a> is used internally in Time Service to make native calls that return the required precision. The implementation of Time Service Scheduler is based on the <a href="https://doc.akka.io/docs/akka/current/scheduler.html">Akka Scheduler</a>, which is designed for high-throughput tasks rather than long-term, cron-like scheduling of tasks.</p>
 <!-- introduction to the service -->
@@ -284,7 +283,7 @@ tmtsoftware/csw
   <li><strong>Scheduler API</strong>: This API provides various methods to schedule future or periodic tasks.</li>
 </ul>
 <h3><a href="#tmttime-api" name="tmttime-api" class="anchor"><span class="anchor-link"></span></a>TMTTime API</h3>
-<p>TMTTime represents an instantaneous point in time with nanosecond precision. It&rsquo;s a wrapper around Instant and provides additional information about the timescale of the instant. </p>
+<p>TMTTime represents an instantaneous point in time with nanosecond precision. It is a wrapper around <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Instant.html">Instant</a> and provides additional information about the timescale of the instant. </p>
 <p>TMTTime supports two timescales:</p>
 <ul>
   <li>Coordinated Universal Time ( <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/core/models/UTCTime.html">UTCTime</a> )</li>
@@ -302,26 +301,44 @@ val utcTime: UTCTime = UTCTime.now()
 val taiTime: TAITime = TAITime.now()</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L12-L16" target="_blank" title="Go to snippet source"></a><code class="language-java">// get current UTC time
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L13-L17" target="_blank" title="Go to snippet source"></a><code class="language-java">// get current UTC time
 private UTCTime utcTime = UTCTime.now();
 
 // get current TAI time
 private TAITime taiTime = TAITime.now();</code></pre></dd>
 </dl>
-<p>Note that time is returned a UTCTime or TAITime object so that it is possible to determine the time scale of the time value by inspection.</p>
+<p>Note that time is returned as a UTCTime or TAITime object so that it is possible to determine the time scale of the time value by inspection.</p>
+<h4><a href="#creating-custom-time-instances" name="creating-custom-time-instances" class="anchor"><span class="anchor-link"></span></a>Creating custom time instances</h4>
+<p>To create custom time instances, you can use the default constructors of UTC and TAI times.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L18-L22" target="_blank" title="Go to snippet source"></a><code class="language-scala">//creating a UTCTime of an hour ago
+val utcTimeOfHourAgo: UTCTime = UTCTime(Instant.now().minusSeconds(3600))
+
+//creating a TAITime of an hour ago
+val taiTimeOfHourAgo: TAITime = TAITime(Instant.now().minusSeconds(3600))</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L21-L25" target="_blank" title="Go to snippet source"></a><code class="language-java">//creating a UTCTime of an hour ago
+private UTCTime utcTimeOfHourAgo = new UTCTime(Instant.now().minusSeconds(3600));
+
+//creating a TAITime of an hour ago
+private TAITime taiTimeOfHourAgo = new TAITime(Instant.now().minusSeconds(3600));</code></pre></dd>
+</dl>
 <h4><a href="#converting-from-utc-to-tai-time-and-vice-versa" name="converting-from-utc-to-tai-time-and-vice-versa" class="anchor"><span class="anchor-link"></span></a>Converting from UTC to TAI Time and Vice-versa</h4>
 <p>Each time object provides a way to convert to the other.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L19-L23" target="_blank" title="Go to snippet source"></a><code class="language-scala">// UTC to TAI
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L27-L31" target="_blank" title="Go to snippet source"></a><code class="language-scala">// UTC to TAI
 val taiTime: TAITime = utcTime.toTAI
 
 // TAI to UTC
 val utcTime0: UTCTime = taiTime.toUTC</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L21-L25" target="_blank" title="Go to snippet source"></a><code class="language-java">// UTC to TAI
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L35-L39" target="_blank" title="Go to snippet source"></a><code class="language-java">// UTC to TAI
 TAITime taiTime = utcTime.toTAI();
 
 // TAI to UTC
@@ -330,36 +347,36 @@ UTCTime utcTime = taiTime.toUTC();</code></pre></dd>
 <h3><a href="#tmttimehelper-api" name="tmttimehelper-api" class="anchor"><span class="anchor-link"></span></a>TMTTimeHelper API</h3>
 <p>This API provides additional time zone related functionality on top of TMTTime. It allows users to get a Java <em>ZonedDateTime</em> representation of a TMTTime.</p>
 <h4><a href="#at-local-time-zone" name="at-local-time-zone" class="anchor"><span class="anchor-link"></span></a>At Local Time Zone</h4>
-<p>Gets the given TMTTime at Local time zone. The local time zone is fetched from the calling system&rsquo;s default time zone.</p>
+<p>Gets the given TMTTime at the local time zone. The local time zone is fetched from the calling system&rsquo;s default time zone.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L28-L32" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Get UTCTime at local timezone
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L36-L40" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Get UTCTime at local timezone
 val utcLocalTime: ZonedDateTime = TMTTimeHelper.atLocal(utcTime)
 
 // Get TAITime at local timezone
 val taiLocalTime: ZonedDateTime = TMTTimeHelper.atLocal(taiTime)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L30-L34" target="_blank" title="Go to snippet source"></a><code class="language-java">// Get UTCTime at local timezone
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L44-L48" target="_blank" title="Go to snippet source"></a><code class="language-java">// Get UTCTime at local timezone
 ZonedDateTime utcLocalTime = TMTTimeHelper.atLocal(utcTime);
 
 // Get TAITime at local timezone
 ZonedDateTime taiLocalTime = TMTTimeHelper.atLocal(taiTime);</code></pre></dd>
 </dl>
 <h4><a href="#at-hawaii-hst-timezone" name="at-hawaii-hst-timezone" class="anchor"><span class="anchor-link"></span></a>At Hawaii (HST) Timezone</h4>
-<p>Gets the given TMTTime at Hawaii time zone.</p>
+<p>Gets the given TMTTime at the Hawaii time zone.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L36-L40" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Get UTCTime at Hawaii (HST) timezone
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L44-L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Get UTCTime at Hawaii (HST) timezone
 val utcHawaiiTime: ZonedDateTime = TMTTimeHelper.atHawaii(utcTime)
 
 // Get TAITime at Hawaii (HST) timezone
 val taiHawaiiTime: ZonedDateTime = TMTTimeHelper.atHawaii(taiTime)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L38-L42" target="_blank" title="Go to snippet source"></a><code class="language-java">// Get UTCTime at Hawaii (HST) timezone
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L52-L56" target="_blank" title="Go to snippet source"></a><code class="language-java">// Get UTCTime at Hawaii (HST) timezone
 ZonedDateTime utcHawaiiTime = TMTTimeHelper.atHawaii(utcTime);
 
 // Get TAITime at Hawaii (HST) timezone
@@ -370,14 +387,14 @@ ZonedDateTime taiHawaiiTime = TMTTimeHelper.atHawaii(taiTime);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L44-L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Get UTCTime at specified timezone
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/TMTTimeExamples.scala#L52-L56" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Get UTCTime at specified timezone
 val utcKolkataTime: ZonedDateTime = TMTTimeHelper.atZone(utcTime, ZoneId.of(&quot;Asia/Kolkata&quot;))
 
 // Get TAITime at specified timezone
 val taiKolkataTime: ZonedDateTime = TMTTimeHelper.atZone(taiTime, ZoneId.of(&quot;Asia/Kolkata&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L46-L50" target="_blank" title="Go to snippet source"></a><code class="language-java">// Get UTCTime at specified timezone
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JTMTTimeExamples.java#L60-L64" target="_blank" title="Go to snippet source"></a><code class="language-java">// Get UTCTime at specified timezone
 ZonedDateTime utcKolkataTime = TMTTimeHelper.atZone(utcTime, ZoneId.of(&quot;Asia/Kolkata&quot;));
 
 // Get TAITime at specified timezone
@@ -386,16 +403,19 @@ ZonedDateTime taiKolkataTime = TMTTimeHelper.atZone(taiTime, ZoneId.of(&quot;Asi
 <h3><a href="#scheduler-api" name="scheduler-api" class="anchor"><span class="anchor-link"></span></a>Scheduler API</h3>
 <p>This API provides various methods to schedule periodic or non-periodic, one-shot tasks in the future. </p>
 <p>For component developers, the scheduler API is provided as a <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/TimeServiceScheduler.html">TimeServiceScheduler</a> object in the <code>CswContext</code> object injected into the ComponentHandlers class provided by the framework. </p>
-<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/TimeServiceScheduler.html">TimeServiceScheduler</a> using <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/TimeServiceSchedulerFactory$.html">TimeServiceSchedulerFactory</a> as follows.</p>
+<p>If you are not using csw-framework, you can create <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/TimeServiceScheduler.html">TimeServiceScheduler</a> using <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/TimeServiceSchedulerFactory$.html">TimeServiceSchedulerFactory</a> as follows:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L17-L18" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create time service scheduler using the factory method
-private val scheduler: TimeServiceScheduler = TimeServiceSchedulerFactory.make()(actorSystem)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L18-L22" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create time service scheduler using the factory method
+implicit val actorSystem: typed.ActorSystem[_]         = ctx.system
+implicit val scheduler: Scheduler                      = actorSystem.scheduler
+implicit val executionContext: ExecutionContext        = actorSystem.executionContext
+private val timeServiceScheduler: TimeServiceScheduler = new TimeServiceSchedulerFactory().make()</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L23-L24" target="_blank" title="Go to snippet source"></a><code class="language-java">// create time service scheduler using the factory method
-TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);</code></pre></dd>
+TimeServiceScheduler scheduler = new TimeServiceSchedulerFactory(actorSystem.scheduler()).make( actorSystem.executionContext());</code></pre></dd>
 </dl>
 <p>For all scheduler calls, an instance of <a href="https://tmtsoftware.github.io/csw/0.1-SNAPSHOT/api/scala/csw/time/scheduler/api/Cancellable.html">Cancellable</a> is returned which can be used to cancel the execution of the future tasks.</p>
 <h4><a href="#schedule-once" name="schedule-once" class="anchor"><span class="anchor-link"></span></a>Schedule Once</h4>
@@ -403,7 +423,7 @@ TimeServiceScheduler scheduler = TimeServiceSchedulerFactory.make(actorSystem);<
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L24-L26" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.scheduleOnce(utcTime) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L28-L30" target="_blank" title="Go to snippet source"></a><code class="language-scala">timeServiceScheduler.scheduleOnce(utcTime) {
   // do something
 }</code></pre></dd>
   <dt>Java</dt>
@@ -417,7 +437,7 @@ scheduler.scheduleOnce(utcTime, task);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L30-L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SchedulingHandler {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L34-L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SchedulingHandler {
   def behavior: Behavior[UTCTime] = Behaviors.setup { ctx =&gt;
     //setup required for the actor
 
@@ -428,9 +448,9 @@ scheduler.scheduleOnce(utcTime, task);</code></pre></dd>
   }
 }
 
-private val actorRef: ActorRef = ctx.spawnAnonymous(SchedulingHandler.behavior).toUntyped
+private val actorRef: ActorRef = ctx.spawnAnonymous(SchedulingHandler.behavior).toClassic
 
-scheduler.scheduleOnce(utcTime, actorRef, UTCTime.now())
+timeServiceScheduler.scheduleOnce(utcTime, actorRef, UTCTime.now())
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
@@ -443,7 +463,7 @@ scheduler.scheduleOnce(utcTime, actorRef, UTCTime.now())
 }
 
 Cancellable schedule() {
-    ActorRef actorRef = Adapter.toUntyped(ctx.asJava().spawnAnonymous(SchedulingHandler.behavior()));
+    ActorRef actorRef = Adapter.toClassic(ctx.asJava().spawnAnonymous(SchedulingHandler.behavior()));
 
     return scheduler.scheduleOnce(utcTime, actorRef, UTCTime.now());
 }</code></pre></dd>
@@ -453,7 +473,7 @@ Cancellable schedule() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.schedulePeriodically(Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">timeServiceScheduler.schedulePeriodically(Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L59-L61" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
@@ -464,7 +484,7 @@ scheduler.schedulePeriodically(Duration.ofMillis(50), task);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">scheduler.schedulePeriodically(utcTime, Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L56" target="_blank" title="Go to snippet source"></a><code class="language-scala">timeServiceScheduler.schedulePeriodically(utcTime, Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L59-L66" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
