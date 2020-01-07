@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
-<title>FSM</title>
+<title>FSM · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../lib/prettify/prettify.css">
@@ -43,7 +43,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <nav class="md-header-nav md-grid">
 <div class="md-flex">
 <div class="md-flex__cell md-flex__cell--shrink">
-<a href="../../sequencer/scripts/fsm.html" title="FSM" class="md-header-nav__button md-logo">
+<a href="../../index.html" title="TMT Executive Software (ESW)" class="md-header-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
 </div>
@@ -52,7 +52,12 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 </div>
 <div class="md-flex__cell md-flex__cell--stretch">
 <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+<span class="md-header-nav__topic">
+TMT Executive Software (ESW)
+</span>
+<span class="md-header-nav__topic">
 FSM
+</span>
 </div>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
@@ -107,12 +112,12 @@ tmtsoftware/esw
 <div class="md-sidebar__inner">
 <nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
 <label class="md-nav__title md-nav__title--site" for="drawer">
-<a href="../../sequencer/scripts/fsm.html" title="FSM" class="md-nav__button md-logo">
+<a href="../../index.html" title="TMT Executive Software (ESW)" class="md-nav__button md-logo">
 <span class="md-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
-<a href="../../sequencer/scripts/fsm.html" title="FSM">
-FSM
+<a href="../../index.html" title="TMT Executive Software (ESW)">
+TMT Executive Software (ESW)
 </a>
 </label>
 <div class="md-nav__source">
@@ -130,13 +135,23 @@ tmtsoftware/esw
 
 </div>
 <ul>
+  <li><a href="../../sequencer/server/sequencer-server.html" class="page">Sequencer HTTP Server</a></li>
+  <li><a href="../../sequencer/scripts/scripts.html" class="page">Sequencer Script</a>
+  <ul>
+    <li><a href="../../sequencer/scripts/fsm.html" class="active page">FSM</a></li>
+    <li><a href="../../sequencer/scripts/dsl/dsl.html" class="page">High Level DSL</a></li>
+  </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
   <li><a href="../../sequencer/scripts/fsm.html#fsm" class="header">FSM</a>
   <ul>
-    <li><a href="../../sequencer/scripts/fsm.html#basic-functionality" class="header">Basic functionality</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#define-fsm" class="header">Define FSM</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#start-fsm" class="header">Start FSM</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#wait-for-completion" class="header">Wait for completion</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#reactive-fsm" class="header">Reactive FSM</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#example-fsm" class="header">Example FSM</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -160,7 +175,11 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../sequencer/scripts/fsm.html#fsm" class="header">FSM</a>
   <ul>
-    <li><a href="../../sequencer/scripts/fsm.html#basic-functionality" class="header">Basic functionality</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#define-fsm" class="header">Define FSM</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#start-fsm" class="header">Start FSM</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#wait-for-completion" class="header">Wait for completion</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#reactive-fsm" class="header">Reactive FSM</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html#example-fsm" class="header">Example FSM</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -172,60 +191,237 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#fsm" name="fsm" class="anchor"><span class="anchor-link"></span></a>FSM</h1>
-<p>Scripts have ability to define and run Finite State Machine(FSM). FSM can transition between defined states and can be made reactive to any published events or commands.</p>
-<h2><a href="#basic-functionality" name="basic-functionality" class="anchor"><span class="anchor-link"></span></a>Basic functionality</h2>
+<p>Scripts have ability to define and run Finite State Machine(FSM). FSM can transition between defined states and can be made reactive to events and commands.</p>
+<h2><a href="#define-fsm" name="define-fsm" class="anchor"><span class="anchor-link"></span></a>Define FSM</h2>
 <h3><a href="#create-fsm" name="create-fsm" class="anchor"><span class="anchor-link"></span></a>Create FSM</h3>
-<p>To create instance of FSM, a helper method <code>Fsm</code> is provided as shown in example. This method takes following parameters:</p>
+<p>To create an instance of FSM, a helper method <code>Fsm</code> is provided as shown in example. This method takes following parameters:</p>
 <ol>
-  <li><code>name</code> of FSM for logging</li>
+  <li><code>name</code> of FSM</li>
   <li><code>initial state</code> of the FSM</li>
   <li><code>block</code> having states of the FSM</li>
 </ol>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/v0.1.0-SNAPSHOT/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L8-L10" target="_blank" title="Go to snippet source"></a><code class="language-kts">val irisFsm = Fsm(name = &quot;iris-fsm&quot;, initState = &quot;INIT&quot;) {
-    // place to define different states of FSM
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L14-L16" target="_blank" title="Go to snippet source"></a><code class="language-kts">val irisFsm = Fsm(name = &quot;iris-fsm&quot;, initState = &quot;INIT&quot;) {
+    // place to define all states of FSM
 }</code></pre></dd>
 </dl>
 <h3><a href="#define-state" name="define-state" class="anchor"><span class="anchor-link"></span></a>Define state</h3>
-<p>For creating fsm, the third parameter is a block which is the place to define all the states. A method named <code>state</code> needs to be called with parameters <code>name</code> of the state and the <code>block</code> of actions to be performed when transitioned to that state. When multiple states with same name are added, the last defined state will considered and others will be discarded.</p>
+<p>As mentioned above, the third parameter of <code>Fsm</code> method is a block which is the place to define all the states of FSM. A method named <code>state</code> needs  to be called with parameters <code>name</code> of the state and the <code>block</code> of actions to be performed in that state. In case of multiple states with same name, the last one will be considered. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>State names are <strong>case-insensitive</strong>.</p></div>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/v0.1.0-SNAPSHOT/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L15-L17" target="_blank" title="Go to snippet source"></a><code class="language-kts">state(&quot;INIT&quot;) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L61-L63" target="_blank" title="Go to snippet source"></a><code class="language-kts">state(&quot;INIT&quot;) {
     // actions to be performed in this state
 }</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p>State names are <strong>case insensitive</strong>.</p></div>
-<h3><a href="#state-transition" name="state-transition" class="anchor"><span class="anchor-link"></span></a>State transition</h3>
-<p>To transit between states, <code>become</code> method needs to be called with name of next <code>state</code>. This will change the state of the fsm to the given state and start executing block of next state. This will throw an <code>InvalidStateException</code> if provided state is not defined.</p>
-<p>State transition should ideally be the <strong>last call of state</strong>, or should be <strong>done with proper control flow</strong> so that become is <strong>not called multiple times</strong>.</p>
-<dl>
-  <dt>Kotlin</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/v0.1.0-SNAPSHOT/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L22" target="_blank" title="Go to snippet source"></a><code class="language-kts">become(state = &quot;IN-PROGRESS&quot;)</code></pre></dd>
 </dl>
-<h3><a href="#complete-fsm" name="complete-fsm" class="anchor"><span class="anchor-link"></span></a>Complete Fsm</h3>
-<p><code>completeFsm</code> marks the Fsm complete. Calling it will immediately <strong>stop execution of the FSM</strong> and next steps are ignored, so it should be called at the end of the state. </p>
+<h3><a href="#state-transition" name="state-transition" class="anchor"><span class="anchor-link"></span></a>State transition</h3>
+<p>To transit between states, <code>become</code> method needs to be called with name of next <code>state</code>. This will change the state of the fsm to the given state and start executing next state. <code>InvalidStateException</code> will be thrown if provided state is not defined.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/v0.1.0-SNAPSHOT/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L26-L28" target="_blank" title="Go to snippet source"></a><code class="language-kts">// will complete the Fsm
-completeFsm()
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L91" target="_blank" title="Go to snippet source"></a><code class="language-kts">become(state = &quot;IN-PROGRESS&quot;)</code></pre></dd>
+</dl>
+<p>State transition should ideally be the <strong>last call in state</strong> or should be <strong>done with proper control flow</strong> so that become is <strong>not called multiple times</strong>.</p>
+<h3><a href="#complete-fsm" name="complete-fsm" class="anchor"><span class="anchor-link"></span></a>Complete FSM</h3>
+<p><code>completeFsm</code> marks the completion of Fsm. Calling it will immediately <strong>stop execution of the FSM</strong> and next steps will be ignored, so it should be called at the end of the state. </p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L95-L96" target="_blank" title="Go to snippet source"></a><code class="language-kts">completeFsm()   // will complete the Fsm
 // anything after this will not be executed</code></pre></dd>
 </dl>
-<h3><a href="#entry" name="entry" class="anchor"><span class="anchor-link"></span></a>entry</h3>
-<h3><a href="#on" name="on" class="anchor"><span class="anchor-link"></span></a>on</h3>
-<h3><a href="#after" name="after" class="anchor"><span class="anchor-link"></span></a>after</h3>
-<h3><a href="#start-fsm" name="start-fsm" class="anchor"><span class="anchor-link"></span></a>start fsm</h3>
-<h3><a href="#await-for-completion" name="await-for-completion" class="anchor"><span class="anchor-link"></span></a>await for completion</h3>
-<h3><a href="#eventvar" name="eventvar" class="anchor"><span class="anchor-link"></span></a>EventVar</h3>
+<h3><a href="#helper-constructs" name="helper-constructs" class="anchor"><span class="anchor-link"></span></a>Helper constructs</h3>
+<ol>
+  <li>
+    <p><code>entry</code> : executes the given <code>block</code> only when state transition happens from a different state</p>
+    <dl>
+      <dt>Kotlin</dt>
+      <dd>
+      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L79-L81" target="_blank" title="Go to snippet source"></a><code class="language-kts">entry {
+    // do something
+}</code></pre></dd>
+    </dl>
+  </li>
+  <li>
+    <p><code>on</code> : executes the given <code>block</code> if given <code>condition</code> is <strong>true</strong></p>
+    <dl>
+      <dt>Kotlin</dt>
+      <dd>
+      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L73-L75" target="_blank" title="Go to snippet source"></a><code class="language-kts">on(condition) {
+    // executes this when condition is true
+}</code></pre></dd>
+    </dl>
+  </li>
+  <li>
+    <p><code>after</code> : executes the given <code>block</code> after the given <code>duration</code> </p>
+    <dl>
+      <dt>Kotlin</dt>
+      <dd>
+      <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L85-L87" target="_blank" title="Go to snippet source"></a><code class="language-kts">after(100.milliseconds) {
+    // do something
+}</code></pre></dd>
+    </dl>
+  </li>
+</ol>
+<h2><a href="#start-fsm" name="start-fsm" class="anchor"><span class="anchor-link"></span></a>Start FSM</h2>
+<p>After creating instance of FSM, it needs to be explicitly started by calling <code>start</code> on it. This will start executing the initial  state of fsm which is provided while creating instance of it.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L20" target="_blank" title="Go to snippet source"></a><code class="language-kts">irisFsm.start()</code></pre></dd>
+</dl>
+<h2><a href="#wait-for-completion" name="wait-for-completion" class="anchor"><span class="anchor-link"></span></a>Wait for completion</h2>
+<p>As FSM has ability to be complete itself, <code>await</code> can be called to wait for its completion. Control flow will be stopped at the <code>await</code> statement  till the FSM is marked complete.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L24" target="_blank" title="Go to snippet source"></a><code class="language-kts">irisFsm.await()</code></pre></dd>
+</dl>
+<h2><a href="#reactive-fsm" name="reactive-fsm" class="anchor"><span class="anchor-link"></span></a>Reactive FSM</h2>
+<p>FSM can be made to react to changes in event and command parameters with help of <code>Event variables</code> and <code>Command flags</code>.</p>
+<h3><a href="#event-variable" name="event-variable" class="anchor"><span class="anchor-link"></span></a>Event variable</h3>
+<p>Event variables are the way to make fsm react to events. Event variable can be tied to only one parameter key in an event. To make FSM react to event variable, we need to create a <code>EventVariable</code> for a specific parameter key of an event and bind the fsm to it.</p>
+<p>Whenever any event is published on the key of given event, all the FSMs bound to that variable will be re-evaluated. Event variables use EventService underneath, which makes it possible to share data between multiple sequencers. </p>
+<p>Event variables are of 2 types:</p>
+<ol>
+  <li><code>SystemVar</code> - for System events</li>
+  <li><code>ObserveVar</code> - for Observe events</li>
+</ol>
+<p>FSM can be bind to multiple event vars and vise versa. Following examples shows how to create event variables, bind FSM to it  and methods like <code>get</code> and <code>set</code>. <code>set</code> will publish the event with modified parameter. </p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L29-L42" target="_blank" title="Go to snippet source"></a><code class="language-kts">//**  System Var **//
+val tempKey = intKey(&quot;temperature&quot;)
+val systemVar = SystemVar(0, &quot;esw.temperature.temp&quot;, tempKey)
+
+systemVar.bind(irisFsm) // binds the FSM and event variable
+
+//**  Observe Var **//
+val coordKey = coordKey(&quot;co-ordinates&quot;)
+val observeVar = ObserveVar(JEqCoord.make(0, 0), &quot;iris.observe.coord&quot;, coordKey)
+observeVar.get() // returns the value of the parameter from the latest event
+
+observeVar.bind(irisFsm) // binds the FSM and event variable
+
+observeVar.set(JEqCoord.make(1, 1)) // publishes the given value on event key</code></pre></dd>
+</dl>
 <h3><a href="#commandflag" name="commandflag" class="anchor"><span class="anchor-link"></span></a>CommandFlag</h3>
-<h3><a href="#define-variables-in-fsms-scope" name="define-variables-in-fsms-scope" class="anchor"><span class="anchor-link"></span></a>define variables in Fsm&rsquo;s scope</h3>
+<p>Command flag acts as bridge which can used to pass <code>Parameters</code> to FSM from outside. Setting the params in command flag will re-evaluate the all the FSMs with provided params which are bound to that flag. It is possible to bind one FSM to multiple command flags and vise versa. Command flag is limited to scope of a single script. It does not have any remote impact.</p>
+<p>Example shows how to create <code>CommandFlag</code>, bind FSM to it and methods <code>get</code> and <code>set</code> which are provided to retrieve or set the value of  params in command flag. </p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/fsm.kts#L48-L53" target="_blank" title="Go to snippet source"></a><code class="language-kts">val flag = CommandFlag()
+flag.value() // way to extract the current params value
+
+flag.bind(irisFsm) // bind the FSM and command flag
+
+flag.set(params) // refreshes the bound FSMs with the new params</code></pre></dd>
+</dl>
+<h2><a href="#example-fsm" name="example-fsm" class="anchor"><span class="anchor-link"></span></a>Example FSM</h2>
+<p>In the below example, <code>temparatureFsm</code> demonstrates how FSM can be defined and used in the scripts. The event variable is declared with event key <code>esw.temperature.temp</code> for param <code>temperature</code> and <code>temparatureFsm</code> is bind to it. The job of the <code>temparatureFsm</code> is to decide the <code>state</code> based on the <code>temperature</code> and publish it on event key <code>esw.temperatureFsm</code> with param key <code>state</code>. </p>
+<p>Logic of state change is: </p>
+<table>
+  <thead>
+    <tr>
+      <th align="center">condition </th>
+      <th align="center">state </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">temp == 30 </td>
+      <td align="center">FINISH </td>
+    </tr>
+    <tr>
+      <td align="center">temp &gt; 40 </td>
+      <td align="center">ERROR </td>
+    </tr>
+    <tr>
+      <td align="center">else </td>
+      <td align="center">OK </td>
+    </tr>
+  </tbody>
+</table>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/exampleFsm.kts#L10-L63" target="_blank" title="Go to snippet source"></a><code class="language-kts">val tempKey = longKey(&quot;temperature&quot;)
+val stateKey = stringKey(&quot;state&quot;)
+
+val tempFsmEvent = SystemEvent(&quot;esw.temperatureFsm&quot;, &quot;state&quot;)
+suspend fun publishState(baseEvent: SystemEvent, state: String) = publishEvent(baseEvent.add(stateKey.set(state)))
+
+// temperature Fsm states
+val OK = &quot;OK&quot;
+val ERROR = &quot;ERROR&quot;
+val FINISHED = &quot;FINISHED&quot;
+
+val temperatureVar = SystemVar(0, &quot;esw.temperature.temp&quot;, tempKey)
+
+val temperatureFsm = Fsm(&quot;TEMP&quot;, OK) {
+    var fsmVariable = 10                    // [[ 01 ]]
+
+    state(OK) {
+        // [[ 02 ]]
+
+        entry {
+            publishState(tempFsmEvent, OK)
+        }
+        on(temperatureVar.get() == 30L) {
+            become(FINISHED)             // [[ 03 ]]
+        }
+        on(temperatureVar.get() &gt; 40) {
+            become(ERROR)
+        }
+    }
+
+    state(ERROR) {
+        entry {
+            publishState(tempFsmEvent, ERROR)
+        }
+        on(temperatureVar.get() &lt; 40) {
+            become(OK)
+        }
+    }
+
+    state(FINISHED) {
+        completeFsm()                   // [[ 04 ]]
+    }
+}
+
+temperatureVar.bind(temperatureFsm)     // [[ 05 ]]
+
+onSetup(&quot;command-1&quot;) {
+    temperatureFsm.start()              // [[ 06 ]]
+}
+
+onSetup(&quot;command-2&quot;) {
+    temperatureFsm.await()              // [[ 07 ]]
+}
+</code></pre></dd>
+</dl>
+<p>Key things (which are marked with <code>// [[ * ]]</code>) in above example code are :</p>
+<ol>
+  <li>The top-level scope of the FSM which can used to declare variables in FSM&rsquo;s scope and statements which should be executed while starting the FSM. Statements written here will be executed only once when the FSM starts.</li>
+  <li>The scope of the state. Code written here will be executed on every refresh of the state, so this is not ideal place to declare variables.</li>
+  <li>State transition from <code>OK</code> state to <code>ERROR</code></li>
+  <li>Marks the FSM complete. Re-evaluation or state transitions cannot happen after this is executed.
+    <p>Till this point, it&rsquo;s all about defining the blue-print of the FSM like states, state transitions and actions to perform in specific states, there is no execution yet. Only the FSM top-level statements are evaluated written at <code>// [[ 1 ]]</code>.</p>
+  </li>
+  <li>
+  <p>Shows the binding of <code>temperatureVar</code> and <code>temperatureFsm</code>. After this point, FSM will re-evaluate whenever events are published on <code>temperatureVar</code>.</p></li>
+  <li>Starts evaluating the initial state of the FSM</li>
+  <li>Waits for completion of the FSM. In example, the script execution will be blocked till line <code>// [[ 4 ]]</code> is executed which will mark the FSM complete and script execution will continue after that.</li>
+</ol>
+<p>Example code also demos the use of the helper methods like <code>entry</code>, <code>on</code>.</p>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw/tree/v0.1.0-SNAPSHOT/docs/src/main/sequencer/scripts/fsm.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/fsm.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -239,6 +435,36 @@ Edit this page
 </div>
 </main>
 <footer class="md-footer">
+<div class="md-footer-nav">
+<nav class="md-footer-nav__inner md-grid">
+<a href="../../sequencer/scripts/scripts.html" title="Sequencer Script" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+</div>
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Previous
+</span>
+Sequencer Script
+</span>
+</div>
+</a>
+<a href="../../sequencer/scripts/dsl/dsl.html" title="High Level DSL" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
+High Level DSL
+</span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+</div>
+</a>
+</nav>
+</div>
 <div class="md-footer-meta md-typeset">
 <div class="md-footer-meta__inner md-grid">
 <div class="md-footer-copyright">
