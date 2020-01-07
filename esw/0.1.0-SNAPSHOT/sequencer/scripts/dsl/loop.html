@@ -149,7 +149,7 @@ tmtsoftware/esw
   <ul>
     <li><a href="../../../sequencer/scripts/dsl/loop.html#loop" class="header">loop</a></li>
     <li><a href="../../../sequencer/scripts/dsl/loop.html#waitfor" class="header">waitFor</a></li>
-    <li><a href="../../../sequencer/scripts/dsl/loop.html#bgloop" class="header">bgLoop</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loopasync" class="header">loopAsync</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -175,7 +175,7 @@ tmtsoftware/esw
   <ul>
     <li><a href="../../../sequencer/scripts/dsl/loop.html#loop" class="header">loop</a></li>
     <li><a href="../../../sequencer/scripts/dsl/loop.html#waitfor" class="header">waitFor</a></li>
-    <li><a href="../../../sequencer/scripts/dsl/loop.html#bgloop" class="header">bgLoop</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loopasync" class="header">loopAsync</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -191,7 +191,7 @@ tmtsoftware/esw
 <ol>
   <li>loop</li>
   <li>waitFor</li>
-  <li>bgLoop</li>
+  <li>loopAsync</li>
 </ol>
 <h2><a href="#loop" name="loop" class="anchor"><span class="anchor-link"></span></a>loop</h2>
 <p><strong>With default loop interval</strong></p>
@@ -200,7 +200,7 @@ tmtsoftware/esw
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/loop.kts#L58-L65" target="_blank" title="Go to snippet source"></a><code class="language-kts">val expectedMotorPosition = 100
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L58-L65" target="_blank" title="Go to snippet source"></a><code class="language-kts">val expectedMotorPosition = 100
 
 // move motor by 10 degrees in each iteration, default loop interval is 50 millis
 // stop loop when current motor position matches expected motor position and continue with the execution of rest of the handler
@@ -215,9 +215,9 @@ loop {
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/loop.kts#L69-L74" target="_blank" title="Go to snippet source"></a><code class="language-kts">// move motor by 20 degrees in every iteration after a loop interval of 100 millis (custom loop interval used here)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L69-L74" target="_blank" title="Go to snippet source"></a><code class="language-kts">// move motor by 20 degrees in every iteration after a loop interval of 100 millis (custom loop interval used here)
 // stop loop when current motor position matches expected motor position and continue with the execution of rest of the handler
-loop(100.milliseconds) {
+loop(minInterval = 100.milliseconds) {
     moveMotor(20)
     stopWhen(motorPosition == expectedMotorPosition)
 }</code></pre></dd>
@@ -229,34 +229,34 @@ loop(100.milliseconds) {
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/loop.kts#L46-L49" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start initializing motor and this method will set motorUp flag to true once initialization is successful
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L46-L49" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start initializing motor and this method will set motorUp flag to true once initialization is successful
 initializeMotor()
 // pauses the init-motor command handlers execution until motor becomes up
 waitFor { motorUp }</code></pre></dd>
 </dl>
-<h2><a href="#bgloop" name="bgloop" class="anchor"><span class="anchor-link"></span></a>bgLoop</h2>
+<h2><a href="#loopasync" name="loopasync" class="anchor"><span class="anchor-link"></span></a>loopAsync</h2>
 <p><strong>With default loop interval</strong></p>
-<p><code>bgLoop</code> DSL allows you to start loop asynchronously in the background which means rest of the code written after <code>bgLoop</code> will be executed concurrently. <code>bgLoop</code> will be terminated when <code>stopWhen</code> condition written inside loop becomes true.</p>
-<p>You can use this DSL when you want to iteratively perform some actions in the background. bgLoop without providing any minimum interval uses default interval of <code>50 milliseconds</code>.</p>
-<p>Following example demonstrate the usage of <code>bgLoop</code> dsl without providing custom loop interval. In the loop body, current temperature is published every <code>50 milliseconds</code>. BgLoop will be terminated when <code>stopPublishingTemperature</code> flag becomes true and this is set to true in <code>onStop</code> handler.</p>
+<p><code>loopAsync</code> DSL allows you to start loop asynchronously in the background which means rest of the code written after <code>loopAsync</code> will be executed concurrently. <code>loopAsync</code> will be terminated when <code>stopWhen</code> condition written inside loop becomes true.</p>
+<p>You can use this DSL when you want to iteratively perform some actions in the background. loopAsync without providing any minimum interval uses default interval of <code>50 milliseconds</code>.</p>
+<p>Following example demonstrate the usage of <code>loopAsync</code> dsl without providing custom loop interval. In the loop body, current temperature is published every <code>50 milliseconds</code>. LoopAsync will be terminated when <code>stopPublishingTemperature</code> flag becomes true and this is set to true in <code>onStop</code> handler.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/loop.kts#L27-L32" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start background loop which publishes current temperature of motor every 50 milliseconds (default loop interval)
-bgLoop {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L27-L32" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start background loop which publishes current temperature of motor every 50 milliseconds (default loop interval)
+loopAsync {
     val currentTemp = getCurrentTemp()
     publishEvent(temperatureEvent.add(temperatureKey.set(currentTemp)))
     stopWhen(stopPublishingTemperature)
 }</code></pre></dd>
 </dl>
 <p><strong>With custom loop interval</strong></p>
-<p><code>bgLoop</code> DSL allows you to provide minimum loop interval and start loop asynchronously. Every iteration of bgLoop will at least wait for minimum provided interval before executing next iteration.</p>
-<p>Following example demonstrate the usage of <code>bgLoop</code> dsl by providing custom loop interval.</p>
+<p><code>loopAsync</code> DSL allows you to provide minimum loop interval and start loop asynchronously. Every iteration of loopAsync will at least wait for minimum provided interval before executing next iteration.</p>
+<p>Following example demonstrate the usage of <code>loopAsync</code> dsl by providing custom loop interval.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/loop.kts#L36-L41" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start background loop which publishes current temperature of motor every 100 milliseconds
-bgLoop(100.milliseconds) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L36-L41" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start background loop which publishes current temperature of motor every 100 milliseconds
+loopAsync(minInterval = 100.milliseconds) {
     val currentTemp = getCurrentTemp()
     publishEvent(temperatureEvent.add(temperatureKey.set(currentTemp)))
     stopWhen(stopPublishingTemperature)
@@ -264,7 +264,7 @@ bgLoop(100.milliseconds) {
 </dl>
 <h3><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h3>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/loop.kts">Loop Examples</a></li>
+  <li><a href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts">Loop Examples</a></li>
 </ul>
 </div>
 <div>
@@ -284,7 +284,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../../sequencer/scripts/dsl/services/time-service.html" title="Time Service Dsl" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../../sequencer/scripts/dsl/services/time-service.html" title="Time Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -293,8 +293,21 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Time Service Dsl
+Time Service
 </span>
+</div>
+</a>
+<a href="../../../sequencer/scripts/dsl/misc.html" title="Misc" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
+Misc
+</span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
 </div>
 </a>
 </nav>
