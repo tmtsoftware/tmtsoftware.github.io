@@ -136,6 +136,7 @@ tmtsoftware/esw
 </div>
 <ul>
   <li><a href="../../../../sequencer/server/sequencer-server.html" class="page">Sequencer HTTP Server</a></li>
+  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
   <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Script</a>
   <ul>
     <li><a href="../../../../sequencer/scripts/fsm.html" class="page">FSM</a></li>
@@ -199,7 +200,7 @@ tmtsoftware/esw
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L19-L20" target="_blank" title="Go to snippet source"></a><code class="language-kts">// create and resolve sequencer
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L17-L18" target="_blank" title="Go to snippet source"></a><code class="language-kts">// create and resolve sequencer
 val tcsSequencer = Sequencer(&quot;TCS&quot;, &quot;darknight&quot;, 5.seconds)</code></pre></dd>
 </dl>
 <p>Since all the components in the TMT architecture are dynamic in nature, which implies they can be shutdown and spawned dynamically on some other location, the sequencer is resolved each time on receiving a command with the provided <code>subsystem</code> and <code>observingMode</code>.</p>
@@ -209,7 +210,7 @@ val tcsSequencer = Sequencer(&quot;TCS&quot;, &quot;darknight&quot;, 5.seconds)<
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L24-L26" target="_blank" title="Go to snippet source"></a><code class="language-kts">val hcdCommand: SequenceCommand = Setup(&quot;tcs&quot;, &quot;setup-tcs-hcd&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L22-L24" target="_blank" title="Go to snippet source"></a><code class="language-kts">val hcdCommand: SequenceCommand = Setup(&quot;tcs&quot;, &quot;setup-tcs-hcd&quot;)
 val assemblyCommand: SequenceCommand = Setup(&quot;tcs&quot;, &quot;setup-tcs-assembly&quot;)
 val sequence: Sequence = sequenceOf(hcdCommand, assemblyCommand)</code></pre></dd>
 </dl>
@@ -219,7 +220,7 @@ val sequence: Sequence = sequenceOf(hcdCommand, assemblyCommand)</code></pre></d
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L30-L31" target="_blank" title="Go to snippet source"></a><code class="language-kts">val submitResponse: SubmitResponse = tcsSequencer.submit(sequence)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L28-L29" target="_blank" title="Go to snippet source"></a><code class="language-kts">val submitResponse: SubmitResponse = tcsSequencer.submit(sequence)
 val queryResponse: SubmitResponse = tcsSequencer.query(submitResponse.runId())</code></pre></dd>
 </dl>
 <p><code>query</code> returns the current response which could be either final response (eg. <code>Completed</code>) or intermediate response (eg. <code>Started</code>).</p>
@@ -228,46 +229,80 @@ val queryResponse: SubmitResponse = tcsSequencer.query(submitResponse.runId())</
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L35" target="_blank" title="Go to snippet source"></a><code class="language-kts">val finalResponse: SubmitResponse = tcsSequencer.queryFinal(submitResponse.runId())</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L33" target="_blank" title="Go to snippet source"></a><code class="language-kts">val finalResponse: SubmitResponse = tcsSequencer.queryFinal(submitResponse.runId())</code></pre></dd>
 </dl>
 <p>If you want to increase/decrease the <code>defaultTimeout</code>, you can use the other variation of the same dsl which takes a timeout.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L39" target="_blank" title="Go to snippet source"></a><code class="language-kts">val finalRes: SubmitResponse = tcsSequencer.queryFinal(submitResponse.runId(), 5.seconds)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L37" target="_blank" title="Go to snippet source"></a><code class="language-kts">val finalRes: SubmitResponse = tcsSequencer.queryFinal(submitResponse.runId(), 5.seconds)</code></pre></dd>
 </dl>
 <h4><a href="#submit-and-wait" name="submit-and-wait" class="anchor"><span class="anchor-link"></span></a>Submit and Wait</h4>
 <p>The <code>submitAndWait</code> dsl is a combination of <code>submit</code> and <code>queryFinal</code>. If you are not interested in initial/intermediate response but only in final response of the Sequence, you can use this dsl. It submits the sequence and waits for the final response if the sequence was successfully <code>Started</code>. It will wait till the <code>defaultTimeout</code> specified at the time of creation of the <code>Sequencer</code> instance.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L43" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sequenceResponse: SubmitResponse = tcsSequencer.submitAndWait(sequence)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L41" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sequenceResponse: SubmitResponse = tcsSequencer.submitAndWait(sequence)</code></pre></dd>
 </dl>
 <p>If you want to increase/decrease the default timeout, you can use the other variation of the same dsl which takes a timeout.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L47" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sequenceRes: SubmitResponse = tcsSequencer.submitAndWait(sequence, 5.seconds)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L45" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sequenceRes: SubmitResponse = tcsSequencer.submitAndWait(sequence, 5.seconds)</code></pre></dd>
 </dl>
 <h2><a href="#going-online-offline" name="going-online-offline" class="anchor"><span class="anchor-link"></span></a>Going online/offline</h2>
-<p>This dsl is used to send online/offline commands to other sequencers. The Sequencer can go in online state only if it has been sent to offline state before. If this command is received in any other state apart from offline, an <code>Unhandled</code> response will be sent. If the Sequencer is in Offline state, and it receives the <code>goOnline</code> command, the <code>goOnline</code> handlers of the receiving sequencer will be called. In case the handlers fail, a <code>GoOnlineHookFailed</code> response would be sent, resulting the sequencer remains in the previous state. Else an <code>Ok</code> message is sent, and the sequencer goes to online(idle) state. </p>
+<h3><a href="#go-online" name="go-online" class="anchor"><span class="anchor-link"></span></a>Go online</h3>
+<p>This dsl is used to send online/offline commands to other sequencers. The Sequencer can go online only if it is currently in offline state. If this command is received in any other state apart from offline, an <code>Unhandled</code> response will be sent.</p>
+<p>If the Sequencer is in Offline state, and it receives the <code>goOnline</code> command, the <a href="../handlers.html#online-and-offline-handlers">goOnline handlers</a> of the receiving sequencer will be called. In case the handlers fail, a <code>GoOnlineHookFailed</code> response would be sent, resulting the sequencer remains in the previous state. Else an <code>Ok</code> message is sent, and the sequencer goes in online(idle) state. </p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L51-L59" target="_blank" title="Go to snippet source"></a><code class="language-kts">val response = tcsSequencer.goOnline()
-when (response) {
-    is `Ok$` -&gt; println(&quot;Tcs Sequencer is now online&quot;)
-    is Unhandled -&gt; println(&quot;Sequencer cannot go online from state: ${response.state()}&quot;)
-    is `GoOnlineHookFailed$` -&gt;
-        // retry going online
-        tcsSequencer.goOnline()
-
-}</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L49" target="_blank" title="Go to snippet source"></a><code class="language-kts">val response: GoOnlineResponse = tcsSequencer.goOnline()</code></pre></dd>
 </dl>
-<p>Go offline command is received in 2 states only. 1. If the sequencer is Idle, which means it is not processing any sequence currently 2. If the sequencer is Loaded with a sequence</p>
-<p>If this command is sent in any other state apart from these, an <code>Unhandled</code> response will be sent. If the Sequencer is in idle/loaded state, and it receives the <code>goOffline</code> command, the <code>goOffline</code> handlers of the receiving sequencer will be called. In case the handlers fail, a <code>GoOfflineHookFailed</code> response would be sent, resulting the sequencer remains in the previous state. Else an <code>Ok</code> message is sent, and the sequencer goes to offline state. </p>
+<h3><a href="#go-offline" name="go-offline" class="anchor"><span class="anchor-link"></span></a>Go offline</h3>
+<p>Go offline command is received in 2 states only.</p>
+<ul>
+  <li>If the sequencer is Idle, which means it is not processing any sequence currently</li>
+  <li>If the sequencer is Loaded with a sequence</li>
+</ul>
+<p>If this command is sent in any other state apart from these, an <code>Unhandled</code> response will be sent. If the Sequencer is in idle/loaded state, and it receives the <code>goOffline</code> command, the <a href="../handlers.html#online-and-offline-handlers">goOffline handlers</a> of the receiving sequencer will be called. In case the handlers fail, a <code>GoOfflineHookFailed</code> response would be sent, resulting the sequencer remains in the previous state. Else an <code>Ok</code> message is sent, and the sequencer goes to offline state. </p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L53" target="_blank" title="Go to snippet source"></a><code class="language-kts">val offlineResponse: GoOfflineResponse = tcsSequencer.goOffline()</code></pre></dd>
+</dl>
 <h2><a href="#diagnostic-and-operations-mode" name="diagnostic-and-operations-mode" class="anchor"><span class="anchor-link"></span></a>Diagnostic and operations mode</h2>
+<h3><a href="#diagnostic-mode" name="diagnostic-mode" class="anchor"><span class="anchor-link"></span></a>Diagnostic mode</h3>
+<p>The diagnostic data mode command is accepted by Sequencers in all states and <code>DiagnosticModeResponse</code> is sent. If the sequencer has defined its <a href="../handlers.html#diagnostic-mode-handlers">diagnostic mode handlers</a>, they will be called. If the handlers execute successfully, an <code>Ok</code> response is sent else <code>DiagnosticHookFailed</code> response is sent.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L57" target="_blank" title="Go to snippet source"></a><code class="language-kts">val diagnosticModeResponse: DiagnosticModeResponse = tcsSequencer.diagnosticMode(utcTimeNow(), &quot;engineering&quot;)</code></pre></dd>
+</dl>
+<h3><a href="#operations-mode" name="operations-mode" class="anchor"><span class="anchor-link"></span></a>Operations mode</h3>
+<p>Operations mode is accepted by Sequencers in all states and <code>OperationsModeResponse</code> is sent. If the sequencer has defined its <a href="../handlers.html#operations-mode-handlers">operations mode handlers</a>, they will be called. If the handlers execute successfully, an <code>Ok</code> response is sent else <code>OperationsHookFailed</code> response is sent.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L61" target="_blank" title="Go to snippet source"></a><code class="language-kts">val operationsModeResponse: OperationsModeResponse = tcsSequencer.operationsMode()</code></pre></dd>
+</dl>
 <h2><a href="#aborting-and-stopping-sequence" name="aborting-and-stopping-sequence" class="anchor"><span class="anchor-link"></span></a>Aborting and Stopping Sequence</h2>
+<h3><a href="#aborting" name="aborting" class="anchor"><span class="anchor-link"></span></a>Aborting</h3>
+<p>This command is accepted only if the Sequencer is in <code>InProgress</code> state, which means it is executing a sequence currently. If this command is sent in any other state, an <code>Unhandled</code> response is returned. In all other cases, an <code>Ok</code> response is sent.</p>
+<p>On receiving this command in <code>InProgress</code> state, the Sequencer will execute the <a href="../handlers.html#abort-sequence-handlers">abort sequence handlers</a> and on completion of execution of handlers (whether successful or failed), the Sequencer will discard all the <code>pending</code> steps and return an <code>Ok</code> response. </p>
+<p>Note that, abort sequence does not abruptly terminate the in-flight step(s) which are already under execution. It will discard only the pending steps, and the sequence is finished gracefully after the inflight step(s) are finished.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L65" target="_blank" title="Go to snippet source"></a><code class="language-kts">val abortResponse: OkOrUnhandledResponse = tcsSequencer.abortSequence()</code></pre></dd>
+</dl>
+<h3><a href="#stopping" name="stopping" class="anchor"><span class="anchor-link"></span></a>Stopping</h3>
+<p>Stopping sequence is very similar to aborting, only difference is that instead of abort handlers, the <a href="../handlers.html#stop-handlers">stop handlers</a> are called. Script writers are expected to save state of sequencer-script in the Stop handlers.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L69" target="_blank" title="Go to snippet source"></a><code class="language-kts">val stopResponse: OkOrUnhandledResponse = tcsSequencer.stop()</code></pre></dd>
+</dl>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/services/sequencer-command-service.md" title="Edit this page" class="md-source-file md-edit">
