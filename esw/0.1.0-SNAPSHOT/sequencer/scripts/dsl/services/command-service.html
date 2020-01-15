@@ -151,10 +151,9 @@ tmtsoftware/esw
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#hcd" class="header">Hcd</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#command-service-dsl" class="header">Command Service Dsl</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#going-online-offline-mode" class="header">Going online/offline mode</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#operationsmode" class="header">operationsMode</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#diagnosticmode" class="header">diagnosticMode</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#lock" class="header">lock</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#unlock" class="header">unlock</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#operations-mode-and-diagnostic-mode" class="header">Operations mode and Diagnostic mode</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#locking-and-unlocking" class="header">Locking and unlocking</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -182,10 +181,9 @@ tmtsoftware/esw
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#hcd" class="header">Hcd</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#command-service-dsl" class="header">Command Service Dsl</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#going-online-offline-mode" class="header">Going online/offline mode</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#operationsmode" class="header">operationsMode</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#diagnosticmode" class="header">diagnosticMode</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#lock" class="header">lock</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#unlock" class="header">unlock</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#operations-mode-and-diagnostic-mode" class="header">Operations mode and Diagnostic mode</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#locking-and-unlocking" class="header">Locking and unlocking</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -200,7 +198,7 @@ tmtsoftware/esw
 <p>Command service dsl is kotlin wrapper over csw command service module provided for sending commands to assemblies or hcds via scripts. You can refer a detailed documentation of command Service provided by csw <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/commons/command.html#commandservice">here</a>. This dsl exposes following APIs:</p>
 <h2><a href="#assembly" name="assembly" class="anchor"><span class="anchor-link"></span></a>Assembly</h2>
 <p>This dsl creates assembly instance with provided name and gives handle to command service dsl through which script can interact with assembly. For example send commands or lifecycle methods e.g. goOnline, goOffline, lock assembly etc. This api also takes default timeout which will be used in commands like submitAndWait, queryFinal etc.</p>
-<p>This dsl takes following parameters: * <code>prefix</code> - Prefix of assembly * <code>defaultTimeout</code> - if dsl like submitAndWait, queryFinal etc does not explicitly provide timeout then this Default timeout is used.</p>
+<p>This dsl takes following parameters: * <code>prefix</code>: Prefix of assembly * <code>defaultTimeout</code>: if dsl like submitAndWait, queryFinal etc does not explicitly provide timeout then this Default timeout is used.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -356,8 +354,8 @@ galilAssembly.query(response.runId())</code></pre></dd>
 
 }</code></pre></dd>
 </dl>
-<h3><a href="#operations-mode-and-diagnostic-mode" name="operations-mode-and-diagnostic-mode" class="anchor"><span class="anchor-link"></span></a>Operations mode and Diagnostic mode</h3>
-<h2><a href="#operationsmode" name="operationsmode" class="anchor"><span class="anchor-link"></span></a>operationsMode</h2>
+<h2><a href="#operations-mode-and-diagnostic-mode" name="operations-mode-and-diagnostic-mode" class="anchor"><span class="anchor-link"></span></a>Operations mode and Diagnostic mode</h2>
+<h3><a href="#operationsmode" name="operationsmode" class="anchor"><span class="anchor-link"></span></a>operationsMode</h3>
 <p>This dsl allows to send assembly/hcd into operations mode. <code>operationsMode</code> can be called from anywhere in script. Following example shows sequencer sending <code>operationsMode</code> command to downstream galil assembly when it receives <code>operationsMode</code> command. </p>
 <dl>
   <dt>Kotlin</dt>
@@ -367,7 +365,7 @@ galilAssembly.query(response.runId())</code></pre></dd>
     galilAssembly.operationsMode()
 }</code></pre></dd>
 </dl>
-<h2><a href="#diagnosticmode" name="diagnosticmode" class="anchor"><span class="anchor-link"></span></a>diagnosticMode</h2>
+<h3><a href="#diagnosticmode" name="diagnosticmode" class="anchor"><span class="anchor-link"></span></a>diagnosticMode</h3>
 <p>This dsl allows to send assembly/hcd into diagnostic data mode based on a hint at the specified startTime. <code>diagnosticMode</code> can be called from anywhere in script. Following example shows sequencer sending <code>diagnosticMode</code> command to downstream galil assembly when it receives <code>diagnosticMode</code> command. </p>
 <dl>
   <dt>Kotlin</dt>
@@ -377,8 +375,8 @@ galilAssembly.query(response.runId())</code></pre></dd>
     galilAssembly.diagnosticMode(startTime, hint)
 }</code></pre></dd>
 </dl>
-<h3><a href="#locking-and-unlocking" name="locking-and-unlocking" class="anchor"><span class="anchor-link"></span></a>Locking and unlocking</h3>
-<h1><a href="#lock" name="lock" class="anchor"><span class="anchor-link"></span></a>lock</h1>
+<h2><a href="#locking-and-unlocking" name="locking-and-unlocking" class="anchor"><span class="anchor-link"></span></a>Locking and unlocking</h2>
+<h3><a href="#lock" name="lock" class="anchor"><span class="anchor-link"></span></a>lock</h3>
 <p>This dsl allows locking assembly/hcd from sequencer script for specified duration. When you lock assembly/hcd, sequencer sending lock command is treated as source. This dsl returns <code>LockingResponse</code> which can be <code>LockAcquired</code> in the successful scenario or <code>AcquiringLockFailed</code> in case of failure. This dsl also provides callbacks for <code>onLockAboutToExpire</code> and, <code>onLockExpired</code> where script writer can write custom logic. These callbacks are thread safe.</p>
 <dl>
   <dt>Kotlin</dt>
@@ -395,14 +393,14 @@ galilAssembly.query(response.runId())</code></pre></dd>
         }
 )</code></pre></dd>
 </dl>
-<h1><a href="#unlock" name="unlock" class="anchor"><span class="anchor-link"></span></a>unlock</h1>
+<h3><a href="#unlock" name="unlock" class="anchor"><span class="anchor-link"></span></a>unlock</h3>
 <p>This dsl allows unlocking assembly/hcd from sequencer script for specified duration. When you unlock assembly/hcd, sequencer sending lock command is treated as source. This dsl returns <code>LockingResponse</code> which can be <code>LockReleased</code> or <code>LockAlreadyReleased</code> in the successful scenario or <code>ReleasingLockFailed</code> in case of failure.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L37" target="_blank" title="Go to snippet source"></a><code class="language-kts">galilAssembly.unlock()</code></pre></dd>
 </dl>
-<h3><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h3>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts">Command Service Examples</a></li>
 </ul>
