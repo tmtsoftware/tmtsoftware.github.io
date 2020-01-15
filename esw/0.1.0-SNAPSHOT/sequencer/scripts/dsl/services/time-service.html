@@ -205,44 +205,55 @@ tmtsoftware/esw
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L39" target="_blank" title="Go to snippet source"></a><code class="language-kts">val currentUtcTime = utcTimeNow()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L61" target="_blank" title="Go to snippet source"></a><code class="language-kts">val currentUtcTime = utcTimeNow()</code></pre></dd>
 </dl>
 <h2><a href="#taitimenow" name="taitimenow" class="anchor"><span class="anchor-link"></span></a>taiTimeNow</h2>
 <p>This utility provides current utc time.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L42" target="_blank" title="Go to snippet source"></a><code class="language-kts">val currentTaiTime = taiTimeNow()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L64" target="_blank" title="Go to snippet source"></a><code class="language-kts">val currentTaiTime = taiTimeNow()</code></pre></dd>
 </dl>
 <h2><a href="#utctimeafter" name="utctimeafter" class="anchor"><span class="anchor-link"></span></a>utcTimeAfter</h2>
 <p>This utility provides utc time after provided duration. Following example shows how to get utc time after 1 hour</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L46" target="_blank" title="Go to snippet source"></a><code class="language-kts">val utcTime = utcTimeAfter(1.hours)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L68" target="_blank" title="Go to snippet source"></a><code class="language-kts">val utcTime = utcTimeAfter(1.hours)</code></pre></dd>
 </dl>
 <h2><a href="#taitimeafter" name="taitimeafter" class="anchor"><span class="anchor-link"></span></a>taiTimeAfter</h2>
 <p>This utility provides tai time after provided duration. Following example shows how to get tai time after 1 hour</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L50" target="_blank" title="Go to snippet source"></a><code class="language-kts">val taiTime = taiTimeAfter(1.hours)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L72" target="_blank" title="Go to snippet source"></a><code class="language-kts">val taiTime = taiTimeAfter(1.hours)</code></pre></dd>
 </dl>
 <h2><a href="#scheduleonce" name="scheduleonce" class="anchor"><span class="anchor-link"></span></a>scheduleOnce</h2>
-<p>This API allows to schedule non periodic task in script at specified utc time or tai time. This a handle to cancel the execution of the task if it hasn&rsquo;t been executed already</p>
+<p>This API allows scheduling non periodic task in script at specified utc time or tai time. This returns a handle to cancel the execution of the task if it hasn&rsquo;t been executed already.</p>
+<p>Following example shows onObserve handler of sequencer is extracting schedule time from received observe command. It is creating probe command which is then submitted to downstream galil assembly at scheduled time.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L60-L62" target="_blank" title="Go to snippet source"></a><code class="language-kts">scheduleOnce(taiTimeNow()) {
-    publishEvent(SystemEvent(&quot;lgsf&quot;, &quot;publish.success&quot;))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L15-L27" target="_blank" title="Go to snippet source"></a><code class="language-kts">val scheduleTimeKey = utcTimeKey(&quot;scheduledTime&quot;)
+val schedulePrefix = &quot;esw.test&quot;
+val galilAssembly = Assembly(&quot;tcs.galil&quot;, defaultTimeout = 10.seconds)
+
+//Usage inside handlers - schedule tasks while handling setup/observe commands
+onObserve(&quot;schedule-once&quot;) {command -&gt;
+    val scheduledTime = command(scheduleTimeKey)
+    val probeCommand = Setup(schedulePrefix, &quot;scheduledOffset&quot;, command.obsId)
+
+    scheduleOnce(scheduledTime.head()) {
+        galilAssembly.submit(probeCommand)
+    }
 }</code></pre></dd>
 </dl>
 <h2><a href="#scheduleoncefromnow" name="scheduleoncefromnow" class="anchor"><span class="anchor-link"></span></a>scheduleOnceFromNow</h2>
-<p>This API allows to schedule non periodic task in script after specified duration. This API takes time duration after which task will be scheduled. scheduleOnceFromNow internally creates instance of utc time considering specified in duration. Following example shows scheduling task after 1 hour from current utc time. This a handle to cancel the execution of the task if it hasn&rsquo;t been executed already.</p>
+<p>This API allows to schedule non periodic task in script after specified duration. This API takes time duration after which task will be scheduled. scheduleOnceFromNow internally creates instance of utc time considering specified in duration. Following example shows scheduling task after 1 hour from current utc time. This returns a handle to cancel the execution of the task if it hasn&rsquo;t been executed already.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L66-L68" target="_blank" title="Go to snippet source"></a><code class="language-kts">scheduleOnceFromNow(1.hours) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L86-L88" target="_blank" title="Go to snippet source"></a><code class="language-kts">scheduleOnceFromNow(1.hours) {
     publishEvent(SystemEvent(&quot;lgsf&quot;, &quot;publish.success&quot;))
 }</code></pre></dd>
 </dl>
@@ -251,8 +262,17 @@ tmtsoftware/esw
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L72-L74" target="_blank" title="Go to snippet source"></a><code class="language-kts">schedulePeriodically(utcTimeNow(), 5.seconds) {
-    publishEvent(SystemEvent(&quot;lgsf&quot;, &quot;publish.success&quot;))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L32-L43" target="_blank" title="Go to snippet source"></a><code class="language-kts">val offsetTimeKey = utcTimeKey(&quot;offsetTime&quot;)
+val offsetPrefix = &quot;esw.offset&quot;
+val assemblyForOffset = Assembly(&quot;tcs.galil&quot;, defaultTimeout = 10.seconds)
+
+onSetup(&quot;schedule-periodically&quot;) {command -&gt;
+    val scheduledTime = command(offsetTimeKey)
+    val probeCommand = Setup(schedulePrefix, &quot;scheduledOffset&quot;, command.obsId)
+
+    schedulePeriodically(scheduledTime.head(), interval = 5.seconds) {
+        assemblyForOffset.submit(probeCommand)
+    }
 }</code></pre></dd>
 </dl>
 <h2><a href="#scheduleperiodicallyfromnow" name="scheduleperiodicallyfromnow" class="anchor"><span class="anchor-link"></span></a>schedulePeriodicallyFromNow</h2>
@@ -260,7 +280,7 @@ tmtsoftware/esw
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L78-L80" target="_blank" title="Go to snippet source"></a><code class="language-kts">schedulePeriodicallyFromNow(1.hours, 10.seconds) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L96-L98" target="_blank" title="Go to snippet source"></a><code class="language-kts">schedulePeriodicallyFromNow(1.hours, 10.seconds) {
     publishEvent(SystemEvent(&quot;lgsf&quot;, &quot;publish.success&quot;))
 }</code></pre></dd>
 </dl>
@@ -286,7 +306,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" title="Sequencer Command Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../../../sequencer/scripts/dsl/services/alarm-service.html" title="Alarm Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -295,8 +315,21 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
+Alarm Service
+</span>
+</div>
+</a>
+<a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" title="Sequencer Command Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
 Sequencer Command Service
 </span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
 </div>
 </a>
 </nav>

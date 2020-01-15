@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../../../assets/tmt_favicon.ico">
-<title>Config Service · TMT Executive Software (ESW)</title>
+<title>Alarm Service · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software (ESW)
 </span>
 <span class="md-header-nav__topic">
-Config Service
+Alarm Service
 </span>
 </div>
 </div>
@@ -145,10 +145,9 @@ tmtsoftware/esw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#config-service" class="header">Config Service</a>
+  <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html#alarm-service" class="header">Alarm Service</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#existsconfig" class="header">existsConfig</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#getconfig" class="header">getConfig</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html#setseverity" class="header">setSeverity</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -170,10 +169,9 @@ tmtsoftware/esw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#config-service" class="header">Config Service</a>
+  <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html#alarm-service" class="header">Alarm Service</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#existsconfig" class="header">existsConfig</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#getconfig" class="header">getConfig</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html#setseverity" class="header">setSeverity</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -184,30 +182,89 @@ tmtsoftware/esw
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#config-service" name="config-service" class="anchor"><span class="anchor-link"></span></a>Config Service</h1>
-<p>Config Service Dsl is a wrapper over config service module provided by csw. You can refer a detailed documentation of Config Service provided by csw <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/config">here</a>.</p>
-<p>This dsl provides APIs to check if file exists in configuration service and retrieve its contents.</p>
-<h2><a href="#existsconfig" name="existsconfig" class="anchor"><span class="anchor-link"></span></a>existsConfig</h2>
-<p>This DSL checks if provided file exists in configuration service with given revision id (if provided) and returns true or false based on that.</p>
+<h1><a href="#alarm-service" name="alarm-service" class="anchor"><span class="anchor-link"></span></a>Alarm Service</h1>
+<p>Alarm Service Dsl is a wrapper over alarm service module provided by csw. You can refer a detailed documentation of Alarm Service provided by csw <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/alarm">here</a>.</p>
+<p>This dsl provides an API to set the severity of alarm.</p>
+<h2><a href="#setseverity" name="setseverity" class="anchor"><span class="anchor-link"></span></a>setSeverity</h2>
+<p>This API sets alarm severity for alarm key to provided value and keeps refreshing it in the background with the interval of config value <code>csw-alarm.refresh-interval</code>. Default value for <code>csw-alarm.refresh-interval</code> config is <em>3 seconds</em> which is configured in downstream csw alarm modules <code>reference.conf</code> file.</p>
+<p><code>setSeverity</code> API requires user to provide <code>AlarmKey</code> and <code>AlarmSeverity</code>.</p>
+<p><strong>AlarmKey</strong></p>
+<p><code>AlarmKey</code> represents unique alarm in the given subsystem and component e.g. <code>nfiraos.trombone.tromboneaxislowlimitalarm</code></p>
+<p>Following example demonstrate creation of <code>AlarmKey</code></p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ConfigServiceDslExample.kts#L12" target="_blank" title="Go to snippet source"></a><code class="language-kts">val bootConfExist: Boolean = existsConfig(&quot;/wfos/boot.conf&quot;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/AlarmServiceDslExample.kts#L22-L23" target="_blank" title="Go to snippet source"></a><code class="language-kts">val tromboneTemperatureAlarm =
+        AlarmKey(Prefix(NFIRAOS, &quot;trombone&quot;), &quot;tromboneMotorTemperatureAlarm&quot;)</code></pre></dd>
 </dl>
-<h2><a href="#getconfig" name="getconfig" class="anchor"><span class="anchor-link"></span></a>getConfig</h2>
-<p>This DSL retrieves the content of the file present at the provided path in configuration service. It returns <code>null</code> if file is not available in configuration service. </p>
+<p><strong>AlarmSeverity</strong></p>
+<p>Supported <code>AlarmSeverity</code> are: </p>
+<ol>
+  <li>Okay</li>
+  <li>Warning</li>
+  <li>Major</li>
+  <li>Indeterminate</li>
+  <li>Disconnected</li>
+  <li>Critical</li>
+</ol>
+<p>Following example demonstrate the usage of <code>setSeverity</code> API. In this example, temperature <a href="../../fsm.html">Fsm</a> is created and based on the state of fsm, severity is set accordingly.</p>
+<table>
+  <thead>
+    <tr>
+      <th align="center">State </th>
+      <th align="center">Temperature </th>
+      <th align="center">Severity </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">OK </td>
+      <td align="center">Temp &gt; 20 &amp;&amp; temp &lt; 40 </td>
+      <td align="center">Okay </td>
+    </tr>
+    <tr>
+      <td align="center">ERROR </td>
+      <td align="center">Temp < 20 or temp > 40 </td>
+      <td align="center">Major </td>
+    </tr>
+  </tbody>
+</table>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ConfigServiceDslExample.kts#L17" target="_blank" title="Go to snippet source"></a><code class="language-kts">val bootConf: Config? = getConfig(&quot;/wfos/boot.conf&quot;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/AlarmServiceDslExample.kts#L27-L51" target="_blank" title="Go to snippet source"></a><code class="language-kts">/**
+ * temp &gt; 20 || temp &lt; 40   =&gt; Severity.Okay
+ * else                     =&gt; Severity.Major
+ */
+val temperatureFsm = Fsm(&quot;TEMP&quot;, OK) {
+    state(OK) {
+        entry {
+            setSeverity(tromboneTemperatureAlarm, Okay)
+        }
+
+        on(temperatureVar.get() &gt; 40) {
+            become(ERROR)
+        }
+    }
+
+    state(ERROR) {
+        entry {
+            setSeverity(tromboneTemperatureAlarm, Major)
+        }
+
+        on(temperatureVar.get() &lt; 40) {
+            become(&quot;OK&quot;)
+        }
+    }
+}</code></pre></dd>
 </dl>
 <h3><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h3>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ConfigServiceDslExample.kts">Config Service Examples</a></li>
+  <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/AlarmServiceDslExample.kts">Alarm Service Examples</a></li>
 </ul>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/services/config-service.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/services/alarm-service.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -223,7 +280,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../../../sequencer/scripts/dsl/dsl.html" title="High Level DSL" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../../../sequencer/scripts/dsl/services/logging-service.html" title="Logging Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -232,17 +289,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-High Level DSL
+Logging Service
 </span>
 </div>
 </a>
-<a href="../../../../sequencer/scripts/dsl/services/command-service.html" title="Command Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../../../sequencer/scripts/dsl/services/time-service.html" title="Time Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Command Service
+Time Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
