@@ -147,6 +147,7 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#logging-service" class="header">Logging Service</a>
   <ul>
+    <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#changing-sequencer-log-level" class="header">Changing Sequencer Log Level</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#trace" class="header">trace</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#debug" class="header">debug</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#info" class="header">info</a></li>
@@ -176,6 +177,7 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#logging-service" class="header">Logging Service</a>
   <ul>
+    <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#changing-sequencer-log-level" class="header">Changing Sequencer Log Level</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#trace" class="header">trace</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#debug" class="header">debug</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html#info" class="header">info</a></li>
@@ -193,8 +195,29 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#logging-service" name="logging-service" class="anchor"><span class="anchor-link"></span></a>Logging Service</h1>
-<p>Logging Service DSL is a wrapper over logging service module provided by csw. You can refer a detailed documentation of Logging Service provided by csw <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/services/logging">here</a>.</p>
-<p>This dsl exposes following APIs to script writers for logging at different levels:</p>
+<p>Logging Service DSL is a wrapper over Logging Service module provided by CSW. You can refer a detailed documentation of Logging Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/logging">here</a>.</p>
+<p>CSW documentation explains all the supported logging related configurations for example, default log level, component specific log levels, log appender etc. It also explains how to override default values.</p>
+<p>All the Sequencer scripts are expected to be kept inside <a href="https://github.com/tmtsoftware/sequencer-scripts">sequencer-scripts</a> repo under Subsystem specific directories. Read more about adding new scripts and script specific configuration files <a href="https://github.com/tmtsoftware/sequencer-scripts">here</a>.</p>
+<h2><a href="#changing-sequencer-log-level" name="changing-sequencer-log-level" class="anchor"><span class="anchor-link"></span></a>Changing Sequencer Log Level</h2>
+<p>Let&rsquo;s say you are writing IRIS darknight (<code>IrisDarknight.kts</code>) script. You place this script in <code>scripts/iris</code> directory in <a href="https://github.com/tmtsoftware/sequencer-scripts">sequencer-scripts</a> repo. In the same directory, you can create your Subsystem specific configuration file, in this case <code>iris.conf</code> file.</p>
+<p>Add following snippets in <code>iris.conf</code> file to change IRIS darknight scripts default log level to <strong>debug</strong> :</p>
+<pre class="prettyprint"><code class="language-hocon"># iris.conf
+
+csw-logging {
+  component-log-levels {
+    iris.darknight = debug
+  }
+}
+
+</code></pre>
+<p>Once you add this configuration in <code>iris.conf</code> file, next step is to include this configuration file in <code>application.conf</code> file present at <code>scripts/application.conf</code> location in <a href="https://github.com/tmtsoftware/sequencer-scripts">sequencer-scripts</a> repo as shown in below snippet:</p>
+<pre class="prettyprint"><code class="language-hocon"># application.conf
+
+include &quot;iris.conf&quot;
+</code></pre><div class="callout note "><div class="callout-title">Note</div>
+<p><strong>IRIS</strong> - name of the Sequencer/Script Subsystem provided while starting Sequencer App</p>
+<p><strong>darknight</strong> - observing mode provided while starting Sequencer App </p></div>
+<p>Logging Service DSL exposes following APIs to script writers for logging at different levels:</p>
 <h2><a href="#trace" name="trace" class="anchor"><span class="anchor-link"></span></a>trace</h2>
 <dl>
   <dt>Kotlin</dt>

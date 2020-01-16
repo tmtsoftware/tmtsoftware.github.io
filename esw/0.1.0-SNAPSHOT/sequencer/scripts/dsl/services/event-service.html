@@ -191,41 +191,41 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#event-service" name="event-service" class="anchor"><span class="anchor-link"></span></a>Event Service</h1>
-<p>Event service dsl is kotlin wrapper over csw event service. This DSL have the ability of publishing, subscribing to events and holds some helper methods. You can refer a detailed documentation of Event Service provided by csw <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/services/event">here</a>.</p>
+<p>Event Service DSL is kotlin wrapper over CSW Event Service. This DSL have the ability of publishing, subscribing to events and holds some helper methods. You can refer a detailed documentation of Event Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/event">here</a>.</p>
 <p>This DSL exposes following APIs:</p>
 <h2><a href="#publishevent" name="publishevent" class="anchor"><span class="anchor-link"></span></a>publishEvent</h2>
 <p>DSL to publish the given <code>event</code>.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L30" target="_blank" title="Go to snippet source"></a><code class="language-kts">publishEvent(temperatureEvent)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L32" target="_blank" title="Go to snippet source"></a><code class="language-kts">publishEvent(event)</code></pre></dd>
 </dl>
 <p>This DSL can also publish events periodically when provided with <code>duration</code> and <code>event generator</code> function.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L34-L37" target="_blank" title="Go to snippet source"></a><code class="language-kts">publishEvent(10.seconds) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L36-L39" target="_blank" title="Go to snippet source"></a><code class="language-kts">publishEvent(10.seconds) {
     // event generator which returns event to publish after the given interval
-    temperatureEvent
+    event
 }</code></pre></dd>
 </dl>
 <h2><a href="#onevent" name="onevent" class="anchor"><span class="anchor-link"></span></a>onEvent</h2>
-<p>DSL to subscribe to events getting published on the given <code>event keys</code>. Executes the given callback whenever any event is published on any of the provided keys.</p>
+<p>DSL to subscribe to events getting published on the given <code>event keys</code>. This DSL takes a <code>callback</code> which operates on an event, that block will be invoked whenever an event is published on any of the provided event keys.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L43-L49" target="_blank" title="Go to snippet source"></a><code class="language-kts">val tempEventKey = &quot;esw.temperature.temp&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L45-L51" target="_blank" title="Go to snippet source"></a><code class="language-kts">val tempEventKey = &quot;esw.temperature.temp&quot;
 val stateEventKey = &quot;esw.temperature.state&quot;
 onEvent(tempEventKey, stateEventKey) { event -&gt;
     // logic to execute on every event
     println(event.eventKey())
 }</code></pre></dd>
 </dl>
-<p>This DSL have the ability to limit the number of events by providing the <code>duration</code> (after which the latest event will be given).</p>
+<p>This DSL have the ability to limit the number of events by providing the <code>duration</code> after which the <code>callback</code> will be invoked with the latest event. If no event is published within the duration then the last published event will be used to execute the callback. </p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L53-L56" target="_blank" title="Go to snippet source"></a><code class="language-kts">onEvent(tempEventKey, stateEventKey, duration = 2.seconds) { event -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L55-L58" target="_blank" title="Go to snippet source"></a><code class="language-kts">onEvent(tempEventKey, stateEventKey, duration = 2.seconds) { event -&gt;
     // logic to execute on every event
     println(event.eventKey())
 }</code></pre></dd>
@@ -235,7 +235,7 @@ onEvent(tempEventKey, stateEventKey) { event -&gt;
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L43-L60" target="_blank" title="Go to snippet source"></a><code class="language-kts">val tempEventKey = &quot;esw.temperature.temp&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L45-L62" target="_blank" title="Go to snippet source"></a><code class="language-kts">val tempEventKey = &quot;esw.temperature.temp&quot;
 val stateEventKey = &quot;esw.temperature.state&quot;
 val events: Set&lt;Event&gt; = getEvent(tempEventKey, stateEventKey)</code></pre></dd>
 </dl>
@@ -245,7 +245,7 @@ val events: Set&lt;Event&gt; = getEvent(tempEventKey, stateEventKey)</code></pre
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L64-L68" target="_blank" title="Go to snippet source"></a><code class="language-kts">// full event key string
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L66-L70" target="_blank" title="Go to snippet source"></a><code class="language-kts">// full event key string
 val tempKey: EventKey = EventKey(&quot;esw.temperature.temp&quot;)
 
 // prefix and event name strings
@@ -256,21 +256,21 @@ val tempKey1: EventKey = EventKey(&quot;esw.temperature&quot;, &quot;temp&quot;)
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L22" target="_blank" title="Go to snippet source"></a><code class="language-kts">val temperatureEvent: SystemEvent = SystemEvent(&quot;esw.temperature&quot;, &quot;temp&quot;, parameters)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L22" target="_blank" title="Go to snippet source"></a><code class="language-kts">val systemEvent: SystemEvent = SystemEvent(&quot;esw.temperature&quot;, &quot;temp&quot;, parameters)</code></pre></dd>
 </dl>
 <h3><a href="#observeevent" name="observeevent" class="anchor"><span class="anchor-link"></span></a>ObserveEvent</h3>
 <p>Helper DSL to create <code>ObserveEvent</code> from the provided <code>prefix</code>, <code>event name</code> and <code>parameters</code> (optional).</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L26" target="_blank" title="Go to snippet source"></a><code class="language-kts">val completionEvent: ObserveEvent = ObserveEvent(&quot;ocs.motor&quot;, &quot;position&quot;, parameters)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L26" target="_blank" title="Go to snippet source"></a><code class="language-kts">val observeEvent: ObserveEvent = ObserveEvent(&quot;ocs.motor&quot;, &quot;position&quot;, parameters)</code></pre></dd>
 </dl>
 <h3><a href="#systemvar" name="systemvar" class="anchor"><span class="anchor-link"></span></a>SystemVar</h3>
 <p>Helper DSL to create <code>EventVariable</code> corresponding to <code>SystemEvent</code>. This DSL needs the <code>initial value</code> of the parameter, <code>event key</code> and <code>parameter key</code>.  More details about SystemVar are provided in <a href="../../fsm.html#reactive-fsm">FSM documentation</a></p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L72-L73" target="_blank" title="Go to snippet source"></a><code class="language-kts">val locKey = intKey(&quot;current-location&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L74-L75" target="_blank" title="Go to snippet source"></a><code class="language-kts">val locKey = intKey(&quot;current-location&quot;)
 val systemVar: EventVariable&lt;Int&gt; = SystemVar(0, &quot;ocs.motor.position&quot;, locKey)</code></pre></dd>
 </dl>
 <h3><a href="#observevar" name="observevar" class="anchor"><span class="anchor-link"></span></a>ObserveVar</h3>
@@ -278,7 +278,7 @@ val systemVar: EventVariable&lt;Int&gt; = SystemVar(0, &quot;ocs.motor.position&
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L77-L78" target="_blank" title="Go to snippet source"></a><code class="language-kts">val angleKey = intKey(&quot;current-angle&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L79-L80" target="_blank" title="Go to snippet source"></a><code class="language-kts">val angleKey = intKey(&quot;current-angle&quot;)
 val observeVar: EventVariable&lt;Int&gt; = ObserveVar(0, &quot;tcs.filter.wheel&quot;, angleKey)</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
