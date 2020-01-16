@@ -266,7 +266,7 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#logging-aggregator" name="logging-aggregator" class="anchor"><span class="anchor-link"></span></a>Logging Aggregator</h1>
-<p>The logging aggregator provides aggregation of logs generated from TMT applications written in Scala, Java, Python, C, C++, modules like System logs, Redis logs, Postgres logs, ElasticSearch logs, Keycloak logs using the widely used Elastic <a href="https://www.elastic.co/elk-stack">ELK stack</a> (<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch</a>, <a href="https://www.elastic.co/guide/en/logstash/current/index.html">Logstash</a>, <a href="https://www.elastic.co/guide/en/kibana/current/index.html">Kibana</a>), and the <a href="https://www.elastic.co/guide/en/beats/filebeat/current/index.html">Filebeat</a> utility.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>The logging aggregator provides aggregation of logs generated from TMT applications written in Scala, Java, Python, C, C++, modules like System logs, Redis logs, Postgres logs, ElasticSearch logs, Keycloak logs using the widely used Elastic <a href="https://www.elastic.co/what-is/elk-stack">ELK stack</a> (<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch</a>, <a href="https://www.elastic.co/guide/en/logstash/current/index.html">Logstash</a>, <a href="https://www.elastic.co/guide/en/kibana/current/index.html">Kibana</a>), and the <a href="https://www.elastic.co/guide/en/beats/filebeat/current/index.html">Filebeat</a> utility.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>The basic/elastic license of Elastic stack, which is a free license, should be sufficient for TMT&rsquo;s purposes. To know more about what features are available in the basic license refer to this <a href="https://www.elastic.co/subscriptions">link</a>.</p></div>
 <h2><a href="#architecture" name="architecture" class="anchor"><span class="anchor-link"></span></a>Architecture</h2>
 <p><img src="../services/logging_architecture.png" alt="logo" /></p>
@@ -303,7 +303,14 @@ tmtsoftware/csw
   <dt>main.cpp
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/cpp/main.cpp" target="_blank" title="Go to snippet source"></a><code class="language-cpp"><br/>using namespace std;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/cpp/main.cpp" target="_blank" title="Go to snippet source"></a><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;cstdlib&gt;
+#include &lt;string&gt;
+#include &lt;spdlog/spdlog.h&gt;
+#include &lt;spdlog/sinks/basic_file_sink.h&gt;
+#include &lt;spdlog_setup/conf.h&gt;
+
+using namespace std;
 
 // take the path for storing logs from env var, if not set throw exception
 string setFilePath()
@@ -360,7 +367,8 @@ int main()
   <dt>logging_default.toml
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/cpp/logging_default.toml" target="_blank" title="Go to snippet source"></a><code class="language-toml">[[sink]]
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/cpp/logging_default.toml" target="_blank" title="Go to snippet source"></a><code class="language-toml"># Various sinks can be created in the following way. More informations can be found at https://github.com/guangie88/spdlog_setup#toml-configuration-example
+[[sink]]
 name = &quot;basic_logger&quot;
 type = &quot;basic_file_sink_st&quot;
 # Tagged based configuration. Programmatically determine path.
@@ -383,7 +391,10 @@ level = &quot;trace&quot;
   <dt>main.c
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/c/main.c" target="_blank" title="Go to snippet source"></a><code class="language-c"><br/>int main(int argc, char **argv)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/c/main.c" target="_blank" title="Go to snippet source"></a><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;zlog.h&gt;
+
+int main(int argc, char **argv)
 {
 
     int rc;
@@ -415,7 +426,8 @@ level = &quot;trace&quot;
   <dt>logging_default.conf
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/c/logging_default.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">[global]
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/logging/aggregator/c/logging_default.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf"># More information on configuration settings can be found http://hardysimpson.github.io/zlog/UsersGuide-EN.html#htoc14
+[global]
 # Highly recommended to keep the default format as-is for a meaningful logging aggregation and analysis
 default format = &quot;{&quot;timestamp&quot; : &quot;%d(%FT%T).%ms%d(%z)&quot;, &quot;@severity&quot; : &quot;%V&quot;, &quot;file&quot; : &quot;%F&quot;, &quot;line&quot; : &quot;%L&quot;, &quot;@host&quot; : &quot;%H&quot;, &quot;message&quot; : &quot;%m&quot;} %n&quot;
 
@@ -580,7 +592,7 @@ class UTCFormatter(logging.Formatter):
 <p>Machines running Logstash and Kibana will require to aggregate system logs from their machines too. Hence, in order to enable system module on their machines follow the below given steps:</p>
 <ul>
   <li>Run Elasticsearch using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/elasticsearch/elasticsearch.yml">elasticsearch.yml</a>.  Place <code>elasticsearch.yml</code> in &laquo;Elasticsearch installation folder&raquo;/config/ and execute <code>./bin/elasticsearch</code> (on Mac) or <code>bin/elasticsearch</code> (on Linux).</li>
-  <li>Go to &laquo;Filebeat installation folder&raquo; place <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator/prod/logstash/filebeat.yml">Logstash/filebeat.yml</a>  and execute <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator/prod/logstash/filebeat-init.sh">Logstash/filebeat-init.sh</a> or  place <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator/prod/kibana/filebeat.yml">Kibana/filebeat.yml</a>  and execute <a href="https://github.com/tmtsoftware/csw/tree/master/scripts/logging_aggregator/prod/kibana/filebeat-init.sh">Kibana/filebeat-init.sh</a>  from Logstash or Kibana machines respectively. This will make Elasticsearch aware of System module.</li>
+  <li>Go to &laquo;Filebeat installation folder&raquo; place <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/logstash/filebeat.yml">Logstash/filebeat.yml</a>  and execute <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/logstash/filebeat-init.sh">Logstash/filebeat-init.sh</a> or  place <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/kibana/filebeat.yml">Kibana/filebeat.yml</a>  and execute <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/kibana/filebeat-init.sh">Kibana/filebeat-init.sh</a>  from Logstash or Kibana machines respectively. This will make Elasticsearch aware of System module.</li>
   <li>Run Filebeat from &laquo;Filebeat installation folder&raquo; by executing <code>./filebeat -e</code> (on Mac) or <code>filebeat -e</code> (on Linux).</li>
   <li>Run LogStash using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/logstash/logstash.conf">logstash.conf</a>.  Place <code>logstash.conf</code> in &laquo;Logstash installation folder&raquo;/config/ and execute <code>./bin/logstash -f config/logstash.conf</code> (on mac) or  <code>bin/logstash -f config/logstash.conf</code> (on Linux).</li>
   <li>Run Kibana using <a href="https://github.com/tmtsoftware/csw/blob/master/scripts/logging_aggregator/prod/kibana/kibana.yml">kibana.yml</a>.  Place <code>kibana.yml</code> in &laquo;Kibana installation folder&raquo;/config/ and execute <code>./bin/kibana</code> (on mac) or <code>bin/kibana</code> (on Linux). This will give GUI over  logs aggregated in Elasticsearch.</li>

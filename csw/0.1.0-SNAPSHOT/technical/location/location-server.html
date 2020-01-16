@@ -187,7 +187,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="https://doc.akka.io/docs/akka/current/index-cluster.html">Akka Cluster</a></li>
   <li><a href="https://doc.akka.io/docs/akka/current/typed/distributed-data.html">Conflict Free Replicated Data Types (CRDTs)</a>: Shares location information within the network.</li>
-  <li><a href="https://doc.akka.io/docs/akka-http/current">Akka HTTP</a></li>
+  <li><a href="https://doc.akka.io/docs/akka-http/current/">Akka HTTP</a></li>
   <li>DeathWatch Actor</li>
 </ul>
 <p><img src="../../images/locationservice/location-service.png" alt="Location Service" /></p>
@@ -200,15 +200,15 @@ tmtsoftware/csw
 <p>Let&rsquo;s discuss different components of <code>Location Server</code> in following sections:</p>
 <h3><a href="#cluster-member" name="cluster-member" class="anchor"><span class="anchor-link"></span></a>Cluster Member</h3>
 <p>Location Service JVM (precisely Actor System) takes part in <a href="https://doc.akka.io/docs/akka/current/index-cluster.html">Akka Cluster</a>. By default, this actor system binds to port <code>3552</code>. Initially when there is no member in Akka cluster, node joins itself. Such a node is referred as seed node (introducer) and the location of this node needs to be known so that other nodes can join to this known address and form a larger cluster. After the joining process is complete, seed nodes are not special and they participate in the cluster in exactly the same way as other nodes.</p>
-<p>Akka Cluster provides cluster <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#membership">membership</a> service using <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#gossip">gossip</a> protocols and an automatic <a href="https://doc.akka.io/docs/akka/current/common/cluster.html#failure-detector">failure detector</a>.</p>
+<p>Akka Cluster provides cluster <a href="https://doc.akka.io/docs/akka/current/typed/cluster-membership.html">membership</a> service using <a href="https://doc.akka.io/docs/akka/current/typed/cluster-concepts.html#gossip">gossip</a> protocols and an automatic <a href="https://doc.akka.io/docs/akka/current/typed/cluster-concepts.html#failure-detector">failure detector</a>.</p>
 <p>Death watch uses the cluster failure detector for nodes in the cluster, i.e. it detects network failures and JVM crashes, in addition to graceful termination of watched actor. Death watch generates the <code>Terminated</code> message to the watching actor when the unreachable cluster node has been downed and removed. Hence we have kept <code>auto-down-unreachable-after = 10s</code> so that in case of failure, interested parties get the death watch notification for the location in around 10s.</p>
 <h3><a href="#distributed-data-replicator-" name="distributed-data-replicator-" class="anchor"><span class="anchor-link"></span></a>Distributed Data (Replicator)</h3>
 <p>We use Akka Distributed Data to share CSW component locations between nodes in an Akka Cluster. These locations are accessed with an actor called as <code>replicator</code> providing a key-value store like API. We store the following data in this key-value store (distributed data):</p>
 <ul>
   <li>
-  <p><code>AllServices</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala#maps">LWWMap</a> CRDT from <code>Connection</code> to <code>Location</code>. <code>Connection</code> and <code>Location</code> can be one of <code>Akka</code>, <code>Tcp</code> or <code>HTTP</code> type.  At any point in time, the value of this map represents all the locations registered with <code>Location Service</code> in a TMT environment.</p></li>
+  <p><code>AllServices</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala">LWWMap</a> CRDT from <code>Connection</code> to <code>Location</code>. <code>Connection</code> and <code>Location</code> can be one of <code>Akka</code>, <code>Tcp</code> or <code>HTTP</code> type.  At any point in time, the value of this map represents all the locations registered with <code>Location Service</code> in a TMT environment.</p></li>
   <li>
-  <p><code>Service</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala#flags-and-registers">LWWRegister</a> which holds location of CSW component against unique connection name.</p></li>
+  <p><code>Service</code>:  This uses <a href="https://doc.akka.io/docs/akka/current/distributed-data.html?language=scala">LWWRegister</a> which holds location of CSW component against unique connection name.</p></li>
 </ul>
 <h4><a href="#consistency-guarantees" name="consistency-guarantees" class="anchor"><span class="anchor-link"></span></a>Consistency Guarantees</h4>
 <ul>
@@ -234,7 +234,7 @@ tmtsoftware/csw
       <li>
       <p>On receiving track request, location server internally subscribes to the <code>replicator</code> using <code>Service</code> key as explained in previous section and generates stream of <code>TrackingEvent</code></p></li>
       <li>
-      <p>Server then maps this stream of <code>TrackingEvent</code> to <a href="https://doc.akka.io/docs/akka-http/current/sse-support.html">SSE (ServerSentEvent)</a></p></li>
+      <p>Server then maps this stream of <code>TrackingEvent</code> to <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationWebsocketHandler.scala">Websocket</a></p></li>
       <li>
       <p>Server also keeps sending <code>ServerSentEvent.heartbeat</code> every <code>2 seconds</code> to keep connection alive</p></li>
     </ol>
@@ -270,11 +270,11 @@ tmtsoftware/csw
 </ol><div class="callout note "><div class="callout-title">Note</div>
 <p>At any point in time, <code>Assembly</code> can choose to cancel tracking. On cancellation, this persistent connection will be released.</p></div>
 <h2><a href="#internals" name="internals" class="anchor"><span class="anchor-link"></span></a>Internals</h2>
-<p>The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/Main.scala">Main</a> class delegates the job of creating the cluster actor and HTTP server instance to the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/internal/ServerWiring.scala">ServerWiring</a> class.</p>
-<p>The default TCP ports for the actor and HTTP servers are specified in <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/resources/application.conf">application.conf</a>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>The <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/Main.scala">Main</a> class delegates the job of creating the cluster actor and HTTP server instance to the <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/internal/ServerWiring.scala">ServerWiring</a> class.</p>
+<p>The default TCP ports for the actor and HTTP servers are specified in <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/resources/application.conf">application.conf</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Due to the way random port numbers are used for CSW components, firewalls should be disabled for these systems, which are assumed to be in an internal network that is protected from outside access.</p></div>
-<p>In order to determine the correct IP address to use for the local host, it is necessary to set the <em>INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs). The <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> class uses that information, along with other settings when starting the cluster actor. It also needs to know the <em>cluster seeds</em>, a comma separated list of <em>host:port</em> values for at least one other actor in the cluster. This information is needed in order to join the Location Service cluster.</p>
-<p>The Location Service HTTP server is implemented by the <a href="https://github.com/tmtsoftware/csw/tree/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationRoutes.scala">LocationRoutes</a> class, which defines the HTTP routes and talks to the cluster actor on the client&rsquo;s behalf.</p>
+<p>In order to determine the correct IP address to use for the local host, it is necessary to set the <em>INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs). The <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> class uses that information, along with other settings when starting the cluster actor. It also needs to know the <em>cluster seeds</em>, a comma separated list of <em>host:port</em> values for at least one other actor in the cluster. This information is needed in order to join the Location Service cluster.</p>
+<p>The Location Service HTTP server is implemented by the <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationHttpHandler.scala">LocationHttpHandler</a> class, <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationWebsocketHandler.scala">LocationWebsocketHandler</a> and talks to the cluster actor on the client&rsquo;s behalf.</p>
 <h2><a href="#java-api" name="java-api" class="anchor"><span class="anchor-link"></span></a>Java API</h2>
 <p>Since the location <em>server</em> is only accessed internally, there is no extra Java API for it. The location service <em>client</em> and <em>API</em> code does provide Java APIs (see below).</p>
 <h2><a href="#tests" name="tests" class="anchor"><span class="anchor-link"></span></a>Tests</h2>
