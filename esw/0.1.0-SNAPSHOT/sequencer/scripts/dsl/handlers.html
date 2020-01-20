@@ -213,8 +213,8 @@ tmtsoftware/esw
     val assembly1 = Assembly(&quot;filter.wheel&quot;, 5.seconds)
     val assembly2 = Assembly(&quot;wfos.red.detector&quot;, 5.seconds)
     par(
-            { assembly1.submit(Setup(&quot;tcs.darknight&quot;, &quot;command-1&quot;)) },
-            { assembly2.submit(Setup(&quot;tcs.darknight&quot;, &quot;command-1&quot;)) }
+            { assembly1.submit(Setup(&quot;TCS.darknight&quot;, &quot;command-1&quot;)) },
+            { assembly2.submit(Setup(&quot;TCS.darknight&quot;, &quot;command-1&quot;)) }
     )
 }</code></pre></dd>
 </dl>
@@ -322,13 +322,14 @@ tmtsoftware/esw
   <li>
     <p><strong>Command Handlers Failure</strong> : While executing sequence <a href="handlers.html#command-handlers">Command Handlers</a> e.g. <code>onSetup</code> , <code>onObserve</code> can fail because of two reasons: </p>
     <ol>
-      <li>handler throws exception or 2. <code>Command Service</code> or <code>Sequencer Command Service</code> used to interact with downstream <code>Assembly/HCD/Sequencer</code> returns negative <code>SubmitResponse</code>. Negative <code>SubmitResponse</code> is by default considered as error. In this case of failure, sequence is terminated with failure.</li>
+      <li>handler throws exception or</li>
+      <li><code>Command Service</code> or <code>Sequencer Command Service</code> used to interact with downstream <code>Assembly/HCD/Sequencer</code> returns negative <code>SubmitResponse</code>. Negative <code>SubmitResponse</code> is by default considered as error. In this case of failure, sequence is terminated with failure.</li>
     </ol>
   </li>
   <li>
   <p><strong>Handlers Failure</strong> : This failure occurs when any of handlers other than Command Handlers fail (e.g. <code>OnGoOnline</code>, <code>onDiagnosticMode</code> etc.). In this scenario, framework will log error cause. Sequence execution will continue. </p></li>
 </ol>
-<p>Script DSL provides following constructs to handle failure while executing script: 1. <strong>onGlobalError</strong> : This construct is provided for script writer. Logic in <code>onGlobalError</code> will be executed in case of all <strong>Handlers Failure</strong> including <strong>Command Handlers Failure</strong>. If <code>onGlobalError</code> handler is not provided by script then only logging of error cause is done by the framework.</p>
+<p>Script DSL provides following constructs to handle failure while executing script: 1. <strong>onGlobalError</strong> : This construct is provided for script writer. Logic in <code>onGlobalError</code> will be executed in case of all <strong>Handlers Failure</strong> including <strong>Command Handlers Failure</strong> except <a href="#shutdown-handler">Shutdown Handler</a>. If <code>onGlobalError</code> handler is not provided by script then only logging of error cause is done by the framework.</p>
 <p>Following example shows usage of <code>onGloablError</code></p>
 <dl>
   <dt>Kotlin</dt>
@@ -406,7 +407,8 @@ onGlobalError { error -&gt;
     error(err.reason)
 }</code></pre></dd>
 </dl>
-<p>If you don&rsquo;t want to fail sequence in case of Command Service APIs while interacting with downstream Assembly/HCD (<code>submit</code>, <code>query</code> etc.) or Sequencer Command Service APIs while interacting with downstream Sequencer (<code>submit</code>, <code>query</code> etc.) then <strong>resumeOnError</strong> flag can be used. For details of <strong>resumeOnError</strong>, please refer <a href="services/command-service.html#error-handling">Error handling</a> </p>
+<p>If you don&rsquo;t want to fail sequence in case of Command Service APIs while interacting with downstream Assembly/HCD (<code>submit</code>, <code>query</code> etc.) or Sequencer Command Service APIs while interacting with downstream Sequencer (<code>submit</code>, <code>query</code> etc.) then <strong>resumeOnError</strong> flag can be used. For details of <strong>resumeOnError</strong>, please refer <a href="services/command-service.html#error-handling">Error handling</a> </p><div class="callout note "><div class="callout-title">Note</div>
+<p>Error in all handlers <strong>except Shutdown Handler</strong> will execute error handler provided by script. If error handler is not provided, framework will log error cause. </p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/handlers.md" title="Edit this page" class="md-source-file md-edit">
