@@ -315,31 +315,48 @@ tmtsoftware/esw
 }</code></pre></dd>
 </dl>
 <h2><a href="#error-handlers" name="error-handlers" class="anchor"><span class="anchor-link"></span></a>Error Handlers</h2>
-<h3><a href="#handling-global-errors" name="handling-global-errors" class="anchor"><span class="anchor-link"></span></a>Handling global errors</h3>
-<p>Script DSL provides <code>onGlobalError</code> handler where script writer can write logic like cleaning up of resources. This will be executed before terminating sequence with failure.</p>
-<p>Script execution can fail and go in error handler by following ways:</p>
+<p>Script can error out in following scenarios:</p>
 <ol>
-  <li>Handlers fail with exception.</li>
-  <li>Command Service and Sequencer Command Service APIs return negative <code>SubmitResponse</code> which is by default considered as error.</li>
+  <li>
+  <p><strong>Script Initialization Error</strong> : When construction of script throws exception then script initialization fails. In this scenario, framework will log error cause. Sequencer will not start in this failure. One need to fix error and then load script again.</p></li>
+  <li>
+    <p><strong>Command Handlers Failure</strong> : While executing sequence <a href="handlers.html#command-handlers">Command Handlers</a> e.g. <code>onSetup</code> , <code>onObserve</code> can fail because of two reasons: </p>
+    <ol>
+      <li>handler throws exception or 2. <code>Command Service</code> or <code>Sequencer Command Service</code> used to interact with downstream <code>Assembly/HCD/Sequencer</code> returns negative <code>SubmitResponse</code>. Negative <code>SubmitResponse</code> is by default considered as error. In this case of failure, sequence is terminated with failure.</li>
+    </ol>
+  </li>
+  <li>
+  <p><strong>Handlers Failure</strong> : This failure occurs when any of handlers other than Command Handlers fail (e.g. <code>OnGoOnline</code>, <code>onDiagnosticMode</code> etc.). In this scenario, framework will log error cause. Sequence execution will continue. </p></li>
 </ol>
-<p>In both of above cases, error cause is logged by a framework and <code>onGlobalError</code> handler written in script is called. If <code>onGlobalError</code> handler is not provided by script then only logging of error cause is done. After calling global error handler, script execution flow breaks and sequence is terminated with failure.</p>
+<p>Script DSL provides following constructs to handle failure while executing script: 1. <strong>onGlobalError</strong> : This construct is provided for script writer. Logic in <code>onGlobalError</code> will be executed in case of all <strong>Handlers Failure</strong> including <strong>Command Handlers Failure</strong>. If <code>onGlobalError</code> handler is not provided by script then only logging of error cause is done by the framework.</p>
+<p>Following example shows usage of <code>onGloablError</code></p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/HandlersExample.kts#L95-L115" target="_blank" title="Go to snippet source"></a><code class="language-kts">// Scenario-1 handler fails
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/HandlersExample.kts#L95-L125" target="_blank" title="Go to snippet source"></a><code class="language-kts">// Scenario-1 onObserve handler fails
 onObserve(&quot;trigger-filter-wheel&quot;) { command -&gt;
     val triggerStartEvent = ObserveEvent(&quot;esw.command&quot;, &quot;trigger.start&quot;, command(stringKey(name = &quot;triggerTime&quot;)))
     // publishEvent fails with EventServerNotAvailable which fails onObserve handler
     // onGlobalError handler is called
+    // Sequence is terminated with failure.
     publishEvent(triggerStartEvent)
 }
 
-// Scenario-2 submit returns negative SubmitResponse
+// Scenario-2 onSetup handler fails - submit returns negative SubmitResponse
 onSetup(&quot;command-2&quot;) { command -&gt;
-    val assembly = Assembly(&quot;filter.wheel&quot;, 5.seconds)
+    val assembly1 = Assembly(&quot;filter.wheel&quot;, 5.seconds)
 
     //Submit command to assembly return negative response. (error by default) onGlobalError handler is called.
-    assembly.submit(command)
+    // Sequence is terminated with failure.
+    assembly1.submit(command)
+}
+
+// Scenario-3
+onDiagnosticMode {startTime, hint -&gt;
+    //publishEvent fails with EventServerNotAvailable
+    //onDiagnosticMode handler fails
+    //onGlobalError is called. Sequence execution continues.
+    publishEvent(ObserveEvent(&quot;esw.diagnostic.mode&quot;, hint))
 }
 
 onGlobalError { error -&gt;
@@ -348,8 +365,10 @@ onGlobalError { error -&gt;
     publishEvent(observationEndEvent)
 }</code></pre></dd>
 </dl>
-<h3><a href="#handling-errors-at-command-level" name="handling-errors-at-command-level" class="anchor"><span class="anchor-link"></span></a>Handling errors at command level</h3>
-<p>If script writer wants to handle errors at command level, <code>onError</code> construct can be used. In this case, <code>onError</code> is called first, followed by <code>onGlobalError</code> handler. This will also result in terminating sequence with failure. Following example shows command level error handler along with global error handler. <code>onError</code> construct is available to handle failure of <code>onSetup</code> and <code>onObserve</code> command handler. Following example shows submit to assembly return negative <code>SubmitResponse</code> triggers error handling mechanism. </p>
+<ol>
+  <li><strong>onError</strong> : This construct is specifically provided for <strong>Command Handlers Failure</strong>. <code>onError</code> block can be written specifically for each <code>onSetup</code> and <code>onObserve</code> handler. In case of failure, <code>onError</code> will be called first followed by <code>onGlobalError</code> and sequence will be terminated with failure. By default negative <code>SubmitResponse</code> is considered as error.</li>
+</ol>
+<p>Following example shows command level error handler along with global error handler. <code>onError</code> construct is available to handle failure of <code>onSetup</code> and <code>onObserve</code> command handler. In this example, submit to assembly return negative <code>SubmitResponse</code> triggers error handling mechanism. </p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
