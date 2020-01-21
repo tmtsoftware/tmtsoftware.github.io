@@ -208,7 +208,7 @@ tmtsoftware/esw
 }</code></pre></dd>
 </dl>
 <h3><a href="#define-state" name="define-state" class="anchor"><span class="anchor-link"></span></a>Define state</h3>
-<p>As mentioned above, the third parameter of <code>Fsm</code> method is a block which is the place to define all the states of FSM. A method named <code>state</code> needs  to be called with parameters <code>name</code> of the state and the <code>block</code> of actions to be performed in that state. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>As mentioned above, the third parameter of <code>Fsm</code> method is a block which is the place to define all the states of FSM. A method named <code>state</code> needs  to be called with parameters <code>name</code> of the state and the <code>block</code> of actions to be performed in that state.</p><div class="callout note "><div class="callout-title">Note</div>
 <ol>
   <li>State names are <strong>case-insensitive</strong>.</li>
   <li>In case of multiple states with same name, the last one will be considered.</li>
@@ -229,7 +229,7 @@ tmtsoftware/esw
 </dl>
 <p>State transition should ideally be the <strong>last call in state</strong> or should be <strong>done with proper control flow</strong> so that become is <strong>not called multiple times</strong>.</p>
 <h3><a href="#complete-fsm" name="complete-fsm" class="anchor"><span class="anchor-link"></span></a>Complete FSM</h3>
-<p><code>completeFsm</code> <strong>marks the FSM complete</strong>. Calling it will immediately <strong>stop execution of the FSM</strong> and next steps will be ignored, so it should be called at the end of the state. </p>
+<p><code>completeFsm</code> <strong>marks the FSM complete</strong>. Calling it will immediately <strong>stop execution of the FSM</strong> and next steps will be ignored, so it should be called at the end of the state.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -259,7 +259,7 @@ tmtsoftware/esw
     </dl>
   </li>
   <li>
-    <p><code>after</code> : executes the given <code>block</code> after the given <code>duration</code> </p>
+    <p><code>after</code> : executes the given <code>block</code> after the given <code>duration</code></p>
     <dl>
       <dt>Kotlin</dt>
       <dd>
@@ -285,16 +285,20 @@ tmtsoftware/esw
 </dl>
 <h2><a href="#reactive-fsm" name="reactive-fsm" class="anchor"><span class="anchor-link"></span></a>Reactive FSM</h2>
 <p>FSM can be made to react to changes in Event and Command parameters with help of <code>Event variables</code> and <code>Command flags</code>.</p>
-<p><strong><code>bind</code>ing FSM to reactive variable is necessary</strong> to achieve the reactive behavior of FSM. </p>
+<p><strong><code>bind</code>ing FSM to reactive variable is necessary</strong> to achieve the reactive behavior of FSM.</p>
 <h3><a href="#event-variable" name="event-variable" class="anchor"><span class="anchor-link"></span></a>Event variable</h3>
 <p>Event variables are the way to make fsm react to events. Event variable can be tied to only one Parameter Key in an event. To make FSM react to Event variable, we need to create a <code>EventVariable</code> for a specific Parameter Key of an Event and <strong>bind the FSM</strong> to it. FSM can be bind to multiple Event variables and vise versa.</p>
-<p>Event variables use Event Service underneath, which makes it possible to share data between multiple sequencers. Whenever any event is published on the key of given event, all the FSMs bound to that variable will be re-evaluated. </p>
+<p>Event variables use Event Service underneath, which makes it possible to share data between multiple sequencers. Whenever any event is published on the key of given event, all the FSMs bound to that variable will be re-evaluated.</p>
 <p>Event variables are of 2 types:</p>
 <ol>
   <li><code>SystemVar</code> - are based on SystemEvent</li>
   <li><code>ObserveVar</code> - are based on ObserveEvent</li>
 </ol>
-<p>Event variable has capability to behave one of two ways  - Subscribe to the Events getting published  - Poll for a new event after every certain interval</p>
+<p>Event variable has capability to behave one of two ways</p>
+<ul>
+  <li>Subscribe to the Events getting published</li>
+  <li>Poll for a new event after every certain interval</li>
+</ul>
 <h4><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>Subscribe</h4>
 <p>Event variable subscribes to the given Event key and refresh the FSMs whenever an event is published. This will refresh the FSMs as soon as Event is published.</p>
 <p>Following examples shows how to create Event variables with subscribing behavior, <code>bind</code> FSM to it and methods like <code>get</code> and <code>set</code>. <code>set</code> will publish the event with modified parameter.</p>
@@ -318,7 +322,7 @@ observeVar.set(JEqCoord.make(1, 1)) // publishes the given value on event key</c
 </dl>
 <h4><a href="#poll" name="poll" class="anchor"><span class="anchor-link"></span></a>Poll</h4>
 <p>Polling behavior is for situations when it&rsquo;s <strong>not necessary to refresh FSM on every Event</strong>, can be done periodically after a certain duration. Event variable polls to get the latest Event with given duration and if a new Event is published, it will refresh the FSMs. Polling behavior can be used when the publisher is too fast and there is no need respond so quickly to it.</p>
-<p>For creating Event variable with polling behavior, it needs an extra argument which is the <code>duration</code> to poll with, the example code demos it. Other methods like <code>get</code>, <code>set</code> and <code>bind</code> are same as shown <a href="#subscribe">Subscribe</a> examples above.</p>
+<p>For creating Event variable with polling behavior, it needs an extra argument which is the <code>duration</code> to poll with, the example code demos it. Other methods like <code>get</code>, <code>set</code> and <code>bind</code> are same as shown <a href="fsm.html#subscribe">Subscribe</a> examples above.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -330,7 +334,7 @@ val pollingObsVar: EventVariable&lt;Coord&gt; = ObserveVar(JEqCoord.make(0, 0), 
 </dl>
 <h3><a href="#commandflag" name="commandflag" class="anchor"><span class="anchor-link"></span></a>CommandFlag</h3>
 <p>Command flag acts as bridge which can used to pass <code>Parameters</code> to FSM from outside. Setting the params in command flag will re-evaluate the all the FSMs with provided params which are bound to that flag. It is possible to bind one FSM to multiple command flags and vise versa. Command flag is limited to scope of a single script. It does not have any remote impact.</p>
-<p>Example shows how to create <code>CommandFlag</code>, <code>bind</code> FSM to it and methods <code>get</code> and <code>set</code> which are provided to retrieve or set the value of  params in command flag. </p>
+<p>Example shows how to create <code>CommandFlag</code>, <code>bind</code> FSM to it and methods <code>get</code> and <code>set</code> which are provided to retrieve or set the value of  params in command flag.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -342,8 +346,8 @@ flag.bind(irisFsm) // bind the FSM and command flag
 flag.set(params) // refreshes the bound FSMs with the new params</code></pre></dd>
 </dl>
 <h2><a href="#example-fsm" name="example-fsm" class="anchor"><span class="anchor-link"></span></a>Example FSM</h2>
-<p>In the below example, <code>temparatureFsm</code> demonstrates how to define and use FSM in the scripts. The event variable is declared with event key <code>esw.temperature.temp</code> for param <code>temperature</code> and <code>temperatureFsm</code> is bind to it. The job of the <code>temperatureFsm</code> is to decide the <code>state</code> based on the <code>temperature</code> and publish it on event key <code>esw.temperatureFsm</code> with param key <code>state</code>. </p>
-<p>Logic of state change is: </p>
+<p>In the below example, <code>temparatureFsm</code> demonstrates how to define and use FSM in the scripts. The event variable is declared with event key <code>esw.temperature.temp</code> for param <code>temperature</code> and <code>temperatureFsm</code> is bind to it. The job of the <code>temperatureFsm</code> is to decide the <code>state</code> based on the <code>temperature</code> and publish it on event key <code>esw.temperatureFsm</code> with param key <code>state</code>.</p>
+<p>Logic of state change is:</p>
 <table>
   <thead>
     <tr>
@@ -424,9 +428,7 @@ onSetup(&quot;command-2&quot;) {
 }
 </code></pre></dd>
 </dl>
-<ul>
-  <li>Full example code is available <a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/FsmExample.kts">here</a>.</li>
-</ul>
+<p>Full example code is available <a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/FsmExample.kts">here</a>.</p>
 <p>Key things in above example code are :</p>
 <ul>
   <li><code>[[ 1 ]]</code>: Shows <strong>top-level scope of the FSM which can used to declare variables</strong> in FSM&rsquo;s scope and statements which should be executed while starting the FSM. Statements written here will be executed only once when the FSM starts.</li>
