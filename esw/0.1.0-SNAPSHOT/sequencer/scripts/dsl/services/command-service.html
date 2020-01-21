@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../../../assets/tmt_favicon.ico">
-<title>Command Service · TMT Executive Software (ESW)</title>
+<title>Command Service · High Level DSL</title>
 <link rel="stylesheet" href="../../../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../../../lib/prettify/prettify.css">
@@ -43,7 +43,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <nav class="md-header-nav md-grid">
 <div class="md-flex">
 <div class="md-flex__cell md-flex__cell--shrink">
-<a href="../../../../index.html" title="TMT Executive Software (ESW)" class="md-header-nav__button md-logo">
+<a href="../../../../sequencer/scripts/dsl/dsl.html" title="High Level DSL" class="md-header-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
 </div>
@@ -53,7 +53,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <div class="md-flex__cell md-flex__cell--stretch">
 <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
 <span class="md-header-nav__topic">
-TMT Executive Software (ESW)
+High Level DSL
 </span>
 <span class="md-header-nav__topic">
 Command Service
@@ -112,12 +112,12 @@ tmtsoftware/esw
 <div class="md-sidebar__inner">
 <nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
 <label class="md-nav__title md-nav__title--site" for="drawer">
-<a href="../../../../index.html" title="TMT Executive Software (ESW)" class="md-nav__button md-logo">
+<a href="../../../../sequencer/scripts/dsl/dsl.html" title="High Level DSL" class="md-nav__button md-logo">
 <span class="md-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
-<a href="../../../../index.html" title="TMT Executive Software (ESW)">
-TMT Executive Software (ESW)
+<a href="../../../../sequencer/scripts/dsl/dsl.html" title="High Level DSL">
+High Level DSL
 </a>
 </label>
 <div class="md-nav__source">
@@ -135,12 +135,17 @@ tmtsoftware/esw
 
 </div>
 <ul>
-  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
-  <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Script</a>
-  <ul>
-    <li><a href="../../../../sequencer/scripts/fsm.html" class="page">FSM</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/dsl.html" class="page">High Level DSL</a></li>
-  </ul></li>
+  <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html" class="page">Config Service</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html" class="active page">Command Service</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html" class="page">Alarm Service</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html" class="page">Time Service</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="page">Sequencer Command Service</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/handlers.html" class="page">Script Handlers</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/loop.html" class="page">Loops</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/contained-fsm.html" class="page">FSM</a></li>
+  <li><a href="../../../../sequencer/scripts/dsl/misc.html" class="page">Misc</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
@@ -198,7 +203,11 @@ tmtsoftware/esw
 <p>Command Service DSL is kotlin wrapper over CSW Command Service module provided for sending commands to assemblies or HCDs via scripts. You can refer a detailed documentation of Command Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/commons/command.html#commandservice">here</a>. This DSL exposes following APIs:</p>
 <h2><a href="#assembly" name="assembly" class="anchor"><span class="anchor-link"></span></a>Assembly</h2>
 <p>This DSL creates Assembly instance with provided name and gives handle to Command Service DSL through which script can interact with assembly. For example send commands or lifecycle methods e.g. goOnline, goOffline, lock Assembly etc. This api also takes default timeout which will be used in commands like submitAndWait, queryFinal etc.</p>
-<p>This DSL takes following parameters: * <code>prefix</code>: Prefix of assembly * <code>defaultTimeout</code>: if DSL like submitAndWait, queryFinal etc does not explicitly provide timeout then this Default timeout is used.</p>
+<p>This DSL takes following parameters:</p>
+<ul>
+  <li><code>prefix</code>: Prefix of assembly</li>
+  <li><code>defaultTimeout</code>: if DSL like submitAndWait, queryFinal etc does not explicitly provide timeout then this Default timeout is used.</li>
+</ul>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -206,7 +215,11 @@ tmtsoftware/esw
 </dl>
 <h2><a href="#hcd" name="hcd" class="anchor"><span class="anchor-link"></span></a>HCD</h2>
 <p>This DSL creates HCD instance with provided name and gives handle to Command Service DSL through which script can interact with HCD. For example send commands to Assembly or lifecycle methods e.g. goOnline, goOffline, lock HCD etc. This api also takes default timeout which will be used in commands like submitAndWait, queryFinal etc.</p>
-<p>This DSL takes following parameters: * <code>prefix</code>: - Prefix of assembly * <code>defaultTimeout</code>: - if DSL like submitAndWait, queryFinal etc does not explicitly provide timeout then this Default timeout is used.</p>
+<p>This DSL takes following parameters:</p>
+<ul>
+  <li><code>prefix</code>: - Prefix of assembly</li>
+  <li><code>defaultTimeout</code>: - if DSL like submitAndWait, queryFinal etc does not explicitly provide timeout then this Default timeout is used.</li>
+</ul>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -333,7 +346,7 @@ galilAssembly.query(response.runId())</code></pre></dd>
 <h2><a href="#going-online-offline-mode" name="going-online-offline-mode" class="anchor"><span class="anchor-link"></span></a>Going online/offline mode</h2>
 <p>This is kotlin wrapper for sending Assembly/HCD in online and offline mode. When Assembly/HCD receives this command respective handlers are called. The detailed documentation of online/offline handlers for Assembly/HCD can be found <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/framework/handling-lifecycle.html#component-online-and-offline">here</a></p>
 <h3><a href="#goonline" name="goonline" class="anchor"><span class="anchor-link"></span></a>goOnline</h3>
-<p>This DSL allows sending Assembly/HCD into online mode. <code>goOnline</code> can be called from anywhere in script. Following example shows Sequencer sending <code>goOnline</code> command to downstream galil Assembly when it receives <code>goOnline</code> command. </p>
+<p>This DSL allows sending Assembly/HCD into online mode. <code>goOnline</code> can be called from anywhere in script. Following example shows Sequencer sending <code>goOnline</code> command to downstream galil Assembly when it receives <code>goOnline</code> command.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -343,7 +356,7 @@ galilAssembly.query(response.runId())</code></pre></dd>
 }</code></pre></dd>
 </dl>
 <h3><a href="#gooffline" name="gooffline" class="anchor"><span class="anchor-link"></span></a>goOffline</h3>
-<p>This DSL allows to send Assembly/HCD into offline mode. <code>goOffline</code> can be called from anywhere in script. Following example shows Sequencer sending <code>goOffline</code> command to downstream galil Assembly when it receives <code>goOffline</code> command. </p>
+<p>This DSL allows to send Assembly/HCD into offline mode. <code>goOffline</code> can be called from anywhere in script. Following example shows Sequencer sending <code>goOffline</code> command to downstream galil Assembly when it receives <code>goOffline</code> command.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -356,7 +369,7 @@ galilAssembly.query(response.runId())</code></pre></dd>
 </dl>
 <h2><a href="#operations-mode-and-diagnostic-mode" name="operations-mode-and-diagnostic-mode" class="anchor"><span class="anchor-link"></span></a>Operations mode and Diagnostic mode</h2>
 <h3><a href="#operationsmode" name="operationsmode" class="anchor"><span class="anchor-link"></span></a>operationsMode</h3>
-<p>This DSL allows to send Assembly/HCD into operations mode. <code>operationsMode</code> can be called from anywhere in script. Following example shows Sequencer sending <code>operationsMode</code> command to downstream galil Assembly when it receives <code>operationsMode</code> command. </p>
+<p>This DSL allows to send Assembly/HCD into operations mode. <code>operationsMode</code> can be called from anywhere in script. Following example shows Sequencer sending <code>operationsMode</code> command to downstream galil Assembly when it receives <code>operationsMode</code> command.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -366,7 +379,7 @@ galilAssembly.query(response.runId())</code></pre></dd>
 }</code></pre></dd>
 </dl>
 <h3><a href="#diagnosticmode" name="diagnosticmode" class="anchor"><span class="anchor-link"></span></a>diagnosticMode</h3>
-<p>This DSL allows to send Assembly/HCD into diagnostic data mode based on a hint at the specified startTime. <code>diagnosticMode</code> can be called from anywhere in script. Following example shows Sequencer sending <code>diagnosticMode</code> command to downstream galil Assembly when it receives <code>diagnosticMode</code> command. </p>
+<p>This DSL allows to send Assembly/HCD into diagnostic data mode based on a hint at the specified startTime. <code>diagnosticMode</code> can be called from anywhere in script. Following example shows Sequencer sending <code>diagnosticMode</code> command to downstream galil Assembly when it receives <code>diagnosticMode</code> command.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
