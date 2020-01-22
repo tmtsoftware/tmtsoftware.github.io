@@ -149,7 +149,7 @@ tmtsoftware/esw
   <ul>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#assembly" class="header">Assembly</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#hcd" class="header">HCD</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#command-service-dsl" class="header">Command Service Dsl</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#command-service-dsl" class="header">Command Service DSL</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#going-online-offline-mode" class="header">Going online/offline mode</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#operations-mode-and-diagnostic-mode" class="header">Operations mode and Diagnostic mode</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#locking-and-unlocking" class="header">Locking and unlocking</a></li>
@@ -179,7 +179,7 @@ tmtsoftware/esw
   <ul>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#assembly" class="header">Assembly</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#hcd" class="header">HCD</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#command-service-dsl" class="header">Command Service Dsl</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#command-service-dsl" class="header">Command Service DSL</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#going-online-offline-mode" class="header">Going online/offline mode</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#operations-mode-and-diagnostic-mode" class="header">Operations mode and Diagnostic mode</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html#locking-and-unlocking" class="header">Locking and unlocking</a></li>
@@ -195,40 +195,48 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#command-service" name="command-service" class="anchor"><span class="anchor-link"></span></a>Command Service</h1>
-<p>Command Service DSL is kotlin wrapper over CSW Command Service module provided for sending commands to assemblies or HCDs via scripts. You can refer a detailed documentation of Command Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/commons/command.html#commandservice">here</a>. This DSL exposes following APIs:</p>
+<p>Command Service DSL is a Kotlin wrapper for the CSW Command Service module for sending commands to Assemblies or HCDs via scripts. You can refer to detailed documentation of the Command Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/commons/command.html#commandservice">here</a>. This DSL exposes following APIs:</p>
 <h2><a href="#assembly" name="assembly" class="anchor"><span class="anchor-link"></span></a>Assembly</h2>
-<p>This DSL creates Assembly instance with provided name and gives handle to Command Service DSL through which script can interact with assembly. For example send commands or lifecycle methods e.g. goOnline, goOffline, lock Assembly etc. This api also takes default timeout which will be used in commands like submitAndWait, queryFinal etc.</p>
-<p>This DSL takes following parameters: * <code>prefix</code>: Prefix of assembly * <code>defaultTimeout</code>: if DSL like submitAndWait, queryFinal etc does not explicitly provide timeout then this Default timeout is used.</p>
+<p>This DSL creates a Command Service DSL object for the Assembly with the provided prefix that can be used to send commands from a script, such as sending Setups or Observes or lifecycle methods e.g. goOnline, goOffline, lock Assembly etc. This API also takes a default timeout which will be used for commands like submitAndWait, queryFinal etc.</p>
+<p>This DSL takes following parameters:</p>
+<ul>
+  <li><code>prefix</code>: Prefix of assembly</li>
+  <li><code>defaultTimeout</code>: command response timeout to be used when not explicitly provided for command</li>
+</ul>
 <dl>
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L14" target="_blank" title="Go to snippet source"></a><code class="language-kts">val galilAssembly = Assembly(&quot;TCS.galil&quot;, defaultTimeout = 10.seconds)</code></pre></dd>
 </dl>
 <h2><a href="#hcd" name="hcd" class="anchor"><span class="anchor-link"></span></a>HCD</h2>
-<p>This DSL creates HCD instance with provided name and gives handle to Command Service DSL through which script can interact with HCD. For example send commands to Assembly or lifecycle methods e.g. goOnline, goOffline, lock HCD etc. This api also takes default timeout which will be used in commands like submitAndWait, queryFinal etc.</p>
-<p>This DSL takes following parameters: * <code>prefix</code>: - Prefix of assembly * <code>defaultTimeout</code>: - if DSL like submitAndWait, queryFinal etc does not explicitly provide timeout then this Default timeout is used.</p>
+<p>This DSL creates a Command Service DSL object for the HCD with the provided prefix that can be used to send commands from a script, such as sending Setups or Observes or lifecycle methods e.g. goOnline, goOffline, lock Assembly etc. This API also takes a default timeout which will be used for commands like submitAndWait, queryFinal etc.</p>
+<p>This DSL takes following parameters:</p>
+<ul>
+  <li><code>prefix</code>: - Prefix of HCD</li>
+  <li><code>defaultTimeout</code>: - command response timeout to be used when not explicitly provided for command</li>
+</ul>
 <dl>
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L18" target="_blank" title="Go to snippet source"></a><code class="language-kts">val filterWheelHcd = Hcd(&quot;TCS.filter.wheel.hcd&quot;, defaultTimeout = 10.seconds)</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>Since all the components in the TMT architecture are dynamic in nature, which implies they can be shutdown and spawned dynamically on some other location, the assembly/hdc is resolved each time on receiving a command with the provided <code>prefix</code>. Following DSL can be used to interact with both <strong>Assembly and HCD</strong> resolved using APIs explained above.</p></div>
-<h2><a href="#command-service-dsl" name="command-service-dsl" class="anchor"><span class="anchor-link"></span></a>Command Service Dsl</h2>
+<p>Since all the components in the TMT architecture are dynamic in nature, which implies they can be shutdown and spawned dynamically on some other location, the Assembly/HCD is resolved each time the Command Service DSL is used.</p></div>
+<h2><a href="#command-service-dsl" name="command-service-dsl" class="anchor"><span class="anchor-link"></span></a>Command Service DSL</h2>
 <h3><a href="#submit" name="submit" class="anchor"><span class="anchor-link"></span></a>Submit</h3>
-<p>This DSL allows to submit a command to Assembly/HCD and return after first phase. If it returns Started then final response can be obtained with query final api.</p>
+<p>This DSL allows you to use the <code>submit</code> API to send a command to the Assembly/HCD, which returns a <code>Started</code> response on successful validation. In this case, the final response can be obtained with the <code>queryFinal</code> api.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L46-L55" target="_blank" title="Go to snippet source"></a><code class="language-kts">val response = galilAssembly.submit(command, resumeOnError = true)
-val startedResponse = galilAssembly.submit(command)
-galilAssembly.queryFinal(startedResponse.runId())</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L52" target="_blank" title="Go to snippet source"></a><code class="language-kts">val startedResponse = galilAssembly.submit(command)</code></pre></dd>
 </dl>
 <h4><a href="#error-handling" name="error-handling" class="anchor"><span class="anchor-link"></span></a>Error handling</h4>
-<p>submit always returns positive submit response. In case of negative submit response, onError handler (if written) is called and then onGlobalError handler is called. Script execution flow breaks in case of negative submit response and sequence is terminated with failure. Following example shows scenario where script execution flow breaks when submit return negative response, in this case onError handler will be executed followed by onGlobalError handler, and sequence is completed with failure.</p>
+<p>In many cases, any errors encountered in a script would likely cause the command (and therefore, sequence) to fail. Most of the time, not much can be done other than capture and report the error that occurred. It is possible some remediation can be performed, but it is likely the sequence would need to run again. For this reason, we have simplified the error handling of commands such that errors from the Command Service DSL calls are recasted as exceptions, which can then be caught by error handlers global to the sequence command handler, or the entire script. In this way, such error handling does not need to be repeated throughout the script for each command sent.</p>
+<p>To add an error handler to a sequence command handler, extend the command handler block with a <code>.onError</code> block. The <code>SubmitResponse</code> error is captured in a <code>ScriptError</code> type and passed into the block. This type contains a <code>reason</code> String explaining what went wrong. If this block does not exist, the global error handler will be called. See the page on <a href="../handlers.html">Script Handlers</a> for more information. After this block is called, the command, and the sequence, terminate with an Error status.</p>
+<p>Because of this mechanism, a <code>submit</code> (and other Command Service API calls) always returns a positive <code>SubmitResponse</code>.<br/>For <code>submit</code>, the two possible responses are <code>Started</code> and <code>Completed</code>.<br/>They can be handled using the <code>.onStarted</code> and <code>.onCompleted</code> methods, respectively. These methods allow you to specify a block of code to be called in each of those cases. Alternatively, a Kotlin <code>when</code> can be used to perform pattern matching on the result. An example of both are shown below, along with an example of an <code>onError</code> handler for the sequence command handler.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L70-L102" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;submit-error-handling&quot;) { command -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L66-L97" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;submit-error-handling&quot;) { command -&gt;
 
     /* =========== Scenario-1 (default) ============
      * if submit returns negative response (which is considered as error by default)
@@ -254,7 +262,6 @@ galilAssembly.queryFinal(startedResponse.runId())</code></pre></dd>
             info(&quot;command completed with response: $completedResponse&quot;)
         }
         is CommandResponse.Completed -&gt; info(&quot;command with ${positiveSubmitResponse.runId()} is completed&quot;)
-        else -&gt; finishWithError(&quot;Error starting WFS exposures: $positiveSubmitResponse&quot;)
     }
 
 }.onError { err -&gt;
@@ -262,11 +269,11 @@ galilAssembly.queryFinal(startedResponse.runId())</code></pre></dd>
     error(err.reason)
 }</code></pre></dd>
 </dl>
-<p>To change this default behaviour, resumeOnError flag can be used. If this flag is set to true then script execution continues, and action is taken based on custom logic in script. Script writer can still choose to terminate sequence using <code>failedOnTerminate</code> utility.</p>
+<p>If you desire to handle errors manually on a per-command basis, the <code>resumeOnError</code> flag can be used. If this flag is set to true, then script execution continues, and action is taken based on custom logic in script by using an <code>.onFailed</code> method. You can still choose to terminate sequence using the <code>onFailedTerminate</code> utility. This will cause similar behavior as when flag is not set by calling the <code>onError</code> or <code>onGlobalError</code> blocks and terminating the sequence, if the <code>SubmitResponse</code> is some kind of error.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L106-L130" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;submit-error-handling-resume&quot;) { command -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L101-L125" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;submit-error-handling-resume&quot;) { command -&gt;
     /* =========== Scenario-2 (resumeOnError = true) ============
      * if submit returns negative response
      * then current execution flow will continue because resumeOnError = true
@@ -293,61 +300,57 @@ galilAssembly.queryFinal(startedResponse.runId())</code></pre></dd>
 }</code></pre></dd>
 </dl>
 <h3><a href="#submitandwait" name="submitandwait" class="anchor"><span class="anchor-link"></span></a>SubmitAndWait</h3>
-<p>This DSL allows submitting command to Assembly/HCD to submit command to Assembly/HCD and waits for positive final response. Script writer can provide a timeout for which it will wait for getting final submit response, otherwise command will timeout and script execution flow breaks and sequence is terminated with failure. If timeout is not provided explicitly, then timeout provided while creating instance of Assembly/HCD is used as default timeout. </p>
+<p>This DSL allows you to submit a command to the Assembly/HCD and wait for the final response. A timeout can be specified, indicating the time which it will wait for getting final submit response. If this time expires, the command will timeout, breaking script execution flow, and the sequence is terminated with failure. If timeout is not provided explicitly, then timeout provided while creating instance of Assembly/HCD is used as default timeout. This command follows the same error handling semantics as <code>submit</code> as described above.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L41" target="_blank" title="Go to snippet source"></a><code class="language-kts">galilAssembly.submitAndWait(command, timeout = 20.seconds)</code></pre></dd>
 </dl>
-<p>submitAndWait always return positive final response. In case of negative response it follows same error handling semantics as submit explained above. </p>
 <h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>Query</h3>
-<p>This DSL allows querying for response of submitted command. Started response returned by submit has runId which can be used to query for response. Query always returns positive submit response. In case of negative response it follows same error handling semantics as submit.</p>
+<p>This DSL allows you to query the status of <code>submit</code> command that has returned a <code>Started</code> response . This response contains a <code>runId</code> which can be used to identify the command to query. This command follows the same error handling semantics as <code>submit</code> as described above.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L46-L49" target="_blank" title="Go to snippet source"></a><code class="language-kts">val response = galilAssembly.submit(command, resumeOnError = true)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L45-L47" target="_blank" title="Go to snippet source"></a><code class="language-kts">val response = galilAssembly.submit(command, resumeOnError = true)
 
 galilAssembly.query(response.runId())</code></pre></dd>
 </dl>
 <h3><a href="#queryfinal" name="queryfinal" class="anchor"><span class="anchor-link"></span></a>QueryFinal</h3>
-<p>This DSL allows querying for final response of submitted command. Started response returned by submit has runId which can be used to query for final response. Script writer can provide a timeout for which it will wait for getting final submit response, otherwise command will timeout and script execution flow breaks and sequence is terminated with failure. If timeout is not provided explicitly, then timeout provided while creating instance of Assembly/HCD is used as default timeout. QueryFinal always returns positive final response. In case of negative response it follows same error handling semantics as submit. </p>
+<p>This DSL allows querying for final response of a <code>submit</code> command that has returned a <code>Started</code> response . This response contains a <code>runId</code> which can be used to identify the command to query for its final response. A timeout can be specified, indicating the time which it will wait for getting final submit response. If this time expires, the command will timeout, breaking script execution flow, and the sequence is terminated with failure. If timeout is not provided explicitly, then the timeout provided while creating instance of Assembly/HCD is used. This command follows the same error handling semantics as <code>submit</code> as described above.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L54-L58" target="_blank" title="Go to snippet source"></a><code class="language-kts">val startedResponse = galilAssembly.submit(command)
-galilAssembly.queryFinal(startedResponse.runId())
-
-galilAssembly.query(response.runId())</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p>submit, submitAndWait, query and queryFinal always return positive response. In case of negative response (considered as error by default), script execution flow breaks, error handling mechanism kicks in and sequence is terminated with failure. <strong>resumeOnError</strong> allows to change this default behaviour and custom logic in script can decide flow. For general guidelines of error handling in script, please refer <a href="../handlers.html#error-handlers">Error handling in script</a></p></div>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L52-L54" target="_blank" title="Go to snippet source"></a><code class="language-kts">val startedResponse = galilAssembly.submit(command)
+galilAssembly.queryFinal(startedResponse.runId())</code></pre></dd>
+</dl>
 <h3><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>SubscribeCurrentState</h3>
-<p>This DSL allows subscribing to current states of Assembly/HCD. Script writer can provide state names to subscribe. If not provided all current states are subscribed. This DSL takes callback, callback provides handle to subscribed state and script writer can write logic in callback which will be executed for all subscribed states.</p>
+<p>This DSL allows subscribing to the current state data of the Assembly/HCD. You can provide a list of state names to subscribe to. If not provided, all current state values are subscribed to. This DSL takes callback (or lambda), which is called whenever a item in the list of subscribed values changes value.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L62-L65" target="_blank" title="Go to snippet source"></a><code class="language-kts">galilAssembly.subscribeCurrentState(StateName(&quot;stateName1&quot;)) { currentState -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L58-L61" target="_blank" title="Go to snippet source"></a><code class="language-kts">galilAssembly.subscribeCurrentState(StateName(&quot;stateName1&quot;)) { currentState -&gt;
     // do something with currentState matching provided state name
     println(&quot;current state : $currentState&quot;)
 }</code></pre></dd>
 </dl>
 <h2><a href="#going-online-offline-mode" name="going-online-offline-mode" class="anchor"><span class="anchor-link"></span></a>Going online/offline mode</h2>
-<p>This is kotlin wrapper for sending Assembly/HCD in online and offline mode. When Assembly/HCD receives this command respective handlers are called. The detailed documentation of online/offline handlers for Assembly/HCD can be found <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/framework/handling-lifecycle.html#component-online-and-offline">here</a></p>
+<p>This is a Kotlin wrapper for putting an Assembly/HCD into Online or Offline mode. When an Assembly/HCD receives this command, its respective handlers are called. The detailed documentation of Online/Fffline handlers for Assembly/HCD can be found <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/framework/handling-lifecycle.html#component-online-and-offline">here</a></p>
 <h3><a href="#goonline" name="goonline" class="anchor"><span class="anchor-link"></span></a>goOnline</h3>
-<p>This DSL allows sending Assembly/HCD into online mode. <code>goOnline</code> can be called from anywhere in script. Following example shows Sequencer sending <code>goOnline</code> command to downstream galil Assembly when it receives <code>goOnline</code> command. </p>
+<p>This DSL command puts an Assembly/HCD into Online mode. <code>goOnline</code> can be called from anywhere in script. The following example shows a Sequencer sending the <code>goOnline</code> command to a downstream &ldquo;Galil Assembly&rdquo; when it receives a <code>goOnline</code> command.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L157-L160" target="_blank" title="Go to snippet source"></a><code class="language-kts">onGoOnline {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L152-L155" target="_blank" title="Go to snippet source"></a><code class="language-kts">onGoOnline {
     // do some actions to go online
     galilAssembly.goOnline()
 }</code></pre></dd>
 </dl>
 <h3><a href="#gooffline" name="gooffline" class="anchor"><span class="anchor-link"></span></a>goOffline</h3>
-<p>This DSL allows to send Assembly/HCD into offline mode. <code>goOffline</code> can be called from anywhere in script. Following example shows Sequencer sending <code>goOffline</code> command to downstream galil Assembly when it receives <code>goOffline</code> command. </p>
+<p>This DSL command puts an Assembly/HCD into Offline mode. <code>goOffline</code> can be called from anywhere in script. The following example shows a Sequencer sending the <code>goOffline</code> command to a downstream &ldquo;Galil Assembly&rdquo; when it receives a <code>goOffline</code> command.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L148-L153" target="_blank" title="Go to snippet source"></a><code class="language-kts">onGoOffline {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L143-L148" target="_blank" title="Go to snippet source"></a><code class="language-kts">onGoOffline {
     // do some actions to go offline
 
     galilAssembly.goOffline()
@@ -356,28 +359,28 @@ galilAssembly.query(response.runId())</code></pre></dd>
 </dl>
 <h2><a href="#operations-mode-and-diagnostic-mode" name="operations-mode-and-diagnostic-mode" class="anchor"><span class="anchor-link"></span></a>Operations mode and Diagnostic mode</h2>
 <h3><a href="#operationsmode" name="operationsmode" class="anchor"><span class="anchor-link"></span></a>operationsMode</h3>
-<p>This DSL allows to send Assembly/HCD into operations mode. <code>operationsMode</code> can be called from anywhere in script. Following example shows Sequencer sending <code>operationsMode</code> command to downstream galil Assembly when it receives <code>operationsMode</code> command. </p>
+<p>This DSL command puts an Assembly/HCD into Operations mode. <code>operationsMode</code> can be called from anywhere in script. The following example shows a Sequencer sending the <code>operationsMode</code> command to a downstream &ldquo;Galil Assembly&rdquo; when it receives an <code>operationsMode</code> command.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L141-L144" target="_blank" title="Go to snippet source"></a><code class="language-kts">onOperationsMode {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L136-L139" target="_blank" title="Go to snippet source"></a><code class="language-kts">onOperationsMode {
     // do some actions to go to operations mode
     galilAssembly.operationsMode()
 }</code></pre></dd>
 </dl>
 <h3><a href="#diagnosticmode" name="diagnosticmode" class="anchor"><span class="anchor-link"></span></a>diagnosticMode</h3>
-<p>This DSL allows to send Assembly/HCD into diagnostic data mode based on a hint at the specified startTime. <code>diagnosticMode</code> can be called from anywhere in script. Following example shows Sequencer sending <code>diagnosticMode</code> command to downstream galil Assembly when it receives <code>diagnosticMode</code> command. </p>
+<p>This DSL command puts an Assembly/HCD into Diagnostic data mode based on a hint at the specified <code>startTime</code>. <code>diagnosticMode</code> can be called from anywhere in script. The following example shows a Sequencer sending the <code>diagnosticMode</code> command to a downstream &ldquo;Galil Assembly&rdquo; when it receives a <code>diagnosticMode</code> command.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L134-L137" target="_blank" title="Go to snippet source"></a><code class="language-kts">onDiagnosticMode { startTime, hint -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L129-L132" target="_blank" title="Go to snippet source"></a><code class="language-kts">onDiagnosticMode { startTime, hint -&gt;
     // do some actions to go to diagnostic mode based on hint
     galilAssembly.diagnosticMode(startTime, hint)
 }</code></pre></dd>
 </dl>
 <h2><a href="#locking-and-unlocking" name="locking-and-unlocking" class="anchor"><span class="anchor-link"></span></a>Locking and unlocking</h2>
 <h3><a href="#lock" name="lock" class="anchor"><span class="anchor-link"></span></a>lock</h3>
-<p>This DSL allows locking Assembly/HCD from Sequencer script for specified duration. When you lock Assembly/HCD, Sequencer sending lock command is treated as source. This DSL returns <code>LockingResponse</code> which can be <code>LockAcquired</code> in the successful scenario or <code>AcquiringLockFailed</code> in case of failure. This DSL also provides callbacks for <code>onLockAboutToExpire</code> and, <code>onLockExpired</code> where script writer can write custom logic. These callbacks are thread safe.</p>
+<p>This DSL command locks an Assembly/HCD from a Sequencer script for the specified duration. When you lock an Assembly/HCD, the Sequencer sending the lock command is designated as the source, which is the only component that can send commands to the locked component while locked. This DSL returns a <code>LockingResponse</code> which can be <code>LockAcquired</code> in the successful scenario or <code>AcquiringLockFailed</code> in case of failure. This DSL also provides callbacks for <code>onLockAboutToExpire</code> and, <code>onLockExpired</code> where script writer can write custom logic. These callbacks are thread safe.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -394,7 +397,7 @@ galilAssembly.query(response.runId())</code></pre></dd>
 )</code></pre></dd>
 </dl>
 <h3><a href="#unlock" name="unlock" class="anchor"><span class="anchor-link"></span></a>unlock</h3>
-<p>This DSL allows unlocking Assembly/HCD from Sequencer script for specified duration. When you unlock Assembly/HCD, Sequencer sending lock command is treated as source. This DSL returns <code>LockingResponse</code> which can be <code>LockReleased</code> or <code>LockAlreadyReleased</code> in the successful scenario or <code>ReleasingLockFailed</code> in case of failure.</p>
+<p>This DSL command unlocks an Assembly/HCD from a Sequencer script for sthe pecified duration. Only the Sequencer who locked the Assembly/HCD can unlock it. This DSL returns a <code>LockingResponse</code> which can be <code>LockReleased</code> or <code>LockAlreadyReleased</code> in the successful scenario or <code>ReleasingLockFailed</code> in case of failure.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>

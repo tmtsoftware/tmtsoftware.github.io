@@ -147,9 +147,12 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../../sequencer/scripts/dsl/loop.html#loops" class="header">Loops</a>
   <ul>
-    <li><a href="../../../sequencer/scripts/dsl/loop.html#loop" class="header">loop</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loop-with-default-loop-interval" class="header">loop - With default loop interval</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loop-with-custom-minimum-loop-interval" class="header">loop - With custom minimum loop interval</a></li>
     <li><a href="../../../sequencer/scripts/dsl/loop.html#waitfor" class="header">waitFor</a></li>
-    <li><a href="../../../sequencer/scripts/dsl/loop.html#loopasync" class="header">loopAsync</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loopasync-with-default-loop-interval" class="header">loopAsync - With default loop interval</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loopasync-with-custom-loop-interval" class="header">loopAsync - With custom loop interval</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -173,9 +176,12 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../../sequencer/scripts/dsl/loop.html#loops" class="header">Loops</a>
   <ul>
-    <li><a href="../../../sequencer/scripts/dsl/loop.html#loop" class="header">loop</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loop-with-default-loop-interval" class="header">loop - With default loop interval</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loop-with-custom-minimum-loop-interval" class="header">loop - With custom minimum loop interval</a></li>
     <li><a href="../../../sequencer/scripts/dsl/loop.html#waitfor" class="header">waitFor</a></li>
-    <li><a href="../../../sequencer/scripts/dsl/loop.html#loopasync" class="header">loopAsync</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loopasync-with-default-loop-interval" class="header">loopAsync - With default loop interval</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#loopasync-with-custom-loop-interval" class="header">loopAsync - With custom loop interval</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html#source-code-for-examples" class="header">Source code for examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -187,15 +193,14 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#loops" name="loops" class="anchor"><span class="anchor-link"></span></a>Loops</h1>
-<p>Script supports following multiple variations of loop DSL to satisfy different use cases: </p>
+<p>Script supports following multiple variations of loop DSL to satisfy different use cases:</p>
 <ol>
   <li>loop</li>
   <li>waitFor</li>
   <li>loopAsync</li>
 </ol>
-<h2><a href="#loop" name="loop" class="anchor"><span class="anchor-link"></span></a>loop</h2>
-<p><strong>With default loop interval</strong></p>
-<p><code>loop</code> DSL allows you to start loop synchronously which means rest of the code written after loop will not be executed until <code>stopWhen</code> condition written inside loop becomes true. You can use this DSL when you want to iteratively perform some actions until certain condition becomes true. loop without providing any minimum interval uses default interval of <code>50 milliseconds</code>. Default <code>loopInterval</code>is used to reduce cpu contention. </p>
+<h2><a href="#loop-with-default-loop-interval" name="loop-with-default-loop-interval" class="anchor"><span class="anchor-link"></span></a>loop - With default loop interval</h2>
+<p><code>loop</code> DSL allows you to start loop synchronously which means rest of the code written after loop will not be executed until <code>stopWhen</code> condition written inside loop becomes true. You can use this DSL when you want to iteratively perform some actions until certain condition becomes true. loop without providing any minimum interval uses default interval of <code>50 milliseconds</code>. Default <code>loopInterval</code>is used to reduce cpu contention.</p>
 <p>Following example demonstrate the usage of <code>loop</code> DSL without providing custom loop interval. In the loop body, motor is being moved by 10 degrees in every iteration of the loop. Loop will be terminated when motor&rsquo;s current position reaches to expected position which is <code>100 degrees</code> in this case.</p>
 <dl>
   <dt>Kotlin</dt>
@@ -209,7 +214,7 @@ loop {
     stopWhen(motorPosition == expectedMotorPosition)
 }</code></pre></dd>
 </dl>
-<p><strong>With custom minimum loop interval</strong></p>
+<h2><a href="#loop-with-custom-minimum-loop-interval" name="loop-with-custom-minimum-loop-interval" class="anchor"><span class="anchor-link"></span></a>loop - With custom minimum loop interval</h2>
 <p><code>loop</code> DSL allows you to provide minimum loop interval and starts loop synchronously. Every iteration of loop will at least wait for minimum provided interval before executing next iteration.</p>
 <p>Following example demonstrate the usage of <code>loop</code> DSL by providing custom loop interval.</p>
 <dl>
@@ -234,8 +239,7 @@ initializeMotor()
 // pauses the init-motor command handlers execution until motor becomes up
 waitFor { motorUp }</code></pre></dd>
 </dl>
-<h2><a href="#loopasync" name="loopasync" class="anchor"><span class="anchor-link"></span></a>loopAsync</h2>
-<p><strong>With default loop interval</strong></p>
+<h2><a href="#loopasync-with-default-loop-interval" name="loopasync-with-default-loop-interval" class="anchor"><span class="anchor-link"></span></a>loopAsync - With default loop interval</h2>
 <p><code>loopAsync</code> DSL allows you to start loop asynchronously in the background which means rest of the code written after <code>loopAsync</code> will be executed concurrently. <code>loopAsync</code> will be terminated when <code>stopWhen</code> condition written inside loop becomes true.</p>
 <p>You can use this DSL when you want to iteratively perform some actions in the background. loopAsync without providing any minimum interval uses default interval of <code>50 milliseconds</code>.</p>
 <p>Following example demonstrate the usage of <code>loopAsync</code> DSL without providing custom loop interval. In the loop body, current temperature is published every <code>50 milliseconds</code>. LoopAsync will be terminated when <code>stopPublishingTemperature</code> flag becomes true and this is set to true in <code>onStop</code> handler.</p>
@@ -249,7 +253,7 @@ loopAsync {
     stopWhen(stopPublishingTemperature)
 }</code></pre></dd>
 </dl>
-<p><strong>With custom loop interval</strong></p>
+<h2><a href="#loopasync-with-custom-loop-interval" name="loopasync-with-custom-loop-interval" class="anchor"><span class="anchor-link"></span></a>loopAsync - With custom loop interval</h2>
 <p><code>loopAsync</code> DSL allows you to provide minimum loop interval and start loop asynchronously. Every iteration of loopAsync will at least wait for minimum provided interval before executing next iteration.</p>
 <p>Following example demonstrate the usage of <code>loopAsync</code> DSL by providing custom loop interval.</p>
 <dl>
@@ -262,7 +266,7 @@ loopAsync(minInterval = 100.milliseconds) {
     stopWhen(stopPublishingTemperature)
 }</code></pre></dd>
 </dl>
-<h3><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h3>
+<h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/esw/blob/v0.1.0-M1/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts">Loop Examples</a></li>
 </ul>

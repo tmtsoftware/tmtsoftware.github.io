@@ -200,7 +200,7 @@ tmtsoftware/esw
 <p>All the handlers which could be defined in various scopes are described below. Note that, in all the below described handlers, error-handling for the block passed to handlers, needs to be taken care by the Script writers.</p>
 <h2><a href="#command-handlers" name="command-handlers" class="anchor"><span class="anchor-link"></span></a>Command Handlers</h2>
 <h3><a href="#onsetup" name="onsetup" class="anchor"><span class="anchor-link"></span></a>onSetup</h3>
-<p>This handler is used to handle a <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/csw/params/commands/Setup.html">Setup</a> command sent to this sequencer. The handler takes two parameters:</p>
+<p>This handler is used to handle a <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/params/commands/Setup.html">Setup</a> command sent to this sequencer. The handler takes two parameters:</p>
 <ol>
   <li><strong>command name</strong> which is matched against the sequence command sent, if the command name matches, corresponding block provided is executed</li>
   <li><strong>block</strong> of code which contains logic to act on the Setup command.</li>
@@ -220,7 +220,7 @@ tmtsoftware/esw
 </dl>
 <p>In the block provided to this handler, all the CSW services (Event, Alarm, Time Service, etc) and control DSL (loop, par etc) are accessible.</p>
 <h3><a href="#onobserve" name="onobserve" class="anchor"><span class="anchor-link"></span></a>onObserve</h3>
-<p>This handler is used to handle an <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/csw/params/commands/Observe.html">Observe</a> command sent to this sequencer. The handler takes two parameters:</p>
+<p>This handler is used to handle an <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/params/commands/Observe.html">Observe</a> command sent to this sequencer. The handler takes two parameters:</p>
 <ol>
   <li><strong>command name</strong> which is matched against the sequence command sent, if the command name matches, corresponding block provided is executed</li>
   <li><strong>block</strong> of code which contains logic to act on the Observe command.</li>
@@ -303,7 +303,7 @@ tmtsoftware/esw
 }</code></pre></dd>
 </dl>
 <h2><a href="#operations-mode-handler" name="operations-mode-handler" class="anchor"><span class="anchor-link"></span></a>Operations Mode Handler</h2>
-<p>This handler can be used to perform actions that need to be done when the sequencer goes in the operations mode. Script writers can use this handler to stop all the publishing being done by the <a href="#diagnostic-mode-handler">diagnostic mode handler</a>, and/or send operations mode command to downstream components.</p>
+<p>This handler can be used to perform actions that need to be done when the sequencer goes in the operations mode. Script writers can use this handler to stop all the publishing being done by the <a href="handlers.html#diagnostic-mode-handler">diagnostic mode handler</a>, and/or send operations mode command to downstream components.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -320,7 +320,7 @@ tmtsoftware/esw
   <li>
   <p><strong>Script Initialization Error</strong> : When construction of script throws exception then script initialization fails. In this scenario, framework will log error cause. Sequencer will not start in this failure. One need to fix error and then load script again.</p></li>
   <li>
-    <p><strong>Command Handlers Failure</strong> : While executing sequence <a href="handlers.html#command-handlers">Command Handlers</a> e.g. <code>onSetup</code> , <code>onObserve</code> can fail because of two reasons: </p>
+    <p><strong>Command Handlers Failure</strong> : While executing sequence <a href="handlers.html#command-handlers">Command Handlers</a> e.g. <code>onSetup</code> , <code>onObserve</code> can fail because of two reasons:</p>
     <ol>
       <li>handler throws exception or</li>
       <li><code>Command Service</code> or <code>Sequencer Command Service</code> used to interact with downstream <code>Assembly/HCD/Sequencer</code> returns negative <code>SubmitResponse</code>. Negative <code>SubmitResponse</code> is by default considered as error. In this case of failure, sequence is terminated with failure.</li>
@@ -329,7 +329,10 @@ tmtsoftware/esw
   <li>
   <p><strong>Handlers Failure</strong> : This failure occurs when any of handlers other than Command Handlers fail (e.g. <code>OnGoOnline</code>, <code>onDiagnosticMode</code> etc.). In this scenario, framework will log error cause. Sequence execution will continue. </p></li>
 </ol>
-<p>Script DSL provides following constructs to handle failure while executing script: 1. <strong>onGlobalError</strong> : This construct is provided for script writer. Logic in <code>onGlobalError</code> will be executed in case of all <strong>Handlers Failure</strong> including <strong>Command Handlers Failure</strong> except <a href="#shutdown-handler">Shutdown Handler</a>. If <code>onGlobalError</code> handler is not provided by script then only logging of error cause is done by the framework.</p>
+<p>Script DSL provides following constructs to handle failure while executing script:</p>
+<ol>
+  <li><strong>onGlobalError</strong> : This construct is provided for script writer. Logic in <code>onGlobalError</code> will be executed in case of all <strong>Handlers Failure</strong> including <strong>Command Handlers Failure</strong> except <a href="handlers.html#shutdown-handler">Shutdown Handler</a>. If <code>onGlobalError</code> handler is not provided by script then only logging of error cause is done by the framework.</li>
+</ol>
 <p>Following example shows usage of <code>onGloablError</code></p>
 <dl>
   <dt>Kotlin</dt>
@@ -373,7 +376,7 @@ onGlobalError { error -&gt;
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L70-L102" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;submit-error-handling&quot;) { command -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L66-L97" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;submit-error-handling&quot;) { command -&gt;
 
     /* =========== Scenario-1 (default) ============
      * if submit returns negative response (which is considered as error by default)
@@ -399,7 +402,6 @@ onGlobalError { error -&gt;
             info(&quot;command completed with response: $completedResponse&quot;)
         }
         is CommandResponse.Completed -&gt; info(&quot;command with ${positiveSubmitResponse.runId()} is completed&quot;)
-        else -&gt; finishWithError(&quot;Error starting WFS exposures: $positiveSubmitResponse&quot;)
     }
 
 }.onError { err -&gt;
@@ -407,8 +409,8 @@ onGlobalError { error -&gt;
     error(err.reason)
 }</code></pre></dd>
 </dl>
-<p>If you don&rsquo;t want to fail sequence in case of Command Service APIs while interacting with downstream Assembly/HCD (<code>submit</code>, <code>query</code> etc.) or Sequencer Command Service APIs while interacting with downstream Sequencer (<code>submit</code>, <code>query</code> etc.) then <strong>resumeOnError</strong> flag can be used. For details of <strong>resumeOnError</strong>, please refer <a href="services/command-service.html#error-handling">Error handling</a> </p><div class="callout note "><div class="callout-title">Note</div>
-<p>Error in all handlers <strong>except Shutdown Handler</strong> will execute error handler provided by script. If error handler is not provided, framework will log error cause. </p></div>
+<p>If you don&rsquo;t want to fail sequence in case of Command Service APIs while interacting with downstream Assembly/HCD (<code>submit</code>, <code>query</code> etc.) or Sequencer Command Service APIs while interacting with downstream Sequencer (<code>submit</code>, <code>query</code> etc.) then <strong>resumeOnError</strong> flag can be used. For details of <strong>resumeOnError</strong>, please refer <a href="services/command-service.html#error-handling">Error handling</a></p><div class="callout note "><div class="callout-title">Note</div>
+<p>Error in all handlers <strong>except Shutdown Handler</strong> will execute error handler provided by script. If error handler is not provided, framework will log error cause.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/handlers.md" title="Edit this page" class="md-source-file md-edit">
