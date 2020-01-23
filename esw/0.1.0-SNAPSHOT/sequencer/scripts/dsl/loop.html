@@ -141,6 +141,10 @@ tmtsoftware/esw
     <li><a href="../../../sequencer/scripts/fsm.html" class="page">FSM</a></li>
     <li><a href="../../../sequencer/scripts/dsl/dsl.html" class="page">High Level DSL</a></li>
   </ul></li>
+  <li><a href="../../../apps/apps.html" class="page">Applications</a>
+  <ul>
+    <li><a href="../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
+  </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
@@ -200,66 +204,96 @@ tmtsoftware/esw
   <li>loopAsync</li>
 </ol>
 <h2><a href="#loop-with-default-loop-interval" name="loop-with-default-loop-interval" class="anchor"><span class="anchor-link"></span></a>loop - With default loop interval</h2>
-<p><code>loop</code> DSL allows you to start loop synchronously which means rest of the code written after loop will not be executed until <code>stopWhen</code> condition written inside loop becomes true. You can use this DSL when you want to iteratively perform some actions until certain condition becomes true. loop without providing any minimum interval uses default interval of <code>50 milliseconds</code>. Default <code>loopInterval</code>is used to reduce cpu contention.</p>
-<p>Following example demonstrate the usage of <code>loop</code> DSL without providing custom loop interval. In the loop body, motor is being moved by 10 degrees in every iteration of the loop. Loop will be terminated when motor&rsquo;s current position reaches to expected position which is <code>100 degrees</code> in this case.</p>
+<p>The <code>loop</code> DSL allows you to start a &ldquo;blocking&rdquo; loop so that the rest of the code after loop will not be executed until <code>stopWhen</code> condition written inside loop becomes true. You can use this DSL when you want to iteratively perform some actions until certain condition becomes true. An interval can be provided to set the minimum period of the loop, where every iteration of loop will at least wait for minimum provided interval before executing next iteration. Otherwise, the default interval is <code>50 milliseconds</code>.</p>
+<p>The following example demonstrates the usage of the <code>loop</code> DSL with the default interval. In the loop body, a motor is being &ldquo;moved&rdquo; by 10 degrees in every iteration of the loop. The loop will be terminated when motor&rsquo;s current position reaches the expected position of 100 degrees.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L60-L67" target="_blank" title="Go to snippet source"></a><code class="language-kts">val expectedMotorPosition = 100
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L20-L89" target="_blank" title="Go to snippet source"></a><code class="language-kts">var motorPosition = 0
+fun moveMotor(degrees: Int) {
+    // move motor logic
+    motorPosition += degrees
+}
+onSetup(&quot;move-motor&quot;) {
 
-// move motor by 10 degrees in each iteration, default loop interval is 50 millis
-// stop loop when current motor position matches expected motor position and continue with the execution of rest of the handler
-loop {
-    moveMotor(10)
-    stopWhen(motorPosition == expectedMotorPosition)
+    val expectedMotorPosition = 100
+
+    // move motor by 10 degrees in each iteration, default loop interval is 50 millis
+    // stop loop when current motor position matches expected motor position and continue with the execution of rest of the handler
+    loop {
+        moveMotor(10)
+        stopWhen(motorPosition == expectedMotorPosition)
+    }
 }</code></pre></dd>
 </dl>
 <h2><a href="#loop-with-custom-minimum-loop-interval" name="loop-with-custom-minimum-loop-interval" class="anchor"><span class="anchor-link"></span></a>loop - With custom minimum loop interval</h2>
-<p><code>loop</code> DSL allows you to provide minimum loop interval and starts loop synchronously. Every iteration of loop will at least wait for minimum provided interval before executing next iteration.</p>
-<p>Following example demonstrate the usage of <code>loop</code> DSL by providing custom loop interval.</p>
+<p>The following example demonstrates the usage of the <code>loop</code> DSL by providing a custom loop interval.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L71-L76" target="_blank" title="Go to snippet source"></a><code class="language-kts">// move motor by 20 degrees in every iteration after a loop interval of 100 millis (custom loop interval used here)
-// stop loop when current motor position matches expected motor position and continue with the execution of rest of the handler
-loop(minInterval = 100.milliseconds) {
-    moveMotor(20)
-    stopWhen(motorPosition == expectedMotorPosition)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L68-L89" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;move-motor&quot;) {
+
+    val expectedMotorPosition = 100
+    // move motor by 20 degrees in every iteration after a loop interval of 100 millis (custom loop interval used here)
+    // stop loop when current motor position matches expected motor position and continue with the execution of rest of the handler
+    loop(minInterval = 100.milliseconds) {
+        moveMotor(20)
+        stopWhen(motorPosition == expectedMotorPosition)
+    }
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><code>minInterval</code> needs to be greater than default interval of <code>50 milliseconds</code> otherwise it will be ignored and default loop interval will be used.</p></div>
 <h2><a href="#waitfor" name="waitfor" class="anchor"><span class="anchor-link"></span></a>waitFor</h2>
 <p>This is a specialized version of loop and satisfies simple use cases where you want to semantically block the execution until certain condition becomes true.</p>
-<p>In the following example, <code>initializeMotor</code> method will start the initialization and eventually set <code>motorUp</code> flag to true indicating motor is successfully initialized. <code>waitFor { motorUp }</code> will check the value of <code>motorUp</code> flag every <code>50 milliseconds</code> and if it is true then rest of the code execution will continue. </p>
+<p>In the following example, <code>initializeMotor</code> method will start the initialization and eventually set <code>motorUp</code> flag to true indicating motor is successfully initialized. <code>waitFor { motorUp }</code> will check the value of <code>motorUp</code> flag every <code>50 milliseconds</code>, and when it is true, the rest of the code execution will continue. </p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L48-L51" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start initializing motor and this method will set motorUp flag to true once initialization is successful
-initializeMotor()
-// pauses the init-motor command handlers execution until motor becomes up
-waitFor { motorUp }</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L24-L59" target="_blank" title="Go to snippet source"></a><code class="language-kts">var motorUp = false
+
+fun initializeMotor() {
+    // some motor initialization logic goes here
+    motorUp = true
+}
+onSetup(&quot;init-motor&quot;) {
+    // start initializing motor and this method will set motorUp flag to true once initialization is successful
+    initializeMotor()
+    // pauses the init-motor command handlers execution until motor becomes up
+    waitFor { motorUp }
+
+    // rest of the handler implementation (here you can safely assume that motor is up)
+}</code></pre></dd>
 </dl>
 <h2><a href="#loopasync-with-default-loop-interval" name="loopasync-with-default-loop-interval" class="anchor"><span class="anchor-link"></span></a>loopAsync - With default loop interval</h2>
-<p><code>loopAsync</code> DSL allows you to start loop asynchronously in the background which means rest of the code written after <code>loopAsync</code> will be executed concurrently. <code>loopAsync</code> will be terminated when <code>stopWhen</code> condition written inside loop becomes true.</p>
-<p>You can use this DSL when you want to iteratively perform some actions in the background. loopAsync without providing any minimum interval uses default interval of <code>50 milliseconds</code>.</p>
-<p>Following example demonstrate the usage of <code>loopAsync</code> DSL without providing custom loop interval. In the loop body, current temperature is published every <code>50 milliseconds</code>. LoopAsync will be terminated when <code>stopPublishingTemperature</code> flag becomes true and this is set to true in <code>onStop</code> handler.</p>
+<p>The <code>loopAsync</code> DSL allows you to start loop asynchronously in the background which means rest of the code written after <code>loopAsync</code> will be executed concurrently. Like <code>loop</code>, <code>loopAsync</code> will be terminated when <code>stopWhen</code> condition written inside loop becomes true.</p>
+<p>You can use this DSL when you want to iteratively perform some actions in the background. <code>loopAsync</code> also has a default interval of <code>50 milliseconds</code>.</p>
+<p>Following example demonstrate the usage of <code>loopAsync</code> DSL using the default interval. In the loop body, current temperature is published every <code>50 milliseconds</code>. The <code>loopAsync</code> will be terminated when <code>stopPublishingTemperature</code> flag becomes true, which is set to true in the <code>onStop</code> handler.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L29-L34" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start background loop which publishes current temperature of motor every 50 milliseconds (default loop interval)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L11-L97" target="_blank" title="Go to snippet source"></a><code class="language-kts">var stopPublishingTemperature = false
+val temperatureEvent = ObserveEvent(&quot;IRIS.motor&quot;, &quot;temperature&quot;)
+val temperatureKey = longKey(&quot;temperature&quot;)
+
+fun getCurrentTemp(): Long = TODO()
+
+// start background loop which publishes current temperature of motor every 50 milliseconds (default loop interval)
 loopAsync {
     val currentTemp = getCurrentTemp()
     publishEvent(temperatureEvent.add(temperatureKey.set(currentTemp)))
     stopWhen(stopPublishingTemperature)
+}
+
+onStop {
+    stopPublishingTemperature = true
 }</code></pre></dd>
 </dl>
 <h2><a href="#loopasync-with-custom-loop-interval" name="loopasync-with-custom-loop-interval" class="anchor"><span class="anchor-link"></span></a>loopAsync - With custom loop interval</h2>
-<p><code>loopAsync</code> DSL allows you to provide minimum loop interval and start loop asynchronously. Every iteration of loopAsync will at least wait for minimum provided interval before executing next iteration.</p>
-<p>Following example demonstrate the usage of <code>loopAsync</code> DSL by providing custom loop interval.</p>
+<p>The following example demonstrates the usage of <code>loopAsync</code> DSL with a custom loop interval.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L38-L43" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start background loop which publishes current temperature of motor every 100 milliseconds
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LoopExample.kts#L37-L42" target="_blank" title="Go to snippet source"></a><code class="language-kts">// start background loop which publishes current temperature of motor every 100 milliseconds
 loopAsync(minInterval = 100.milliseconds) {
     val currentTemp = getCurrentTemp()
     publishEvent(temperatureEvent.add(temperatureKey.set(currentTemp)))
