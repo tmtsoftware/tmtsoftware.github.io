@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
-<title>Sequencer Script · TMT Executive Software (ESW)</title>
+<title>Sequencer Scripts · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software (ESW)
 </span>
 <span class="md-header-nav__topic">
-Sequencer Script
+Sequencer Scripts
 </span>
 </div>
 </div>
@@ -135,12 +135,23 @@ tmtsoftware/esw
 
 </div>
 <ul>
-  <li><a href="../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
-  <li><a href="../../sequencer/scripts/scripts.html" class="active page">Sequencer Script</a>
+  <li><a href="../../sequencer/scripts/scripts.html" class="active page">Sequencer Scripts</a>
   <ul>
-    <li><a href="../../sequencer/scripts/fsm.html" class="page">FSM</a></li>
-    <li><a href="../../sequencer/scripts/dsl/dsl.html" class="page">High Level DSL</a></li>
+    <li><a href="../../sequencer/scripts/dsl/handlers.html" class="page">Script Handlers</a></li>
+    <li><a href="../../sequencer/scripts/dsl/loop.html" class="page">Including Looping in Scripts</a></li>
+    <li><a href="../../sequencer/scripts/dsl/misc.html" class="page">Other DSL</a></li>
+    <li><a href="../../sequencer/scripts/fsm.html" class="page">Finite State Machines</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/config-service.html" class="page">Using the Configuration Service in Scripts</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/command-service.html" class="page">Command Service for Assemblies and HCDs</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="page">Sequencer Command Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="page">Extension utilities on SubmitResponse</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/time-service.html" class="page">Time Service Access in Scripts</a></li>
   </ul></li>
+  <li><a href="../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
   <li><a href="../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -163,13 +174,36 @@ tmtsoftware/esw
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#sequencer-script" name="sequencer-script" class="anchor"><span class="anchor-link"></span></a>Sequencer Script</h1>
-<div class="toc main">
+<h1><a href="#sequencer-scripts" name="sequencer-scripts" class="anchor"><span class="anchor-link"></span></a>Sequencer Scripts</h1>
+<p>All logic in Sequencer is implemented in Sequencer scripts. Scripts are written in in Kotlin using a TMT developed Domain Specific Language (DSL) to facilitate development. This section describes the DSL in detail. </p>
+<p>As an alternate to procedural style scripting, some framework DSL has been provided to allow scripting using a Finite State Machine (FSM) (still in development). </p>
 <ul>
-  <li><a href="../../sequencer/scripts/fsm.html" class="page">FSM</a></li>
-  <li><a href="../../sequencer/scripts/dsl/dsl.html" class="page">High Level DSL</a></li>
-</ul>
-</div>
+  <li>Script DSL Constructs
+    <ul>
+      <li><a href="dsl/handlers.html">Script Handlers</a></li>
+      <li><a href="dsl/loop.html">Looping</a></li>
+      <li><a href="dsl/misc.html">Other DSL</a></li>
+      <li><a href="fsm.html">Finite State Machines</a></li>
+    </ul>
+  </li>
+  <li>CSW Services DSL
+    <ul>
+      <li><a href="dsl/services/location-service.html">Location Service</a></li>
+      <li><a href="dsl/services/config-service.html">Config Service</a></li>
+      <li><a href="dsl/services/command-service.html">Assembly/HCD Command Service</a></li>
+      <li><a href="dsl/services/sequencer-command-service.html">Sequencer Command Service</a></li>
+      <li><a href="dsl/services/submit-response-extensions.html">Submit Response Extensions</a></li>
+      <li><a href="dsl/services/event-service.html">Event Service</a></li>
+      <li><a href="dsl/services/logging-service.html">Logging Service</a></li>
+      <li><a href="dsl/services/alarm-service.html">Alarm Service</a></li>
+      <li><a href="dsl/services/time-service.html">Time Service</a></li>
+    </ul>
+  </li>
+</ul><div class="callout note "><div class="callout-title">Note</div>
+<p>All the examples shown in each individual section assume that you have following import in place in <code>script</code></p>
+<pre class="prettyprint"><code class="language-kotlin">// import all the models, helpers, extensions
+import esw.ocs.dsl.highlevel.models.*
+</code></pre></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/scripts.md" title="Edit this page" class="md-source-file md-edit">
@@ -188,7 +222,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../sequencer/state-transition.html" title="Sequencer State Transition" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../index.html" title="TMT Executive Software (ESW)" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -197,17 +231,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Sequencer State Transition
+TMT Executive Software (ESW)
 </span>
 </div>
 </a>
-<a href="../../sequencer/scripts/fsm.html" title="FSM" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../sequencer/scripts/dsl/handlers.html" title="Script Handlers" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-FSM
+Script Handlers
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

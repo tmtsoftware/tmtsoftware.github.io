@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../../../assets/tmt_favicon.ico">
-<title>Time Service · TMT Executive Software (ESW)</title>
+<title>Time Service Access in Scripts · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software (ESW)
 </span>
 <span class="md-header-nav__topic">
-Time Service
+Time Service Access in Scripts
 </span>
 </div>
 </div>
@@ -135,12 +135,23 @@ tmtsoftware/esw
 
 </div>
 <ul>
-  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
-  <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Script</a>
+  <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/fsm.html" class="page">FSM</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/dsl.html" class="page">High Level DSL</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/handlers.html" class="page">Script Handlers</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/loop.html" class="page">Including Looping in Scripts</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/misc.html" class="page">Other DSL</a></li>
+    <li><a href="../../../../sequencer/scripts/fsm.html" class="page">Finite State Machines</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html" class="page">Using the Configuration Service in Scripts</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html" class="page">Command Service for Assemblies and HCDs</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="page">Sequencer Command Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="page">Extension utilities on SubmitResponse</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html" class="active page">Time Service Access in Scripts</a></li>
   </ul></li>
+  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -149,16 +160,18 @@ tmtsoftware/esw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#time-service" class="header">Time Service</a>
+  <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#time-service-access-in-scripts" class="header">Time Service Access in Scripts</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#utctimenow" class="header">utcTimeNow</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#taitimenow" class="header">taiTimeNow</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#utctimeafter" class="header">utcTimeAfter</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#taitimeafter" class="header">taiTimeAfter</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduleonce" class="header">scheduleOnce</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduleoncefromnow" class="header">scheduleOnceFromNow</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduleperiodically" class="header">schedulePeriodically</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduleperiodicallyfromnow" class="header">schedulePeriodicallyFromNow</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#time-access" class="header">Time Access</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#access-utc-time-with-utctimenow" class="header">Access UTC Time with utcTimeNow</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#access-tai-time-with-taitimenow" class="header">Access TAI Time with taiTimeNow</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#access-utc-time-in-the-future-with-utctimeafter" class="header">Access UTC time in the Future with utcTimeAfter</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#access-tai-time-in-the-future-with-taitimeafter" class="header">Access TAI Time in the Future with taiTimeAfter</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduling-with-time-service" class="header">Scheduling with Time Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#using-scheduleonce" class="header">Using scheduleOnce</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#using-scheduleoncefromnow" class="header">Using scheduleOnceFromNow</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#using-scheduleperiodically" class="header">Using schedulePeriodically</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#using-scheduleperiodicallyfromnow" class="header">Using schedulePeriodicallyFromNow</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#source-code-for-above-examples" class="header">Source code for above examples</a></li>
   </ul></li>
 </ul>
@@ -181,16 +194,18 @@ tmtsoftware/esw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#time-service" class="header">Time Service</a>
+  <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#time-service-access-in-scripts" class="header">Time Service Access in Scripts</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#utctimenow" class="header">utcTimeNow</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#taitimenow" class="header">taiTimeNow</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#utctimeafter" class="header">utcTimeAfter</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#taitimeafter" class="header">taiTimeAfter</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduleonce" class="header">scheduleOnce</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduleoncefromnow" class="header">scheduleOnceFromNow</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduleperiodically" class="header">schedulePeriodically</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduleperiodicallyfromnow" class="header">schedulePeriodicallyFromNow</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#time-access" class="header">Time Access</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#access-utc-time-with-utctimenow" class="header">Access UTC Time with utcTimeNow</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#access-tai-time-with-taitimenow" class="header">Access TAI Time with taiTimeNow</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#access-utc-time-in-the-future-with-utctimeafter" class="header">Access UTC time in the Future with utcTimeAfter</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#access-tai-time-in-the-future-with-taitimeafter" class="header">Access TAI Time in the Future with taiTimeAfter</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#scheduling-with-time-service" class="header">Scheduling with Time Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#using-scheduleonce" class="header">Using scheduleOnce</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#using-scheduleoncefromnow" class="header">Using scheduleOnceFromNow</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#using-scheduleperiodically" class="header">Using schedulePeriodically</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#using-scheduleperiodicallyfromnow" class="header">Using schedulePeriodicallyFromNow</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html#source-code-for-above-examples" class="header">Source code for above examples</a></li>
   </ul></li>
 </ul>
@@ -202,48 +217,53 @@ tmtsoftware/esw
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#time-service" name="time-service" class="anchor"><span class="anchor-link"></span></a>Time Service</h1>
-<p>Time Service DSL is DSL wrapper over Time Service module provided by CSW. This DSL exposes following APIs to script writers to schedule tasks at given time. It also exposes utility methods for getting specified utc time or tai time and calculate offset.</p>
-<h2><a href="#utctimenow" name="utctimenow" class="anchor"><span class="anchor-link"></span></a>utcTimeNow</h2>
-<p>This utility provides current utc time.</p>
+<h1><a href="#time-service-access-in-scripts" name="time-service-access-in-scripts" class="anchor"><span class="anchor-link"></span></a>Time Service Access in Scripts</h1>
+<p>The time and scheduling functionality of the CSW Time Service are available to script writers. Time Service DSL provides access to the Time Service module provided by CSW. This DSL exposes the following API calls to script writers to access time and schedule tasks.</p>
+<h3><a href="#time-access" name="time-access" class="anchor"><span class="anchor-link"></span></a>Time Access</h3>
+<p>Time Service provides access to both TAI and UTC time that is synchronized at the telescope site with time on all the other computers and also with absolute time provided by a GPS system.</p>
+<p>Time access calls are made available to all scripts. Access to some time functionality requires the import of <code>kotlin.time</code> packages. </p>
+<h3><a href="#access-utc-time-with-utctimenow" name="access-utc-time-with-utctimenow" class="anchor"><span class="anchor-link"></span></a>Access UTC Time with utcTimeNow</h3>
+<p>The <code>utcTimeNow</code> Time Service utility returns the current UTC time. The time value returned is a CSW <code>UTCTime</code> type, which is an absolute time value.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L61" target="_blank" title="Go to snippet source"></a><code class="language-kts">val currentUtcTime = utcTimeNow()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L62" target="_blank" title="Go to snippet source"></a><code class="language-kts">val currentUtcTime = utcTimeNow()</code></pre></dd>
 </dl>
-<h2><a href="#taitimenow" name="taitimenow" class="anchor"><span class="anchor-link"></span></a>taiTimeNow</h2>
-<p>This utility provides current utc time.</p>
+<h3><a href="#access-tai-time-with-taitimenow" name="access-tai-time-with-taitimenow" class="anchor"><span class="anchor-link"></span></a>Access TAI Time with taiTimeNow</h3>
+<p>The <code>taiTimeNow</code> Time Service utility returns the current TAI time. The time value returned is a CSW <code>TAITime</code> type, which is an absolute time value.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L64" target="_blank" title="Go to snippet source"></a><code class="language-kts">val currentTaiTime = taiTimeNow()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L65" target="_blank" title="Go to snippet source"></a><code class="language-kts">val currentTaiTime = taiTimeNow()</code></pre></dd>
 </dl>
-<h2><a href="#utctimeafter" name="utctimeafter" class="anchor"><span class="anchor-link"></span></a>utcTimeAfter</h2>
-<p>This utility provides utc time after provided duration. Following example shows how to get utc time after 1 hour</p>
+<h3><a href="#access-utc-time-in-the-future-with-utctimeafter" name="access-utc-time-in-the-future-with-utctimeafter" class="anchor"><span class="anchor-link"></span></a>Access UTC time in the Future with utcTimeAfter</h3>
+<p>The <code>utcTimeAfter</code> Time Service utility provides an absolute UTC time some amount of time from now in the future. The value provided is a duration such as &ldquo;1 hour&rdquo;. The returned value is an absolute <code>UTCTime</code> type. The following example shows provides UTC time 1 hour from now.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L68" target="_blank" title="Go to snippet source"></a><code class="language-kts">val utcTime = utcTimeAfter(1.hours)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L69" target="_blank" title="Go to snippet source"></a><code class="language-kts">val utcTime = utcTimeAfter(1.hours)</code></pre></dd>
 </dl>
-<h2><a href="#taitimeafter" name="taitimeafter" class="anchor"><span class="anchor-link"></span></a>taiTimeAfter</h2>
-<p>This utility provides tai time after provided duration. Following example shows how to get tai time after 1 hour</p>
+<h3><a href="#access-tai-time-in-the-future-with-taitimeafter" name="access-tai-time-in-the-future-with-taitimeafter" class="anchor"><span class="anchor-link"></span></a>Access TAI Time in the Future with taiTimeAfter</h3>
+<p>The <code>taiTimeAfter</code> Time Service utility provides an absolute TAI time some amount of time from now in the future. The value provided is a duration. The returned value is an absolute <code>TAITime</code> type. The following example shows provides TAI time 1 hour from now.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L72" target="_blank" title="Go to snippet source"></a><code class="language-kts">val taiTime = taiTimeAfter(1.hours)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L73" target="_blank" title="Go to snippet source"></a><code class="language-kts">val taiTime = taiTimeAfter(1.hours)</code></pre></dd>
 </dl>
-<h2><a href="#scheduleonce" name="scheduleonce" class="anchor"><span class="anchor-link"></span></a>scheduleOnce</h2>
-<p>This API allows scheduling non periodic task in script at specified utc time or tai time. This returns a handle to cancel the execution of the task if it hasn&rsquo;t been executed already. Task is a callback which will be executed in thread safe way.</p>
-<p>Following example shows onObserve handler of Sequencer is extracting schedule time from received observe command. It is creating probe command which is then submitted to downstream galil Assembly at scheduled time.</p>
+<h3><a href="#scheduling-with-time-service" name="scheduling-with-time-service" class="anchor"><span class="anchor-link"></span></a>Scheduling with Time Service</h3>
+<p>The Time Service DSL provides script access to the CSW scheduling library allowing scripts to schedule one-off and periodic tasks. Access to the Time Service scheduling functionality is provided in the script writing environment with no extra imports.</p>
+<h3><a href="#using-scheduleonce" name="using-scheduleonce" class="anchor"><span class="anchor-link"></span></a>Using scheduleOnce</h3>
+<p>The <code>scheduleOnce</code> Time Service DSL allows scheduling a task in a script once at the specified absolute UTC or TAI time. The function schedules the task and returns a handle that can be used to cancel the execution of the task if it has not yet executed. The task is a callback which will be executed in thread safe way.</p>
+<p>The following example shows an onSetup handler of a script extracting a scheduled time from a Setup command and then uses  the scheduleOnce to send a motion command to a Galil Assembly at the scheduled time.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L15-L27" target="_blank" title="Go to snippet source"></a><code class="language-kts">val scheduleTimeKey = utcTimeKey(&quot;scheduledTime&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L16-L28" target="_blank" title="Go to snippet source"></a><code class="language-kts">val scheduleTimeKey = utcTimeKey(&quot;scheduledTime&quot;)
 val schedulePrefix = &quot;esw.test&quot;
-val galilAssembly = Assembly(&quot;TCS.galil&quot;, defaultTimeout = 10.seconds)
+val galilAssembly = Assembly(TCS, &quot;galil&quot;)
 
 //Usage inside handlers - schedule tasks while handling setup/observe commands
-onObserve(&quot;schedule-once&quot;) {command -&gt;
+onSetup(&quot;schedule-once&quot;) { command -&gt;
     val scheduledTime = command(scheduleTimeKey)
     val probeCommand = Setup(schedulePrefix, &quot;scheduledOffset&quot;, command.obsId)
 
@@ -252,23 +272,26 @@ onObserve(&quot;schedule-once&quot;) {command -&gt;
     }
 }</code></pre></dd>
 </dl>
-<h2><a href="#scheduleoncefromnow" name="scheduleoncefromnow" class="anchor"><span class="anchor-link"></span></a>scheduleOnceFromNow</h2>
-<p>This API allows scheduling non periodic task in script after specified duration. Task is a callback which will be executed in thread safe way. This API takes time duration after which task will be scheduled. scheduleOnceFromNow internally creates instance of utc time considering specified in duration. Following example shows scheduling task after 1 hour from current utc time. This returns a handle to cancel the execution of the task if it hasn&rsquo;t been executed already.</p>
+<h3><a href="#using-scheduleoncefromnow" name="using-scheduleoncefromnow" class="anchor"><span class="anchor-link"></span></a>Using scheduleOnceFromNow</h3>
+<p>Often, it is necessary to schedule a task in the future some amount of time from now. The <code>scheduleOnceFromNow</code> API allows scheduling non periodic task in script after a specified duration. The task is a callback which will be executed in thread-safe way. This API takes a time <code>Duration</code> type after which task will be scheduled.</p>
+<p>The following example shows the scheduling of a task after 1 hour from now. The function takes a duration and returns a handle which can be used to cancel the execution of the task if it has not yet executed.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L86-L88" target="_blank" title="Go to snippet source"></a><code class="language-kts">scheduleOnceFromNow(1.hours) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L87-L89" target="_blank" title="Go to snippet source"></a><code class="language-kts">scheduleOnceFromNow(1.hours) {
     publishEvent(SystemEvent(&quot;LGSF&quot;, &quot;publish.success&quot;))
 }</code></pre></dd>
 </dl>
-<h2><a href="#scheduleperiodically" name="scheduleperiodically" class="anchor"><span class="anchor-link"></span></a>schedulePeriodically</h2>
-<p>This API allows to schedule a task to execute periodically at the given interval. Task is a callback which will be executed in thread safe way. The task is executed once at the given start time followed by execution of task at each interval. This returns a handle to cancel the execution of further tasks.</p>
+<h3><a href="#using-scheduleperiodically" name="using-scheduleperiodically" class="anchor"><span class="anchor-link"></span></a>Using schedulePeriodically</h3>
+<p>The <code>schedulePeriodically</code> API allows scheduling a task to execute periodically at a given interval starting at a provided absolute start time. The provided task is a callback, which will be executed in thread-safe way.</p>
+<p>Initially, the task is executed once at the given start time followed by periodic execution of the task at the requested period. This function returns a handle that can be used to cancel the execution of further tasks.</p>
+<p>The following example shows the scheduling of a task in an <code>onSetup</code> handler that starts running at the time provided in a parameter and then runs every 5 seconds until stopped. </p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L32-L43" target="_blank" title="Go to snippet source"></a><code class="language-kts">val offsetTimeKey = utcTimeKey(&quot;offsetTime&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L33-L44" target="_blank" title="Go to snippet source"></a><code class="language-kts">val offsetTimeKey = utcTimeKey(&quot;offsetTime&quot;)
 val offsetPrefix = &quot;esw.offset&quot;
-val assemblyForOffset = Assembly(&quot;TCS.galil&quot;, defaultTimeout = 10.seconds)
+val assemblyForOffset = Assembly(TCS, &quot;galil&quot;)
 
 onSetup(&quot;schedule-periodically&quot;) {command -&gt;
     val scheduledTime = command(offsetTimeKey)
@@ -279,15 +302,17 @@ onSetup(&quot;schedule-periodically&quot;) {command -&gt;
     }
 }</code></pre></dd>
 </dl>
-<h2><a href="#scheduleperiodicallyfromnow" name="scheduleperiodicallyfromnow" class="anchor"><span class="anchor-link"></span></a>schedulePeriodicallyFromNow</h2>
-<p>This API allows to schedule a task to execute periodically at the given interval. Task is a callback which will be executed in thread safe way. This API takes time duration after which task will be scheduled once followed by execution of task at each interval. Following example shows scheduling task after 1 hour from current utc time and then executing it periodically at 10 seconds interval. This returns a handle to cancel the execution of further tasks.</p>
+<h3><a href="#using-scheduleperiodicallyfromnow" name="using-scheduleperiodicallyfromnow" class="anchor"><span class="anchor-link"></span></a>Using schedulePeriodicallyFromNow</h3>
+<p>The <code>schedulePeriodicallyFromNow</code> API is like <code>schedulePeriodically</code> but takes a duration as the start time rather than an absolute time. Initially, the task is executed once after a delay from the current time specified by the duration time. This execution is followed by periodic execution of the task at the requested period. The task is a callback which will be executed in thread-safe way. This function returns a handle that can be used to cancel the execution of further tasks.</p>
+<p>The following example shows scheduling the publishing of an Event after 1 hour from now and then publishes an Event periodically with a 10 second period until cancelled. </p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L96-L98" target="_blank" title="Go to snippet source"></a><code class="language-kts">schedulePeriodicallyFromNow(1.hours, 10.seconds) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts#L97-L99" target="_blank" title="Go to snippet source"></a><code class="language-kts">schedulePeriodicallyFromNow(1.hours, 10.seconds) {
     publishEvent(SystemEvent(&quot;LGSF&quot;, &quot;publish.success&quot;))
 }</code></pre></dd>
-</dl>
+</dl><div class="callout note "><div class="callout-title">Limits of Scheduling</div>
+<p>The script environment for scheduling tasks should not be relied upon for very short periods or low jitter applications. </p></div>
 <h2><a href="#source-code-for-above-examples" name="source-code-for-above-examples" class="anchor"><span class="anchor-link"></span></a>Source code for above examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/TimeServiceDslExample.kts">Time Service Example Script</a></li>
@@ -323,13 +348,13 @@ Alarm Service
 </span>
 </div>
 </a>
-<a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" title="Sequencer Command Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../../../sequencer/state-transition.html" title="Sequencer State Transition" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Sequencer Command Service
+Sequencer State Transition
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../../assets/tmt_favicon.ico">
-<title>Misc · TMT Executive Software (ESW)</title>
+<title>Other DSL · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software (ESW)
 </span>
 <span class="md-header-nav__topic">
-Misc
+Other DSL
 </span>
 </div>
 </div>
@@ -135,12 +135,23 @@ tmtsoftware/esw
 
 </div>
 <ul>
-  <li><a href="../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
-  <li><a href="../../../sequencer/scripts/scripts.html" class="page">Sequencer Script</a>
+  <li><a href="../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
-    <li><a href="../../../sequencer/scripts/fsm.html" class="page">FSM</a></li>
-    <li><a href="../../../sequencer/scripts/dsl/dsl.html" class="page">High Level DSL</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/handlers.html" class="page">Script Handlers</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/loop.html" class="page">Including Looping in Scripts</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/misc.html" class="active page">Other DSL</a></li>
+    <li><a href="../../../sequencer/scripts/fsm.html" class="page">Finite State Machines</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/config-service.html" class="page">Using the Configuration Service in Scripts</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/command-service.html" class="page">Command Service for Assemblies and HCDs</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="page">Sequencer Command Service</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="page">Extension utilities on SubmitResponse</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../../../sequencer/scripts/dsl/services/time-service.html" class="page">Time Service Access in Scripts</a></li>
   </ul></li>
+  <li><a href="../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
   <li><a href="../../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -149,7 +160,7 @@ tmtsoftware/esw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../../sequencer/scripts/dsl/misc.html#misc" class="header">Misc</a>
+  <li><a href="../../../sequencer/scripts/dsl/misc.html#other-dsl" class="header">Other DSL</a>
   <ul>
     <li><a href="../../../sequencer/scripts/dsl/misc.html#par" class="header">par</a></li>
     <li><a href="../../../sequencer/scripts/dsl/misc.html#source-code-for-examples" class="header">Source code for examples</a></li>
@@ -174,7 +185,7 @@ tmtsoftware/esw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../../sequencer/scripts/dsl/misc.html#misc" class="header">Misc</a>
+  <li><a href="../../../sequencer/scripts/dsl/misc.html#other-dsl" class="header">Other DSL</a>
   <ul>
     <li><a href="../../../sequencer/scripts/dsl/misc.html#par" class="header">par</a></li>
     <li><a href="../../../sequencer/scripts/dsl/misc.html#source-code-for-examples" class="header">Source code for examples</a></li>
@@ -188,25 +199,25 @@ tmtsoftware/esw
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#misc" name="misc" class="anchor"><span class="anchor-link"></span></a>Misc</h1>
+<h1><a href="#other-dsl" name="other-dsl" class="anchor"><span class="anchor-link"></span></a>Other DSL</h1>
 <h2><a href="#par" name="par" class="anchor"><span class="anchor-link"></span></a>par</h2>
-<p>This utility is provided to support running multiple tasks in parallel. Call to <code>par</code> returns when all the submitted task completes.</p>
-<p>Following example demonstrate a use case of sending commands in parallel to multiple HCD&rsquo;s.</p>
+<p>This utility is provided to support running multiple tasks in parallel. A call to <code>par</code> returns when all the submitted tasks complete.</p>
+<p>The following example demonstrates sending commands in parallel to multiple HCD&rsquo;s.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/MiscExample.kts#L13-L26" target="_blank" title="Go to snippet source"></a><code class="language-kts">val prefix = &quot;ocs.primary&quot;
-val hcd1 = Hcd(&quot;IRIS.filter.wheel1&quot;, 10.minutes)
-val hcd2 = Hcd(&quot;IRIS.filter.wheel2&quot;, 10.minutes)
-val hcd3 = Hcd(&quot;IRIS.filter.wheel3&quot;, 10.minutes)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/MiscExample.kts#L14-L27" target="_blank" title="Go to snippet source"></a><code class="language-kts">val prefix = &quot;OCS.IRIS_darkMode&quot;
+val hcd1 = Hcd(IRIS, &quot;filter.wheel1&quot;, 10.minutes)
+val hcd2 = Hcd(IRIS, &quot;filter.wheel2&quot;, 10.minutes)
+val hcd3 = Hcd(IRIS, &quot;filter.wheel3&quot;, 10.minutes)
 
 onSetup(&quot;setup-iris-hcds&quot;) {
     // send 3 setup commands to 3 HCD&#39;s in parallel
     val responses: List&lt;SubmitResponse&gt; =
             par(
-                    { hcd1.submit(Setup(prefix, &quot;move-10&quot;)) },
-                    { hcd2.submit(Setup(prefix, &quot;move-10&quot;)) },
-                    { hcd3.submit(Setup(prefix, &quot;move-10&quot;)) }
+                    { hcd1.submitAndWait(Setup(prefix, &quot;move-10&quot;)) },
+                    { hcd2.submitAndWait(Setup(prefix, &quot;move-10&quot;)) },
+                    { hcd3.submitAndWait(Setup(prefix, &quot;move-10&quot;)) }
             )
 }</code></pre></dd>
 </dl>
@@ -232,7 +243,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../../sequencer/scripts/dsl/loop.html" title="Loops" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../../sequencer/scripts/dsl/loop.html" title="Including Looping in Scripts" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -241,17 +252,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Loops
+Including Looping in Scripts
 </span>
 </div>
 </a>
-<a href="../../../apps/apps.html" title="Applications" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../../sequencer/scripts/fsm.html" title="Finite State Machines" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Applications
+Finite State Machines
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

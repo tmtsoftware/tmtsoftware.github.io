@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../../../assets/tmt_favicon.ico">
-<title>Using the Configuration Service in Scripts · TMT Executive Software (ESW)</title>
+<title>Extension utilities on SubmitResponse · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software (ESW)
 </span>
 <span class="md-header-nav__topic">
-Using the Configuration Service in Scripts
+Extension utilities on SubmitResponse
 </span>
 </div>
 </div>
@@ -142,10 +142,10 @@ tmtsoftware/esw
     <li><a href="../../../../sequencer/scripts/dsl/misc.html" class="page">Other DSL</a></li>
     <li><a href="../../../../sequencer/scripts/fsm.html" class="page">Finite State Machines</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/location-service.html" class="page">Location Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html" class="active page">Using the Configuration Service in Scripts</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html" class="page">Using the Configuration Service in Scripts</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html" class="page">Command Service for Assemblies and HCDs</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="page">Sequencer Command Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="page">Extension utilities on SubmitResponse</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="active page">Extension utilities on SubmitResponse</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html" class="page">Alarm Service</a></li>
@@ -158,15 +158,6 @@ tmtsoftware/esw
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">Table of contents</label>
-<ul>
-  <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#using-the-configuration-service-in-scripts" class="header">Using the Configuration Service in Scripts</a>
-  <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#existsconfig" class="header">existsConfig</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#getconfig" class="header">getConfig</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#source-code-for-examples" class="header">Source code for examples</a></li>
-  </ul></li>
-</ul>
 </nav>
 
 </nav>
@@ -180,110 +171,56 @@ tmtsoftware/esw
 </div>
 </div>
 </div>
-<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-<div class="md-sidebar__scrollwrap">
-<div class="md-sidebar__inner">
-<nav class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">Table of contents</label>
-<ul>
-  <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#using-the-configuration-service-in-scripts" class="header">Using the Configuration Service in Scripts</a>
-  <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#existsconfig" class="header">existsConfig</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#getconfig" class="header">getConfig</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html#source-code-for-examples" class="header">Source code for examples</a></li>
-  </ul></li>
-</ul>
-</nav>
-
-</div>
-</div>
-</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#using-the-configuration-service-in-scripts" name="using-the-configuration-service-in-scripts" class="anchor"><span class="anchor-link"></span></a>Using the Configuration Service in Scripts</h1>
-<p>The Configuration Service (CS) is available to script writers using the provided DSL. The Configuration Service DSL is a wrapper over the client Configuration Service module provided by CSW. The detailed documentation of Configuration Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/config">here</a> is useful to understand usage of CS and limits.</p>
-<p>The CS DSL provides methods to check if a file exists in the Configuration Service and to retrieve a file&rsquo;s contents.</p>
-<h3><a href="#existsconfig" name="existsconfig" class="anchor"><span class="anchor-link"></span></a>existsConfig</h3>
-<p>The <code>existsConfig</code> DSL method checks if provided file path exists in Configuration Service with a specific revision id (if provided) and returns true or false based on whether or not the file exists.</p>
+<h1><a href="#extension-utilities-on-submitresponse" name="extension-utilities-on-submitresponse" class="anchor"><span class="anchor-link"></span></a>Extension utilities on SubmitResponse</h1>
+<p>A <code>submit</code> or <code>query</code> (and other Command Service or Sequencer Command Service API calls) always return a positive <code>SubmitResponse</code> unless called with <code>resumeOnError</code> flag as <code>true</code>.<br/>For <code>submit</code>, the two possible positive responses are <code>Started</code> and <code>Completed</code>. They can be handled using the <code>.onStarted</code> and <code>.onCompleted</code> methods, respectively. These methods allow you to specify a block of code to be called in each of those cases. </p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ConfigServiceDslExample.kts#L46-L50" target="_blank" title="Go to snippet source"></a><code class="language-kts">val commandsFile = &quot;/wfos/commands.conf&quot;
-val commandsConfigExist: Boolean = existsConfig(commandsFile)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SubmitResponseExtensions.kts#L16-L25" target="_blank" title="Go to snippet source"></a><code class="language-kts">val positiveSubmitResponse: SubmitResponse = assembly.submit(command)
 
-// terminate script if required configuration file does not exist
-if (!commandsConfigExist) finishWithError(&quot;Configuration file [$commandsFile] not found in configuration service&quot;)</code></pre></dd>
-</dl>
-<h3><a href="#getconfig" name="getconfig" class="anchor"><span class="anchor-link"></span></a>getConfig</h3>
-<p>The <code>getConfig</code> DSL method retrieves the content of the file present at the provided path in Configuration Service. It returns <code>null</code> if file is not available in Configuration Service. </p>
-<p>In the below example, we are performing following steps:</p>
-<ol>
-  <li>Retrieve a configuration file from Configuration Service</li>
-  <li>Fail/Terminate script if configuration file does not exist</li>
-  <li>Parse retrieved configuration file and convert it to <code>MotorCommands</code> domain model</li>
-  <li>When Sequencer receives <code>set-motor-speed</code> command, then submit <code>set-speed</code> command to downstream motor HCD</li>
-  <li>When Sequencer receives <code>rotate-motor</code> command, then send <code>set-resolution</code> command to downstream motor HCD</li>
-</ol>
-<dl>
-  <dt>Kotlin</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ConfigServiceDslExample.kts#L54-L74" target="_blank" title="Go to snippet source"></a><code class="language-kts">val wfosCommandsFile = &quot;/wfos/commands.conf&quot;
-
-// retrieve configuration file from config service, terminate script if configuration file does not exist
-val commandsConfig: Config = getConfig(wfosCommandsFile)
-        ?: finishWithError(&quot;Configuration file [$wfosCommandsFile] not found in configuration service&quot;)
-
-val motorCommands = MotorCommands.from(commandsConfig)
-
-// on receiving `set-motor-speed` command, send `set-speed` command to downstream motor hcd
-onSetup(&quot;set-motor-speed&quot;) {
-    val motorSpeedParam = motorSpeedKey.set(motorCommands.setMotorSpeed)
-    val setSpeedCommand = Setup(motorPrefixStr, &quot;set-speed&quot;).add(motorSpeedParam)
-    motorHcd.submit(setSpeedCommand)
-}
-
-// on receiving `set-step-motor-resolution` command, send `set-resolution` command to downstream motor hcd
-onSetup(&quot;set-step-motor-resolution&quot;) {
-    val setResolutionParam = motorResolutionKey.set(motorCommands.setStepMotorResolution)
-    val setResolutionCommand = Setup(motorPrefixStr, &quot;set-resolution&quot;).add(setResolutionParam)
-    motorHcd.submit(setResolutionCommand)
-}</code></pre></dd>
-</dl>
-<p>The following example shows sample code for converting a <code>Config</code> object retrieved from the Configuration Service to custom domain models. Note that TMT standard for configuration files is HOCON as supported by CSW.</p>
-<p>Refer to <a href="https://github.com/lightbend/config">this</a> guide for complete usage of <code>Config</code>.</p>
-<dl>
-  <dt>Kotlin</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ConfigServiceDslExample.kts#L14-L34" target="_blank" title="Go to snippet source"></a><code class="language-kts">/**
- * ======== Sample commands.conf file ========
- * wfos.motor.commands {
- *      set-motor-speed = 50
- *      set-step-motor-resolution = &quot;1080p&quot;
- * }
- */
-data class MotorCommands(val setMotorSpeed: Long, val setStepMotorResolution: String) {
-
-    // static factory to create `MotorCommands` from `Config` object
-    // Ex. MotorCommands.from(config)
-    companion object {
-        fun from(wfosCommandsConfig: Config): MotorCommands {
-            val motorCommandsConfig: Config = wfosCommandsConfig.getConfig(&quot;wfos.motor.commands&quot;)
-            return MotorCommands(
-                    motorCommandsConfig.getLong(&quot;set-motor-speed&quot;),
-                    motorCommandsConfig.getString(&quot;set-step-motor-resolution&quot;)
-            )
+positiveSubmitResponse
+        .onStarted { startedResponse -&gt;
+            val finalResponse: SubmitResponse = assembly.queryFinal(startedResponse.runId())
+            info(&quot;command completed with result: $finalResponse&quot;)
         }
+        .onCompleted { completedResponse -&gt;
+            info(&quot;command with ${completedResponse.runId()} is completed with result: ${completedResponse.result}&quot;)
+        }</code></pre></dd>
+</dl>
+<p>Alternatively, a Kotlin <code>when</code> can be used to perform pattern matching on the result. An example of that is shown below.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SubmitResponseExtensions.kts#L30-L36" target="_blank" title="Go to snippet source"></a><code class="language-kts">when (positiveSubmitResponse) {
+    is Started -&gt; {
+        val finalResponse: SubmitResponse = assembly.queryFinal(positiveSubmitResponse.runId())
+        info(&quot;command completed with response: $finalResponse&quot;)
     }
+    is Completed -&gt; info(&quot;command with ${positiveSubmitResponse.runId()} is completed&quot;)
 }</code></pre></dd>
 </dl>
-<h3><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h3>
-<ul>
-  <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ConfigServiceDslExample.kts">Config Service Examples</a></li>
-</ul>
+<p>If you desire to handle errors manually on a per-command basis, the <code>resumeOnError</code> flag can be used. If this flag is set to true, then script execution continues, and action is taken based on custom logic in script by using an <code>.onFailed</code> method.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SubmitResponseExtensions.kts#L41-L44" target="_blank" title="Go to snippet source"></a><code class="language-kts">val submitResponse: SubmitResponse = assembly.submit(command, resumeOnError = true)
+positiveSubmitResponse.onFailed { failedResponse -&gt;
+    error(&quot;command completed with result: $failedResponse&quot;)
+}</code></pre></dd>
+</dl>
+<p>You can still choose to terminate sequence using the <code>onFailedTerminate</code> utility. This will cause similar behavior as when flag is not set by calling the <code>onError</code> or <code>onGlobalError</code> blocks and terminating the sequence, if the <code>SubmitResponse</code> is some kind of error.</p>
+<dl>
+  <dt>Kotlin</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SubmitResponseExtensions.kts#L49-L50" target="_blank" title="Go to snippet source"></a><code class="language-kts">val submitRes: SubmitResponse = assembly.submit(command, resumeOnError = true)
+positiveSubmitResponse.onFailedTerminate()</code></pre></dd>
+</dl>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/services/config-service.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/services/submit-response-extensions.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -299,7 +236,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../../../sequencer/scripts/dsl/services/location-service.html" title="Location Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" title="Sequencer Command Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -308,17 +245,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Location Service
+Sequencer Command Service
 </span>
 </div>
 </a>
-<a href="../../../../sequencer/scripts/dsl/services/command-service.html" title="Command Service for Assemblies and HCDs" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../../../sequencer/scripts/dsl/services/event-service.html" title="Event Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Command Service for Assemblies and HCDs
+Event Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

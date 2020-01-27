@@ -135,12 +135,23 @@ tmtsoftware/esw
 
 </div>
 <ul>
-  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
-  <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Script</a>
+  <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/fsm.html" class="page">FSM</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/dsl.html" class="page">High Level DSL</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/handlers.html" class="page">Script Handlers</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/loop.html" class="page">Including Looping in Scripts</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/misc.html" class="page">Other DSL</a></li>
+    <li><a href="../../../../sequencer/scripts/fsm.html" class="page">Finite State Machines</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html" class="page">Using the Configuration Service in Scripts</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html" class="page">Command Service for Assemblies and HCDs</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="page">Sequencer Command Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="page">Extension utilities on SubmitResponse</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html" class="active page">Alarm Service</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html" class="page">Time Service Access in Scripts</a></li>
   </ul></li>
+  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -189,14 +200,14 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#alarm-service" name="alarm-service" class="anchor"><span class="anchor-link"></span></a>Alarm Service</h1>
-<p>Alarm Service DSL is a wrapper over Alarm Service module provided by CSW. You can refer a detailed documentation of Alarm Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/alarm">here</a>.</p>
+<p>The Alarm Service DSL is a wrapper for the Alarm Service module provided by CSW. You can refer to detailed documentation of the Alarm Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/alarm">here</a>.</p>
 <p>This DSL provides an API to set the severity of alarm.</p>
 <h2><a href="#setseverity" name="setseverity" class="anchor"><span class="anchor-link"></span></a>setSeverity</h2>
-<p>This API sets alarm severity for alarm key to provided value and keeps refreshing it in the background with the interval of config value <code>csw-alarm.refresh-interval</code>. Default value for <code>csw-alarm.refresh-interval</code> config is <em>3 seconds</em> which is configured in downstream CSW alarm modules <code>reference.conf</code> file.</p>
-<p><code>setSeverity</code> API requires user to provide <code>AlarmKey</code> and <code>AlarmSeverity</code>.</p>
+<p>This API sets alarm severity for an <code>AlarmKey</code> to the provided level and keeps refreshing it in the background with the interval of config value <code>csw-alarm.refresh-interval</code>. Default value for <code>csw-alarm.refresh-interval</code> config is <em>3 seconds</em> which is configured in downstream CSW alarm modules <code>reference.conf</code> file.</p>
+<p>The <code>setSeverity</code> API requires user to provide <code>AlarmKey</code> and <code>AlarmSeverity</code>.</p>
 <h3><a href="#alarmkey" name="alarmkey" class="anchor"><span class="anchor-link"></span></a>AlarmKey</h3>
 <p><code>AlarmKey</code> represents unique alarm in the given subsystem and component e.g. <code>nfiraos.trombone.tromboneaxislowlimitalarm</code></p>
-<p>Following example demonstrate creation of <code>AlarmKey</code></p>
+<p>The following example demonstrates the creation of an <code>AlarmKey</code></p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -204,7 +215,7 @@ tmtsoftware/esw
         AlarmKey(Prefix(NFIRAOS, &quot;trombone&quot;), &quot;tromboneMotorTemperatureAlarm&quot;)</code></pre></dd>
 </dl>
 <h3><a href="#alarmseverity" name="alarmseverity" class="anchor"><span class="anchor-link"></span></a>AlarmSeverity</h3>
-<p>Supported <code>AlarmSeverity</code> are:</p>
+<p>The supported <code>AlarmSeverity</code> levels are:</p>
 <ol>
   <li>Okay</li>
   <li>Warning</li>
@@ -213,7 +224,7 @@ tmtsoftware/esw
   <li>Disconnected</li>
   <li>Critical</li>
 </ol>
-<p>Following example demonstrate the usage of <code>setSeverity</code> API. In this example, temperature <a href="../../fsm.html">Fsm</a> is created and based on the state of fsm, severity is set accordingly.</p>
+<p>The following example demonstrates the usage of the <code>setSeverity</code> API. In this example, a temperature <a href="../../fsm.html">FSM</a> is created, and based on the state of the FSM, the severity is set accordingly.</p>
 <table>
   <thead>
     <tr>
@@ -225,12 +236,12 @@ tmtsoftware/esw
   <tbody>
     <tr>
       <td align="center">OK </td>
-      <td align="center">Temp &gt; 20 &amp;&amp; temp &lt; 40 </td>
+      <td align="center">Temperature less than or equal to 40 </td>
       <td align="center">Okay </td>
     </tr>
     <tr>
       <td align="center">ERROR </td>
-      <td align="center">Temp < 20 or temp > 40 </td>
+      <td align="center">Temperature is greater than 40 </td>
       <td align="center">Major </td>
     </tr>
   </tbody>
@@ -239,8 +250,8 @@ tmtsoftware/esw
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/AlarmServiceDslExample.kts#L27-L51" target="_blank" title="Go to snippet source"></a><code class="language-kts">/**
- * temp &gt; 20 &amp;&amp; temp &lt; 40   =&gt; Severity.Okay
- * else                     =&gt; Severity.Major
+ * temp &lt;= 40   =&gt; Severity.Okay
+ * else        =&gt; Severity.Major
  */
 val temperatureFsm = Fsm(&quot;TEMP&quot;, OK) {
     state(OK) {
@@ -258,7 +269,7 @@ val temperatureFsm = Fsm(&quot;TEMP&quot;, OK) {
             setSeverity(tromboneTemperatureAlarm, Major)
         }
 
-        on(temperatureVar.get() &lt; 40) {
+        on(temperatureVar.get() &lt;= 40) {
             become(OK)
         }
     }
@@ -299,13 +310,13 @@ Logging Service
 </span>
 </div>
 </a>
-<a href="../../../../sequencer/scripts/dsl/services/time-service.html" title="Time Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../../../sequencer/scripts/dsl/services/time-service.html" title="Time Service Access in Scripts" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Time Service
+Time Service Access in Scripts
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
