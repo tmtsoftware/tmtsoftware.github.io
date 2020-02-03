@@ -1,0 +1,752 @@
+{
+  "location-service" : {
+    "http-contract" : {
+      "endpoints" : [ {
+        "requestType" : "Register",
+        "responseType" : "Location",
+        "errorTypes" : [ "RegistrationFailed", "OtherLocationIsRegistered" ]
+      }, {
+        "requestType" : "Unregister",
+        "responseType" : "Done",
+        "errorTypes" : [ "UnregistrationFailed" ]
+      }, {
+        "requestType" : "UnregisterAll",
+        "responseType" : "Done",
+        "errorTypes" : [ "UnregistrationFailed" ]
+      }, {
+        "requestType" : "Find",
+        "responseType" : [ "Location" ]
+      }, {
+        "requestType" : "Resolve",
+        "responseType" : [ "Location" ]
+      }, {
+        "requestType" : "ListEntries",
+        "responseType" : [ "Location" ],
+        "errorTypes" : [ "RegistrationListingFailed" ]
+      }, {
+        "requestType" : "ListByComponentType",
+        "responseType" : [ "Location" ],
+        "errorTypes" : [ "RegistrationListingFailed" ]
+      }, {
+        "requestType" : "ListByConnectionType",
+        "responseType" : [ "Location" ],
+        "errorTypes" : [ "RegistrationListingFailed" ]
+      }, {
+        "requestType" : "ListByHostname",
+        "responseType" : [ "Location" ],
+        "errorTypes" : [ "RegistrationListingFailed" ]
+      }, {
+        "requestType" : "ListByPrefix",
+        "responseType" : [ "Location" ],
+        "errorTypes" : [ "RegistrationListingFailed" ]
+      } ],
+      "requests" : {
+        "ListEntries" : [ {
+          "_type" : "ListEntries"
+        } ],
+        "UnregisterAll" : [ {
+          "_type" : "UnregisterAll"
+        } ],
+        "Resolve" : [ {
+          "_type" : "Resolve",
+          "connection" : {
+            "prefix" : "TCS.filter.wheel",
+            "componentType" : "hcd",
+            "connectionType" : "akka"
+          },
+          "within" : "23 seconds"
+        } ],
+        "ListByConnectionType" : [ {
+          "_type" : "ListByConnectionType",
+          "connectionType" : "akka"
+        }, {
+          "_type" : "ListByConnectionType",
+          "connectionType" : "http"
+        } ],
+        "Unregister" : [ {
+          "_type" : "Unregister",
+          "connection" : {
+            "prefix" : "TCS.filter.wheel",
+            "componentType" : "hcd",
+            "connectionType" : "http"
+          }
+        } ],
+        "ListByHostname" : [ {
+          "_type" : "ListByHostname",
+          "hostname" : "hostname"
+        } ],
+        "Find" : [ {
+          "_type" : "Find",
+          "connection" : {
+            "prefix" : "TCS.filter.wheel",
+            "componentType" : "hcd",
+            "connectionType" : "akka"
+          }
+        } ],
+        "Register" : [ {
+          "_type" : "Register",
+          "registration" : {
+            "_type" : "AkkaRegistration",
+            "connection" : {
+              "prefix" : "TCS.filter.wheel",
+              "componentType" : "hcd",
+              "connectionType" : "akka"
+            },
+            "actorRefURI" : "path"
+          }
+        }, {
+          "_type" : "Register",
+          "registration" : {
+            "_type" : "HttpRegistration",
+            "connection" : {
+              "prefix" : "TCS.filter.wheel",
+              "componentType" : "hcd",
+              "connectionType" : "http"
+            },
+            "port" : 8080,
+            "path" : "path"
+          }
+        } ],
+        "ListByComponentType" : [ {
+          "_type" : "ListByComponentType",
+          "componentType" : "hcd"
+        }, {
+          "_type" : "ListByComponentType",
+          "componentType" : "assembly"
+        } ],
+        "ListByPrefix" : [ {
+          "_type" : "ListByPrefix",
+          "prefix" : "TCS.filter.wheel"
+        } ]
+      }
+    },
+    "websocket-contract" : {
+      "endpoints" : [ {
+        "requestType" : "Track",
+        "responseType" : "TrackingEvent"
+      } ],
+      "requests" : {
+        "Track" : [ {
+          "_type" : "Track",
+          "connection" : {
+            "prefix" : "TCS.filter.wheel",
+            "componentType" : "hcd",
+            "connectionType" : "akka"
+          }
+        } ]
+      }
+    },
+    "models" : {
+      "TrackingEvent" : [ {
+        "_type" : "LocationUpdated",
+        "location" : {
+          "_type" : "AkkaLocation",
+          "connection" : {
+            "prefix" : "TCS.filter.wheel",
+            "componentType" : "hcd",
+            "connectionType" : "akka"
+          },
+          "uri" : "path"
+        }
+      }, {
+        "_type" : "LocationRemoved",
+        "connection" : {
+          "prefix" : "TCS.filter.wheel",
+          "componentType" : "hcd",
+          "connectionType" : "akka"
+        }
+      } ],
+      "ComponentType" : [ "container", "hcd", "assembly", "sequencer", "sequence_component", "service", "machine" ],
+      "Connection" : [ {
+        "prefix" : "TCS.filter.wheel",
+        "componentType" : "hcd",
+        "connectionType" : "akka"
+      }, {
+        "prefix" : "TCS.filter.wheel",
+        "componentType" : "hcd",
+        "connectionType" : "http"
+      }, {
+        "prefix" : "TCS.filter.wheel",
+        "componentType" : "hcd",
+        "connectionType" : "tcp"
+      } ],
+      "Registration" : [ {
+        "_type" : "AkkaRegistration",
+        "connection" : {
+          "prefix" : "TCS.filter.wheel",
+          "componentType" : "hcd",
+          "connectionType" : "akka"
+        },
+        "actorRefURI" : "path"
+      }, {
+        "_type" : "HttpRegistration",
+        "connection" : {
+          "prefix" : "TCS.filter.wheel",
+          "componentType" : "hcd",
+          "connectionType" : "http"
+        },
+        "port" : 8080,
+        "path" : "path"
+      }, {
+        "_type" : "TcpRegistration",
+        "connection" : {
+          "prefix" : "TCS.filter.wheel",
+          "componentType" : "hcd",
+          "connectionType" : "tcp"
+        },
+        "port" : 8080
+      } ],
+      "ComponentId" : [ {
+        "prefix" : "TCS.filter.wheel",
+        "componentType" : "hcd"
+      } ],
+      "Prefix" : [ "TCS.filter.wheel" ],
+      "LocationServiceError" : [ {
+        "_type" : "RegistrationFailed",
+        "msg" : "failure message"
+      }, {
+        "_type" : "OtherLocationIsRegistered",
+        "msg" : "failure message"
+      }, {
+        "_type" : "UnregistrationFailed",
+        "connection" : {
+          "prefix" : "TCS.filter.wheel",
+          "componentType" : "hcd",
+          "connectionType" : "akka"
+        }
+      }, {
+        "_type" : "RegistrationListingFailed"
+      } ],
+      "ConnectionType" : [ "http", "tcp", "akka" ],
+      "Subsystem" : [ "AOESW", "APS", "CIS", "CLN", "CRYO", "CSW", "DMS", "DPS", "ESEN", "ESW", "FMCS", "GMS", "IRIS", "LGSF", "M1CS", "MODHIS", "NFIRAOS", "NSCU", "OSS", "PFCS", "PSFR", "REFR", "RTC", "RPG", "SCMS", "SOSS", "TCS", "WFOS", "Container" ],
+      "Location" : [ {
+        "_type" : "AkkaLocation",
+        "connection" : {
+          "prefix" : "TCS.filter.wheel",
+          "componentType" : "hcd",
+          "connectionType" : "akka"
+        },
+        "uri" : "path"
+      }, {
+        "_type" : "HttpLocation",
+        "connection" : {
+          "prefix" : "TCS.filter.wheel",
+          "componentType" : "hcd",
+          "connectionType" : "http"
+        },
+        "uri" : "path"
+      }, {
+        "_type" : "TcpLocation",
+        "connection" : {
+          "prefix" : "TCS.filter.wheel",
+          "componentType" : "hcd",
+          "connectionType" : "tcp"
+        },
+        "uri" : "path"
+      } ]
+    }
+  },
+  "command-service" : {
+    "http-contract" : {
+      "endpoints" : [ {
+        "requestType" : "Validate",
+        "responseType" : "ValidateResponse"
+      }, {
+        "requestType" : "Submit",
+        "responseType" : "SubmitResponse"
+      }, {
+        "requestType" : "Query",
+        "responseType" : "SubmitResponse"
+      }, {
+        "requestType" : "Oneway",
+        "responseType" : "OnewayResponse"
+      } ],
+      "requests" : {
+        "Validate" : [ {
+          "_type" : "Validate",
+          "controlCommand" : {
+            "_type" : "Observe",
+            "source" : "CSW.ncc.trombone",
+            "commandName" : "move",
+            "maybeObsId" : [ "obs001" ],
+            "paramSet" : [ ]
+          }
+        } ],
+        "Submit" : [ {
+          "_type" : "Submit",
+          "controlCommand" : {
+            "_type" : "Observe",
+            "source" : "CSW.ncc.trombone",
+            "commandName" : "move",
+            "maybeObsId" : [ "obs001" ],
+            "paramSet" : [ ]
+          }
+        } ],
+        "Query" : [ {
+          "_type" : "Query",
+          "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333"
+        } ],
+        "Oneway" : [ {
+          "_type" : "Oneway",
+          "controlCommand" : {
+            "_type" : "Observe",
+            "source" : "CSW.ncc.trombone",
+            "commandName" : "move",
+            "maybeObsId" : [ "obs001" ],
+            "paramSet" : [ ]
+          }
+        } ]
+      }
+    },
+    "websocket-contract" : {
+      "endpoints" : [ {
+        "requestType" : "QueryFinal",
+        "responseType" : "SubmitResponse"
+      }, {
+        "requestType" : "SubscribeCurrentState",
+        "responseType" : "CurrentState"
+      } ],
+      "requests" : {
+        "QueryFinal" : [ {
+          "_type" : "QueryFinal",
+          "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333",
+          "timeoutInSeconds" : 100
+        } ],
+        "SubscribeCurrentState" : [ {
+          "_type" : "SubscribeCurrentState",
+          "names" : [ "idle" ]
+        } ]
+      }
+    },
+    "models" : {
+      "Units" : [ "angstrom", "arcmin", "arcsec", "day", "degree", "elvolt", "gram", "hour", "hertz", "joule", "kelvin", "kilogram", "kilometer", "liter", "meter", "marcsec", "millimeter", "millisecond", "micron", "micrometer", "minute", "newton", "pascal", "radian", "second", "sday", "steradian", "microarcsec", "volt", "watt", "week", "year", "coulomb", "centimeter", "erg", "au", "jansky", "lightyear", "mag", "cal", "foot", "inch", "pound", "mile", "ounce", "yard", "NoUnits", "encoder", "count", "pix" ],
+      "Parameter" : [ {
+        "IntKey" : {
+          "keyName" : "encoder",
+          "values" : [ 100 ],
+          "units" : "NoUnits"
+        }
+      }, {
+        "IntArrayKey" : {
+          "keyName" : "filter",
+          "values" : [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ],
+          "units" : "NoUnits"
+        }
+      }, {
+        "StructKey" : {
+          "keyName" : "structs",
+          "values" : [ {
+            "paramSet" : [ {
+              "IntKey" : {
+                "keyName" : "encoder",
+                "values" : [ 100 ],
+                "units" : "NoUnits"
+              }
+            }, {
+              "IntArrayKey" : {
+                "keyName" : "filter",
+                "values" : [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ],
+                "units" : "NoUnits"
+              }
+            } ]
+          } ],
+          "units" : "NoUnits"
+        }
+      }, {
+        "IntMatrixKey" : {
+          "keyName" : "matrix",
+          "values" : [ [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ] ],
+          "units" : "NoUnits"
+        }
+      }, {
+        "CometCoordKey" : {
+          "keyName" : "halley's",
+          "values" : [ {
+            "_type" : "CometCoord",
+            "tag" : "BASE",
+            "epochOfPerihelion" : 2000,
+            "inclination" : 90,
+            "longAscendingNode" : 2,
+            "argOfPerihelion" : 100,
+            "perihelionDistance" : 1.4,
+            "eccentricity" : 0.234
+          } ],
+          "units" : "NoUnits"
+        }
+      }, {
+        "UTCTimeKey" : {
+          "keyName" : "utcTimeKey",
+          "values" : [ "2017-09-04T16:28:00.123456789Z" ],
+          "units" : "second"
+        }
+      }, {
+        "RaDecKey" : {
+          "keyName" : "raDecKey",
+          "values" : [ {
+            "ra" : 100,
+            "dec" : 100
+          } ],
+          "units" : "NoUnits"
+        }
+      }, {
+        "ChoiceKey" : {
+          "keyName" : "mode-reset",
+          "values" : [ "c" ],
+          "units" : "NoUnits"
+        }
+      } ],
+      "CommandName" : [ "move" ],
+      "CurrentState" : [ {
+        "prefix" : "CSW.ncc.trombone",
+        "stateName" : "idle",
+        "paramSet" : [ {
+          "StructKey" : {
+            "keyName" : "structs",
+            "values" : [ {
+              "paramSet" : [ {
+                "IntKey" : {
+                  "keyName" : "encoder",
+                  "values" : [ 100 ],
+                  "units" : "NoUnits"
+                }
+              }, {
+                "IntArrayKey" : {
+                  "keyName" : "filter",
+                  "values" : [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ],
+                  "units" : "NoUnits"
+                }
+              } ]
+            } ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "IntArrayKey" : {
+            "keyName" : "filter",
+            "values" : [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "IntMatrixKey" : {
+            "keyName" : "matrix",
+            "values" : [ [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ] ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "ChoiceKey" : {
+            "keyName" : "mode-reset",
+            "values" : [ "c" ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "UTCTimeKey" : {
+            "keyName" : "utcTimeKey",
+            "values" : [ "2017-09-04T16:28:00.123456789Z" ],
+            "units" : "second"
+          }
+        }, {
+          "RaDecKey" : {
+            "keyName" : "raDecKey",
+            "values" : [ {
+              "ra" : 100,
+              "dec" : 100
+            } ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "CometCoordKey" : {
+            "keyName" : "halley's",
+            "values" : [ {
+              "_type" : "CometCoord",
+              "tag" : "BASE",
+              "epochOfPerihelion" : 2000,
+              "inclination" : 90,
+              "longAscendingNode" : 2,
+              "argOfPerihelion" : 100,
+              "perihelionDistance" : 1.4,
+              "eccentricity" : 0.234
+            } ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "IntKey" : {
+            "keyName" : "encoder",
+            "values" : [ 100 ],
+            "units" : "NoUnits"
+          }
+        } ]
+      } ],
+      "CommandIssue" : [ {
+        "_type" : "AssemblyBusyIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "IdNotAvailableIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "MissingKeyIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "ParameterValueOutOfRangeIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "RequiredAssemblyUnavailableIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "RequiredSequencerUnavailableIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "RequiredServiceUnavailableIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "RequiredHCDUnavailableIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "UnresolvedLocationsIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "UnsupportedCommandInStateIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "UnsupportedCommandIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "WrongInternalStateIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "WrongNumberOfParametersIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "WrongParameterTypeIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "WrongPrefixIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "WrongUnitsIssue",
+        "reason" : "issue"
+      }, {
+        "_type" : "OtherIssue",
+        "reason" : "issue"
+      } ],
+      "SubmitResponse" : [ {
+        "_type" : "Cancelled",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333"
+      }, {
+        "_type" : "Completed",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333",
+        "result" : {
+          "paramSet" : [ {
+            "StructKey" : {
+              "keyName" : "structs",
+              "values" : [ {
+                "paramSet" : [ {
+                  "IntKey" : {
+                    "keyName" : "encoder",
+                    "values" : [ 100 ],
+                    "units" : "NoUnits"
+                  }
+                }, {
+                  "IntArrayKey" : {
+                    "keyName" : "filter",
+                    "values" : [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ],
+                    "units" : "NoUnits"
+                  }
+                } ]
+              } ],
+              "units" : "NoUnits"
+            }
+          }, {
+            "IntArrayKey" : {
+              "keyName" : "filter",
+              "values" : [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ],
+              "units" : "NoUnits"
+            }
+          }, {
+            "IntMatrixKey" : {
+              "keyName" : "matrix",
+              "values" : [ [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ] ],
+              "units" : "NoUnits"
+            }
+          }, {
+            "ChoiceKey" : {
+              "keyName" : "mode-reset",
+              "values" : [ "c" ],
+              "units" : "NoUnits"
+            }
+          }, {
+            "UTCTimeKey" : {
+              "keyName" : "utcTimeKey",
+              "values" : [ "2017-09-04T16:28:00.123456789Z" ],
+              "units" : "second"
+            }
+          }, {
+            "RaDecKey" : {
+              "keyName" : "raDecKey",
+              "values" : [ {
+                "ra" : 100,
+                "dec" : 100
+              } ],
+              "units" : "NoUnits"
+            }
+          }, {
+            "CometCoordKey" : {
+              "keyName" : "halley's",
+              "values" : [ {
+                "_type" : "CometCoord",
+                "tag" : "BASE",
+                "epochOfPerihelion" : 2000,
+                "inclination" : 90,
+                "longAscendingNode" : 2,
+                "argOfPerihelion" : 100,
+                "perihelionDistance" : 1.4,
+                "eccentricity" : 0.234
+              } ],
+              "units" : "NoUnits"
+            }
+          }, {
+            "IntKey" : {
+              "keyName" : "encoder",
+              "values" : [ 100 ],
+              "units" : "NoUnits"
+            }
+          } ]
+        }
+      }, {
+        "_type" : "Error",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333",
+        "message" : "issue"
+      }, {
+        "_type" : "Invalid",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333",
+        "issue" : {
+          "_type" : "OtherIssue",
+          "reason" : "issue"
+        }
+      }, {
+        "_type" : "Locked",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333"
+      }, {
+        "_type" : "Started",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333"
+      } ],
+      "OnewayResponse" : [ {
+        "_type" : "Accepted",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333"
+      }, {
+        "_type" : "Invalid",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333",
+        "issue" : {
+          "_type" : "OtherIssue",
+          "reason" : "issue"
+        }
+      }, {
+        "_type" : "Locked",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333"
+      } ],
+      "ValidateResponse" : [ {
+        "_type" : "Accepted",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333"
+      }, {
+        "_type" : "Invalid",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333",
+        "issue" : {
+          "_type" : "OtherIssue",
+          "reason" : "issue"
+        }
+      }, {
+        "_type" : "Locked",
+        "runId" : "b1ee7801-a469-4e5e-a9f8-a8364fd23333"
+      } ],
+      "ControlCommand" : [ {
+        "_type" : "Observe",
+        "source" : "CSW.ncc.trombone",
+        "commandName" : "move",
+        "maybeObsId" : [ "obs001" ],
+        "paramSet" : [ ]
+      }, {
+        "_type" : "Setup",
+        "source" : "CSW.ncc.trombone",
+        "commandName" : "move",
+        "maybeObsId" : [ "obs001" ],
+        "paramSet" : [ ]
+      } ],
+      "Result" : [ {
+        "paramSet" : [ {
+          "StructKey" : {
+            "keyName" : "structs",
+            "values" : [ {
+              "paramSet" : [ {
+                "IntKey" : {
+                  "keyName" : "encoder",
+                  "values" : [ 100 ],
+                  "units" : "NoUnits"
+                }
+              }, {
+                "IntArrayKey" : {
+                  "keyName" : "filter",
+                  "values" : [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ],
+                  "units" : "NoUnits"
+                }
+              } ]
+            } ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "IntArrayKey" : {
+            "keyName" : "filter",
+            "values" : [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "IntMatrixKey" : {
+            "keyName" : "matrix",
+            "values" : [ [ [ 1, 2, 3, 4, 5 ], [ 10, 20, 30, 40, 50 ] ] ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "ChoiceKey" : {
+            "keyName" : "mode-reset",
+            "values" : [ "c" ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "UTCTimeKey" : {
+            "keyName" : "utcTimeKey",
+            "values" : [ "2017-09-04T16:28:00.123456789Z" ],
+            "units" : "second"
+          }
+        }, {
+          "RaDecKey" : {
+            "keyName" : "raDecKey",
+            "values" : [ {
+              "ra" : 100,
+              "dec" : 100
+            } ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "CometCoordKey" : {
+            "keyName" : "halley's",
+            "values" : [ {
+              "_type" : "CometCoord",
+              "tag" : "BASE",
+              "epochOfPerihelion" : 2000,
+              "inclination" : 90,
+              "longAscendingNode" : 2,
+              "argOfPerihelion" : 100,
+              "perihelionDistance" : 1.4,
+              "eccentricity" : 0.234
+            } ],
+            "units" : "NoUnits"
+          }
+        }, {
+          "IntKey" : {
+            "keyName" : "encoder",
+            "values" : [ 100 ],
+            "units" : "NoUnits"
+          }
+        } ]
+      } ],
+      "KeyType" : [ "ChoiceKey", "StringKey", "StructKey", "UTCTimeKey", "TAITimeKey", "RaDecKey", "EqCoordKey", "SolarSystemCoordKey", "MinorPlanetCoordKey", "CometCoordKey", "AltAzCoordKey", "CoordKey", "BooleanKey", "CharKey", "ByteKey", "ShortKey", "LongKey", "IntKey", "FloatKey", "DoubleKey", "ByteArrayKey", "ShortArrayKey", "LongArrayKey", "IntArrayKey", "FloatArrayKey", "DoubleArrayKey", "ByteMatrixKey", "ShortMatrixKey", "LongMatrixKey", "IntMatrixKey", "FloatMatrixKey", "DoubleMatrixKey" ]
+    }
+  }
+}
