@@ -192,6 +192,7 @@ tmtsoftware/csw
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
+  <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
@@ -324,7 +325,7 @@ private ILocationService locationService = JHttpLocationServiceFactory.makeLocal
 
 // dummy http connection
 val httpPort                          = 8080
-val httpConnection                    = HttpConnection(ComponentId(Prefix(Subsystem.CSW, &quot;configuration&quot;), ComponentType.Service))
+val httpConnection                    = HttpConnection(api.models.ComponentId(Prefix(Subsystem.CSW, &quot;configuration&quot;), ComponentType.Service))
 val httpRegistration                  = HttpRegistration(httpConnection, httpPort, &quot;path123&quot;)
 val httpRegResult: RegistrationResult = Await.result(locationService.register(httpRegistration), 2.seconds)
 
@@ -334,7 +335,7 @@ val httpRegResult: RegistrationResult = Await.result(locationService.register(ht
 import akka.actor.typed.scaladsl.adapter._
 
 // dummy HCD connection
-val hcdConnection = AkkaConnection(ComponentId(Prefix(Subsystem.NFIRAOS, &quot;hcd1&quot;), ComponentType.HCD))
+val hcdConnection = AkkaConnection(api.models.ComponentId(Prefix(Subsystem.NFIRAOS, &quot;hcd1&quot;), ComponentType.HCD))
 val hcdRegistration: AkkaRegistration = AkkaRegistrationFactory.make(
   hcdConnection,
   context
@@ -360,7 +361,7 @@ def behavior(): Behavior[String] = Behaviors.setup { ctx =&gt;
 }
 val typedActorRef: ActorRef[String] = context.system.spawn(behavior(), &quot;typed-actor-ref&quot;)
 
-val assemblyConnection = AkkaConnection(models.ComponentId(Prefix(Subsystem.NFIRAOS, &quot;assembly1&quot;), ComponentType.Assembly))
+val assemblyConnection = AkkaConnection(ComponentId(Prefix(Subsystem.NFIRAOS, &quot;assembly1&quot;), ComponentType.Assembly))
 
 // Register Typed ActorRef[String] with Location Service
 val assemblyRegistration: AkkaRegistration =
@@ -370,14 +371,14 @@ val assemblyRegResult: RegistrationResult = Await.result(locationService.registe
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L97-L134" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>// dummy http connection
-HttpConnection httpConnection = new HttpConnection(new ComponentId(Prefix.apply(JSubsystem.CSW(), &quot;configuration&quot;), JComponentType.Service()));
+HttpConnection httpConnection = new HttpConnection(new ComponentId(new Prefix(JSubsystem.CSW(), &quot;configuration&quot;), JComponentType.Service()));
 HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;);
 httpRegResult = locationService.register(httpRegistration).get();
 
 // ************************************************************************************************************
 
 // dummy HCD connection
-AkkaConnection hcdConnection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.NFIRAOS(), &quot;hcd1&quot;), JComponentType.HCD()));
+AkkaConnection hcdConnection = new AkkaConnection(new ComponentId(new Prefix(JSubsystem.NFIRAOS(), &quot;hcd1&quot;), JComponentType.HCD()));
 ActorRef actorRef = getContext().actorOf(Props.create(AbstractActor.class, () -&gt; new AbstractActor() {
             @Override
             public Receive createReceive() {
@@ -399,7 +400,7 @@ hcdRegResult = locationService.register(hcdRegistration).get();
 Behavior&lt;String&gt; behavior = Behaviors.setup(ctx -&gt; Behaviors.same());
 akka.actor.typed.ActorRef&lt;String&gt; typedActorRef = Adapter.spawn(context(), behavior, &quot;typed-actor-ref&quot;);
 
-AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.NFIRAOS(), &quot;assembly1&quot;), JComponentType.Assembly()));
+AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(new Prefix(JSubsystem.NFIRAOS(), &quot;assembly1&quot;), JComponentType.Assembly()));
 
 // Register Typed ActorRef[String] with Location Service
 AkkaRegistration assemblyRegistration = new RegistrationFactory().akkaTyped(assemblyConnection, typedActorRef);
@@ -599,14 +600,14 @@ for (Location loc : akkaList) {
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/location/LocationServiceExampleClientApp.scala#L233-L236" target="_blank" title="Go to snippet source"></a><code class="language-scala">// filter akka locations based on prefix
-val akkaLocations: List[Location] = Await.result(locationService.listByPrefix(Prefix(&quot;nfiraos.ncc.assembly1&quot;)), timeout)
-log.info(&quot;Registered akka locations for nfiraos.ncc.assmbly1&quot;)
+val akkaLocations: List[Location] = Await.result(locationService.listByPrefix(&quot;NFIRAOS.ncc&quot;), timeout)
+log.info(&quot;Registered akka locations for nfiraos.ncc&quot;)
 akkaLocations.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L231-L235" target="_blank" title="Go to snippet source"></a><code class="language-java">List&lt;Location&gt; akkaLocations = locationService.listByPrefix(Prefix.apply(&quot;nfiraos.ncc.assembly1&quot;)).get();
-log.info(&quot;Registered akka locations for nfiraos.ncc.assembly1&quot;);
-for (Location loc : akkaLocations) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L231-L235" target="_blank" title="Go to snippet source"></a><code class="language-java">List&lt;Location&gt; locations = locationService.listByPrefix(&quot;NFIRAOS.ncc&quot;).get();
+log.info(&quot;Registered akka locations for nfiraos.ncc&quot;);
+for (Location loc : locations) {
     log.info(&quot;--- &quot; + connectionInfo(loc.connection()));
 }</code></pre></dd>
 </dl>
