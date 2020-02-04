@@ -137,19 +137,8 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/handlers.html" class="page">Script Handlers</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/loop.html" class="page">Including Looping in Scripts</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/misc.html" class="page">Other DSL</a></li>
-    <li><a href="../../../../sequencer/scripts/fsm.html" class="page">Finite State Machines</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/location-service.html" class="page">Location Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html" class="page">Using the Configuration Service in Scripts</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html" class="active page">Command Service for Assemblies and HCDs</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="page">Sequencer Command Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="page">Extension utilities on SubmitResponse</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html" class="page">Alarm Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html" class="page">Time Service Access in Scripts</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/script-constructs.html" class="page">Script DSL Constructs</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a></li>
   </ul></li>
   <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
@@ -253,12 +242,12 @@ val filterWheelHcd2 = Hcd(WFOS, &quot;GalilHcd1&quot;, defaultTimeout = 20.secon
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L48-L61" target="_blank" title="Go to snippet source"></a><code class="language-kts">val parameters = intKey(&quot;target&quot;).set(100)
-val galilCommand = Setup(&quot;ESW.iris_darkNight&quot;, &quot;moveWheel&quot;, command.obsId).add(parameters)
+val galilCommand = Setup(&quot;ESW.IRIS_darkNight&quot;, &quot;moveWheel&quot;, command.obsId).add(parameters)
 val startedResponse = galilAssembly.submit(galilCommand)</code></pre></dd>
 </dl>
 <h4><a href="#error-handling-in-scripts" name="error-handling-in-scripts" class="anchor"><span class="anchor-link"></span></a>Error Handling in Scripts</h4>
 <p>In most cases errors encountered in the execution of a script will likely cause the command (and therefore, Sequence) to fail. Most of the time, not much can be done when an error occurs other than to report the error that occurred. In some cases, it is possible some remediation can be performed, but it is likely the Sequence would need to run again. For this reason, the error handling of commands in a script has been simplified such that errors from the Command Service DSL calls are captured and delivered to error handlers specific to a single sequence command handler, or global to the entire script. In this way, such error handling does not need to be repeated throughout the script for each command sent.</p>
-<p>To add an error handler to a command handler, extend the command handler block with a <code>.onError</code> block. The <code>SubmitResponse</code> error is captured in a <code>ScriptError</code> type and passed into the block. This type contains a <code>reason</code> String explaining what went wrong. If the command handler does not have an <code>onError</code> block, the global error handler will be called. See the page on <a href="../handlers.html">Script Handlers</a> for more information. After this block is called, the command sending the sequence terminates with an Error status.</p>
+<p>To add an error handler to a command handler, extend the command handler block with a <code>.onError</code> block. The <code>SubmitResponse</code> error is captured in a <code>ScriptError</code> type and passed into the block. This type contains a <code>reason</code> String explaining what went wrong. If the command handler does not have an <code>onError</code> block, the global error handler will be called. See the page on <a href="../constructs/handlers.html">Script Handlers</a> for more information. After this block is called, the command sending the sequence terminates with an Error status.</p>
 <p>Because of this mechanism, a <code>submit</code> (and other Command Service API calls) always returns a positive <code>SubmitResponse</code>. For <code>submit</code>, the two possible responses are <code>Started</code> and <code>Completed</code>. They can be handled using the <code>.onStarted</code> and <code>.onCompleted</code> methods, respectively. These methods allow you to specify a block of code to be called in each of those cases. Alternatively, a Kotlin <code>when</code> can be used to perform pattern matching on the result. An example of both are shown below, along with an example of an <code>onError</code> handler for the sequence command handler. Since there are only two positive options, forming an if statement using the <code>isStarted</code> call on the <code>SubmitResponse</code> is convenient in many cases.</p>
 <dl>
   <dt>Kotlin</dt>
@@ -271,7 +260,7 @@ val startedResponse = galilAssembly.submit(galilCommand)</code></pre></dd>
      * Hence, only Started (in case of long-running command) or Completed (in case of short running command) response is returned
      */
     val parameters = intKey(&quot;target&quot;).set(100)
-    val galilCommand = Setup(&quot;ESW.iris_darkNight&quot;, &quot;moveWheel&quot;, command.obsId).add(parameters)
+    val galilCommand = Setup(&quot;ESW.IRIS_darkNight&quot;, &quot;moveWheel&quot;, command.obsId).add(parameters)
     val positiveSubmitResponse: CommandResponse.SubmitResponse = galilAssembly.submit(galilCommand)
 
     //  First approach - using custom dsl (this is an alternative to kotlin pattern match using when)
@@ -344,7 +333,7 @@ val startedResponse = galilAssembly.submit(galilCommand)</code></pre></dd>
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L48-L51" target="_blank" title="Go to snippet source"></a><code class="language-kts">val parameters = intKey(&quot;target&quot;).set(100)
-val galilCommand = Setup(&quot;ESW.iris_darkNight&quot;, &quot;moveWheel&quot;, command.obsId).add(parameters)
+val galilCommand = Setup(&quot;ESW.IRIS_darkNight&quot;, &quot;moveWheel&quot;, command.obsId).add(parameters)
 galilAssembly.submitAndWait(galilCommand, timeout = 20.seconds)</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Do I Need a Result Variable?</div>
 <p>Note that this example does not save the <code>submitAndWait</code> result. If a <code>submitAndWait</code> does not return a result, and since the <code>submitAndWait</code> returns only after the actions are completed, and errors are handled elsewhere, there is not much reason to bother with the result. If it is the case where the command returns a result in the <code>Completed</code>, save the returned <code>Completed</code> value and retrieve the result.</p></div>

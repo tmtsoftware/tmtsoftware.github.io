@@ -137,19 +137,8 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/handlers.html" class="page">Script Handlers</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/loop.html" class="page">Including Looping in Scripts</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/misc.html" class="page">Other DSL</a></li>
-    <li><a href="../../../../sequencer/scripts/fsm.html" class="page">Finite State Machines</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/location-service.html" class="page">Location Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/config-service.html" class="page">Using the Configuration Service in Scripts</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/command-service.html" class="page">Command Service for Assemblies and HCDs</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="active page">Sequencer Command Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="page">Extension utilities on SubmitResponse</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/alarm-service.html" class="page">Alarm Service</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/time-service.html" class="page">Time Service Access in Scripts</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/script-constructs.html" class="page">Script DSL Constructs</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a></li>
   </ul></li>
   <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
@@ -252,7 +241,7 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 <p>The <code>query</code> DSL method allows checking on the state of the <code>Sequence</code>. <code>query</code> returns the current response immediately, which could be either a final response (eg. <code>Completed</code>) or the <code>Started</code> response. The <code>runId</code> of the submitted <code>Sequence</code> can be obtained from the <code>SubmitResponse</code> returned by <code>submit</code>. <code>query</code> is useful in the case where polling of the command is needed or the script needs to take other actions and periodically check for the completion of the <code>Sequence</code>. </p>
 <p>Note that if the <code>runId</code> is not present in the Sequencer or has been removed from the CRM, the response returned is an <code>Invalid</code> response with an <code>IdNotAvailableIssue</code>. </p>
 <p>Please refer to <a href="submit-response-extensions.html">SubmitResponse extension utilities</a> for using helper methods on <code>SubmitResponse</code>.</p>
-<p>By default, any negative <code>SubmitResponse</code> (for e.g. <code>Invalid</code> or <code>Error</code>) is treated as a Script error. Refer to <a href="../handlers.html#error-handlers">error handling</a> section for more details. Alternatively, if you do not want to escalate a negative <code>SubmitResponse</code>, you can use <code>submit</code> Api with <code>resumeOnError</code> flag.</p>
+<p>By default, any negative <code>SubmitResponse</code> (for e.g. <code>Invalid</code> or <code>Error</code>) is treated as a Script error. Refer to <a href="../constructs/handlers.html#error-handlers">error handling</a> section for more details. Alternatively, if you do not want to escalate a negative <code>SubmitResponse</code>, you can use <code>submit</code> Api with <code>resumeOnError</code> flag.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -288,7 +277,7 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 <p>As with Assemblies and HCDs, a Sequencer can also indicate to another Sequencer to go offline or online using the Sequencer Command Service DSL.</p>
 <h3><a href="#sequencer-sends-goonline" name="sequencer-sends-goonline" class="anchor"><span class="anchor-link"></span></a>Sequencer Sends goOnline</h3>
 <p>This DSL method is used to send online/offline commands to other sequencers. The Sequencer can go online only if it is currently in the offline state. If this command is received in any other state apart from offline, an <code>Unhandled</code> response will be sent.</p>
-<p>If the Sequencer is in the Offline state, and it receives the <code>goOnline</code> command, the <a href="../handlers.html#online-and-offline-handlers">goOnline handlers</a> of the receiving Sequencer will be called. In case the handlers fail, a <code>GoOnlineHookFailed</code> response would be sent, and the Sequencer remains in the previous state. Otherwise, an <code>Ok</code> response is returned, and the Sequencer goes in online(idle) state.</p>
+<p>If the Sequencer is in the Offline state, and it receives the <code>goOnline</code> command, the <a href="../constructs/handlers.html#online-and-offline-handlers">goOnline handlers</a> of the receiving Sequencer will be called. In case the handlers fail, a <code>GoOnlineHookFailed</code> response would be sent, and the Sequencer remains in the previous state. Otherwise, an <code>Ok</code> response is returned, and the Sequencer goes in online(idle) state.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -300,7 +289,7 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
   <li>If the Sequencer is Idle, which means it is not processing any sequence currently</li>
   <li>If the Sequencer is Loaded with a sequence</li>
 </ul>
-<p>If this command is sent in any other state apart from these, an <code>Unhandled</code> response will be sent. If the Sequencer is in idle/loaded state, and it receives the <code>goOffline</code> command, the <a href="../handlers.html#online-and-offline-handlers">goOffline handlers</a> of the receiving Sequencer will be called. In case the handlers fail, a <code>GoOfflineHookFailed</code> response would be sent, resulting the Sequencer remains in the previous state. Otherwise an <code>Ok</code> message is sent, and the Sequencer goes to offline state.</p>
+<p>If this command is sent in any other state apart from these, an <code>Unhandled</code> response will be sent. If the Sequencer is in idle/loaded state, and it receives the <code>goOffline</code> command, the <a href="../constructs/handlers.html#online-and-offline-handlers">goOffline handlers</a> of the receiving Sequencer will be called. In case the handlers fail, a <code>GoOfflineHookFailed</code> response would be sent, resulting the Sequencer remains in the previous state. Otherwise an <code>Ok</code> message is sent, and the Sequencer goes to offline state.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -308,14 +297,14 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 </dl>
 <h2><a href="#handling-diagnostic-and-operations-mode" name="handling-diagnostic-and-operations-mode" class="anchor"><span class="anchor-link"></span></a>Handling Diagnostic and Operations Mode</h2>
 <h3><a href="#diagnostic-mode" name="diagnostic-mode" class="anchor"><span class="anchor-link"></span></a>Diagnostic Mode</h3>
-<p>The <code>diagnosticMode</code> command can be sent to Sequencers in all states and a <code>DiagnosticModeResponse</code> is returned. If the Sequencer script has defined the <a href="../handlers.html#diagnostic-mode-handler">diagnostic mode handlers</a>, they will be called. If the handlers execute successfully, an <code>Ok</code> response is sent; otherwise, the <code>DiagnosticHookFailed</code> response is sent.</p>
+<p>The <code>diagnosticMode</code> command can be sent to Sequencers in all states and a <code>DiagnosticModeResponse</code> is returned. If the Sequencer script has defined the <a href="../constructs/handlers.html#diagnostic-mode-handler">diagnostic mode handlers</a>, they will be called. If the handlers execute successfully, an <code>Ok</code> response is sent; otherwise, the <code>DiagnosticHookFailed</code> response is sent.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L69" target="_blank" title="Go to snippet source"></a><code class="language-kts">val diagnosticModeResponse: DiagnosticModeResponse = wfos.diagnosticMode(utcTimeNow(), &quot;engineering&quot;)</code></pre></dd>
 </dl>
 <h3><a href="#operations-mode" name="operations-mode" class="anchor"><span class="anchor-link"></span></a>Operations Mode</h3>
-<p>The <code>operationsMode</code> command returns a Sequencer in a diagnostic data mode to normal operation. <code>operationsMode</code> is accepted by Sequencers in all states and an <code>OperationsModeResponse</code> is returned to the sender. If the Sequencer has defined its <a href="../handlers.html#operations-mode-handler">operations mode handlers</a>, they will be called. If the handlers execute successfully, an <code>Ok</code> response is sent; otherwise, the <code>OperationsHookFailed</code> response is sent.</p>
+<p>The <code>operationsMode</code> command returns a Sequencer in a diagnostic data mode to normal operation. <code>operationsMode</code> is accepted by Sequencers in all states and an <code>OperationsModeResponse</code> is returned to the sender. If the Sequencer has defined its <a href="../constructs/handlers.html#operations-mode-handler">operations mode handlers</a>, they will be called. If the handlers execute successfully, an <code>Ok</code> response is sent; otherwise, the <code>OperationsHookFailed</code> response is sent.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -325,7 +314,7 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 <p>Stopping and aborting are meant to handle early termination of observing sequences in instruments. Aborting indicates that the current observe should stop as soon as possible and save the data if possible. Stop indicates that the current observe should stop at the end of the current step. In both cases, the observation is over and no subsequent steps can be executed.</p>
 <p>Stop and abort commands are accepted only if the Sequencer is in <code>InProgress</code> state, which means it is executing a sequence. If this command is sent in any other state, an <code>Unhandled</code> response is returned. In all other cases, an <code>Ok</code> response is sent.</p>
 <h3><a href="#aborting-a-sequence" name="aborting-a-sequence" class="anchor"><span class="anchor-link"></span></a>Aborting a Sequence</h3>
-<p>On receiving the abort command in the <code>InProgress</code> state, the Sequencer will execute the <a href="../handlers.html#abort-sequence-handler">abort sequence handlers</a> and on completion of execution of handlers (whether successful or failed), the Sequencer will discard all the <code>pending</code> steps and return an <code>Ok</code> response. </p>
+<p>On receiving the abort command in the <code>InProgress</code> state, the Sequencer will execute the <a href="../constructs/handlers.html#abort-sequence-handler">abort sequence handlers</a> and on completion of execution of handlers (whether successful or failed), the Sequencer will discard all the <code>pending</code> steps and return an <code>Ok</code> response. </p>
 <p>Note that, abort of a sequence does not abruptly terminate the in-flight step(s) which are already under execution. It will discard only the pending steps, and the sequence is finished gracefully after the inflight step(s) are finished although the script can take action to end the current step immediately.</p>
 <dl>
   <dt>Kotlin</dt>
@@ -333,7 +322,7 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L77" target="_blank" title="Go to snippet source"></a><code class="language-kts">val abortResponse: OkOrUnhandledResponse = wfos.abortSequence()</code></pre></dd>
 </dl>
 <h3><a href="#stopping-a-sequence" name="stopping-a-sequence" class="anchor"><span class="anchor-link"></span></a>Stopping a Sequence</h3>
-<p>Stopping a Sequence is very similar to aborting. The only difference is that instead of abort handlers, the <a href="../handlers.html#stop-handler">stop handlers</a> are called.</p>
+<p>Stopping a Sequence is very similar to aborting. The only difference is that instead of abort handlers, the <a href="../constructs/handlers.html#stop-handler">stop handlers</a> are called.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -370,13 +359,13 @@ Command Service for Assemblies and HCDs
 </span>
 </div>
 </a>
-<a href="../../../../sequencer/scripts/dsl/services/submit-response-extensions.html" title="Extension utilities on SubmitResponse" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../../../sequencer/scripts/dsl/services/event-service.html" title="Event Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Extension utilities on SubmitResponse
+Event Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

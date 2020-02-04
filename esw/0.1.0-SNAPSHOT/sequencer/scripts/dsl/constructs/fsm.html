@@ -225,13 +225,14 @@ tmtsoftware/esw
 }</code></pre></dd>
 </dl>
 <h3><a href="#state-transition" name="state-transition" class="anchor"><span class="anchor-link"></span></a>State transition</h3>
-<p>To transit between states, <code>become</code> method needs to be called with name of next <code>state</code>. This will <strong>change the state</strong> of the fsm to the given state and <strong>start executing next state</strong>. <code>InvalidStateException</code> will be thrown if provided state is not defined.</p>
+<p>To transit between states, <code>become</code> method needs to be called with name of <em>next state</em>. This will <strong>change the state of the fsm to next state and start executing it</strong>. <code>InvalidStateException</code> will be thrown if provided state is not defined.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/Fsm.kts#L99" target="_blank" title="Go to snippet source"></a><code class="language-kts">become(state = &quot;IN-PROGRESS&quot;)</code></pre></dd>
 </dl><div class="callout warning "><div class="callout-title">Caution</div>
 <p>State transition should ideally be the <strong>last call in state</strong> or should be <strong>done with proper control flow</strong> so that become is <strong>not called multiple times</strong>.</p></div>
+<p>Along with changing state, it is also possible to <em>Params</em> from current state to another. Params can be given to <em>become</em> as last argument, which will injected in the next state as a parameter.</p>
 <p>In a case where <strong>state transition does not happen</strong> while executing a state, the <strong>FSM will stay in the same state</strong> and re-evaluating FSM after that will execute the same state until any state transition happens. The <a href="fsm.html#reactive-fsm">reactive variables</a> plays an important role in this as they are the way to re-evaluate the FSM state.</p>
 <dl>
   <dt>Kotlin</dt>
@@ -407,7 +408,7 @@ flag.value() // way to extract the current params value in FSM</code></pre></dd>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/FsmExample.kts#L12-L78" target="_blank" title="Go to snippet source"></a><code class="language-kts">val tempKey = longKey(&quot;temperature&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/FsmExample.kts#L12-L83" target="_blank" title="Go to snippet source"></a><code class="language-kts">val tempKey = longKey(&quot;temperature&quot;)
 val stateKey = stringKey(&quot;state&quot;)
 
 val tempFsmEvent = SystemEvent(&quot;esw.temperatureFsm&quot;, &quot;state&quot;)
@@ -435,43 +436,48 @@ val temperatureFsm = Fsm(&quot;TEMP&quot;, OK) {
         on(currentTemp == 30L) {
             become(FINISHED)                                 // [[ 3 ]]
         }
-        on(currentTemp &gt; 40) {
-            become(ERROR)
+        on(currentTemp &gt; expectedTemp) {
+            become(ERROR, commandFlag().value())             // [[ 4 ]]
         }
         on(currentTemp &lt;= expectedTemp) {
-            info(&quot;temperataure is below expected threshold&quot;,
+            info(&quot;temperature is below expected threshold&quot;,
                     mapOf(&quot;exepected&quot; to expectedTemp, &quot;current&quot; to currentTemp)
             )
         }
     }
 
-    state(ERROR) {
+    state(ERROR) { params -&gt;
+        val expectedTemp = params.get(intKey(&quot;expected-temperature&quot;)).get().first
+
         entry {
+            info(&quot;temperature is above expected threshold&quot;,
+                    mapOf(&quot;exepected&quot; to expectedTemp)
+            )
             publishState(tempFsmEvent, ERROR)
         }
-        on(temperatureVar.get() &lt; 40) {
+        on(temperatureVar.get() &lt; expectedTemp) {
             become(OK)
         }
     }
 
     state(FINISHED) {
-        completeFsm()                                        // [[ 4 ]]
+        completeFsm()                                        // [[ 5 ]]
     }
 }
 
 temperatureVar.bind(temperatureFsm)
-commandFlag.bind(temperatureFsm)                             // [[ 5 ]]
+commandFlag.bind(temperatureFsm)                             // [[ 6 ]]
 
 onSetup(&quot;command-1&quot;) {
-    temperatureFsm.start()                                   // [[ 6 ]]
+    temperatureFsm.start()                                   // [[ 7 ]]
 }
 
 onSetup(&quot;command-2&quot;) { command -&gt;
-    commandFlag.set(command.params)                          // [[ 7 ]]
+    commandFlag.set(command.params)                          // [[ 8 ]]
 }
 
 onSetup(&quot;command-3&quot;) {
-    temperatureFsm.await()                                   // [[ 8 ]]
+    temperatureFsm.await()                                   // [[ 9 ]]
 }
 </code></pre></dd>
 </dl>
@@ -481,14 +487,15 @@ onSetup(&quot;command-3&quot;) {
   <li><code>[[ 1 ]]</code>: Shows <strong>top-level scope of the FSM which can used to declare variables</strong> in FSM&rsquo;s scope and statements which should be executed while starting the FSM. Statements written here will be executed only once when the FSM starts.</li>
   <li><code>[[ 2 ]]</code>: The scope of the state. Statements written here will be executed on every evaluation of the state. So variables declared here will be reinitialized whenever state is re-evaluated. In the above case, the <em>expectedTemp</em> and <em>currentTemp</em> will be initialized every time the OK state is evaluated.</li>
   <li><code>[[ 3 ]]</code>: State transitions from <code>OK</code> state to <code>FINISHED</code>.</li>
-  <li><code>[[ 4 ]]</code>: Marks the FSM complete. Re-evaluation or state transitions cannot happen after this is executed.</li>
+  <li><code>[[ 4 ]]</code>: State transitions from <code>OK</code> state to <code>ERROR</code> with <em>Params</em>. ERROR state shows how to consume Params in a state.</li>
+  <li><code>[[ 5 ]]</code>: Marks the FSM complete. Re-evaluation or state transitions cannot happen after this is executed.</li>
 </ul>
-<p>Till point <code>[[ 4 ]]</code>, it&rsquo;s all about <strong>defining the blue-print</strong> and <strong>initialising state of FSM</strong> which includes executing statements at <code>[[ 1 ]]</code>.</p>
+<p>Till point <code>[[ 5 ]]</code>, it&rsquo;s all about <strong>defining the blue-print</strong> and <strong>initialising state of FSM</strong> which includes executing statements at <code>[[ 1 ]]</code>.</p>
 <ul>
-  <li><code>[[ 5 ]]</code>: Shows the binding <code>temperatureFsm</code> to <code>temperatureVar</code> and <code>commandFlag</code>. After this point, FSM will re-evaluate whenever events are published on <code>temperatureVar</code>.</li>
-  <li><code>[[ 6 ]]</code>: Starts <strong>evaluating the initial state</strong> of the FSM</li>
-  <li><code>[[ 7 ]]</code>: Sets the Params of the Command in the Command flag</li>
-  <li><code>[[ 8 ]]</code>: Waits for completion of the FSM. In example, the script execution will be blocked till line <code>[[ 4 ]]</code> is executed which will mark the FSM complete. The script will continue execution after FSM is marked complete.</li>
+  <li><code>[[ 6 ]]</code>: Shows the binding <code>temperatureFsm</code> to <code>temperatureVar</code> and <code>commandFlag</code>. After this point, FSM will re-evaluate whenever events are published on <code>temperatureVar</code>.</li>
+  <li><code>[[ 7 ]]</code>: Starts <strong>evaluating the initial state</strong> of the FSM</li>
+  <li><code>[[ 8 ]]</code>: Sets the Params of the Command in the Command flag</li>
+  <li><code>[[ 9 ]]</code>: Waits for completion of the FSM. In example, the script execution will be blocked till line <code>[[ 4 ]]</code> is executed which will mark the FSM complete. The script will continue execution after FSM is marked complete.</li>
 </ul>
 <p>Example code also demos the use of the <a href="fsm.html#helper-constructs">helper constructs</a> like <code>entry</code>, <code>on</code>.</p>
 </div>

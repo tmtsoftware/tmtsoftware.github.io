@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../../../assets/tmt_favicon.ico">
-<title>Extension utilities on SubmitResponse · TMT Executive Software (ESW)</title>
+<title>Database Service · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software (ESW)
 </span>
 <span class="md-header-nav__topic">
-Extension utilities on SubmitResponse
+Database Service
 </span>
 </div>
 </div>
@@ -147,6 +147,13 @@ tmtsoftware/esw
   </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#database-service" class="header">Database Service</a>
+  <ul>
+    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-database-connection-read-access-" class="header">Create Database Connection (Read Access)</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </nav>
@@ -160,56 +167,33 @@ tmtsoftware/esw
 </div>
 </div>
 </div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#database-service" class="header">Database Service</a>
+  <ul>
+    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-database-connection-read-access-" class="header">Create Database Connection (Read Access)</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#extension-utilities-on-submitresponse" name="extension-utilities-on-submitresponse" class="anchor"><span class="anchor-link"></span></a>Extension utilities on SubmitResponse</h1>
-<p>A <code>submit</code> or <code>query</code> (and other Command Service or Sequencer Command Service API calls) always return a positive <code>SubmitResponse</code> unless called with <code>resumeOnError</code> flag as <code>true</code>.<br/>For <code>submit</code>, the two possible positive responses are <code>Started</code> and <code>Completed</code>. They can be handled using the <code>.onStarted</code> and <code>.onCompleted</code> methods, respectively. These methods allow you to specify a block of code to be called in each of those cases. </p>
-<dl>
-  <dt>Kotlin</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SubmitResponseExtensions.kts#L16-L25" target="_blank" title="Go to snippet source"></a><code class="language-kts">val positiveSubmitResponse: SubmitResponse = assembly.submit(command)
-
-positiveSubmitResponse
-        .onStarted { startedResponse -&gt;
-            val finalResponse: SubmitResponse = assembly.queryFinal(startedResponse.runId())
-            info(&quot;command completed with result: $finalResponse&quot;)
-        }
-        .onCompleted { completedResponse -&gt;
-            info(&quot;command with ${completedResponse.runId()} is completed with result: ${completedResponse.result}&quot;)
-        }</code></pre></dd>
-</dl>
-<p>Alternatively, a Kotlin <code>when</code> can be used to perform pattern matching on the result. An example of that is shown below.</p>
-<dl>
-  <dt>Kotlin</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SubmitResponseExtensions.kts#L30-L36" target="_blank" title="Go to snippet source"></a><code class="language-kts">when (positiveSubmitResponse) {
-    is Started -&gt; {
-        val finalResponse: SubmitResponse = assembly.queryFinal(positiveSubmitResponse.runId())
-        info(&quot;command completed with response: $finalResponse&quot;)
-    }
-    is Completed -&gt; info(&quot;command with ${positiveSubmitResponse.runId()} is completed&quot;)
-}</code></pre></dd>
-</dl>
-<p>If you desire to handle errors manually on a per-command basis, the <code>resumeOnError</code> flag can be used. If this flag is set to true, then script execution continues, and action is taken based on custom logic in script by using an <code>.onFailed</code> method.</p>
-<dl>
-  <dt>Kotlin</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SubmitResponseExtensions.kts#L41-L44" target="_blank" title="Go to snippet source"></a><code class="language-kts">val submitResponse: SubmitResponse = assembly.submit(command, resumeOnError = true)
-positiveSubmitResponse.onFailed { failedResponse -&gt;
-    error(&quot;command completed with result: $failedResponse&quot;)
-}</code></pre></dd>
-</dl>
-<p>You can still choose to terminate sequence using the <code>onFailedTerminate</code> utility. This will cause similar behavior as when flag is not set by calling the <code>onError</code> or <code>onGlobalError</code> blocks and terminating the sequence, if the <code>SubmitResponse</code> is some kind of error.</p>
-<dl>
-  <dt>Kotlin</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SubmitResponseExtensions.kts#L49-L50" target="_blank" title="Go to snippet source"></a><code class="language-kts">val submitRes: SubmitResponse = assembly.submit(command, resumeOnError = true)
-positiveSubmitResponse.onFailedTerminate()</code></pre></dd>
-</dl>
+<h1><a href="#database-service" name="database-service" class="anchor"><span class="anchor-link"></span></a>Database Service</h1>
+<p>The Database Service DSL is a wrapper for the Database Service module provided by CSW. You can refer to detailed documentation of the Database Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/database">here</a>.</p>
+<p>This DSL provides APIs to create the connection to database.</p>
+<h2><a href="#create-database-connection-read-access-" name="create-database-connection-read-access-" class="anchor"><span class="anchor-link"></span></a>Create Database Connection (Read Access)</h2>
+<p>This API allows creating connection to database with default read access. The username and password for read access is picked from environment variables set on individual&rsquo;s machine i.e. <code>DB_READ_USERNAME</code> and <code>DB_READ_PASSWORD</code>. It is expected that developers set these variables before calling this method. It returns Jooq&rsquo;s <code>DSLContext</code> or fails with DatabaseException. DSLContext provide methods like <code>fetchAsync</code>, <code>executeAsync</code>, <code>executeBatch</code>, etc. Moreover, see <code>JooqHelper</code> in CSW which provides wrapper methods on Jooq&rsquo;s <code>DSLContext</code>. </p>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/services/submit-response-extensions.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/services/database-service.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -225,7 +209,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../../../sequencer/scripts/dsl/services/database-service.html" title="Database Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../../../sequencer/scripts/dsl/services/time-service.html" title="Time Service Access in Scripts" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -234,17 +218,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Database Service
+Time Service Access in Scripts
 </span>
 </div>
 </a>
-<a href="../../../../sequencer/scripts/dsl/services/params.html" title="Params" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../../../sequencer/scripts/dsl/services/submit-response-extensions.html" title="Extension utilities on SubmitResponse" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Params
+Extension utilities on SubmitResponse
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
