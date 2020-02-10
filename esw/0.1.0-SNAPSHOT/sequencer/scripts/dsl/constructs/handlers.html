@@ -204,7 +204,7 @@ tmtsoftware/esw
 <p>A Sequencer script processes Sequences by defining &ldquo;handlers&rdquo; in the script. This is done by completing the special handler functions described below. There are handlers that can be created to process the Setup and Observe commands, which make up the Sequence, but there are also handlers for specific reasons including: aborting and stopping a sequence, putting the Sequencer in Online and Offline modes, and putting the Sequencer into a Diagnostic mode and back to Operations mode. There is also a global error handler to catch all uncaught exceptions, and a shutdown handler to perform cleanup befores the Sequencer shut down and exits. Each of these handlers are described below, with a section on <a href="handlers.html#error-handlers">how to handle exceptions</a> after that.</p>
 <h2><a href="#command-handlers" name="command-handlers" class="anchor"><span class="anchor-link"></span></a>Command Handlers</h2>
 <h3><a href="#onsetup" name="onsetup" class="anchor"><span class="anchor-link"></span></a>onSetup</h3>
-<p>This handler is used to handle a <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/params/commands/Setup.html">Setup</a> command sent to this Sequencer. The handler takes two parameters:</p>
+<p>This handler is used to handle a <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/java/csw/params/commands/Setup.html">Setup</a> command sent to this Sequencer. The handler takes two parameters:</p>
 <ol>
   <li><strong>command name</strong> which is matched against the sequence command sent. If the command name matches, corresponding block provided is executed</li>
   <li><strong>block</strong> of code which contains logic to act on the Setup command.</li>
@@ -225,7 +225,7 @@ tmtsoftware/esw
 </dl>
 <p>In the block provided to this handler, all the CSW services (Event, Alarm, Time Service, etc) and control DSL (loop, par etc) are accessible.</p>
 <h3><a href="#onobserve" name="onobserve" class="anchor"><span class="anchor-link"></span></a>onObserve</h3>
-<p>This handler is used to handle an <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/params/commands/Observe.html">Observe</a> command sent to this Sequencer. The handler takes two parameters:</p>
+<p>This handler is used to handle an <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/java/csw/params/commands/Observe.html">Observe</a> command sent to this Sequencer. The handler takes two parameters:</p>
 <ol>
   <li><strong>command name</strong> which is matched against the sequence command sent, if the command name matches, corresponding block provided is executed</li>
   <li><strong>block</strong> of code which contains logic to act on the Observe command.</li>
@@ -409,8 +409,8 @@ onGlobalError { error -&gt;
     error(err.reason)
 }</code></pre></dd>
 </dl>
-<p><strong>retry</strong>: This construct is specifically provided for <strong>Command Handler Failures</strong>. A <code>retry</code> block can be written specifically for each <code>onSetup</code> and <code>onObserve</code> handler. A <code>retry</code> block expects a <code>retryCount</code> and optional parameter <code>interval</code> which specifies an interval after which <code>onSetup</code> or <code>onObserve</code> will be retried in case of failure. <code>retry</code> block can be used along with <code>onError</code> or it can be used independently. If <code>retry</code> is combined with <code>onError</code> then command handler failure will call <code>onError</code> before each retry attempt. If command handler still fails after all retry attempts then <code>onError</code> block is called followed by <code>onGlobalError</code> and sequence will be terminated with failure. After the error handling blocks are called, the command and hence the sequence, terminate with an Error status.</p>
-<p>Following example shows <code>retry</code> construct used along with <code>onError</code>.</p>
+<p><strong>retry</strong>: This construct can be attached to an <code>onSetup</code> or <code>onObserve</code> handler to automatically retry  the handler code in the case of <strong>Command Handler Failures</strong>. A <code>retry</code> block expects a <code>retryCount</code> and optional parameter <code>interval</code> which specifies an interval after which <code>onSetup</code> or <code>onObserve</code> will be retried in case of failure. The <code>retry</code> block can be used along with <code>onError</code> or it can be used independently. If <code>retry</code> is combined with <code>onError</code>, the <code>onError</code> block will be called before each retry attempt. If the command handler still fails after all retry attempts, the command fails with an Error status. Then the <code>onGlobalError</code> block will be executed (if provided), and the sequence will be terminated with a failure as well (see <a href="handlers.html#global-error-handler">Global Error Handler</a>.</p>
+<p>The following example shows the <code>retry</code> construct used along with <code>onError</code>.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -423,7 +423,7 @@ onGlobalError { error -&gt;
     error(err.reason)
 }.retry(2)</code></pre></dd>
 </dl>
-<p>Following example shows <code>retry</code> with interval used independently (without having <code>onError</code> block).</p>
+<p>The following example shows <code>retry</code> with an interval specified and used without an <code>onError</code> block.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
