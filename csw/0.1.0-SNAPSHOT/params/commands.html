@@ -298,10 +298,10 @@ val prefix3: Prefix = Prefix(&quot;wfos.prog.cloudcover&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L36-L43" target="_blank" title="Go to snippet source"></a><code class="language-java">//using constructor, supplying subsystem and prefix both
-Prefix prefix1 = Prefix.apply(JSubsystem.NFIRAOS(), &quot;ncc.trombone&quot;);
+Prefix prefix1 = Prefix.apply(JSubsystem.NFIRAOS, &quot;ncc.trombone&quot;);
 
 //just by supplying prefix
-Prefix prefix2 = Prefix.apply(JSubsystem.TCS(), &quot;mobie.blue.filter&quot;);
+Prefix prefix2 = Prefix.apply(JSubsystem.TCS, &quot;mobie.blue.filter&quot;);
 
 //invalid prefix string which does not contain valid subsystem in the beginning will throw an exception,
 // Prefix badPrefix = Prefix.apply(&quot;abcdefgh&quot;);</code></pre></dd>
@@ -374,7 +374,7 @@ Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Float&gt; k4 = JKeyType.FloatKey().make(&quot;correction&quot;);
 
 //prefix
-Prefix prefix = Prefix.apply(JSubsystem.WFOS(), &quot;red.detector&quot;);
+Prefix prefix = Prefix.apply(JSubsystem.WFOS, &quot;red.detector&quot;);
 
 //parameters
 Parameter&lt;Integer&gt; i1 = k1.set(22);
@@ -391,7 +391,7 @@ Optional&lt;Parameter&lt;Integer&gt;&gt; optParam1 = sc1.jGet(k1); //present
 Optional&lt;Parameter&lt;Integer&gt;&gt; optK2Bad = sc1.jGet(k2bad); //absent
 
 //add more than one parameters, using madd
-Setup sc2 = sc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day()), k4.set(1.0f, 2.0f));
+Setup sc2 = sc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(1.0f, 2.0f));
 int paramSize = sc2.size();
 
 //add binary payload
@@ -461,7 +461,7 @@ Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;UTCTime&gt; k4 = JKeyType.UTCTimeKey().make(&quot;creation-time&quot;);
 
 //prefix
-Prefix prefix = Prefix.apply(JSubsystem.WFOS(), &quot;red.detector&quot;);
+Prefix prefix = Prefix.apply(JSubsystem.WFOS, &quot;red.detector&quot;);
 
 //parameters
 Boolean[] boolArray = {true, false, true, false};
@@ -479,7 +479,7 @@ java.util.List&lt;Boolean&gt; values = k1Param.orElseThrow().jValues();
 Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = oc1.jGet(k2bad.keyName(), JKeyType.FloatArrayKey());
 
 //add more than one parameters, using madd
-Observe oc2 = oc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day()), k4.set(UTCTime.now()));
+Observe oc2 = oc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(UTCTime.now()));
 int paramSize = oc2.size();
 
 //update existing key with set
@@ -542,7 +542,7 @@ Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;UTCTime&gt; k4 = JKeyType.UTCTimeKey().make(&quot;creation-time&quot;);
 
 //prefix
-Prefix prefix = Prefix.apply(JSubsystem.WFOS(), &quot;red.detector&quot;);
+Prefix prefix = Prefix.apply(JSubsystem.WFOS, &quot;red.detector&quot;);
 
 //parameters
 Boolean[] boolArray = {true, false, true, false};
@@ -560,7 +560,7 @@ java.util.List&lt;Boolean&gt; values = k1Param.orElseThrow().jValues();
 Optional&lt;Parameter&lt;ArrayData&lt;Float&gt;&gt;&gt; k2BadParam = wc1.jGet(&quot;absentKeyHere&quot;, JKeyType.FloatArrayKey());
 
 //add more than one parameters, using madd
-Wait wc2 = wc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day()), k4.set(UTCTime.now()));
+Wait wc2 = wc1.madd(k3.set(1, 2, 3, 4).withUnits(JUnits.day), k4.set(UTCTime.now()));
 int paramSize = wc2.size();
 
 //update existing key with set
@@ -627,7 +627,7 @@ MatrixData&lt;Double&gt; m1 = MatrixData.fromArrays(doubles);
 //parameter
 Parameter&lt;MatrixData&lt;Double&gt;&gt; i1 = k1.set(m1);
 
-Prefix prefix = Prefix.apply(JSubsystem.WFOS(), &quot;blue.filter&quot;);
+Prefix prefix = Prefix.apply(JSubsystem.WFOS, &quot;blue.filter&quot;);
 
 //commands
 Setup sc = new Setup(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(i1);
@@ -707,7 +707,7 @@ Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
 
 //prefix
-Prefix prefix = Prefix.apply(JSubsystem.WFOS(), &quot;blue.filter&quot;);
+Prefix prefix = Prefix.apply(JSubsystem.WFOS, &quot;blue.filter&quot;);
 
 //params
 Parameter&lt;Integer&gt; encParam1 = encoderKey.set(1);

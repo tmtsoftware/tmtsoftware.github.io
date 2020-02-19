@@ -215,9 +215,6 @@ tmtsoftware/csw
   <ul>
     <li><a href="../framework/managing-command-state.html#updating-a-long-running-command" class="header">Updating a Long-running Command</a></li>
     <li><a href="../framework/managing-command-state.html#using-the-crm-with-subcommands" class="header">Using the CRM with Subcommands</a></li>
-    <li><a href="../framework/managing-command-state.html#addsubcommand" class="header">addSubCommand</a></li>
-    <li><a href="../framework/managing-command-state.html#fixme-for-kim-this-snip-is-broken-fix-addsubcommand-in-mcsassemblycomponenthandlers-and-then-make-it-snip-" class="header">Fixme for Kim: This snip is broken. Fix #addSubCommand in McsAssemblyComponentHandlers and then make it <code>@@snip</code>.</a></li>
-    <li><a href="../framework/managing-command-state.html#fixme-for-kim-this-snip-is-broken-fix-updatesubcommand-in-mcsassemblycomponenthandlers-and-then-make-it-snip-" class="header">Fixme for Kim: This snip is broken. Fix #updateSubCommand in McsAssemblyComponentHandlers and then make it <code>@@snip</code>.</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -243,9 +240,6 @@ tmtsoftware/csw
   <ul>
     <li><a href="../framework/managing-command-state.html#updating-a-long-running-command" class="header">Updating a Long-running Command</a></li>
     <li><a href="../framework/managing-command-state.html#using-the-crm-with-subcommands" class="header">Using the CRM with Subcommands</a></li>
-    <li><a href="../framework/managing-command-state.html#addsubcommand" class="header">addSubCommand</a></li>
-    <li><a href="../framework/managing-command-state.html#fixme-for-kim-this-snip-is-broken-fix-addsubcommand-in-mcsassemblycomponenthandlers-and-then-make-it-snip-" class="header">Fixme for Kim: This snip is broken. Fix #addSubCommand in McsAssemblyComponentHandlers and then make it <code>@@snip</code>.</a></li>
-    <li><a href="../framework/managing-command-state.html#fixme-for-kim-this-snip-is-broken-fix-updatesubcommand-in-mcsassemblycomponenthandlers-and-then-make-it-snip-" class="header">Fixme for Kim: This snip is broken. Fix #updateSubCommand in McsAssemblyComponentHandlers and then make it <code>@@snip</code>.</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -257,87 +251,135 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#managing-command-state" name="managing-command-state" class="anchor"><span class="anchor-link"></span></a>Managing Command State</h1>
-<p>A component has access to the <code>commandResponseManager</code> which is used to manage the state of commands during its execution. On receiving a command as a part of <code>onSubmit</code>, and if the command is accepted by the component, the framework adds the command to an internal CommandResponseManager (CRM). The framework also uses the <code>SubmitResponse</code> returned by the <code>onSubmit</code> handler to update the CommandResponseManager. In many cases, this is adequate and no other information is required to handle completion information.</p>
-<p>The CommandResponseManager can provide additional support in the following scenarios. These scenarios require the developer to update the CRM.</p>
+<p>A component is provided with a <code>commandResponseManager</code> which is used to update the state of commands that start long-running actions. A long-running command is one that starts actions that take longer than 1 second.</p>
+<p>The CommandResponseManager (CRM) is used to provide the final <code>SubmitResponse</code> in the following two scenarios. These scenarios require the developer to update the CRM.</p>
 <ol>
-  <li>The command received in <code>onSubmit</code> returns <code>Started</code> indicating a long-running command that requires notification of completion at a later time.</li>
+  <li>The <code>onSubmit</code> handler returns <code>Started</code> indicating a long-running command that requires notification of completion at a later time.</li>
   <li>To process an <code>onSubmit</code> that starts long-running actions, the component needs to send one or more commands to other components that may also take time to complete.</li>
 </ol>
+<p>On receiving a command as a part of <code>onSubmit</code>, and if the <code>onSubmit</code> handler returns <code>Started</code>, the framework adds the command to an internal CommandResponseManager that keeps track of the command and the sender of the command. The sender is then sent the final <code>SubmitResponse</code> when CRM <code>updateCommand</code> is called. </p>
 <h2><a href="#updating-a-long-running-command" name="updating-a-long-running-command" class="anchor"><span class="anchor-link"></span></a>Updating a Long-running Command</h2>
-<p>In the first scenario, the developer has a long-running command and does not start any sub-commands or does not need to use the CRM to help manage subcommands. In this case, once the actions are completed, <code>addOrUpdateCommand</code> is used to notify the CRM that the actions are complete. This will cause the original sender to be notified of completion using the <code>SubmitResponse</code> passed to <code>addOrUpdateCommand</code>.</p>
-<h3><a href="#addorupdatecommand" name="addorupdatecommand" class="anchor"><span class="anchor-link"></span></a>addOrUpdateCommand</h3>
-<p><code>AddOrUpdateCommand</code> is used to add a new command or update the status of an existing command. The following example simulates a worker that takes some time to complete. The <code>onSubmit</code> handler returns <code>Started</code> and later the actions complete with <code>Completed</code>, which completes the command. </p>
+<p>In the first scenario, the developer has a long-running command. In this case, once the actions are completed, <code>updateCommand</code> is used to notify the CRM that the actions are complete. This will cause the original sender to be notified of completion using the <code>SubmitResponse</code> passed to <code>updateCommand</code>.</p>
+<h3><a href="#using-updatecommand" name="using-updatecommand" class="anchor"><span class="anchor-link"></span></a>Using updateCommand</h3>
+<p><code>updateCommand</code> is used to update the status of a <code>Started</code> command. The following example from the SampleAssembly shows the Assembly sends a command to SampleHcd. It then does a <code>queryFinal</code> and when it returns, it updates the parent runId with the response received from the HCD. The <code>onSubmit</code> handler (not shown) already has returned <code>Started</code> to the sender of the original command, and the asynchronous completion is used to update the parent command. </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/McsHcdComponentHandlers.scala#L36-L42" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(runId: Id, controlCommand: ControlCommand): SubmitResponse = {
-  controlCommand.commandName match {
-    case `longRunning` =&gt;
-      timeServiceScheduler.scheduleOnce(UTCTime(UTCTime.now().value.plusSeconds(5))) {
-        commandResponseManager.updateCommand(Completed(runId))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L208-L223" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def sleepHCD(runId: Id, setup: Setup, sleepTime: Long): Unit =
+  hcdCS match {
+    case Some(cs) =&gt;
+      val s = Setup(prefix, hcdSleep, None).add(setSleepTime(sleepTime))
+      cs.submit(s).foreach {
+        case started: Started =&gt;
+          // Can insert extra code during execution here
+          cs.queryFinal(started.runId).foreach(sr =&gt; commandResponseManager.updateCommand(sr.withRunId(runId)))
+        case other =&gt;
+          commandResponseManager.updateCommand(other.withRunId(runId))
       }
-      Started(runId)</code></pre></dd>
+    case None =&gt;
+      commandResponseManager.updateCommand(
+        Error(runId, s&quot;A needed HCD is not available: ${hcdConnection.componentId} for $prefix&quot;)
+      )
+  }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L148-L163" target="_blank" title="Go to snippet source"></a><code class="language-java">private CommandResponse.SubmitResponse crmAddOrUpdate(Setup setup, Id runId) {
-    // This simulates some worker task doing something that finishes after onSubmit returns
-    Runnable task = new Runnable() {
-        @Override
-        public void run() {
-            commandResponseManager.updateCommand(new Completed(runId));
-        }
-    };
-
-    // Wait a bit and then set CRM to Completed
-    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    executor.schedule(task, 1, TimeUnit.SECONDS);
-
-    // Return Started from onSubmit
-    return new Started(runId);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L245-L263" target="_blank" title="Go to snippet source"></a><code class="language-java">private void sleepHCD(Id runId, Setup setup, Long sleepTime) {
+  if (hcdCS.isPresent()) {
+    ICommandService cs = hcdCS.get();
+    Setup s = new Setup(prefix, hcdSleep, Optional.empty()).add(setSleepTime(sleepTime));
+    cs.submit(s).thenAccept(submitResponse -&gt; {
+      if (submitResponse instanceof Started) {
+        Started started = (Started) submitResponse;
+        // Can insert extra code during execution here
+        cs.queryFinal(started.runId(), timeout).thenAccept(sr -&gt; cswCtx.commandResponseManager().updateCommand(sr.withRunId(runId)));
+      } else {
+        cswCtx.commandResponseManager().updateCommand(submitResponse.withRunId(runId));
+      }
+    });
+  } else {
+    cswCtx.commandResponseManager().updateCommand(
+        new CommandResponse.Error(runId, &quot;A needed HCD is not available: &quot; + hcdConnection.componentId() + &quot; for &quot; + prefix)
+    );
+  }
 }</code></pre></dd>
 </dl>
 <h2><a href="#using-the-crm-with-subcommands" name="using-the-crm-with-subcommands" class="anchor"><span class="anchor-link"></span></a>Using the CRM with Subcommands</h2>
-<p>If while processing a received command, the component needs to create and send commands to other components (e.g. an Assembly sending commands to one or more HCDs) it can use the CRM to help manage responses from the sub-commands.</p>
-<p>A received command that requires one or more sub-commands must first associate the sub-commands with the received command using the <code>addSubCommand</code> CRM method. When the sub-commands complete, <code>updateSubCommand</code> is used to update the status of sub-commands. </p>
-<p>The status of original command can then be derived from the status of the sub-commands and when all the sub-commands have completed either successfully or not, the original command will complete and a response returned to the original command sender.</p>
-<h2><a href="#addsubcommand" name="addsubcommand" class="anchor"><span class="anchor-link"></span></a>addSubCommand</h2>
-<p>Use <code>addSubCommand</code> to associate sub-commands with a received command.</p>
-<h1><a href="#fixme-for-kim-this-snip-is-broken-fix-addsubcommand-in-mcsassemblycomponenthandlers-and-then-make-it-snip-" name="fixme-for-kim-this-snip-is-broken-fix-addsubcommand-in-mcsassemblycomponenthandlers-and-then-make-it-snip-" class="anchor"><span class="anchor-link"></span></a>Fixme for Kim: This snip is broken. Fix #addSubCommand in McsAssemblyComponentHandlers and then make it <code>@@snip</code>.</h1>
+<p>If while processing a received command, the component needs to create and send commands to other components (e.g. an Assembly sending commands to one or more HCDs) it can use the CRM to help manage responses from the sub-commands. In this case, the typical use case is that the sender such as an Assembly needs to send one or more sub-commands to HCDs and needs to wait until all the sub-commands complete. It then makes a decision on how to update the original command received by the Assembly based on the results of the sub-commands. The CRM provides a helper method to wait for one or more sub-commands. Then the previous <code>updateCommand</code> CRM method is used to update the original command.</p>
+<h3><a href="#using-queryfinalall" name="using-queryfinalall" class="anchor"><span class="anchor-link"></span></a>Using queryFinalAll</h3>
+<p>The CRM provides a method called <code>queryFinalAll</code>. This method takes a list of responses from <code>submit</code> or <code>submitAndWait</code> and allows a block of code to be completed when <em>all</em> the commands in the list have completed, either successfully or unsuccessfully. A response is returned from <code>queryFinalAll</code> of type <code>OverallSuccess</code>, which can be <code>OverallSuccess</code> or <code>OverallFailure</code>. Each of these returns the individual responses from the original commands to allow a decision on how to proceed.</p>
+<p>In this example of a <code>complexCommand</code>, the Assembly sends two <em>sub-commands</em> to HCDs. It then uses <code>queryFinalAll</code> to wait for the sub-commands to finish. In the <code>OverallSuccess</code> case <code>commandResponseManager.updateCommand</code> is used to return <code>Completed</code> to the parent. If one or more of the sub-commands fails, the negative response of the first failed command is returned to the parent.</p>
 <dl>
   <dt>Scala</dt>
-  <dd>snip <a href="../../../../csw-framework/src/test/scala/csw/common/components/command/McsAssemblyComponentHandlers.scala">McsAssemblyComponentHandlers.scala</a> { #addSubCommand }</dd>
-  <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L189-L195" target="_blank" title="Go to snippet source"></a><code class="language-java">Prefix prefix1 = Prefix.apply(JSubsystem.WFOS(), &quot;red.detector&quot;);
-Setup subCommand1 = new Setup(prefix1, new CommandName(&quot;sub-command-1&quot;), sc.jMaybeObsId());
-//commandResponseManager.addSubCommand(sc.runId, subCommand1.runId());              //TODO Don&#39;t know how to solve subcommands!!!
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L171-L203" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>    case `complexCommand` =&gt;
+      val medium = simpleHCD(runId, Setup(prefix, hcdSleep, setup.maybeObsId).add(setSleepTime(mediumSleepPeriod)))
+      val long   = simpleHCD(runId, Setup(prefix, hcdSleep, setup.maybeObsId).add(setSleepTime(longSleepPeriod)))
 
-Prefix prefix2 = Prefix.apply(JSubsystem.WFOS(), &quot;blue.detector&quot;);
-Setup subCommand2 = new Setup(prefix2, new CommandName(&quot;sub-command-2&quot;), sc.jMaybeObsId());
-//commandResponseManager.addSubCommand(sc.runId(), subCommand2.runId());</code></pre></dd>
-</dl>
-<h2><a href="#updatesubcommand" name="updatesubcommand" class="anchor"><span class="anchor-link"></span></a>updateSubCommand</h2>
-<p>Use <code>updateSubCommand</code> to update the CRM with the <code>SubmitResponse</code> of the sub-commands. This can trigger the delivery of the status of the original/parent command when status of all the sub-commands have been updated. A <code>SubmitResponse</code> indicating failure such as <code>Cancelled</code> or <code>Error</code> in any one of the sub-commands results in the error status of the parent command. Status of any other sub-commands will not be considered in this case.</p>
-<h1><a href="#fixme-for-kim-this-snip-is-broken-fix-updatesubcommand-in-mcsassemblycomponenthandlers-and-then-make-it-snip-" name="fixme-for-kim-this-snip-is-broken-fix-updatesubcommand-in-mcsassemblycomponenthandlers-and-then-make-it-snip-" class="anchor"><span class="anchor-link"></span></a>Fixme for Kim: This snip is broken. Fix #updateSubCommand in McsAssemblyComponentHandlers and then make it <code>@@snip</code>.</h1>
-<p>Scala : snip <a href="../../../../csw-framework/src/test/scala/csw/common/components/command/McsAssemblyComponentHandlers.scala">McsAssemblyComponentHandlers.scala</a> { #updateSubCommand }</p>
-<dl>
+      commandResponseManager
+        .queryFinalAll(medium, long)
+        .map {
+          case OverallSuccess(_) =&gt;
+            // Don&#39;t care about individual responses with success
+            commandResponseManager.updateCommand(Completed(runId))
+          case OverallFailure(responses) =&gt;
+            // There must be at least one error
+            val errors = responses.filter(isNegative)
+            commandResponseManager.updateCommand(errors.head.withRunId(runId))
+        }
+        .recover(ex =&gt; commandResponseManager.updateCommand(Error(runId, ex.toString)))
+
+      Started(runId)
+    case `sleep` =&gt;
+      sleepHCD(runId, setup, setup(sleepTimeKey).head)
+      Started(runId)
+    case _ =&gt;
+      Invalid(runId, CommandIssue.UnsupportedCommandIssue(s&quot;${setup.commandName.name}&quot;))
+  }
+
+private def simpleHCD(runId: Id, setup: Setup): Future[SubmitResponse] =
+  hcdCS match {
+    case Some(cs) =&gt;
+      cs.submitAndWait(setup)
+    case None =&gt;
+      Future(Error(runId, s&quot;A needed HCD is not available: ${hcdConnection.componentId}&quot;))
+  }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L217-L229" target="_blank" title="Go to snippet source"></a><code class="language-java">// An original command is split into sub-commands and sent to a component.
-// The result from submitting the sub-commands is used to update the CRM
-ICommandService componentCommandService = runningHcds.get(componentInfo.getConnections().get(0)).orElseThrow();
-componentCommandService.submitAndWait(subCommand2, Timeout.durationToTimeout(FiniteDuration.apply(5, TimeUnit.SECONDS)))
-        .thenAccept(commandResponse -&gt; {
-            if (commandResponse instanceof CommandResponse.Completed) {
-                // As the commands get completed, the results are updated in the commandResponseManager
-                // TODO: FIX ME
-                commandResponseManager.updateCommand(commandResponse);
-            } else {
-                // do something
-            }
-        });</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p>It may be the case that the component wants to avoid automatic inference of a command based on the result of the sub-commands. It should refrain from updating the status of the sub-commands in this case and update the status of the parent command directly as required.</p></div>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L206-L239" target="_blank" title="Go to snippet source"></a><code class="language-java">  if (cmd.equals(complexCommand)) {
+    CompletableFuture&lt;SubmitResponse&gt; medium = simpleHCD(runId, new Setup(prefix, hcdSleep, setup.jMaybeObsId()).add(setSleepTime(mediumSleepPeriod)));
+    CompletableFuture&lt;SubmitResponse&gt; long_ = simpleHCD(runId, new Setup(prefix, hcdSleep, setup.jMaybeObsId()).add(setSleepTime(longSleepPeriod)));
+    cswCtx.commandResponseManager().queryFinalAll(Arrays.asList(medium, long_))
+        .thenAccept(response -&gt; {
+          if (response instanceof OverallSuccess) {
+            // Don&#39;t care about individual responses with success
+            cswCtx.commandResponseManager().updateCommand(new Completed(runId));
+          } else if (response instanceof OverallFailure) {
+            // There must be at least one error
+            List&lt;SubmitResponse&gt; errors = ((OverallFailure) response).getResponses().stream().filter(CommandResponse::isNegative).collect(Collectors.toList());
+            cswCtx.commandResponseManager().updateCommand(errors.get(0).withRunId(runId));
+          }
+        }).exceptionally(ex -&gt; {
+      cswCtx.commandResponseManager().updateCommand(new CommandResponse.Error(runId, ex.toString()));
+      return null;
+    });
+    return new Started(runId);
+  }
+  if (cmd.equals(sleep)) {
+    sleepHCD(runId, setup, setup.apply(sleepTimeKey).head());
+    return new Started(runId);
+  }
+  return new Invalid(runId, new CommandIssue.UnsupportedCommandIssue(setup.commandName().name()));
+}
+
+private CompletableFuture&lt;SubmitResponse&gt; simpleHCD(Id runId, Setup setup) {
+  if (hcdCS.isPresent()) {
+    ICommandService cs = hcdCS.get();
+    return cs.submitAndWait(setup, timeout);
+  }
+  return CompletableFuture.completedFuture(
+          new CommandResponse.Error(runId, &quot;A needed HCD is not available: &quot; + hcdConnection.componentId()));
+}</code></pre></dd>
+</dl>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/framework/managing-command-state.md" title="Edit this page" class="md-source-file md-edit">

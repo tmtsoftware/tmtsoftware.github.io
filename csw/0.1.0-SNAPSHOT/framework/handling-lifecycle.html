@@ -313,7 +313,7 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 
     // find a Hcd connection from the connections provided in componentInfo
     Optional&lt;Connection&gt; mayBeConnection = componentInfo.getConnections().stream()
-            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD())
+            .filter(connection -&gt; connection.componentId().componentType() == JComponentType.HCD)
             .findFirst();
 
     // If an Hcd is found as a connection, resolve its location from location service and create other
@@ -410,8 +410,9 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <p><code>Online</code> describes a component that is currently part of the observing system that is in use. When a component enters the Running state it is also &ldquo;online&rdquo;.</p>
 <p>A component is <code>offline</code> when it is operating and available for active observing but is not currently in use.</p>
 <p>If a component is to transition from the online state to the offline state, the <code>onGoOffLine</code> handler is called. The component should make any changes in its operation for offline use.</p>
-<p>If a component is to transition from the offline state to the online state, the <code>onGoOnline</code> handler is called. The component should make any changes in its operation needed for online use.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>Unless implemented by the developer, there is no fundamental difference in the inherent behavior of a component when in either state. These two states provide a standard way for code to be implemented via these handlers for the transition from one state to another, allowing the component to prepare itself to be online (ready for operations) or offline (stowed or dormant). Any call to transition to a online/offline state when the component is already in that state is a no op.</p></div>
+<p>If a component is to transition from the offline state to the online state, the <code>onGoOnline</code> handler is called. The component should make any changes in its operation needed for online use.</p><div class="callout note "><div class="callout-title">Online vs Offline</div>
+<p>Unless implemented by the developer, there is no fundamental difference in the inherent behavior of a component when in either state. These two states provide a standard way for code to be implemented via these handlers for the transition from one state to another, allowing the component to prepare itself to be online (ready for operations) or offline (stowed or dormant). Any call to transition to a online/offline state when the component is already in that state is a no op.</p>
+<p>However, when offline, a component should take actions that make sense when offline. For instance, it should not follow the telescope motion or take actions as if online. </p></div>
 <h3><a href="#isonline" name="isonline" class="anchor"><span class="anchor-link"></span></a>isOnline</h3>
 <p>A component has access to the <code>isOnline</code> boolean flag, which can be used to determine if the component is in the online or offline state.</p>
 <h3><a href="#ongooffline" name="ongooffline" class="anchor"><span class="anchor-link"></span></a>onGoOffline</h3>
@@ -470,73 +471,111 @@ public void onGoOnline() {
 <p>The remaining handlers are associated with handling incoming commands. There is a handler for submit commands called <code>onSubmit</code> and a handler for oneway called <code>onOneway</code>.</p>
 <p>This section gives an introduction to the command handlers. For more information on how to send and monitor commands, see the <a href="../commons/command.html">Communication using Commands</a> page.</p>
 <h3><a href="#validatecommand" name="validatecommand" class="anchor"><span class="anchor-link"></span></a>validateCommand</h3>
-<p>The <code>validateCommand</code> handler allows the component to inspect a command and its parameters to determine if the actions related to the command can be executed or started. If it is okay, an <code>Accepted</code> response is returned. If not, <code>Invalid</code> is returned. Validation may also take into consideration the state of the component. For instance, if an Assembly or HCD can only handle one command at a time, <code>validateCommand</code> should return an return <code>Invalid</code> if a second command is received.</p>
-<p>The handler is called whenever a command is sent as a <code>Submit</code> or <code>Oneway</code> message to the component. If the handler returns <code>Accepted</code>, the corresponding <code>onSubmit</code> or <code>onOneway</code> handler is called. This handler can also be called when the Command Service method <code>validateCommand</code> is used, to preview the acceptance of a command before it is sent using <code>submit</code> or <code>oneway</code>. In this case, the <code>onSubmit</code> or <code>onOneway</code> handler is not called.</p>
+<p>The <code>validateCommand</code> handler allows the component to inspect a command and its parameters to determine if the actions related to the command can be executed or started. If it is okay, an <code>Accepted</code> response is returned. If not, <code>Invalid</code> is returned. Validation may also take into consideration the state of the component. For instance, if an Assembly or HCD can only handle one command at a time, <code>validateCommand</code> should return an return <code>Invalid</code> if a second command is received. The <code>Invalid</code> returns a <code>CommandIssue</code>, which are a number of pre-defined reasons for failing validation. These pre-defined reasons should be used whenever possible, but there is also an <code>OtherIssue</code> defined.</p><div class="callout note "><div class="callout-title">I have an issue you should add!</div>
+<p>If you run across a validation issue you think should be added to <code>CommandIssue</code>, please submit a ticket to the CSW maintenance JIRA page at this <a href="/login.jsp?permissionViolation=true&os_destination=%2Fprojects%2FCSW%2Fissues&page_caps=&user_role=">location</a>. </p></div>
+<p>The handler is called whenever a command is sent as a <code>Submit</code>, <code>SubmitAndWait</code>, or <code>Oneway</code> message to the component. If the handler returns <code>Accepted</code>, the corresponding <code>onSubmit</code> or <code>onOneway</code> handler is called.<br/>This handler can also be called when the Command Service method <code>validateCommand</code> is used, to preview the acceptance of a command before it is sent using <code>submit</code> or <code>oneway</code>. In this case, the <code>onSubmit</code> or <code>onOneway</code> handler is not called.</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L73-L76" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = controlCommand match {
-  case _: Setup   =&gt; Accepted(runId) // validation for setup goes here
-  case _: Observe =&gt; Accepted(runId) // validation for observe goes here
-}</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L113-L138" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, command: ControlCommand): ValidateCommandResponse =
+  command match {
+    case setup: Setup =&gt;
+      setup.commandName match {
+        case `sleep` =&gt;
+          validateSleep(runId, setup)
+        case `immediateCommand` | `shortCommand` | `mediumCommand` | `longCommand` | `complexCommand` =&gt;
+          Accepted(runId)
+        case _ =&gt;
+          Invalid(runId, UnsupportedCommandIssue(s&quot;Command: ${setup.commandName.name} is not supported for sample Assembly.&quot;))
+      }
+    case _ =&gt;
+      Invalid(runId, UnsupportedCommandIssue(s&quot;Command: ${command.commandName.name} is not supported for sample Assembly.&quot;))
+  }
+
+private def validateSleep(runId: Id, setup: Setup): ValidateCommandResponse =
+  if (setup.exists(sleepTimeKey)) {
+    val sleepTime: Long = setup(sleepTimeKey).head
+    if (sleepTime &lt; maxSleep)
+      Accepted(runId)
+    else
+      Invalid(runId, ParameterValueOutOfRangeIssue(&quot;sleepTime must be &lt; 2000&quot;))
+  }
+  else {
+    Invalid(runId, MissingKeyIssue(s&quot;required sleep command key: $sleepTimeKey is missing.&quot;))
+  }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L107-L118" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
-public CommandResponse.ValidateCommandResponse validateCommand(Id runId, ControlCommand controlCommand) {
-    if (controlCommand instanceof Setup) {
-        // validation for setup goes here
-        return new CommandResponse.Accepted(runId);
-    } else if (controlCommand instanceof Observe) {
-        // validation for observe goes here
-        return new CommandResponse.Accepted(runId);
-    } else {
-        return new CommandResponse.Invalid(runId, new CommandIssue.AssemblyBusyIssue(&quot;Command not supported&quot;));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L146-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+public ValidateCommandResponse validateCommand(Id runId, ControlCommand command) {
+  CommandName cmd = command.commandName();
+  if (command instanceof Setup) {
+    Setup setup = (Setup) command;
+    if (cmd.equals(sleep)) {
+      return validateSleep(runId, setup);
     }
+    if (cmd.equals(immediateCommand) || cmd.equals(shortCommand) || cmd.equals(mediumCommand) || cmd.equals(longCommand)|| cmd.equals(complexCommand)) {
+      return new Accepted(runId);
+    }
+  }
+  return new Invalid(runId, new UnsupportedCommandIssue(&quot;Command: &quot; + cmd.name() + &quot; is not supported for sample Assembly.&quot;));
+}
+
+private ValidateCommandResponse validateSleep(Id runId, Setup setup) {
+  if (setup.exists(sleepTimeKey)) {
+    Long sleepTime = setup.jGet(sleepTimeKey).get().head();
+    if (sleepTime &lt; maxSleep)
+      return new Accepted(runId);
+    else
+      return new Invalid(runId, new ParameterValueOutOfRangeIssue(&quot;sleepTime must be &lt; 2000&quot;));
+  } else {
+    return new Invalid(runId, new MissingKeyIssue(&quot;required sleep command key: &quot; + sleepTimeKey + &quot; is missing.&quot;));
+  }
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L60-L63" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = controlCommand match {
-  case _: Setup   =&gt; Accepted(runId) // validation for setup goes here
-  case _: Observe =&gt; Accepted(runId) // validation for observe goes here
-}</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/samplehcd/SampleHcdHandlers.scala#L90-L97" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, command: ControlCommand): ValidateCommandResponse =
+  command.commandName match {
+    case `hcdSleep` | `hcdImmediate` =&gt;
+      Accepted(runId)
+    case _ =&gt;
+      log.error(s&quot;HCD: $prefix received an unsupported command: ${command.commandName.name}&quot;)
+      Invalid(runId, UnsupportedCommandIssue(s&quot;Command: ${command.commandName.name} is not supported for HCD: $prefix.&quot;))
+  }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L87-L98" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
-public CommandResponse.ValidateCommandResponse validateCommand(Id runId, ControlCommand controlCommand) {
-    if (controlCommand instanceof Setup) {
-        // validation for setup goes here
-        return new CommandResponse.Accepted(runId);
-    } else if (controlCommand instanceof Observe) {
-        // validation for observe goes here
-        return new CommandResponse.Accepted(runId);
-    } else {
-        return new CommandResponse.Invalid(runId, new CommandIssue.UnsupportedCommandIssue(controlCommand.commandName().name()));
-    }
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/samplehcd/JSampleHcdHandlers.java#L99-L106" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+public ValidateCommandResponse validateCommand(Id runId, ControlCommand command) {
+  if (command.commandName().equals(hcdSleep) || command.commandName().equals(hcdImmediate)) {
+    return new Accepted(runId);
+  }
+  log.error(&quot;HCD: &quot; + prefix + &quot; received an unsupported command: &quot; + command.commandName().name());
+  return new Invalid(runId, new UnsupportedCommandIssue(&quot;Command &quot; + command.commandName().name() + &quot; is not supported fpr HCD: &quot; + prefix + &quot;.&quot;));
 }</code></pre></dd>
 </dl>
 <h3><a href="#onsubmit" name="onsubmit" class="anchor"><span class="anchor-link"></span></a>onSubmit</h3>
-<p>On receiving a command sent using the <code>submit</code> message, the <code>onSubmit</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. The <code>onSubmit</code> handler returns a <code>SubmitResponse</code> indicating if the command is completed immediately, or if it is long-running by returning a <code>Started</code> response. Completion of a long running command is then tracked using the <code>CommandResponseManager</code>, described in more detail in the <a href="managing-command-state.html">Managing Command State</a> page. </p>
-<p>The example shows one way to process <code>Setup</code> and <code>Observe</code> commands separately.</p>
+<p>On receiving a command sent using a <code>submit</code> or <code>submitAndWait</code> message, the <code>onSubmit</code> handler is invoked only if the <code>validateCommand</code> handler returns <code>Accepted</code>. The <code>onSubmit</code> handler returns a <code>SubmitResponse</code> indicating if the command is completed immediately, or if it is long-running, by returning a <code>Started</code> response. Completion of long-running commands is tracked using the <code>CommandResponseManager</code>, described in more detail in the <a href="managing-command-state.html">Managing Command State</a> page. </p>
+<p>The example shows one way to split <code>Setup</code> and <code>Observe</code> commands into separate handlers. In this case, the Assembly does not support <code>Observe</code> and returns <code>Invalid</code> with the <code>UnsupportedCommandIssue</code>. </p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L80-L83" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(runId: Id, controlCommand: ControlCommand): SubmitResponse = controlCommand match {
-  case setup: Setup     =&gt; submitSetup(runId, setup)     // includes logic to handle Submit with Setup config command
-  case observe: Observe =&gt; submitObserve(runId, observe) // includes logic to handle Submit with Observe config command
-}</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L142-L147" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(runId: Id, command: ControlCommand): SubmitResponse =
+  command match {
+    case s: Setup =&gt; onSetup(runId, s)
+    case _: Observe =&gt;
+      Invalid(runId, UnsupportedCommandIssue(&quot;Observe commands not supported&quot;))
+  }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L122-L131" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
-public CommandResponse.SubmitResponse onSubmit(Id runId, ControlCommand controlCommand) {
-    if (controlCommand instanceof Setup)
-        return submitSetup(runId, (Setup) controlCommand); // includes logic to handle Submit with Setup config command
-    else if (controlCommand instanceof Observe)
-        return submitObserve(runId, (Observe) controlCommand); // includes logic to handle Submit with Observe config command
-    else
-        return new CommandResponse.Error(runId,
-                &quot;Submitted command not supported: &quot; + controlCommand.commandName().name());
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L175-L181" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+public SubmitResponse onSubmit(Id runId, ControlCommand command) {
+  if (command instanceof Setup) {
+    return onSetup(runId, (Setup) command);
+  }
+  return new Invalid(runId, new UnsupportedCommandIssue(&quot;Observe commands not supported&quot;));
 }</code></pre></dd>
 </dl>
+<p>Ideally, in the above example, lack of support for <code>Observe</code> should be determined in the <code>validateCommand</code> handler and checking in <code>onSetup</code> should not be needed.</p><div class="callout note "><div class="callout-title">Invalid or Error?</div>
+<p>The <code>Invalid</code> response should be used when an issue is found with validation of the command or other issues prior to starting actions. <code>Error</code> is reserved for issues with the actions started by the command.</p></div>
 <h3><a href="#ononeway" name="ononeway" class="anchor"><span class="anchor-link"></span></a>onOneway</h3>
 <p>On receiving a command as <code>oneway</code>, the <code>onOneway</code> handler is invoked for a component only if the <code>validateCommand</code> handler returns <code>Accepted</code>. The <code>onOneway</code> handler does not return a value and a command submitted with the <code>oneway</code> does not track completion of actions. </p>
 <dl>
@@ -558,9 +597,9 @@ public void onOneway(Id runId, ControlCommand controlCommand) {
 </dl>
 <h2><a href="#handling-diagnostic-data" name="handling-diagnostic-data" class="anchor"><span class="anchor-link"></span></a>Handling Diagnostic Data</h2>
 <h3><a href="#ondiagnosticmode" name="ondiagnosticmode" class="anchor"><span class="anchor-link"></span></a>onDiagnosticMode</h3>
-<p>A Component can receive a <code>DiagnosticMode</code> command from other components at any time. The <code>onDiagnosticMode</code> handler of the component is invoked on receiving the command. Inside the handler, the components can start publishing some diagnostic data as desired. The <code>DiagnosticMode</code> command can be received by a component only in the Running state and is ignored otherwise. The diagnosticMode handler contains a <code>startTime</code> which is a <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/time/core/models/UTCTime.html" title="csw/time/core/models/UTCTime"><code>UTCTime</code></a> and a String parameter called <code>hint</code> with the name of the technical data mode. The component should read the hint and publish events accordingly.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>A Component can receive a <code>DiagnosticMode</code> command from other components at any time. The <code>onDiagnosticMode</code> handler of the component is invoked on receiving the command. Inside the handler, the components can start publishing some diagnostic data as desired. The <code>DiagnosticMode</code> command can be received by a component only in the Running state and is ignored otherwise. The diagnosticMode handler contains a <code>startTime</code> which is a <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/time/core/models/UTCTime.html" title="csw/time/core/models/UTCTime"><code>UTCTime</code></a> and a String parameter called <code>hint</code> with the name of the technical data mode. The component should read the hint and publish events accordingly.</p>
+<p>The startTime is included so a diagnosticMode can be synchronized in time with diagnosticMode starting in other components. The Time Service can be used to schedule execution of some tasks at the specified startTime. Event Service publish API can also be used in order to start publishing events at the specified startTime. A component can only be in one technical data mode at a time. If the component is in one technical data, then on receiving command to go in another technical mode, the component should stop/halt the previous<br/>diagnosticMode handler, and should enter the new technical data mode. Even if the component does not define any diagnostic modes, it must be prepared to receive and process diagnosticMode handler without an error by completing with no changes. This is equivalent to leaving the handler empty.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>A component developer should be careful to make any changes in the component&rsquo;s internal state in any callbacks. For example,  while calling <code>timeServiceScheduler.schedule</code> or <code>eventPublisher.publish</code>, if you are trying to mutate state in  the callbacks passed to them, you might run into concurrency issues. Hence, in such scenarios, it is recommended to  use a <code>WorkerActor</code> to manage the state.</p></div>
-<p>The startTime is included so a diagnosticMode can be synchronized in time with diagnosticMode starting in other components. The Time Service can be used to schedule execution of some tasks at the specified startTime. Event Service publish Api can also be used in order to start publishing events at the specified startTime. A component can only be in one technical data mode at a time. If the component is in one technical data, then on receiving command to go in another technical mode, the component should stop/halt the previous<br/>diagnosticMode handler, and should enter the new technical data mode. Even if the component does not define any diagnostic modes, it must be prepared to receive and process diagnosticMode handler without an error by completing with no changes.</p>
 <p>The supported diagnostic mode hints of a component are published in the component&rsquo;s model files. Unsupported hints should be rejected by a component.</p>
 <p>The example shows one usage of <code>onDiagnosticMode</code> handler.</p>
 <dl>
@@ -581,10 +620,10 @@ override def onDiagnosticMode(startTime: UTCTime, hint: String): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L261-L277" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L254-L270" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public void onDiagnosticMode(UTCTime startTime, String hint) {
     if (hint.equals(&quot;engineering&quot;)) {
-        var event = new SystemEvent(Prefix.apply(JSubsystem.TCS(), &quot;prefix&quot;), new EventName(&quot;eventName&quot;))
+        var event = new SystemEvent(Prefix.apply(JSubsystem.TCS, &quot;prefix&quot;), new EventName(&quot;eventName&quot;))
                 .add(JKeyType.IntKey().make(&quot;diagnostic-data&quot;).set(1));
         diagModeCancellable.map(Cancellable::cancel); // cancel previous diagnostic publishing
         diagModeCancellable = Optional.of(
@@ -610,7 +649,7 @@ public void onDiagnosticMode(UTCTime startTime, String hint) {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L281-L284" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L274-L277" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public void onOperationsMode() {
     diagModeCancellable.map(Cancellable::cancel); // cancel diagnostic mode
 }</code></pre></dd>

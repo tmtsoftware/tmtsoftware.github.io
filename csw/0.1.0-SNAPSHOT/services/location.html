@@ -371,14 +371,14 @@ val assemblyRegResult: RegistrationResult = Await.result(locationService.registe
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L97-L134" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>// dummy http connection
-HttpConnection httpConnection = new HttpConnection(new ComponentId(new Prefix(JSubsystem.CSW(), &quot;configuration&quot;), JComponentType.Service()));
+HttpConnection httpConnection = new HttpConnection(new ComponentId(new Prefix(JSubsystem.CSW, &quot;configuration&quot;), JComponentType.Service));
 HttpRegistration httpRegistration = new HttpRegistration(httpConnection, 8080, &quot;path123&quot;);
 httpRegResult = locationService.register(httpRegistration).get();
 
 // ************************************************************************************************************
 
 // dummy HCD connection
-AkkaConnection hcdConnection = new AkkaConnection(new ComponentId(new Prefix(JSubsystem.NFIRAOS(), &quot;hcd1&quot;), JComponentType.HCD()));
+AkkaConnection hcdConnection = new AkkaConnection(new ComponentId(new Prefix(JSubsystem.NFIRAOS, &quot;hcd1&quot;), JComponentType.HCD));
 ActorRef actorRef = getContext().actorOf(Props.create(AbstractActor.class, () -&gt; new AbstractActor() {
             @Override
             public Receive createReceive() {
@@ -400,7 +400,7 @@ hcdRegResult = locationService.register(hcdRegistration).get();
 Behavior&lt;String&gt; behavior = Behaviors.setup(ctx -&gt; Behaviors.same());
 akka.actor.typed.ActorRef&lt;String&gt; typedActorRef = Adapter.spawn(context(), behavior, &quot;typed-actor-ref&quot;);
 
-AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(new Prefix(JSubsystem.NFIRAOS(), &quot;assembly1&quot;), JComponentType.Assembly()));
+AkkaConnection assemblyConnection = new AkkaConnection(new ComponentId(new Prefix(JSubsystem.NFIRAOS, &quot;assembly1&quot;), JComponentType.Assembly));
 
 // Register Typed ActorRef[String] with Location Service
 AkkaRegistration assemblyRegistration = new RegistrationFactory().akkaTyped(assemblyConnection, typedActorRef);
@@ -561,7 +561,7 @@ componentList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quo
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L212-L217" target="_blank" title="Go to snippet source"></a><code class="language-java">// filter connections based on component type
-List&lt;Location&gt; componentList = locationService.list(JComponentType.Assembly()).get();
+List&lt;Location&gt; componentList = locationService.list(JComponentType.Assembly).get();
 log.info(&quot;Registered Assemblies:&quot;);
 for (Location loc : componentList) {
     log.info(&quot;--- &quot; + connectionInfo(loc.connection()));
@@ -583,7 +583,7 @@ akkaList.foreach(c =&gt; log.info(s&quot;--- ${locationInfoToString(c)}&quot;))<
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/location/JLocationServiceExampleClient.java#L222-L227" target="_blank" title="Go to snippet source"></a><code class="language-java">// filter connections based on connection type
-List&lt;Location&gt; akkaList = locationService.list(JConnectionType.AkkaType()).get();
+List&lt;Location&gt; akkaList = locationService.list(JConnectionType.AkkaType).get();
 log.info(&quot;Registered Akka connections:&quot;);
 for (Location loc : akkaList) {
     log.info(&quot;--- &quot; + connectionInfo(loc.connection()));
@@ -613,8 +613,8 @@ for (Location loc : locations) {
 </dl>
 <p>The log output should contain:</p>
 <pre><code>[INFO] Registered akka locations for nfiraos.ncc
-[INFO] --- hcd1-hcd-akka, component type=HCD, connection type=AkkaType
-[INFO] --- assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
+[INFO] --- nfiraos.ncc.hcd1-hcd-akka, component type=HCD, connection type=AkkaType
+[INFO] --- nfiraos.ncc.assembly1-assembly-akka, component type=Assembly, connection type=AkkaType
 </code></pre>
 <h2><a href="#tracking-and-subscribing" name="tracking-and-subscribing" class="anchor"><span class="anchor-link"></span></a>Tracking and Subscribing</h2>
 <p>The lifecycle of a connection of interest can be followed using either the <code>track</code> API or the <code>subscribe</code> API. </p>

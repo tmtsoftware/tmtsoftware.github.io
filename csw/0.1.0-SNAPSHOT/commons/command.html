@@ -216,7 +216,7 @@ tmtsoftware/csw
     <li><a href="../commons/command.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../commons/command.html#command-based-communication-between-components" class="header">Command-based Communication Between Components</a></li>
     <li><a href="../commons/command.html#commandservice" class="header">CommandService</a></li>
-    <li><a href="../commons/command.html#fixme-for-kim-this-snip-is-broken-fix-submit-and-then-make-it-snip-" class="header">Fixme for Kim: This snip is broken. Fix #submit and then make it <code>@@snip</code>.</a></li>
+    <li><a href="../commons/command.html#matching-state-for-command-completion" class="header">Matching State for Command Completion</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -243,7 +243,7 @@ tmtsoftware/csw
     <li><a href="../commons/command.html#dependencies" class="header">Dependencies</a></li>
     <li><a href="../commons/command.html#command-based-communication-between-components" class="header">Command-based Communication Between Components</a></li>
     <li><a href="../commons/command.html#commandservice" class="header">CommandService</a></li>
-    <li><a href="../commons/command.html#fixme-for-kim-this-snip-is-broken-fix-submit-and-then-make-it-snip-" class="header">Fixme for Kim: This snip is broken. Fix #submit and then make it <code>@@snip</code>.</a></li>
+    <li><a href="../commons/command.html#matching-state-for-command-completion" class="header">Matching State for Command Completion</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -267,18 +267,20 @@ tmtsoftware/csw
 <h2><a href="#command-based-communication-between-components" name="command-based-communication-between-components" class="anchor"><span class="anchor-link"></span></a>Command-based Communication Between Components</h2>
 <p>A component can send <a href="../params/commands.html">Commands</a> to other components. The commands can be sent as one of the following three types of messages: </p>
 <ul>
-  <li><strong>submit</strong> - A command is sent as Submit when the result of completion is desired.</li>
-  <li><strong>oneway</strong> - A command is sent as Oneway when the result of completion is not desired.</li>
+  <li><strong>submit</strong> - A command is sent using a <code>submit</code> when the result of completion is desired.</li>
+  <li><strong>oneway</strong> - A command is sent as <code>oneway</code> when the result of completion is not desired.</li>
   <li><strong>validate</strong> - A command is sent, but it is only validated with no actions started.</li>
 </ul>
-<p>A <code>submit</code> is the typical way of sending a command from one component to another. When received, a <code>submit</code> command is validated and if accepted, the actions associated with the command are executed or started. <code>submit</code> has a different responses that allow for different scenarios. When the actions started are long-running, the caller can wait for the actions to complete if needed.</p>
+<p>Submit comes in two versions: <code>submit</code> and <code>submitAndWait</code>. The only difference is in how long-running commands are treated. If a command starts long-running actions, <code>submit</code> returns a <code>Started</code> response immediately while <code>submitAndWait</code> will wait for the long-running actions to complete before returning a final response. The <code>submitAndWait</code> is a composite of <code>submit</code> and <code>queryFinal</code>.</p>
+<p>A <code>submitAndWait</code> is the most convenient way of sending a command from one component to another. When received, a <code>submitAndWait</code> command is validated and if accepted, the actions associated with the command are executed or started. When the <code>submit</code> response that is part of the <code>submitAndWait</code> is received, <code>submitAndWait</code> immediately does a <code>queryFinal</code>. For simple scenarios, this is the right command and will be the most commonly used.</p>
+<p>A <code>submit</code> can be used when the sender of a command needs to do additional work before long-running actions are completed. For instance, send another command to execute in parallel. If commands are short, <code>submit</code> and <code>submitAndWait</code> behave the same way. When the actions started by <code>submit</code> are long-running, the caller can wait for the actions to complete if needed using the <code>queryFinal</code> call.</p>
 <p>A <code>oneway</code> is primarily meant to be used between an Assembly and an HCD when no completion information is desired. It is also useful when tracking completion using a Matcher and current state values (see below) or events.</p>
 <p>A <code>validate</code> message is used to ask a destination component to validate a command and determine if the command can be executed. It does not execute the command and only returns the result of validation. In some scenarios, it may be useful to test to see if a command can be executed prior to trying to execute the command.</p>
 <h3><a href="#component-locking" name="component-locking" class="anchor"><span class="anchor-link"></span></a>Component Locking</h3>
 <p>If a component is locked, any Command Service command will have a response of <code>Locked</code>. The corresponding handler will not be called until the component is unlocked. See <a href="create-component.html">Creating a Component</a> for more information on locking. </p>
 <p>Note that the code in the receiving component&rsquo;s handler does not need to return <code>Locked</code>. If the component has been Locked, the component&rsquo;s Supervisor returns the <code>Locked</code> response to the caller and the handler is not called.</p>
 <h3><a href="#command-validation" name="command-validation" class="anchor"><span class="anchor-link"></span></a>Command Validation</h3>
-<p>Command validations occur in two scenarios. One is using the <code>validate</code> message as described above. For example, <code>validate</code> could be used by an Assembly when it needs to send multiple commands to different HCDs and it wants to first check that all the HCDs can execute their commands before sending a command to any of the HCDs.<br/>The second scenario is that it is always the first step in processing a command&ndash;either <code>submit</code> or <code>oneway</code>.</p>
+<p>Command validations occur in two scenarios. One is using the <code>validate</code> message as described above. For example, <code>validate</code> could be used by an Assembly when it needs to send multiple commands to different HCDs and it wants to first check that all the HCDs can execute their commands before sending a command to any of the HCDs.<br/>The second scenario is that it is always the first step in processing a command with <code>submit</code>, <code>submitAndWait</code>, or <code>oneway</code>.</p>
 <p>If the receiving component is not locked, the component&rsquo;s supervisor calls the <code>validateCommand</code> handler of the Top Level Actor. The developer code evaluates and returns a <code>ValidateCommandResponse</code> as shown in the following table. </p>
 <table>
   <thead>
@@ -305,12 +307,21 @@ tmtsoftware/csw
 <h3><a href="#the-submit-message" name="the-submit-message" class="anchor"><span class="anchor-link"></span></a>The Submit Message</h3>
 <p>A <code>submit</code> message is sent with its <a href="../params/commands.html">command</a> to a component destination. A <code>SubmitResponse</code> is returned to the caller when the <code>submit</code> message is used. If the <code>validateCommand</code> handler returns <code>Accepted</code>, the framework calls the <code>onSubmit</code> handler of the Top Level Actor. The <code>onSubmit</code> handler always returns a <code>SubmitResponse</code>.</p>
 <h4><a href="#immediate-completion-scenario" name="immediate-completion-scenario" class="anchor"><span class="anchor-link"></span></a>Immediate Completion Scenario</h4>
-<p>If the actions of the <code>submit</code> command take a very short time to complete, they may be completed by the <code>onSubmit</code> handler. This is called <em>immediate completion</em>. The time for the actions to complete should be less than 1 second. (Note: The framework will timeout if the <code>onSubmit</code> handler does not return a response within 1 second.) In this scenario with <code>onSubmit</code>, the values of <code>SubmitResponse</code> can be <code>Completed</code>, <code>CompletedWithResult</code>, or <code>Error</code>. <code>Error</code> is returned when the actions could not be accomplished. This is different than <code>Invalid</code>, which indicates that the command could not be validated.</p>
-<p>The immediate completion behavior is similar to a remote procedure call although the execution is entirely asynchronous. If the actions do not produce a value for the client, the <code>Completed</code> <code>SubmitResponse</code> is returned. If there is a result, the <code>Completed</code> <code>SubmitResult</code> is returned with a parameter set of <code>Result</code> type.</p>
+<p>If the actions of the <code>submit</code> command take a very short time to complete, they may be completed by the <code>onSubmit</code> handler. This is called <em>immediate completion</em>. The time for the actions to complete should be less than 1 second. (Note: The framework will timeout if the destination does not return a response within 1 second.) In this scenario with <code>onSubmit</code>, the values of <code>SubmitResponse</code> can be <code>Completed</code> or <code>Error</code>. <code>Error</code> is returned when the actions could not be accomplished. This is different than <code>Invalid</code>, which indicates that the command could not be validated.</p>
+<p>The immediate completion behavior is similar to a remote procedure call although the execution is entirely asynchronous. If the actions are successful, the <code>Completed</code> <code>SubmitResponse</code> is returned. If there is a result, the <code>Completed</code> is returned with a parameter set of <code>Result</code> type that can be inspected by the sender.</p>
 <h4><a href="#long-running-actions-scenario" name="long-running-actions-scenario" class="anchor"><span class="anchor-link"></span></a>Long Running Actions Scenario</h4>
-<p>When actions take longer than 1 second, <code>onSubmit</code> should start the actions and return the <code>Started</code> <code>SubmitResponse</code>. The <code>Started</code> response indicates to the framework that long running actions have been started.</p>
-<p>Once the long running actions have started, the receiving component code must notify the framework when the actions are completed. This is done be updating the <a href="../framework/managing-command-state.html">Command Response Manager</a>.</p>
-<p>In addition to the values returned for immediate completion, long running actions can return <code>Cancelled</code>. If the component supports a separate command to stop a long running command, the stopped command should return <code>Cancelled</code> when successfully cancelled. The command that cancels the long running command should return <code>Completed</code>.</p>
+<p>When actions take longer than 1 second, <code>onSubmit</code> should start the actions and return the <code>Started</code> <code>SubmitResponse</code>. The <code>Started</code> response indicates to the framework that long-running actions have been started.</p>
+<p>Once the long-running actions have started, the receiving component code must notify the framework when the actions are completed. This is done be updating through the <a href="../framework/managing-command-state.html">Command Response Manager</a>.</p>
+<p>In addition to the values returned for immediate completion, long running actions can return <code>Cancelled</code>. If the component supports a separate command to stop a long-running command, the stopped command should return <code>Cancelled</code> when successfully cancelled. The command that cancels the long running command should return <code>Completed</code>.</p>
+<h3><a href="#the-submitandwait-message" name="the-submitandwait-message" class="anchor"><span class="anchor-link"></span></a>The SubmitAndWait Message</h3>
+<p>A <code>submitAndWait</code> message is sent with its <a href="../params/commands.html">command</a> to a component destination. A <code>SubmitResponse</code> is returned to the caller when the <code>submitAndWait</code> message is used. If the <code>validateCommand</code> handler returns <code>Accepted</code>, the framework calls the <code>onSubmit</code> handler of the Top Level Actor. The <code>onSubmit</code> handler always returns a <code>SubmitResponse</code>.</p>
+<h4><a href="#immediate-completion-scenario" name="immediate-completion-scenario" class="anchor"><span class="anchor-link"></span></a>Immediate Completion Scenario</h4>
+<p>If the actions of the <code>submitAndWait</code> command take a very short time to complete, <code>submitAndWait</code> behaves exactly like <code>submit</code> as described above.</p>
+<p>The immediate completion behavior is similar to a remote procedure call although the execution is entirely asynchronous. If the actions are successful, the <code>Completed</code> <code>SubmitResponse</code> is returned. If there is a result, the <code>Completed</code> is returned with a parameter set of <code>Result</code> type that can be inspected by the sender.</p>
+<h4><a href="#long-running-actions-scenario" name="long-running-actions-scenario" class="anchor"><span class="anchor-link"></span></a>Long Running Actions Scenario</h4>
+<p>When actions take longer than 1 second, <code>onSubmit</code> should start the actions and return the <code>Started</code> <code>SubmitResponse</code>. The <code>Started</code> response indicates to the framework that long-running actions have been started. In this case, <code>submitAndWait</code> immediately executes a <code>queryFinal</code> command in order to wait for the final response.</p>
+<p>As with the <code>submit</code> description, the receiving component code must notify the framework when the actions are completed. This is done be updating the <a href="../framework/managing-command-state.html">Command Response Manager</a>.</p>
+<h4><a href="#submitresponse-summary" name="submitresponse-summary" class="anchor"><span class="anchor-link"></span></a>SubmitResponse Summary</h4>
 <p>The following table summarizes all the possible values for <code>SubmitResponse</code>.</p>
 <table>
   <thead>
@@ -325,16 +336,12 @@ tmtsoftware/csw
       <td>The command is not valid and cannot be executed. The response includes a reason in the form of a <code>CommandIssue</code>. <code>onSubmit</code> is not executed. </td>
     </tr>
     <tr>
-      <td align="center">Completed </td>
-      <td>This response is returned when the actions associated with a command are complete. </td>
-    </tr>
-    <tr>
       <td align="center">Completed(Result) </td>
-      <td>This response is returned when the actions associated with a command are complete and a result is returned. </td>
+      <td>This response is returned when the actions associated with a command are completed. A result may or may not be returned. </td>
     </tr>
     <tr>
       <td align="center">Started </td>
-      <td>Returned when long running actions have been started. </td>
+      <td>Returned by <code>onSubmit</code> when long-running actions have been started. </td>
     </tr>
     <tr>
       <td align="center">Error </td>
@@ -342,7 +349,7 @@ tmtsoftware/csw
     </tr>
     <tr>
       <td align="center">Cancelled </td>
-      <td>The actions associated with a long running command have been cancelled. </td>
+      <td>The actions associated with a long-running command have been cancelled. </td>
     </tr>
     <tr>
       <td align="center">Locked </td>
@@ -364,7 +371,7 @@ tmtsoftware/csw
   <tbody>
     <tr>
       <td align="center">Invalid </td>
-      <td>The command is not valid and cannot be executed. The response includes a reason in the form of a <code>CommandIssue</code>. <code>onSubmit</code> is not executed. </td>
+      <td>The command is not valid and cannot be executed. The response includes a reason in the form of a <code>CommandIssue</code>. <code>onOneway</code> is not executed. </td>
     </tr>
     <tr>
       <td align="center">Accepted </td>
@@ -376,49 +383,69 @@ tmtsoftware/csw
     </tr>
   </tbody>
 </table>
-<p><code>Oneway</code> is available as a higher performance option when an Assembly needs to send commands to an HCD but doesn&rsquo;t really care about completion such as the case when demands are being sent to a motor. Validation is still present to ensure the HCD supports the standalone operation requirement and can check that it is not getting out of range values.</p>
+<p><code>Oneway</code> is available as a higher performance option when an Assembly needs to send commands to an HCD but doesn&rsquo;t really care about completion such as the case when demands are being sent to a motor. Validation is still present to ensure the HCD supports the standalone operation requirement that allows the HCD to check that its input values are not invalid and it is not getting out of range values.</p>
 <p><code>Oneway</code> can be used with a <em>matcher</em>. The matcher can use CurrentState or even events from the Event Service to determine completion. This can be more complicated than <code>submit</code>, but may be useful in some scenarios.</p>
 <h2><a href="#commandservice" name="commandservice" class="anchor"><span class="anchor-link"></span></a>CommandService</h2>
 <p>A helper/wrapper is provided called <code>CommandService</code> that provides a convenient way to use the Command Service with a component from the Location Service. </p>
-<p>A <code>CommandService</code> instance is created using an <code>AkkaLocation</code> of the receiving component, discovered from the Location Service. This <code>CommandService</code> instance has methods for communicating with the component. A new <code>CommandService</code> is created for each component for which commands are to be sent.</p>
+<p>A <code>CommandService</code> instance is created using an <code>AkkaLocation</code> of the receiving component, discovered from the Location Service. This <code>CommandService</code> instance has methods for communicating with the component. A new <code>CommandService</code> is created for each component for which commands are to be sent.</p><div class="callout note "><div class="callout-title">Scala async library!</div>
+<p>Note that the Scala examples are using async/await which simplifies handling the Futures, but is not necessary. The async/await library is not available in Java.</p></div>
 <p>The API can be exercised as follows for different scenarios of command-based communication:</p>
 <h3><a href="#submit" name="submit" class="anchor"><span class="anchor-link"></span></a>submit</h3>
-<p>Sending a <code>submit</code> message with a command returns a <code>SubmitResponse</code> as a Future. The Future returned by <code>submit</code> will always be the final response in case of short running command which may be a positive completion (<code>Completed</code>) or a negative completion (<code>Invalid</code>, <code>Error</code>, <code>Cancelled</code>, <code>Locked</code>) or initial response in case of long running command which can be <code>Started</code>. In case of long running command, <code>Started</code> or <code>Invalid</code> response is returned and then user can either <code>query</code> for response or <code>queryFinal</code> for final response.</p>
-<p>This example shows an immediate response command using <code>submit</code> that returns <code>Started</code>, and <code>queryFinal</code> to get the final response.</p>
+<p>Sending a <code>submit</code> message with a command returns a <code>SubmitResponse</code> as a Future. The Future returned by <code>submit</code> will be the final response in case of short-running command and may be a positive completion (<code>Completed</code>) or a negative completion (<code>Invalid</code>, <code>Error</code>, <code>Cancelled</code>, <code>Locked</code>). The response may also be the <code>Started</code> response in the case of long-running actions. In the case of a long-running command the <code>Started</code> response can be used with either <code>query</code> or <code>queryFinal</code> to obtain the final response.</p>
+<p>This example shows a command using <code>submit</code> that returns <code>Started</code> followed by a <code>queryFinal</code> to get the final response.</p>
 <dl>
-  <dt>Scala/submit w/immediate-response
-  </dt>
+  <dt>Scala/submit w/queryFinal</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/LongRunningCommandTest.scala#L105-L106" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Test 2 shows that submitAndWait can send the same command and wait for final completion
-val test2Response = assemblyCommandService.submitAndWait(assemblyLongSetup)</code></pre></dd>
-  <dt>Java/submit w/immediate-response
-  </dt>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L208-L223" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def sleepHCD(runId: Id, setup: Setup, sleepTime: Long): Unit =
+  hcdCS match {
+    case Some(cs) =&gt;
+      val s = Setup(prefix, hcdSleep, None).add(setSleepTime(sleepTime))
+      cs.submit(s).foreach {
+        case started: Started =&gt;
+          // Can insert extra code during execution here
+          cs.queryFinal(started.runId).foreach(sr =&gt; commandResponseManager.updateCommand(sr.withRunId(runId)))
+        case other =&gt;
+          commandResponseManager.updateCommand(other.withRunId(runId))
+      }
+    case None =&gt;
+      commandResponseManager.updateCommand(
+        Error(runId, s&quot;A needed HCD is not available: ${hcdConnection.componentId} for $prefix&quot;)
+      )
+  }</code></pre></dd>
+  <dt>Java/submit w/queryFinal</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L240-L251" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;SubmitResponse&gt; longRunningResultF2 = hcdCmdService.submit(longRunningSetup)
-        .thenCompose(response -&gt; {
-            if (response instanceof Started) {
-                // This extracts and returns the the first value of parameter encoder
-                Id id = ((Started) response).runId();
-                return hcdCmdService.queryFinal(id, timeout);
-            } else {
-                // For some other response (Invalid command)
-                return CompletableFuture.failedFuture(new RuntimeException(&quot;Submitted command is invalid&quot;));
-            }
-        });
-</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L245-L263" target="_blank" title="Go to snippet source"></a><code class="language-java">private void sleepHCD(Id runId, Setup setup, Long sleepTime) {
+  if (hcdCS.isPresent()) {
+    ICommandService cs = hcdCS.get();
+    Setup s = new Setup(prefix, hcdSleep, Optional.empty()).add(setSleepTime(sleepTime));
+    cs.submit(s).thenAccept(submitResponse -&gt; {
+      if (submitResponse instanceof Started) {
+        Started started = (Started) submitResponse;
+        // Can insert extra code during execution here
+        cs.queryFinal(started.runId(), timeout).thenAccept(sr -&gt; cswCtx.commandResponseManager().updateCommand(sr.withRunId(runId)));
+      } else {
+        cswCtx.commandResponseManager().updateCommand(submitResponse.withRunId(runId));
+      }
+    });
+  } else {
+    cswCtx.commandResponseManager().updateCommand(
+        new CommandResponse.Error(runId, &quot;A needed HCD is not available: &quot; + hcdConnection.componentId() + &quot; for &quot; + prefix)
+    );
+  }
+}</code></pre></dd>
 </dl>
-<p>Note that the Scala examples are using <code>async/await</code> which simplifies handling the Futures, but is not necessary. The <code>async/await</code> library is not available in Java. If using <code>submit</code> and the validation fails in the destination component, the <code>Invalid</code> response is returned.</p>
+<p>If using <code>submit</code> and the validation fails in the destination component, the <code>Invalid</code> response is returned. Sometimes it is possible to handle an <code>Invalid</code> response locally, but in most cases it must simply be returned to the caller. The following example shows how to process individual responses from a <code>submit</code>:</p>
 <dl>
   <dt>Scala/submit w/invalid response</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L149-L162" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L149-L162" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
 val invalidCommandF = assemblyCmdService.submitAndWait(invalidSetup)
 async {
   await(invalidCommandF) match {
     case Completed(_, _) =&gt;
-    // Do Completed thing
+      // Do Completed thing
     case Invalid(_, _) =&gt;
-    //issue shouldBe a[Invalid]
+      //issue shouldBe a[Invalid]
     case other =&gt;
       // Unexpected result
       log.error(s&quot;Some other response: $other&quot;)
@@ -441,74 +468,33 @@ Await.result(invalidCommandF, 5.seconds) shouldBe a[Invalid]</code></pre></dd>
                 }
         );</code></pre></dd>
 </dl>
-<p>The handling of long-running and immediate completion commands look the same from the command sender&rsquo;s perspective. The following example shows a long-running command that returns a value when the command action completes with a result.</p>
+<p>The handling an immediate completion command looks the same from the command sender&rsquo;s perspective, but can be challenging on the side of the component handling the command. Because <code>submit</code> returns a <code>Future[SubmitResponse]</code> and <code>onSetup</code> returns <code>SubmitResponse</code>, an immediate completion command must be handled in the component that receives the request. For instance, an Assembly can return a <code>Completed</code> without returning <code>Started</code>, but if an Assembly needs to contact an HCD to get a response, the Assembly must first return <code>Started</code> and then contact the HCD. The following snippet shows a portion of an <code>onSetup</code> handler that returns some local state as an immediate completion. </p>
 <dl>
-  <dt>Scala/submit long running</dt>
+  <dt>Scala/submit immediate command</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L234-L248" target="_blank" title="Go to snippet source"></a><code class="language-scala">val queryFinalF = async {
-  // The following submit is made without saving the Future!
-  val runId = await(assemblyCmdService.submit(longRunningSetup)).runId
-
-  // Use queryFinal and runId to wait for completion and result
-  await(assemblyCmdService.queryFinal(runId)) match {
-    case Completed(_, result) =&gt;
-      Some(result(encoder).head)
-
-    case otherResponse =&gt;
-      // log a message?
-      None
-  }
-}
-Await.result(queryFinalF, timeout.duration) shouldBe Some(20)</code></pre></dd>
-  <dt>Java/submit long running</dt>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L152-L157" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def onSetup(runId: Id, setup: Setup): SubmitResponse =
+  setup.commandName match {
+    case `immediateCommand` =&gt;
+      val localValue = 1000L
+      // Assembly preforms a calculation or reads state information storing in a result
+      Completed(runId, Result().add(resultKey.set(localValue)))</code></pre></dd>
+  <dt>Java/submit immediate command</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L271-L287" target="_blank" title="Go to snippet source"></a><code class="language-java">longRunningCommandResultF = hcdCmdService.submitAndWait(longRunningSetup, timeout);
-sresponse = longRunningCommandResultF.get();
-
-// longRunningSetup3 has already been submitted
-CompletableFuture&lt;Optional&lt;Integer&gt;&gt; int3F =
-        hcdCmdService.queryFinal(sresponse.runId(), timeout).thenCompose(response -&gt; {
-            if (response instanceof Completed) {
-                // This extracts and returns the the first value of parameter encoder
-                Result result = ((Completed) response).result();
-                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
-                return CompletableFuture.completedFuture(rvalue);
-            } else {
-                // For some other response, return empty
-                return CompletableFuture.completedFuture(Optional.empty());
-            }
-        });
-Assert.assertEquals(Optional.of(20), int3F.get());</code></pre></dd>
-</dl>
-<p>If a command is long-running and the sender needs to determine that the actions have started properly, the <code>query</code> method of <code>CommandService</code> can be used as shown in the following example without using the Future returned by <code>submit</code>, which provides the final completion notification.</p>
-<h1><a href="#fixme-for-kim-this-snip-is-broken-fix-submit-and-then-make-it-snip-" name="fixme-for-kim-this-snip-is-broken-fix-submit-and-then-make-it-snip-" class="anchor"><span class="anchor-link"></span></a>Fixme for Kim: This snip is broken. Fix #submit and then make it <code>@@snip</code>.</h1>
-<dl>
-  <dt>Scala/submit long running/query</dt>
-  <dd>snip <a href="../../../../csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> { #submitAndQuery }</dd>
-  <dt>Java/submit long running/query</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L255-L267" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;SubmitResponse&gt; longRunningSubmitResultF3 = hcdCmdService.submit(longRunningSetup);
-
-// do some work before querying for the result of above command as needed
-CompletableFuture&lt;SubmitResponse&gt; queryResponseF3 =
-        hcdCmdService.query(longRunningSubmitResultF3.get().runId());
-queryResponseF3.thenAccept(r -&gt; {
-    if (r instanceof Started) {
-        // happy case - no action needed
-        // Do some other work
-    } else {
-        // log.error. This indicates that the command probably failed to start.
-    }
-});</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L186-L191" target="_blank" title="Go to snippet source"></a><code class="language-java">private SubmitResponse onSetup(Id runId, Setup setup) {
+  CommandName cmd = setup.commandName();
+  if (cmd.equals(immediateCommand)) {
+    // Assembly preforms a calculation or reads state information storing in a result
+    return new Completed(runId, new Result().madd(resultKey.set(1000L)));
+  }</code></pre></dd>
 </dl>
 <h3><a href="#submitandwait" name="submitandwait" class="anchor"><span class="anchor-link"></span></a>submitAndWait</h3>
-<p><code>submitAndWait</code> is wrapper method which sends <code>submit</code> message and waits for final response. Sending a <code>submit</code> message with a command returns a <code>SubmitResponse</code> as a Future. The Future returned by <code>submitAndWait</code> will always be the final response, which may be a positive completion (<code>Completed</code>) or a negative completion (<code>Invalid</code>, <code>Error</code>, <code>Cancelled</code>, <code>Locked</code>). The <code>Started</code> response is never seen by the programmer when using the <code>submitAndWait</code> of <code>CommandService</code>.The handling of long-running and immediate completion commands look the same from the command sender&rsquo;s perspective</p>
+<p><code>submitAndWait</code> is a convenience method which sends a <code>submit</code> message and then, if the command is long-running, it waits for final completion. Sending a <code>submit</code> message with a command returns a <code>SubmitResponse</code> as a Future. The Future returned by <code>submitAndWait</code> will always be the final response, whether the actions are long-running or not. The final result may be a positive completion (<code>Completed</code>) or a negative completion (<code>Invalid</code>, <code>Error</code>, <code>Cancelled</code>, <code>Locked</code>). The <code>Started</code> response is never seen by the programmer when using <code>submitAndWait</code> of <code>CommandService</code>. The handling of long-running and immediate completion commands look the same from the command sender&rsquo;s perspective when using <code>submitAndWait</code>.</p>
 <p>This example shows an immediate completion command using <code>submitAndWait</code>.</p>
 <dl>
   <dt>Scala/submitAndWait w/immediate-response
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L168-L178" target="_blank" title="Go to snippet source"></a><code class="language-scala">val immediateSetup = Setup(prefix, immediateCmd, obsId)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L168-L178" target="_blank" title="Go to snippet source"></a><code class="language-scala">val immediateSetup = Setup(prefix, immediateCmd, obsId)
 val immediateCommandF = async {
   await(assemblyCmdService.submitAndWait(immediateSetup)) match {
     case response: Completed =&gt;
@@ -534,150 +520,47 @@ val immediateCommandF = async {
                 }
         );</code></pre></dd>
 </dl>
-<p>Note that the Scala examples are using <code>async/await</code> which simplifies handling the Futures, but is not necessary. The <code>async/await</code> library is not available in Java. If using <code>submitAndWait</code> and the validation fails in the destination component, the <code>Invalid</code> response is returned.</p>
+<p>Several examples have been shown of sending a command that is long-running. The following examples show an Assembly that issues a command to an HCD with <code>submitAndWait</code> and returns <code>Started</code>. When <code>submitAndWait</code> returns with a final response, the parent is updated with the final response through the <code>CommandResponseManager</code>.</p>
 <dl>
-  <dt>Scala/submitAndWait w/invalid response</dt>
+  <dt>Scala/submitAndWait w/immediate-response
+  </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L149-L162" target="_blank" title="Go to snippet source"></a><code class="language-scala">val invalidSetup    = Setup(prefix, invalidCmd, obsId)
-val invalidCommandF = assemblyCmdService.submitAndWait(invalidSetup)
-async {
-  await(invalidCommandF) match {
-    case Completed(_, _) =&gt;
-    // Do Completed thing
-    case Invalid(_, _) =&gt;
-    //issue shouldBe a[Invalid]
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/CommandAssemblyHandlers.scala#L100-L110" target="_blank" title="Go to snippet source"></a><code class="language-scala">case `longRunningCmdToAsm` =&gt;
+  hcdComponent.submitAndWait(longRunning).foreach {
+    case _: Completed =&gt;
+      commandResponseManager.updateCommand(Completed(runId))
     case other =&gt;
-      // Unexpected result
-      log.error(s&quot;Some other response: $other&quot;)
+      // Handle some other response besides Completed
+      commandResponseManager.updateCommand(other.withRunId(runId))
   }
-}
-Await.result(invalidCommandF, 5.seconds) shouldBe a[Invalid]</code></pre></dd>
-  <dt>Java/submitAndWait w/invalid response</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L147-L162" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup invalidSetup = new Setup(prefix(), invalidCmd(), Optional.empty()).add(encoderValue);
-CompletableFuture&lt;SubmitResponse&gt; invalidCommandF =
-        hcdCmdService.submitAndWait(invalidSetup, timeout).thenApply(
-                response -&gt; {
-                    if (response instanceof Invalid) {
-                        // Cast the response to get the issue
-                        CommandResponse.Invalid invalid = (Invalid) response;
-                        assert (invalid.issue().reason().contains(&quot;failure&quot;));
-                    } else {
-                        // Just do something to make the test fail
-                        throw new IllegalArgumentException();
-                    }
-                    return response;
-                }
-        );
+  // Assembly starts long-running and returns started
+  Started(runId)
 </code></pre></dd>
-</dl>
-<p>If a command is long-running and the sender needs to determine that the actions have started properly, the <code>query</code> method of <code>CommandService</code> can be used as shown in the following example without using the Future returned by <code>submitAndWait</code>, which provides the final completion notification.</p>
-<dl>
-  <dt>Scala/submitAndWait long running/query</dt>
+  <dt>Java/submitAndWait w/immediate-response
+  </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L203-L229" target="_blank" title="Go to snippet source"></a><code class="language-scala">var longRunningRunId: Id = Id(&quot;blah&quot;) // Is updated below for use in later test
-val longRunningQueryResultF = async {
-  // The following val is set so we can do query and work and complete later
-  val longRunningF = assemblyCmdService.submit(longRunningSetup)
-  // This is used in a later test
-  longRunningRunId = await(longRunningF).runId
-
-  await(assemblyCmdService.query(longRunningRunId)) match {
-    case Started(runId) =&gt;
-      runId shouldEqual longRunningRunId
-    // happy case - no action needed
-    // Do some other work
-    case a =&gt;
-    // log.error. This indicates that the command probably failed to start.
-  }
-
-  // Now wait for completion and result
-  await(assemblyCmdService.queryFinal(longRunningRunId)) match {
-    case Completed(_, result) =&gt;
-      Some(result(encoder).head)
-
-    case otherResponse =&gt;
-      // log a message?
-      None
-  }
-}
-Await.result(longRunningQueryResultF, timeout.duration) shouldBe Some(20)</code></pre></dd>
-  <dt>Java/submitAndWait long running/query</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L209-L236" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; longRunningCommandResultF =
-        hcdCmdService.submitAndWait(longRunningSetup, timeout);
-
-// do some work before querying for the result of above command as needed
-SubmitResponse sresponse = longRunningCommandResultF.get();
-CompletableFuture&lt;SubmitResponse&gt; queryResponseF = hcdCmdService.query(sresponse.runId());
-queryResponseF.thenAccept(r -&gt; {
-    if (r instanceof Started) {
-        // happy case - no action needed
-        // Do some other work
-    } else {
-        // log.error. This indicates that the command probably failed to start.
-    }
-});
-
-CompletableFuture&lt;Optional&lt;Integer&gt;&gt; intF =
-        longRunningCommandResultF.thenCompose(response -&gt; {
-            if (response instanceof Completed) {
-                // This extracts and returns the the first value of parameter encoder
-                Result result = ((Completed) response).result();
-                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
-                return CompletableFuture.completedFuture(rvalue);
-            } else {
-                // For some other response, return empty
-                return CompletableFuture.completedFuture(Optional.empty());
-            }
-        });
-Assert.assertEquals(Optional.of(20), intF.get());</code></pre></dd>
-</dl>
-<p>It&rsquo;s also possible to use the runId of the <code>Setup</code> with <code>queryFinal</code> to determine when the actions are completed. This is equivalent to using the Future returned by <code>submitAndWait</code>, but in this case, the original Future from <code>submitAndWait</code> is not available.</p>
-<dl>
-  <dt>Scala/submitAndWait long running/queryFinal</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L234-L248" target="_blank" title="Go to snippet source"></a><code class="language-scala">val queryFinalF = async {
-  // The following submit is made without saving the Future!
-  val runId = await(assemblyCmdService.submit(longRunningSetup)).runId
-
-  // Use queryFinal and runId to wait for completion and result
-  await(assemblyCmdService.queryFinal(runId)) match {
-    case Completed(_, result) =&gt;
-      Some(result(encoder).head)
-
-    case otherResponse =&gt;
-      // log a message?
-      None
-  }
-}
-Await.result(queryFinalF, timeout.duration) shouldBe Some(20)</code></pre></dd>
-  <dt>Java/submitAndWait long running/queryFinal</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L271-L287" target="_blank" title="Go to snippet source"></a><code class="language-java">longRunningCommandResultF = hcdCmdService.submitAndWait(longRunningSetup, timeout);
-sresponse = longRunningCommandResultF.get();
-
-// longRunningSetup3 has already been submitted
-CompletableFuture&lt;Optional&lt;Integer&gt;&gt; int3F =
-        hcdCmdService.queryFinal(sresponse.runId(), timeout).thenCompose(response -&gt; {
-            if (response instanceof Completed) {
-                // This extracts and returns the the first value of parameter encoder
-                Result result = ((Completed) response).result();
-                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
-                return CompletableFuture.completedFuture(rvalue);
-            } else {
-                // For some other response, return empty
-                return CompletableFuture.completedFuture(Optional.empty());
-            }
-        });
-Assert.assertEquals(Optional.of(20), int3F.get());</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L189-L202" target="_blank" title="Go to snippet source"></a><code class="language-java">Setup longRunningSetup = new Setup(prefix(), longRunningCmd(), Optional.empty()).add(encoderValue);
+CompletableFuture&lt;Optional&lt;Integer&gt;&gt; longRunningResultF =
+        hcdCmdService.submitAndWait(longRunningSetup, timeout)
+                .thenCompose(response -&gt; {
+                    if (response instanceof Completed) {
+                        // This extracts and returns the the first value of parameter encoder
+                        Result result = ((Completed) response).result();
+                        Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
+                        return CompletableFuture.completedFuture(rvalue);
+                    } else {
+                        // For some other response, return empty
+                        return CompletableFuture.completedFuture(Optional.empty());
+                    }
+                });</code></pre></dd>
 </dl>
 <h3><a href="#oneway" name="oneway" class="anchor"><span class="anchor-link"></span></a>oneway</h3>
-<p><code>Oneway</code> does not provide completion information but does return the result of <code>validateCommand</code> handler in the Top-Level-Actor (<code>Accepted</code>, <code>Invalid</code>, or <code>Locked</code>). When sending a command as a <code>oneway</code> message, a <code>OnewayResponse</code> is returned as a Future that can be used to check that it was validated. </p>
+<p><code>Oneway</code> does not provide completion information but does return the result of <code>validateCommand</code> handler in the Top-Level-Actor (<code>Accepted</code>, <code>Invalid</code>, or <code>Locked</code>). When sending a command as a <code>oneway</code> message, a <code>OnewayResponse</code> is returned as a Future that can be used to check that it was validated if necessary.</p>
+<p>Oneway is useful for communication between an Assembly when it needs to send commands to an HCD as quickly as possible. The command is validated on the destination and the validation response is returned, but no other responses are provided.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L252-L263" target="_blank" title="Go to snippet source"></a><code class="language-scala">// `onewayCmd` is a sample to demonstrate oneway without any actions
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L271-L282" target="_blank" title="Go to snippet source"></a><code class="language-scala">// `onewayCmd` is a sample to demonstrate oneway without any actions
 val onewaySetup = Setup(prefix, onewayCmd, obsId)
 // Don&#39;t care about the futures from async
 val oneWayF = async {
@@ -707,7 +590,7 @@ CompletableFuture onewayF = hcdCmdService
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L267-L277" target="_blank" title="Go to snippet source"></a><code class="language-scala">val validateCommandF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L286-L296" target="_blank" title="Go to snippet source"></a><code class="language-scala">val validateCommandF = async {
   await(assemblyCmdService.validate(immediateSetup)) match {
     case _: Accepted       =&gt; true
     case Invalid(_, issue) =&gt;
@@ -739,25 +622,113 @@ Await.result(validateCommandF, timeout.duration) shouldBe true</code></pre></dd>
 Assert.assertTrue(validateCommandF.get());</code></pre></dd>
 </dl>
 <h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>query</h3>
-<p>At any time, the <code>query</code> call of <code>CommandService</code> can be used to check the current status of a command that has been sent via the <code>submit</code> message using the command&rsquo;s <code>runId</code>. This is most useful with a long-running command but all commands that use <code>submit</code> are available.</p>
-<p>The <code>query</code> message returns a <code>SubmitResponse</code>. This response occurs when the framework has no knowledge of the command associated with the <code>runId</code> passed with the <code>query</code>. The previous long-running example above showed the use of <code>query</code> to check that the actions associated with a command that had started. Another usage is to check the final value of a command that is already completed using its <code>runId</code>.</p>
+<p>If a command returns a <code>Started</code> response indicating it has long-running actions, and the sender needs to determine that the actions have started properly, or wishes to poll the destination component for the final response, the <code>query</code> method of <code>CommandService</code> can be used as shown in the following example without using the Future returned by <code>submitAndWait</code>, which provides the final completion notification.</p>
 <dl>
-  <dt>Scala/query usage</dt>
+  <dt>Scala/submit w/query</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L285-L287" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Check on a command that was completed in the past
-val queryValue = Await.result(assemblyCmdService.query(longRunningRunId), timeout.duration)
-queryValue shouldBe a[Completed]</code></pre></dd>
-  <dt>Java/query usage</dt>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L205-L230" target="_blank" title="Go to snippet source"></a><code class="language-scala">val longRunningQueryResultF = async {
+  // The following val is set so we can do query and work and complete later
+  val longRunningF = assemblyCmdService.submit(longRunningSetup)
+  // This is used in a later test
+  longRunningRunId = await(longRunningF).runId
+
+  await(assemblyCmdService.query(longRunningRunId)) match {
+    case Started(runId) =&gt;
+      runId shouldEqual longRunningRunId
+      // happy case - no action needed
+      // Do some other work
+    case a =&gt;
+      // log.error. This indicates that the command probably failed to start.
+  }
+
+  // Now wait for completion and result
+  await(assemblyCmdService.queryFinal(longRunningRunId)) match {
+    case Completed(_, result) =&gt;
+      Some(result(encoder).head)
+
+    case otherResponse =&gt;
+      // log a message?
+      None
+  }
+}
+Await.result(longRunningQueryResultF, timeout.duration) shouldBe Some(20)</code></pre></dd>
+  <dt>Java/submit w/query</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L291-L292" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;SubmitResponse&gt; queryResponseF2 = hcdCmdService.query(sresponse.runId());
-Assert.assertTrue(queryResponseF2.get() instanceof Completed);</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L209-L236" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;CommandResponse.SubmitResponse&gt; longRunningCommandResultF =
+        hcdCmdService.submitAndWait(longRunningSetup, timeout);
+
+// do some work before querying for the result of above command as needed
+SubmitResponse sresponse = longRunningCommandResultF.get();
+CompletableFuture&lt;SubmitResponse&gt; queryResponseF = hcdCmdService.query(sresponse.runId());
+queryResponseF.thenAccept(r -&gt; {
+    if (r instanceof Started) {
+        // happy case - no action needed
+        // Do some other work
+    } else {
+        // log.error. This indicates that the command probably failed to start.
+    }
+});
+
+CompletableFuture&lt;Optional&lt;Integer&gt;&gt; intF =
+        longRunningCommandResultF.thenCompose(response -&gt; {
+            if (response instanceof Completed) {
+                // This extracts and returns the the first value of parameter encoder
+                Result result = ((Completed) response).result();
+                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
+                return CompletableFuture.completedFuture(rvalue);
+            } else {
+                // For some other response, return empty
+                return CompletableFuture.completedFuture(Optional.empty());
+            }
+        });
+Assert.assertEquals(Optional.of(20), intF.get());</code></pre></dd>
+</dl>
+<h3><a href="#queryfinal" name="queryfinal" class="anchor"><span class="anchor-link"></span></a>queryFinal</h3>
+<p>When using <code>submit</code> and the <code>submit</code> returns a <code>Started</code> response, the final completion reponse can be obtained using <code>queryFinal</code>. Like <code>query</code>, <code>queryFinal</code> uses the <code>Id</code> returned by <code>Started</code>. But in this case, rather than returning immediately like <code>query</code>, it waits and only returns when the final <code>SubmitResponse</code> is sent. <code>queryFinal</code> is used exclusively with <code>submit</code> in the case where some other activity must be done before the actions started by the <code>submit</code> complete. <code>submitAndWait</code> is just a <code>submit</code> + <code>queryFinal</code>. It is also possible to just start actions with <code>submitAndWait</code> and use the returned Future when you are ready. The following examples show you can use the runId returned by <code>submitAndWait</code> with <code>queryFinal</code>.</p>
+<dl>
+  <dt>Scala/submitAndWait long running/queryFinal</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L253-L267" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoderValue:Future[Option[Int]] = async {
+  // The following submit is made without saving the Future!
+  val runId = await(assemblyCmdService.submitAndWait(longRunningSetup)).runId
+
+  // Use queryFinal and runId to wait for completion and result
+  await(assemblyCmdService.queryFinal(runId)) match {
+    case Completed(_, result) =&gt;
+      Some(result(encoder).head)
+
+    case otherResponse =&gt;
+      // log a message?
+      None
+  }
+}
+Await.result(encoderValue, timeout.duration) shouldBe Some(20)</code></pre></dd>
+  <dt>Java/submitAndWait long running/queryFinal</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L271-L287" target="_blank" title="Go to snippet source"></a><code class="language-java">longRunningCommandResultF = hcdCmdService.submitAndWait(longRunningSetup, timeout);
+sresponse = longRunningCommandResultF.get();
+
+// longRunningSetup3 has already been submitted
+CompletableFuture&lt;Optional&lt;Integer&gt;&gt; int3F =
+        hcdCmdService.queryFinal(sresponse.runId(), timeout).thenCompose(response -&gt; {
+            if (response instanceof Completed) {
+                // This extracts and returns the the first value of parameter encoder
+                Result result = ((Completed) response).result();
+                Optional&lt;Integer&gt; rvalue = Optional.of(result.jGet(encoder).orElseThrow().head());
+                return CompletableFuture.completedFuture(rvalue);
+            } else {
+                // For some other response, return empty
+                return CompletableFuture.completedFuture(Optional.empty());
+            }
+        });
+Assert.assertEquals(Optional.of(20), int3F.get());</code></pre></dd>
 </dl>
 <h3><a href="#submitallandwait" name="submitallandwait" class="anchor"><span class="anchor-link"></span></a>submitAllAndWait</h3>
-<p><code>SubmitAll</code> can be used to send multiple commands sequentially to the same component. This could be used to send initialization commands to an HCD, for instance. The argument for <code>submitAllAndWait</code> is a list of commands. <code>SubmitAll</code> returns a list of <code>SubmitResponse</code>s &ndash; one for each command in the list. While <code>submitAndWait</code> returns a <code>SubmitResponse</code> as a Future, <code>submitAllAndWait</code> returns a list of <code>SubmitResponse</code>s as a future, which completes when all the commands in the list have completed. </p>
+<p><code>submitAllAndWait</code> can be used to send multiple commands sequentially to the same component. This could be used to send initialization commands to an HCD, for instance. The argument for <code>submitAllAndWait</code> is a list of commands. <code>submitAllAndWait</code> returns a list of <code>SubmitResponse</code>s &ndash; one for each command in the list. While <code>submitAndWait</code> returns a <code>SubmitResponse</code> as a Future, <code>submitAllAndWait</code> returns a list of <code>SubmitResponse</code>s as a future, which completes when all the commands in the list have completed. </p>
 <dl>
   <dt>Scala/query usage</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L295-L302" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L314-L321" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF = async {
   await(assemblyCmdService.submitAllAndWait(List(submitAllSetup1, submitAllSetup2, submitAllinvalidSetup)))
 }
 val submitAllResponse = Await.result(submitAllF, timeout.duration)
@@ -781,40 +752,16 @@ Assert.assertTrue(submitAllResponse.get(1) instanceof Completed);
 Assert.assertTrue(submitAllResponse.get(2) instanceof Invalid);</code></pre></dd>
 </dl>
 <p>In the first example, three commands are sent and the result is a list with three <code>SubmitResponse</code>s. The last one returned invalid and was not executed.</p>
-<p>The commands in <code>submitAllAndWait</code> will execute sequentially, but each one must complete successfully for the subsequent commands to be executed. If any one of the commands fails, <code>submitAllAndWait</code> stops and the list is returned with the commands that are completed up to and including the command that failed. This is shown in the following example by making the invalid command second in the list.</p>
-<dl>
-  <dt>Scala/query usage</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L306-L312" target="_blank" title="Go to snippet source"></a><code class="language-scala">val submitAllF2 = async {
-  await(assemblyCmdService.submitAllAndWait(List(submitAllSetup1, submitAllinvalidSetup, submitAllSetup2)))
-}
-val submitAllResponse2 = Await.result(submitAllF2, timeout.duration)
-submitAllResponse2.length shouldBe 2
-submitAllResponse2(0) shouldBe a[Completed]
-submitAllResponse2(1) shouldBe a[Invalid]</code></pre></dd>
-  <dt>Java/query usage</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L346-L355" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;List&lt;SubmitResponse&gt;&gt; submitAllF2 = hcdCmdService
-        .submitAllAndWait(
-                List.of(submitAllSetup1, submitAllSetup3, submitAllSetup2),
-                timeout
-        );
-
-List&lt;SubmitResponse&gt; submitAllResponse2 = submitAllF2.get();
-Assert.assertEquals(submitAllResponse2.size(), 2);
-Assert.assertTrue(submitAllResponse2.get(0) instanceof Completed);
-Assert.assertTrue(submitAllResponse2.get(1) instanceof Invalid);</code></pre></dd>
-</dl>
-<p>In this case, the returned list is of length 2 rather than 3.</p>
+<p>The commands in <code>submitAllAndWait</code> will execute sequentially, but each one must complete successfully for the subsequent commands to be executed. If any one of the commands fails, <code>submitAllAndWait</code> stops and the list is returned with the commands that are completed up to and including the command that failed.</p>
 <h3><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>subscribeCurrentState</h3>
-<p>This method provided by <code>CommandService</code> can be used to subscribe to the <a href="../params/states.html">CurrentState</a> of a component by providing a callback that is called with the arrival of every <code>CurrentState</code> item.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>This method provided by <code>CommandService</code> can be used to subscribe to the <a href="../params/states.html">CurrentState</a> of a component by providing a callback that is called with the arrival of every <code>CurrentState</code> item. <code>SubscribeCurrentState</code> returns a handle of the <code>CurrentStateSubscription</code> which should be used to unsubscribe the subscription.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Callbacks are not thread-safe on the JVM. If you are doing side effects/mutations inside the callback, you should ensure that it is done in a thread-safe way inside an actor. Here is an <a href="https://github.com/tmtsoftware/csw/blob/master/examples/src/main/scala/example/event/ConcurrencyInCallbacksExample.scala">example</a> of how it can be done.</p></div>
-<p><code>SubscribeCurrentState</code> returns a handle of the <code>CurrentStateSubscription</code> which should be used to unsubscribe the subscription.</p>
-<p>The following example code shows an Assembly that subscribes to all <code>CurrentState</code> items of an HCD. The example sends a <code>Setup</code> with an encoder parameter value to the HCD as a <code>oneway</code> message.</p>
+<p><code>CurrentState</code> can be an efficient way to keep the Aseembly up to date with the current internal state of the HCD.</p>
+<p>The following example code shows an Assembly that subscribes to all <code>CurrentState</code> items of an HCD. The example sends a <code>Setup</code> with an encoder parameter value to the HCD as a <code>oneway</code> message. In this example, sending this command causes the HCD to publish <code>CurrentState</code> with the value that was sent to it.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L316-L332" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Subscriber code
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L335-L351" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Subscriber code
 val expectedEncoderValue = 234
 val currStateSetup       = Setup(prefix, hcdCurrentStateCmd, obsId).add(encoder.set(expectedEncoderValue))
 // Setup a callback response to CurrentState
@@ -833,7 +780,7 @@ cstate(encoder).head shouldBe expectedEncoderValue
 subscription.cancel()</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L359-L495" target="_blank" title="Go to snippet source"></a><code class="language-java">// Subscriber code
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L373-L509" target="_blank" title="Go to snippet source"></a><code class="language-java">// Subscriber code
 int expectedEncoderValue = 234;
 Setup currStateSetup = new Setup(prefix(), hcdCurrentStateCmd(), Optional.empty()).add(encoder.set(expectedEncoderValue));
 // Setup a callback response to CurrentState - use AtomicInteger to capture final value
@@ -866,15 +813,15 @@ Subscription subscription = hcdCmdService.subscribeCurrentState(currentState -&g
 cswCtx.currentStatePublisher.publish(currentState)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L168-L172" target="_blank" title="Go to snippet source"></a><code class="language-java">Key&lt;Integer&gt; encoder = JKeyType.IntKey().make(&quot;encoder&quot;);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L164-L168" target="_blank" title="Go to snippet source"></a><code class="language-java">Key&lt;Integer&gt; encoder = JKeyType.IntKey().make(&quot;encoder&quot;);
 int expectedEncoderValue = setup.jGet(encoder).orElseThrow().head();
 
 CurrentState currentState = new CurrentState(prefix(), new StateName(&quot;HCDState&quot;)).add(encoder().set(expectedEncoderValue));
 currentStatePublisher.publish(currentState);</code></pre></dd>
 </dl>
 <p>There are two <code>subscribeCurrentState</code> methods in <code>CommandService</code>. The method shown in the above examples subscribes the caller to <em>all</em> CurrentState published. Each <code>CurrentState</code> item has a <code>StateName</code>. A second signature for <code>subscribeCurrentState</code> can include a Set of <code>StateName</code> when the caller only needs some of the CurrentState published by a component. </p>
-<h2><a href="#matching-state-for-command-completion" name="matching-state-for-command-completion" class="anchor"><span class="anchor-link"></span></a>Matching state for command completion</h2>
-<p>The <code>matcher</code> is provided to allow a component sending a command to use <code>CurrentState</code> published by a component to determine when actions are complete. The expected case is an Assembly using the <code>CurrentState</code> published by an HCD. When using a <code>submit</code>, completion is determined in the destination. In some scenarios, the Assembly may want to determine when actions are complete. This is what the  <code>matcher</code> allows.</p>
+<h2><a href="#matching-state-for-command-completion" name="matching-state-for-command-completion" class="anchor"><span class="anchor-link"></span></a>Matching State for Command Completion</h2>
+<p>The <code>matcher</code> is provided to allow a component sending a command to use <code>CurrentState</code> published by a component to determine when actions are complete. The expected case is an Assembly using the <code>CurrentState</code> published by an HCD. When using a <code>submit</code> or <code>submitAndWait</code>, completion is determined in the destination. In some scenarios, the Assembly may want to determine when actions are complete. This is what the  <code>matcher</code> allows.</p>
 <p>To use this feature, the <code>oneway</code> message is used rather than <code>submit</code>. A <code>oneway</code> command is  validated but the framework does not provide completion. Doing a query with the <code>runId</code> of a <code>oneway</code>  will always return <code>CommandNotAvailable</code>, but <code>oneway</code> is perfect for use with a <code>matcher</code>.</p>
 <p>The <code>matcher</code> is created with the ActorRef of the component that is the source of <code>CurrentState</code> and an instance of <code>StateMatcher</code>, which defines the state and criteria for matching. </p>
 <p>Several types of <code>StateMatcher</code> are provided as part of CSW for common use. These are <code>DemandMatcherAll</code> for matching the entire <code>DemandState</code> against the current state, <code>DemandMatcher</code> for matching state with or without units against the current state, and <code>PresenceMatcher</code> which checks if a matching state is found with a provided prefix. </p>
@@ -882,7 +829,7 @@ currentStatePublisher.publish(currentState);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L339-L351" target="_blank" title="Go to snippet source"></a><code class="language-scala">val param: Parameter[Int] = encoder.set(100)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L358-L370" target="_blank" title="Go to snippet source"></a><code class="language-scala">val param: Parameter[Int] = encoder.set(100)
 val setupWithMatcher      = Setup(prefix, matcherCmd, obsId)
 
 // create a StateMatcher which specifies the desired algorithm and state to be matched.
@@ -897,7 +844,7 @@ val commandResponse = Await.result(matchResponseF, timeout.duration)
 commandResponse shouldBe a[Completed]</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L385-L397" target="_blank" title="Go to snippet source"></a><code class="language-java">Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;encoder&quot;).set(100);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L399-L411" target="_blank" title="Go to snippet source"></a><code class="language-java">Parameter&lt;Integer&gt; param = JKeyType.IntKey().make(&quot;encoder&quot;).set(100);
 Setup setupWithMatcher = new Setup(prefix(), matcherCmd(), Optional.empty()).add(param);
 
 // create a StateMatcher which specifies the desired algorithm and state to be matched.
@@ -917,7 +864,7 @@ Assert.assertEquals(expectedResponse, actualResponse);     // Not a great test f
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L355-L375" target="_blank" title="Go to snippet source"></a><code class="language-scala">val onewayMatchF = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala#L374-L394" target="_blank" title="Go to snippet source"></a><code class="language-scala">val onewayMatchF = async {
   await(assemblyCmdService.onewayAndMatch(setupWithMatcher, demandMatcher)) match {
     case i: Invalid =&gt;
       // Command was not accepted
@@ -940,7 +887,7 @@ Assert.assertEquals(expectedResponse, actualResponse);     // Not a great test f
 Await.result(onewayMatchF, timeout.duration) shouldBe a[Completed]</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L401-L406" target="_blank" title="Go to snippet source"></a><code class="language-java">// create a DemandMatcher which specifies the desired state to be matched.
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/command/JCommandIntegrationTest.java#L415-L420" target="_blank" title="Go to snippet source"></a><code class="language-java">// create a DemandMatcher which specifies the desired state to be matched.
 StateMatcher stateMatcher = new DemandMatcher(new DemandState(prefix(), new StateName(&quot;testStateName&quot;)).add(param), false, timeout);
 
 CompletableFuture&lt;MatchingResponse&gt; matchedCommandResponseF =
