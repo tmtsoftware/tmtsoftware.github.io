@@ -192,6 +192,10 @@ tmtsoftware/csw
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
   <li><a href="../commons/manuals.html" class="page">Manuals</a></li>
+  <li><a href="../migration_guide/migration-guides.html" class="page">Migration Guides</a>
+  <ul>
+    <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
+  </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
@@ -266,6 +270,21 @@ tmtsoftware/csw
 <p><strong>Preparation</strong>: Identify machines which are running the Location Server and whose IP and port are known. Let&rsquo;s assume they are two for now, and the IP address for machine1 is 192.168.1.21 and for machine2 is 192.168.1.22. Also, they will both have dedicated port 3552 to run the Location Server. </p>
 <p><strong>Provisioning</strong>: Make sure you set all necessary <a href="../deployment/env-vars.html">environment variables</a>.</p>
 <p>Switch to application directory and run this command on <strong>machine1 and machine2</strong> - <code>./bin/csw-location-server --clusterPort=3552</code></p>
+<p>Note : <code>Outside</code> below means any machine not present in this Akka cluster.</p>
+<p>In production environment, you may need a capability to access protected resources of Location Server and provide  Authentication and Authorization for such resources. E.g. ability to register/unregister components(which has to undergo maintenance) from a system operator machine present  <code>Outside</code>.</p>
+<ol>
+  <li>To enable this, an additional command line argument is available when starting Location Server
+    <ol>
+      <li>Default is local-only mode and such location server will not be accessible from <code>Outside</code></li>
+      <li>Other option is <code>--publicNetwork</code>, it means start location server in public mode with auth enabled</li>
+    </ol>
+  </li>
+  <li>Switch to application directory and run this command on all machines where you want Location Server in local-only  mode (authentication and authorization disabled) - <code>./bin/csw-location-server --clusterPort=3552</code></li>
+  <li>Switch to application directory and run this command on all machines where you want Location Server in public  mode (authentication and authorization enabled) - <code>./bin/csw-location-server --clusterPort=3552 --publicNetwork</code></li>
+  <li>Once Akka cluster is up, start <a href="../services/aas.html">Authentication and Authorization Service</a> on one of the  node where Location Server is running in local-only mode, so that it can register itself to this Location Server  without the need of authentication and authorization.</li>
+  <li>Other Location Server instances including public mode instances will get location of Authentication and  Authorization Service automatically.</li>
+  <li>When any application(E.g. Dashboard application used by Operator to monitor System health) wants to access protected  resource of Location Server, it can connect to any public mode Location Server, pass a valid token and access it.</li>
+</ol>
 <h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>Help</h3>
 <p>Use the following command to get help on the options available with this app.</p>
 <p><code>./bin/csw-location-server --help</code></p>
