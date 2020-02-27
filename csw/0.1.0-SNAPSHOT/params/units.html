@@ -590,7 +590,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L277-L304" target="_blank" title="Go to snippet source"></a><code class="language-scala">//declare keyname
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L279-L306" target="_blank" title="Go to snippet source"></a><code class="language-scala">//declare keyname
 val s1: String = &quot;encoder&quot;
 
 //making 3 keys
@@ -612,21 +612,21 @@ val paramOfShorts: Parameter[Short] = k2.set(1, 2, 3, 4)
 //values to store
 val weekDays: Array[String] = Array(&quot;Sunday&quot;, &quot;Monday&quot;, &quot;Tuesday&quot;)
 
-//associating units via set
-val paramWithUnits1: Parameter[String] = k3.set(weekDays, Units.day)
+//default units via set
+val paramWithUnits1: Parameter[String] = k3.setAll(weekDays)
 //associating units via withUnits
-val paramWithUnits2: Parameter[String] = k3 -&gt; weekDays withUnits Units.count
+val paramWithUnits2: Parameter[String] = k3 -&gt; weekDays withUnits Units.day
 //change existing unit
 val paramWithUnits3: Parameter[Short] = paramOfShorts.withUnits(Units.meter)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L330-L365" target="_blank" title="Go to snippet source"></a><code class="language-java">//declare keyname
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L329-L364" target="_blank" title="Go to snippet source"></a><code class="language-java">//declare keyname
 String s1 = &quot;encoder&quot;;
 
 //making 3 keys
 Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(s1);
-Key&lt;Short&gt; k2 = JKeyType.ShortKey().make(&quot;RandomKeyName&quot;);
-Key&lt;String&gt; k3 = JKeyType.StringKey().make(s1);
+Key&lt;Short&gt; k2 = JKeyType.ShortKey().make(&quot;RandomKeyName&quot;, JUnits.NoUnits);
+Key&lt;String&gt; k3 = JKeyType.StringKey().make(s1, JUnits.NoUnits);
 
 //storing a single value, default unit is NoUnits()
 Parameter&lt;Boolean&gt; bParam = k1.set(true);
@@ -650,10 +650,10 @@ Parameter&lt;Short&gt; paramOfShorts = k2.set(
 //values to store
 String[] weekDays = {&quot;Sunday&quot;, &quot;Monday&quot;, &quot;Tuesday&quot;};
 
-//associating units via set
-Parameter&lt;String&gt; paramWithUnits1 = k3.set(weekDays, JUnits.day);
+//defaults units via set
+Parameter&lt;String&gt; paramWithUnits1 = k3.setAll(weekDays);
 //associating units via withUnits
-Parameter&lt;String&gt; paramWithUnits2 = k3.set(weekDays).withUnits(JUnits.day);
+Parameter&lt;String&gt; paramWithUnits2 = k3.setAll(weekDays).withUnits(JUnits.day);
 //change existing unit
 Parameter&lt;Short&gt; paramWithUnits3 = paramOfShorts.withUnits(JUnits.meter);</code></pre></dd>
 </dl>

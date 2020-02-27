@@ -357,8 +357,8 @@ val byteKey2: Key[Byte] = ByteKey.make(&quot;byteKey2&quot;)
 val bytes1: Array[Byte] = Array[Byte](10, 20)
 val bytes2: Array[Byte] = Array[Byte](30, 40)
 
-val b1: Parameter[Byte] = byteKey1.set(bytes1)
-val b2: Parameter[Byte] = byteKey2.set(bytes2)
+val b1: Parameter[Byte] = byteKey1.setAll(bytes1)
+val b2: Parameter[Byte] = byteKey2.setAll(bytes2)
 
 val sc3: Setup = Setup(prefix, CommandName(&quot;move&quot;), Some(obsId), Set(b1, b2))
 
@@ -371,7 +371,7 @@ val allKeys: Set[String] = sc4.paramSet.map(_.keyName)
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L54-L97" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
-Key&lt;Integer&gt; k1 = JKeyType.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; k1 = JKeyType.IntKey().make(&quot;encoder&quot;, JUnits.encoder);
 Key&lt;String&gt; k2 = JKeyType.StringKey().make(&quot;stringThing&quot;);
 Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
 Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
@@ -404,8 +404,8 @@ Key&lt;Byte&gt; byteKey2 = JKeyType.ByteKey().make(&quot;byteKey2&quot;);
 Byte[] bytes1 = {10, 20};
 Byte[] bytes2 = {30, 40};
 
-Parameter&lt;Byte&gt; b1 = byteKey1.set(bytes1);
-Parameter&lt;Byte&gt; b2 = byteKey2.set(bytes2);
+Parameter&lt;Byte&gt; b1 = byteKey1.setAll(bytes1);
+Parameter&lt;Byte&gt; b2 = byteKey2.setAll(bytes2);
 
 Setup sc3 = new Setup(prefix, new CommandName(&quot;move&quot;), Optional.of(obsId)).add(b1).add(b2);
 
@@ -459,7 +459,7 @@ val oc4: Observe = oc2.remove(k4)
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L113-L150" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(&quot;repeat&quot;);
-Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;expTime&quot;);
+Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;expTime&quot;, JUnits.second);
 Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
 Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;UTCTime&gt; k4 = JKeyType.UTCTimeKey().make(&quot;creation-time&quot;);
@@ -469,7 +469,7 @@ Prefix prefix = Prefix.apply(JSubsystem.WFOS, &quot;red.detector&quot;);
 
 //parameters
 Boolean[] boolArray = {true, false, true, false};
-Parameter&lt;Boolean&gt; i1 = k1.set(boolArray);
+Parameter&lt;Boolean&gt; i1 = k1.setAll(boolArray);
 Parameter&lt;Integer&gt; i2 = k2.set(1, 2, 3, 4);
 
 //create Observe, add sequentially using add
@@ -488,7 +488,7 @@ int paramSize = oc2.size();
 
 //update existing key with set
 Integer[] intArray = {5, 6, 7, 8};
-Observe oc3 = oc1.add(k2.set(intArray));
+Observe oc3 = oc1.add(k2.setAll(intArray));
 
 //remove a key
 Observe oc4 = oc2.remove(k4);
@@ -540,7 +540,7 @@ val wc4: Wait = wc2.remove(k4)
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L165-L202" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
 Key&lt;Boolean&gt; k1 = JKeyType.BooleanKey().make(&quot;repeat&quot;);
-Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;expTime&quot;);
+Key&lt;Integer&gt; k2 = JKeyType.IntKey().make(&quot;expTime&quot;, JUnits.second);
 Key&lt;Integer&gt; k2bad = JKeyType.IntKey().make(&quot;missingKey&quot;);
 Key&lt;Integer&gt; k3 = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;UTCTime&gt; k4 = JKeyType.UTCTimeKey().make(&quot;creation-time&quot;);
@@ -550,7 +550,7 @@ Prefix prefix = Prefix.apply(JSubsystem.WFOS, &quot;red.detector&quot;);
 
 //parameters
 Boolean[] boolArray = {true, false, true, false};
-Parameter&lt;Boolean&gt; i1 = k1.set(boolArray);
+Parameter&lt;Boolean&gt; i1 = k1.setAll(boolArray);
 Parameter&lt;Integer&gt; i2 = k2.set(1, 2, 3, 4);
 
 //create Wait, add sequentially using add
@@ -569,7 +569,7 @@ int paramSize = wc2.size();
 
 //update existing key with set
 Integer[] intArray = {5, 6, 7, 8};
-Wait wc3 = wc1.add(k2.set(intArray));
+Wait wc3 = wc1.add(k2.setAll(intArray));
 
 //remove a key
 Wait wc4 = wc2.remove(k4);
@@ -706,7 +706,7 @@ val uniqueKeys3: List[String] = finalSetUp.paramSet.toList.map(_.keyName)</code>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JCommandsTest.java#L256-L294" target="_blank" title="Go to snippet source"></a><code class="language-java">//keys
-Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;);
+Key&lt;Integer&gt; encoderKey = JKeyType.IntKey().make(&quot;encoder&quot;, JUnits.encoder);
 Key&lt;Integer&gt; filterKey = JKeyType.IntKey().make(&quot;filter&quot;);
 Key&lt;Integer&gt; miscKey = JKeyType.IntKey().make(&quot;misc.&quot;);
 
