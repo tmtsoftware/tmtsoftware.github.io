@@ -135,12 +135,20 @@ tmtsoftware/esw
 
 </div>
 <ul>
+  <li><a href="../../../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
+  <ul>
+    <li><a href="../../../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/SeqComp.html" class="page">Sequence Component</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/Sequencers.html" class="page">Sequencers</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/state-transition.html" class="page">Sequencer Lifecycle</a></li>
+  </ul></li>
   <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
+    <li><a href="../../../../sequencer/scripts/script-styles.html" class="page">Sequencer Script Styles</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/script-constructs.html" class="page">Script DSL Constructs</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a></li>
   </ul></li>
-  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
+  <li><a href="../../../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -190,7 +198,7 @@ tmtsoftware/esw
 <div class="md-content__searchable">
 <h1><a href="#alarm-service" name="alarm-service" class="anchor"><span class="anchor-link"></span></a>Alarm Service</h1>
 <p>The Alarm Service DSL is a wrapper for the Alarm Service module provided by CSW. You can refer to detailed documentation of the Alarm Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/alarm">here</a>.</p>
-<p>This DSL provides an API to set the severity of alarm.</p>
+<p>This DSL provides an API to set the severity of an alarm. This is the the component API for CSW Alarm Service.</p>
 <h2><a href="#setseverity" name="setseverity" class="anchor"><span class="anchor-link"></span></a>setSeverity</h2>
 <p>This API sets alarm severity for an <code>AlarmKey</code> to the provided level and keeps refreshing it in the background with the interval of config value <code>csw-alarm.refresh-interval</code>. Default value for <code>csw-alarm.refresh-interval</code> config is <em>3 seconds</em> which is configured in downstream CSW alarm modules <code>reference.conf</code> file.</p>
 <p>The <code>setSeverity</code> API requires user to provide <code>AlarmKey</code> and <code>AlarmSeverity</code>.</p>
@@ -209,9 +217,8 @@ tmtsoftware/esw
   <li>Okay</li>
   <li>Warning</li>
   <li>Major</li>
-  <li>Indeterminate</li>
-  <li>Disconnected</li>
   <li>Critical</li>
+  <li>Indeterminate</li>
 </ol>
 <p>The following example demonstrates the usage of the <code>setSeverity</code> API. In this example, a temperature <a href="../constructs/fsm.html">FSM</a> is created, and based on the state of the FSM, the severity is set accordingly.</p>
 <table>
@@ -248,7 +255,7 @@ val temperatureFsm = Fsm(&quot;TEMP&quot;, OK) {
             setSeverity(tromboneTemperatureAlarm, Okay)
         }
 
-        on(temperatureVar.get() &gt; 40) {
+        on(temperatureVar.first() &gt; 40) {
             become(ERROR)
         }
     }
@@ -258,7 +265,7 @@ val temperatureFsm = Fsm(&quot;TEMP&quot;, OK) {
             setSeverity(tromboneTemperatureAlarm, Major)
         }
 
-        on(temperatureVar.get() &lt;= 40) {
+        on(temperatureVar.first() &lt;= 40) {
             become(OK)
         }
     }

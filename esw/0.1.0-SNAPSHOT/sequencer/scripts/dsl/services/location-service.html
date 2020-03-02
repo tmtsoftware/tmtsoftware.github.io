@@ -135,12 +135,20 @@ tmtsoftware/esw
 
 </div>
 <ul>
+  <li><a href="../../../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
+  <ul>
+    <li><a href="../../../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/SeqComp.html" class="page">Sequence Component</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/Sequencers.html" class="page">Sequencers</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/state-transition.html" class="page">Sequencer Lifecycle</a></li>
+  </ul></li>
   <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
+    <li><a href="../../../../sequencer/scripts/script-styles.html" class="page">Sequencer Script Styles</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/script-constructs.html" class="page">Script DSL Constructs</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a></li>
   </ul></li>
-  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
+  <li><a href="../../../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -201,10 +209,10 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#location-service" name="location-service" class="anchor"><span class="anchor-link"></span></a>Location Service</h1>
-<p>Location Service DSL is a wrapper over Location Service module provided by CSW. You can refer a detailed documentation of Location Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/location">here</a>.</p>
-<p>This DSL provides following APIs:</p>
+<p>The Location Service DSL is a wrapper over the Location Service module provided by CSW. You can refer the detailed documentation of the Location Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/location">here</a>.</p>
+<p>This DSL provides the following APIs:</p>
 <h2><a href="#register" name="register" class="anchor"><span class="anchor-link"></span></a>register</h2>
-<p>This DSL registers provided <code>Registration</code> with Location Service and returns <code>RegistrationResult</code> which contains <code>Location</code> with which component is registered and handle for un-registration.</p>
+<p>This DSL registers a provided <code>Registration</code> with the Location Service and returns a <code>RegistrationResult</code>, which contains the <code>Location</code> with which a component is registered and a handle for un-registration.</p>
 <p><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/Registration">Registration</a> can be one of:</p>
 <ol>
   <li><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/AkkaRegistration">AkkaRegistration</a></li>
@@ -214,7 +222,7 @@ tmtsoftware/esw
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L26-L34" target="_blank" title="Go to snippet source"></a><code class="language-kts">// register HTTP service running at port 8080 and routes are served from /routes endpoint
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L27-L35" target="_blank" title="Go to snippet source"></a><code class="language-kts">// register HTTP service running at port 8080 and routes are served from /routes endpoint
 val registrationResult: RegistrationResult =
         register(HttpRegistration(httpConnection, port, &quot;/routes&quot;))
 
@@ -225,7 +233,7 @@ val location: Location = registrationResult.location
 registrationResult.unregister()</code></pre></dd>
 </dl>
 <h2><a href="#unregister" name="unregister" class="anchor"><span class="anchor-link"></span></a>unregister</h2>
-<p>This DSL un-registers provided <code>Connection</code> from Location Service</p>
+<p>This DSL un-registers the provided <code>Connection</code> from Location Service</p>
 <p><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/Connection">Connection</a> can be one of:</p>
 <ol>
   <li><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/Connection$$AkkaConnection">AkkaConnection</a></li>
@@ -235,17 +243,17 @@ registrationResult.unregister()</code></pre></dd>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L40-L43" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sourcePrefix: Prefix = cmd.source()
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L41-L44" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sourcePrefix: Prefix = cmd.source()
 val componentId = ComponentId(sourcePrefix, Service)
 
 unregister(HttpConnection(componentId))</code></pre></dd>
 </dl>
 <h2><a href="#findlocation" name="findlocation" class="anchor"><span class="anchor-link"></span></a>findLocation</h2>
-<p>This DSL look up for provided <code>Connection</code> in Location Service and returns corresponding <code>Location</code> or <code>null</code> if not found.</p>
+<p>This DSL looks up the provided <code>Connection</code> in the Location Service and returns the corresponding <code>Location</code>, or <code>null</code>, if not found.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L49-L55" target="_blank" title="Go to snippet source"></a><code class="language-kts">val prefix: Prefix = cmd.source()
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L50-L56" target="_blank" title="Go to snippet source"></a><code class="language-kts">val prefix: Prefix = cmd.source()
 val assemblyConnection = AkkaConnection(ComponentId(prefix, Assembly))
 
 val location: AkkaLocation? = findLocation(assemblyConnection)
@@ -254,14 +262,14 @@ val location: AkkaLocation? = findLocation(assemblyConnection)
 location?.let { sendUIEvent(&quot;Resolved assembly location: $it&quot;) }</code></pre></dd>
 </dl>
 <h2><a href="#resolvelocation" name="resolvelocation" class="anchor"><span class="anchor-link"></span></a>resolveLocation</h2>
-<p>This DSL keeps looking for provided <code>Connection</code> in Location Service for the provided/default duration and returns corresponding <code>Location</code> or <code>null</code> if not found after duration exhausts.</p>
+<p>This DSL looks for the specified <code>Connection</code> in the Location Service for the optionally specified duration (default is 5 seconds) and returns the corresponding <code>Location</code>. If the location is not resolved within the time limit, <code>null</code> is returned.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L61-L67" target="_blank" title="Go to snippet source"></a><code class="language-kts">val prefix: Prefix = cmd.source()
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L62-L68" target="_blank" title="Go to snippet source"></a><code class="language-kts">val prefix: Prefix = cmd.source()
 val assemblyConnection = AkkaConnection(ComponentId(prefix, Assembly))
 
-val location: AkkaLocation? = resolveLocation(assemblyConnection)
+val location: AkkaLocation? = resolveLocation(assemblyConnection, 10.seconds)
 
 // send a successful event to UI if assembly location is found
 location?.let { sendUIEvent(&quot;Resolved assembly location: $it&quot;) }</code></pre></dd>
@@ -271,20 +279,20 @@ location?.let { sendUIEvent(&quot;Resolved assembly location: $it&quot;) }</code
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L73-L76" target="_blank" title="Go to snippet source"></a><code class="language-kts">val allLocations: List&lt;Location&gt; = listLocations()
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L74-L77" target="_blank" title="Go to snippet source"></a><code class="language-kts">val allLocations: List&lt;Location&gt; = listLocations()
 
 // publish all locations to UI in the format of [location1, location2, ...]
 sendUIEvent(allLocations.joinToString(prefix = &quot;[&quot;, postfix = &quot;]&quot;))</code></pre></dd>
 </dl>
 <h2><a href="#listlocationsby" name="listlocationsby" class="anchor"><span class="anchor-link"></span></a>listLocationsBy</h2>
-<p>Following various APIs are provided for listing locations with filtering criteria:</p>
+<p>The following various APIs are provided for listing locations with filtering criteria:</p>
 <h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/ComponentType">ComponentType</a></h3>
-<p>Filters locations based on provided <code>ComponentType</code>, for example, HCD, Assembly, Sequencer etc.</p>
-<p>Following example demonstrate a use case where script sends Offline command to all the Assemblies.</p>
+<p>Filters locations based on provided <code>ComponentType</code>. A DSL is provided to specify the type, which can be one of: <code>HCD</code>, <code>Assembly</code>, <code>Sequencer</code>, <code>SequenceComponent</code>, <code>Container</code>, <code>Service</code></p>
+<p>The following example demonstrates a use case where the script sends an Offline command to all of the Assemblies currently registered.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L81-L88" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;offline-assemblies&quot;) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L82-L89" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;offline-assemblies&quot;) {
     // list all Assembly components
     val assemblyLocations: List&lt;Location&gt; = listLocationsBy(Assembly)
 
@@ -294,12 +302,12 @@ sendUIEvent(allLocations.joinToString(prefix = &quot;[&quot;, postfix = &quot;]&
 }</code></pre></dd>
 </dl>
 <h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/ConnectionType">ConnectionType</a></h3>
-<p>Filters locations based on provided <code>ConnectionType</code>, for example, AkkaType, HttpType, TcpType etc.</p>
-<p>Following example demonstrate a use case where script locks all the components i.e. Assemblies and HCD&rsquo;s.</p>
+<p>Filters locations based on provided <code>ConnectionType</code>. A DSL is provided to speficy the type, which can be one of: <code>AkkaType</code>, <code>HttpType</code>, <code>TcpType</code>.</p>
+<p>The following example demonstrates a use case where the script locks all of the Akka Type components i.e. Assemblies and HCD&rsquo;s.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L92-L114" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;lock-all-components&quot;) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L93-L115" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;lock-all-components&quot;) {
     val timeout = 10.minutes
     val leaseDuration = 20.minutes
 
@@ -322,55 +330,55 @@ sendUIEvent(allLocations.joinToString(prefix = &quot;[&quot;, postfix = &quot;]&
         }
     }
 }</code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p>Following import is required for creating <code>ConnectionType</code> and <code>ComponentType</code></p>
+</dl><div class="callout note "><div class="callout-title">Required import for Location Service APIs</div>
+<p>The following import is required for using <code>ConnectionType</code> and <code>ComponentType</code>:</p>
 <pre class="prettyprint"><code class="language-kotlin">import esw.ocs.dsl.highlevel.models.*
 </code></pre></div>
 <h3><a href="#hostname" name="hostname" class="anchor"><span class="anchor-link"></span></a>Hostname</h3>
-<p>Filters locations based on provided hostname.</p>
-<p>In the following example, we are listing all the components running on <code>IRIS</code> (hostname: <strong>10.1.1.1</strong>) machine</p>
+<p>Filters locations based on the provided hostname (or IP address).</p>
+<p>In the following example, all of the components running on <code>IRIS</code> (hostname: <strong>10.1.1.1</strong>) machine are listed.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L119-L123" target="_blank" title="Go to snippet source"></a><code class="language-kts">// list all the components running on IRIS machine
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L120-L124" target="_blank" title="Go to snippet source"></a><code class="language-kts">// list all the components running on IRIS machine
 val irisMachineHostname = &quot;10.1.1.1&quot;
-val irisMachineLocations: List&lt;Location&gt; = listLocationsBy(irisMachineHostname)
+val irisMachineLocations: List&lt;Location&gt; = listLocationsByHostname(irisMachineHostname)
 
 sendUIEvent(&quot;IRIS machine running components: [$irisMachineLocations]&quot;)</code></pre></dd>
 </dl>
 <h3><a href="#prefix" name="prefix" class="anchor"><span class="anchor-link"></span></a>Prefix</h3>
-<p>Filters locations based on provided Prefix.</p>
-<p>In the following example, we are listing all the componenst registered using Prefix: <code>IRIS.filter.wheel</code> where <code>IRIS</code> is a Subsystem and <code>filter.wheel</code> is a component name</p>
+<p>Filters locations based on the provided prefix string. As with the CSW Location Service, the method filters for all locations with prefixes that start with the provided string.</p>
+<p>In the following example, it receives a list of all of the components registered with prefixes that start with: <code>IRIS.filter.</code></p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L127-L139" target="_blank" title="Go to snippet source"></a><code class="language-kts">val irisPrefix = Prefix(&quot;IRIS.filter.wheel&quot;)
-val irisComponents: List&lt;Location&gt; = listLocationsBy(irisPrefix)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L128-L140" target="_blank" title="Go to snippet source"></a><code class="language-kts">val irisPrefixString =&quot;IRIS.filter.&quot;
+val irisComponents: List&lt;Location&gt; = listLocationsBy(irisPrefixString)
 
 // log Assembly and HCD location
 irisComponents.forEach {
     when (it.connection.componentId.componentType) {
-        Assembly -&gt; info(&quot;$irisPrefix is registered as Assembly with location: $it&quot;)
+        Assembly -&gt; info(&quot;Assembly starting with $irisPrefixString is registered with location: $it&quot;)
 
-        HCD -&gt; info(&quot;$irisPrefix is registered as HCD with location: $it&quot;)
+        HCD -&gt; info(&quot;HCD starting with $irisPrefixString is registered with location: $it&quot;)
 
-        else -&gt; error(&quot;Invalid location: $it found for $irisPrefix&quot;)
+        else -&gt; error(&quot;Invalid location: $it found for $irisPrefixString&quot;)
     }
 }</code></pre></dd>
 </dl>
 <h2><a href="#onlocationtrackingevent" name="onlocationtrackingevent" class="anchor"><span class="anchor-link"></span></a>onLocationTrackingEvent</h2>
-<p>This DSL allows you to add a callback on every location changed event which is represented by <code>TrackingEvent</code>.</p>
+<p>This DSL allows you to add a callback that is called when the location of the specified connection changes, which is represented by a <code>TrackingEvent</code>.</p>
 <p><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/TrackingEvent">TrackingEvent</a> has following two subclasses</p>
 <ol>
   <li>
-  <p><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/LocationUpdated">LocationUpdated</a>: Published when location is registered with Location Service</p></li>
+  <p><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/LocationUpdated">LocationUpdated</a>: Published when the location is registered with the Location Service</p></li>
   <li>
-  <p><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/LocationRemoved">LocationRemoved</a>: Published when location is removed from Location Service</p></li>
+  <p><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/scala/csw/location/models/LocationRemoved">LocationRemoved</a>: Published when the location is removed from the Location Service</p></li>
 </ol>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L144-L159" target="_blank" title="Go to snippet source"></a><code class="language-kts">onObserve(&quot;monitor-iris-sequencer&quot;) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts#L145-L160" target="_blank" title="Go to snippet source"></a><code class="language-kts">onObserve(&quot;monitor-iris-sequencer&quot;) {
     val irisPrefix = Prefix(&quot;IRIS.darknight&quot;)
     val irisComponent = ComponentId(irisPrefix, Sequencer)
     val irisSequencerConnection = AkkaConnection(irisComponent)
@@ -387,7 +395,7 @@ irisComponents.forEach {
     }
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p><code>sendUIEvent</code> used in above examples is just for demonstration purpose and is not part of DSL. <code>sendUIEvent</code> publish <code>SystemEvent</code> with provided message.</p></div>
+<p><code>sendUIEvent</code> used in above examples is just for demonstration purposes and is not part of DSL. The <code>sendUIEvent</code> method, defined elsewhere in the script, publishes a <code>SystemEvent</code> with the provided message.</p></div>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/LocationServiceDslExample.kts">Location Service Examples</a></li>

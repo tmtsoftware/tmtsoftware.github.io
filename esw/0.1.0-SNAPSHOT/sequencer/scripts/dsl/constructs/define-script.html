@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../../../assets/tmt_favicon.ico">
-<title>Defining Script · TMT Executive Software (ESW)</title>
+<title>Defining A Script · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software (ESW)
 </span>
 <span class="md-header-nav__topic">
-Defining Script
+Defining A Script
 </span>
 </div>
 </div>
@@ -135,12 +135,20 @@ tmtsoftware/esw
 
 </div>
 <ul>
+  <li><a href="../../../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
+  <ul>
+    <li><a href="../../../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/SeqComp.html" class="page">Sequence Component</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/Sequencers.html" class="page">Sequencers</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/state-transition.html" class="page">Sequencer Lifecycle</a></li>
+  </ul></li>
   <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
+    <li><a href="../../../../sequencer/scripts/script-styles.html" class="page">Sequencer Script Styles</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/script-constructs.html" class="page">Script DSL Constructs</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a></li>
   </ul></li>
-  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
+  <li><a href="../../../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -149,11 +157,11 @@ tmtsoftware/esw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#defining-script" class="header">Defining Script</a>
+  <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#defining-a-script" class="header">Defining A Script</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#regular-script" class="header">Regular Script</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#finite-state-machine-script-fsm-script-" class="header">Finite State Machine Script (FSM Script)</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#reusable-script" class="header">Reusable Script</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#handler-oriented-script" class="header">Handler-Oriented Script</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#state-machine-oriented-script-fsm-script-" class="header">State Machine-Oriented Script (FSM Script)</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#reusable-scripts" class="header">Reusable Scripts</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -175,11 +183,11 @@ tmtsoftware/esw
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#defining-script" class="header">Defining Script</a>
+  <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#defining-a-script" class="header">Defining A Script</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#regular-script" class="header">Regular Script</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#finite-state-machine-script-fsm-script-" class="header">Finite State Machine Script (FSM Script)</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#reusable-script" class="header">Reusable Script</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#handler-oriented-script" class="header">Handler-Oriented Script</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#state-machine-oriented-script-fsm-script-" class="header">State Machine-Oriented Script (FSM Script)</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/constructs/define-script.html#reusable-scripts" class="header">Reusable Scripts</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -190,19 +198,20 @@ tmtsoftware/esw
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#defining-script" name="defining-script" class="anchor"><span class="anchor-link"></span></a>Defining Script</h1>
+<h1><a href="#defining-a-script" name="defining-a-script" class="anchor"><span class="anchor-link"></span></a>Defining A Script</h1>
 <p>There are 3 variations of Sequencer Scripts. These variations are based the way the Script gets executed. The variations are:</p>
 <ul>
-  <li>Regular Script</li>
-  <li>Finite State Machine Script (FSM Script)</li>
+  <li>Handler-Oriented Script</li>
+  <li>State Machine-Oriented Script (FSM Script)</li>
   <li>Reusable Script</li>
 </ul>
-<h2><a href="#regular-script" name="regular-script" class="anchor"><span class="anchor-link"></span></a>Regular Script</h2>
-<p>Regular script is like a collection of <a href="handlers.html">script handlers</a> which executes the handlers of requested action or command. To define a regular script, a function named <code>script</code> needs to be invoked with a <em>block</em> which contains the logic of the script. The below example shows way to declare the script.</p>
+<h2><a href="#handler-oriented-script" name="handler-oriented-script" class="anchor"><span class="anchor-link"></span></a>Handler-Oriented Script</h2>
+<p>A handler-oriented script is a collection of <a href="handlers.html">script handlers</a> which execute the actions tied to a command. To define a handler-oriented script, a function named <code>script</code> needs to be invoked with a code <em>block</em> which contains the logic of the script. The example below shows the way to declare the script.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L15-L31" target="_blank" title="Go to snippet source"></a><code class="language-kts">import esw.ocs.dsl.core.script
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L16-L32" target="_blank" title="Go to snippet source"></a><code class="language-kts">import esw.ocs.dsl.core.script
+import esw.ocs.dsl.highlevel.models.Major
 
 script {
     // place to add Sequencer Script logic
@@ -210,22 +219,35 @@ script {
 </dl>
 <p>The logic can be divided into 2 parts:</p>
 <ul>
-  <li>Top-level statements (initialisation logic) : Executed while loading (initialising) the script.</li>
+  <li>Top-level statements (initialization logic): Executed while loading (initializing) the script.</li>
   <li>Script Handlers: Executed when a command to execute a particular handler is received.</li>
 </ul>
-<p><a href="handlers.html">Script handlers</a> are defined to process Sequence of Commands or to perform actions like Going online or offline, starting Diagnostic mode etc. Documentation of handlers can be found <a href="handlers.html">here</a>. Handlers will be executed whenever there is need to execute Sequence or to perform any action on Sequencer.</p>
-<p>Everything except Script Handlers are considered as Top-level statements and will be executed while loading the script. This is the <strong>place to declare the Script specific variables</strong> and tasks to be executed at initialisation of the Script.</p>
+<p><a href="handlers.html">Script handlers</a> are defined to process a Sequence of Commands or to perform actions like going online or offline, starting a diagnostic mode etc. Documentation of handlers can be found <a href="handlers.html">here</a>. Handlers will be executed whenever the Sequence or outside client makes a request to perform an action on the Sequencer.</p>
+<p>Everything except Script Handlers are considered as top-level statements and will be executed while loading the script. This is the place to <strong>declare the Script specific variables</strong> and tasks to be executed at initialization of the Script.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L35-L64" target="_blank" title="Go to snippet source"></a><code class="language-kts">script {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L36-L78" target="_blank" title="Go to snippet source"></a><code class="language-kts">script {
     info(&quot;Loading DarkNight script&quot;)
+
+    var tromboneTemperature = 0.0
+    onEvent(&quot;nfiraos.tromboneAssembly.temperature&quot;) { event -&gt;
+        when (event) {
+            is SystemEvent -&gt; {
+                tromboneTemperature = event(doubleKey(&quot;temperatureInCelsius&quot;)).first
+            }
+        }
+    }
 
     val tromboneTemperatureAlarm =
             Key.AlarmKey(Prefix(NFIRAOS, &quot;trombone&quot;), &quot;tromboneMotorTemperatureAlarm&quot;)
 
     loopAsync(1.seconds) {
-        setSeverity(tromboneTemperatureAlarm, getSeverity())
+        if (tromboneTemperature &gt; 10.0) {
+            setSeverity(tromboneTemperatureAlarm, Major)
+        } else  {
+            setSeverity(tromboneTemperatureAlarm, Okay)
+        }
     }
 
     onSetup(&quot;basic-setup&quot;) { command -&gt;
@@ -251,13 +273,13 @@ script {
 </dl>
 <p>The example mainly demos:</p>
 <ul>
-  <li>Top-level statements like declaring Script specific variable ( <em>tromboneTemperatureAlarm</em> ) , use of <a href="../script-constructs.html">Script Constructs</a> ( <em>loopAsync</em> ) and use of <a href="../csw-services.html">Csw Services</a> ( <em>info</em> - <a href="../services/logging-service.html">Logging Service</a>, <em>setSeverity</em> - <a href="../services/alarm-service.html">Alarm Service</a>)</li>
-  <li>Defining <a href="handlers.html">Script Handlers</a> like <em>onSetup</em> , <em>onObserve</em> using <a href="../script-constructs.html">Csw Services</a>.</li>
+  <li>Top-level statements like declaring Script specific variable (*tromboneTemperature*, <em>tromboneTemperatureAlarm</em>) , use of <a href="../script-constructs.html">Script Constructs</a> (*loopAsync*) and use of <a href="../csw-services.html">Csw Services</a> (*info* - <a href="../services/logging-service.html">Logging Service</a>, <em>setSeverity</em> - <a href="../services/alarm-service.html">Alarm Service</a>)</li>
+  <li>Defining <a href="handlers.html">Script Handlers</a> like <em>onSetup</em> and <em>onObserve</em></li>
 </ul>
-<h2><a href="#finite-state-machine-script-fsm-script-" name="finite-state-machine-script-fsm-script-" class="anchor"><span class="anchor-link"></span></a>Finite State Machine Script (FSM Script)</h2>
-<p>FSM script is a way of writing Sequencer Script as <a href="https://en.wikipedia.org/wiki/Finite-state_machine" title="Finite State Machines (FSM)">Finite State Machines (FSM)</a>, where execution of Script Handler is dependent on the Current State of the Sequencer Script. </p>
-<p>To define FSM Script a function <code>FSMScript</code> needs to be called with the <em>initial state</em> to start script with, and the block containing Script logic. The block contains initialisation logic and different states. </p>
-<p>In FSM Script, Script handlers can be defined in two scopes :</p>
+<h2><a href="#state-machine-oriented-script-fsm-script-" name="state-machine-oriented-script-fsm-script-" class="anchor"><span class="anchor-link"></span></a>State Machine-Oriented Script (FSM Script)</h2>
+<p>FSM script is a way of writing a Sequencer Script as a <a href="https://en.wikipedia.org/wiki/Finite-state_machine" title="Finite State Machine (FSM)">Finite State Machine (FSM)</a>, where execution of Script Handler is dependent on the current state of the Sequencer Script. </p>
+<p>To define FSM Script a function <code>FSMScript</code> needs to be called with the <em>initial state</em> of the script, and a block containing the Script logic. The block contains initialization logic for different states.</p>
+<p>In an FSM Script, script handlers can be defined in two scopes :</p>
 <ul>
   <li>Default scope - top-level scope of the Script</li>
   <li>State scope - scope of a specific state.</li>
@@ -266,7 +288,7 @@ script {
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L9-L85" target="_blank" title="Go to snippet source"></a><code class="language-kts">import esw.ocs.dsl.core.FsmScript
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L10-L99" target="_blank" title="Go to snippet source"></a><code class="language-kts">import esw.ocs.dsl.core.FsmScript
 
 FsmScript(&quot;INIT&quot;) {
 
@@ -285,16 +307,16 @@ FsmScript(&quot;INIT&quot;) {
 
 }</code></pre></dd>
 </dl>
-<p>Initialisation of the Script takes place by executing the top-level statements, and then executing the <em>initial state</em>. The <strong>top-level scope is the place to declare variables</strong> which can be used in Script. </p>
-<p>While defining handlers there is restriction about <a href="handlers.html#command-handlers">Command handlers</a> that they can only be tied to State scope. Other <a href="handlers.html">Script handlers</a> except the Command handlers can be tied both scopes of FSM script.</p>
-<p>To execute any action, corresponding handlers in current State scope will be executed first and then handlers in Default scope will be executed. In case of a Command Sequence, if the current state does not handle Command which is being executed, the Sequence will be completed with Error with reason <code>UnhandledCommandException</code>.</p>
-<p>For state transition, <code>become</code> needs to called from the current state with <em>next state</em>. It will start evaluating the next state, and will execute further actions on the next state. If the <em>next state</em> is not defined in Script, then an exception will be thrown saying <em>No state declaration found for state</em>.</p>
-<p>It is also possible to pass Params from current state to the next state by passing them as last argument to the <em>become</em> function. The passed Params will be available as a function parameter while defining any State.</p>
-<p>In below example, <code>[[ 1 ]]</code> shows use of <code>become</code> to change state. where <code>[[ 2 ]]</code> shows how to pass Params while changing state. The ON state shows how to consumes the Params.</p>
+<p>Initialization of the Script takes place by executing the top-level statements, and then executing the <em>initial state</em>. The <strong>top-level scope is the place to declare variables</strong> which can be used across all states in the Script. </p>
+<p>While defining handlers there are some restrictions about <a href="handlers.html#command-handlers">Command handlers</a> and where they can be defined in the FSM script scope. <a href="handlers.html">Script handlers</a> other than the Command handlers can be tied both scopes of FSM script.</p>
+<p>To execute any action, the corresponding handlers in the current state scope will be executed first and then handlers in the Default scope, if any, will be executed. In case of a Command Sequence, if the current state does not handle the Command which is being executed, the Sequence will be completed with an Error with a <code>UnhandledCommandException</code> reason.</p>
+<p>For state transitions, <code>become</code> needs to called from the current state with the <em>next state</em> as an argument. It will start evaluating and executing future actions in the next state. If the <em>next state</em> is not defined in the Script, then an exception will be thrown saying <em>No state declaration found for state</em>.</p>
+<p>It is also possible to pass parameters from the current state to the next state by passing them as the last argument to the <em>become</em> function. The passed parameters will be available as a function parameter while defining any State. This can reduce the need for global variables.</p>
+<p>In below example, <code>[[ 1 ]]</code> shows use of <code>become</code> to change state. where <code>[[ 2 ]]</code> shows how to pass Params while changing state. The ON state shows how to consume the Params.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L95-L109" target="_blank" title="Go to snippet source"></a><code class="language-kts">state(&quot;ON&quot;) { params -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L109-L123" target="_blank" title="Go to snippet source"></a><code class="language-kts">state(&quot;ON&quot;) { params -&gt;
 
     onSetup(&quot;turn-off&quot;) {
         turnOffLight()
@@ -310,11 +332,11 @@ state(&quot;OFF&quot;) {
     }
 }</code></pre></dd>
 </dl>
-<p>The State scope can have top-level statements and Script handlers. The State&rsquo;s top-level statements will be executed when state transition happens. So invoking <em>become</em> will initialise the next state which includes calling the top-level statements. The State top-level can be used to declare variables limited to State scope which will last till state transition. After that, state will be cleared and next time it will be initialised again to default values. </p>
+<p>The <code>state</code> scope can have top-level statements and Script handlers. The <code>state</code>&rsquo;s top-level statements will be executed when state transition happens. So invoking <em>become</em> will initialize the next state which includes calling the top-level statements. The <code>state</code> top-level can be used to declare variables limited to the scope of the state which will last until state transition. After that, the state will be cleared, and the next time the FSM becomes that state, it will be initialized again to default values. </p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L116-L136" target="_blank" title="Go to snippet source"></a><code class="language-kts">state(&quot;SETTING-UP&quot;) { params -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L130-L150" target="_blank" title="Go to snippet source"></a><code class="language-kts">state(&quot;SETTING-UP&quot;) { params -&gt;
 
     val initialPos = params[intKey(&quot;current-position&quot;)].get().head()
     var moved = false
@@ -336,16 +358,15 @@ state(&quot;OFF&quot;) {
 
 }</code></pre></dd>
 </dl>
-<p>In the example, <code>initialPos</code> and <code>moved</code> demos declaring State scoped variables. Whenever state transition happens to some other state and back to SETTING-UP state, these variables will be reinitialised to its default values as defined in code. <em>Transition to self will not reinitialise variables</em>. </p>
-<h2><a href="#reusable-script" name="reusable-script" class="anchor"><span class="anchor-link"></span></a>Reusable Script</h2>
-<p>Reusable Scripts make it possible to write the <strong>common logic which needs to shared across multiple scripts</strong>. This can be used to create small building blocks for building Sequencer Scripts.</p>
-<p>They are same as the <a href="define-script.html#regular-script">Regular Script</a> except they cannot be directly loaded into a Sequence Component, and can only be loaded into other Sequencer Scripts.</p>
-<p>The common logic consists of Script handlers and the top-level statements(initialisation logic). The top-level statements will be executed while loading the script. Script handlers will be added to the corresponding handlers of the script loading it.</p>
-<p>Following code declares a Reusable Script with Observe Command Handler.</p>
+<p>In the example, <code>initialPos</code> and <code>moved</code> demonstrate declaring State scoped variables. Whenever state transition happens to some other state and the goes back to the <code>SETTING-UP</code> state, these variables will be reinitialized to their default values as defined in code. <em>A transition to self will not reinitialize variables</em>. </p>
+<h2><a href="#reusable-scripts" name="reusable-scripts" class="anchor"><span class="anchor-link"></span></a>Reusable Scripts</h2>
+<p>Reusable Scripts make it possible to write any <strong>common logic that can shared across multiple scripts</strong>. This can be used to create small building blocks for constructing Sequencer Scripts (although this does cause dependencies that reduce a script&rsquo;s ability to stand alone). They cannot be directly loaded into a Sequence Component; they can only be loaded into other Sequencer Scripts.</p>
+<p>Reusable Scripts may consist of Script handlers or the top-level statements (initialization logic). The top-level statements will be executed while loading the script. Script handlers will be added to the corresponding handlers of the script loading it.</p>
+<p>THe following code declares a Reusable Script with an Observe Command Handler.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L12-L154" target="_blank" title="Go to snippet source"></a><code class="language-kts">import esw.ocs.dsl.core.reusableScript
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L13-L168" target="_blank" title="Go to snippet source"></a><code class="language-kts">import esw.ocs.dsl.core.reusableScript
 
 val startObservationScript = reusableScript {
     onObserve(&quot;start-observation&quot;) {
@@ -359,23 +380,23 @@ val startObservationScript = reusableScript {
 
 }</code></pre></dd>
 </dl>
-<h3><a href="#loading-in-regular-script" name="loading-in-regular-script" class="anchor"><span class="anchor-link"></span></a>Loading in Regular Script</h3>
-<p>To use Reusable Scripts, the Regular script needs to call function called <code>loadScript</code> with the instance of Reusable Script. Calling <em>loadScript</em> will initialise the Reusable Script and then combine handlers of both scripts.</p>
+<h3><a href="#loading-in-a-handler-oriented-script" name="loading-in-a-handler-oriented-script" class="anchor"><span class="anchor-link"></span></a>Loading in a Handler-Oriented Script</h3>
+<p>To use Reusable Scripts, a Handler-Oriented script needs to call the <code>loadScripts</code> function with the instance of Reusable Script. Calling <em>loadScripts</em> will initialize the Reusable Script and then combine handlers of both scripts.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L158-L162" target="_blank" title="Go to snippet source"></a><code class="language-kts">script {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L172-L176" target="_blank" title="Go to snippet source"></a><code class="language-kts">script {
 
     loadScripts(startObservationScript)
 
 }</code></pre></dd>
 </dl>
 <h3><a href="#loading-in-fsm-script" name="loading-in-fsm-script" class="anchor"><span class="anchor-link"></span></a>Loading in FSM Script</h3>
-<p>A Reusable Script cannot be directly imported at top-level of FSM script. It can only be imported in a particular State of the FSM script. Loaded script is limited to that particular State. Below example loading script into a State.</p>
+<p>A Reusable Script cannot be directly imported at the top-level of an FSM script. It can only be imported in a particular State of the FSM script. THe <code>loadScripts</code> command and the logic from the loaded script is limited to that particular State. The example below shows loading a reusable script into a State.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L169-L173" target="_blank" title="Go to snippet source"></a><code class="language-kts">state(&quot;INIT&quot;) { params -&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DefineScriptExample.kts#L183-L187" target="_blank" title="Go to snippet source"></a><code class="language-kts">state(&quot;INIT&quot;) { params -&gt;
 
     loadScripts(startObservationScript)
 

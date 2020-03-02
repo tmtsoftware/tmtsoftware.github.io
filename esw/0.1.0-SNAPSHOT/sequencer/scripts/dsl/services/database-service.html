@@ -135,12 +135,20 @@ tmtsoftware/esw
 
 </div>
 <ul>
+  <li><a href="../../../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
+  <ul>
+    <li><a href="../../../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/SeqComp.html" class="page">Sequence Component</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/Sequencers.html" class="page">Sequencers</a></li>
+    <li><a href="../../../../sequencer/seqcompsequencer/state-transition.html" class="page">Sequencer Lifecycle</a></li>
+  </ul></li>
   <li><a href="../../../../sequencer/scripts/scripts.html" class="page">Sequencer Scripts</a>
   <ul>
+    <li><a href="../../../../sequencer/scripts/script-styles.html" class="page">Sequencer Script Styles</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/script-constructs.html" class="page">Script DSL Constructs</a></li>
     <li><a href="../../../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a></li>
   </ul></li>
-  <li><a href="../../../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
+  <li><a href="../../../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -151,8 +159,8 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#database-service" class="header">Database Service</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-database-connection-read-access-" class="header">Create Database Connection (Read Access)</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-database-connection-with-provided-access-" class="header">Create Database Connection (with provided access)</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-a-database-connection-read-access-" class="header">Create a Database Connection (Read Access)</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-a-database-connection-read-write-access-" class="header">Create a Database Connection (Read/Write Access)</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -176,8 +184,8 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#database-service" class="header">Database Service</a>
   <ul>
-    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-database-connection-read-access-" class="header">Create Database Connection (Read Access)</a></li>
-    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-database-connection-with-provided-access-" class="header">Create Database Connection (with provided access)</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-a-database-connection-read-access-" class="header">Create a Database Connection (Read Access)</a></li>
+    <li><a href="../../../../sequencer/scripts/dsl/services/database-service.html#create-a-database-connection-read-write-access-" class="header">Create a Database Connection (Read/Write Access)</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -190,11 +198,11 @@ tmtsoftware/esw
 <div class="md-content__searchable">
 <h1><a href="#database-service" name="database-service" class="anchor"><span class="anchor-link"></span></a>Database Service</h1>
 <p>The Database Service DSL is a wrapper for the Database Service module provided by CSW. You can refer to detailed documentation of the Database Service provided by CSW <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/database">here</a>.</p>
-<p>This DSL provides APIs to create the connection to database. It uses Jooq library underneath for crating database connections and query. APIs for creating database connection expose <code>DSLContext</code>. All the database related functionality is available using Java APIs exposed on <code>DSLContext</code>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p><code>Jooq</code> is a Java library that provides a higher level API for accessing data i.e. DDL support, DML support, fetch, batch execution, prepared statements, safety against sql injection, connection pooling, etc. To know more about Jooq and its features, please refer to this <a href="https://www.jooq.org/learn/">link</a>.</p></div>
-<h2><a href="#create-database-connection-read-access-" name="create-database-connection-read-access-" class="anchor"><span class="anchor-link"></span></a>Create Database Connection (Read Access)</h2>
-<p>This API allows creating connection to database with default read access. The username and password for read access is picked from environment variables set on individual&rsquo;s machine i.e. <code>DB_READ_USERNAME</code> and <code>DB_READ_PASSWORD</code>. It is expected that developers set these variables before calling this method. It returns Jooq&rsquo;s <code>DSLContext</code> or fails with DatabaseException. DSLContext provide methods like <code>fetchAsync</code>, <code>executeAsync</code>, <code>executeBatch</code>, etc. Moreover, see <code>JooqHelper</code> in CSW which provides wrapper methods on Jooq&rsquo;s <code>DSLContext</code>. For methods returning <code>Future</code>, script will need to await for sequential flow.</p>
-<p>Following example shows creating database connection and querying database.</p>
+<p>This DSL provides APIs to create the connection to a database. It uses a Jooq library underneath for creating database connections and queries. APIs for creating the database connection expose a <code>DSLContext</code> object. All database-related functionality from the Database Service is available using the Java APIs exposed by <code>DSLContext</code>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p><code>Jooq</code> is a Java library that provides a higher level API for accessing data i.e. DDL support, DML support, fetch, batch execution, prepared statements, safety against SQL injection, connection pooling, etc. To know more about Jooq and its features, please refer to this <a href="https://www.jooq.org/learn/">link</a>.</p></div>
+<h2><a href="#create-a-database-connection-read-access-" name="create-a-database-connection-read-access-" class="anchor"><span class="anchor-link"></span></a>Create a Database Connection (Read Access)</h2>
+<p>This API allows creating a connection to a database with default read access. The username and password for read access is picked from environment variables set on individual&rsquo;s machine i.e. <code>DB_READ_USERNAME</code> and <code>DB_READ_PASSWORD</code>. It is expected that developers set these variables before calling this method. It returns a Jooq <code>DSLContext</code> or fails with a DatabaseException. The <code>DSLContext</code> provides methods like <code>fetchAsync</code>, <code>executeAsync</code>, <code>executeBatch</code>, etc. Additionally, the CSW <a href="https://tmtsoftware.github.io/csw/api/scala/csw/database/javadsl/JooqHelper$.html"><code>JooqHelper</code></a> and its wrapper methods can be used. For methods returning a <code>Future</code>, script will need to explicitly await for the future to complete to achieve sequential flow.</p>
+<p>THe following example shows the creation of a database connection and a query to the database.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -210,19 +218,26 @@ onSetup(&quot;setup-iris&quot;) {
     // do something with filter keys
 }</code></pre></dd>
 </dl>
-<h2><a href="#create-database-connection-with-provided-access-" name="create-database-connection-with-provided-access-" class="anchor"><span class="anchor-link"></span></a>Create Database Connection (with provided access)</h2>
-<p>This API allows creating the connection to database with credentials picked from environment variables. Names of these environment variables is expected as method parameters and developers are expected to set these variables before calling this method. If user provides names for write credentials environment variables, then database connection will be created with write access. It returns Jooq&rsquo;s <code>DSLContext</code> or fails with DatabaseException. DSLContext provide methods like <code>fetchAsync</code>, <code>executeAsync</code>, <code>executeBatch</code>, etc. Moreover, see <code>JooqHelper</code> in CSW which provides wrapper methods on Jooq&rsquo;s <code>DSLContext</code>. For methods returning <code>Future</code>, script will need to await for sequential flow. </p>
-<p>Following example shows creating database connection with write access.</p>
+<h2><a href="#create-a-database-connection-read-write-access-" name="create-a-database-connection-read-write-access-" class="anchor"><span class="anchor-link"></span></a>Create a Database Connection (Read/Write Access)</h2>
+<p>This API allows creating a connection to a database with read/write access. User name and password credentials should be stored in environment variables, and the names of these environment variables are passed as method parameters.<br/>If the correct write access credentials can be obtained from these environment variables, then a database connection will be created with write access. It returns a Jooq <code>DSLContext</code> or fails with a DatabaseException.</p>
+<p>The following example shows the creation of a database connection with write access and alternative way of using the <code>DSLContext</code> to do queries.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DatabaseServiceDslExample.kts#L28" target="_blank" title="Go to snippet source"></a><code class="language-kts">val context = makeDatabaseService(&quot;IRIS_db&quot;, &quot;db_write_username&quot;, &quot;db_write_password&quot;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DatabaseServiceDslExample.kts#L28-L36" target="_blank" title="Go to snippet source"></a><code class="language-kts">val context = makeDatabaseService(&quot;IRIS_db&quot;, &quot;db_write_username&quot;, &quot;db_write_password&quot;)
+
+onObserve(&quot;command-1&quot;) {
+    val result = context
+            .select(field(&quot;event_name&quot;))
+            .from(name(&quot;table_1&quot;)).fetch()
+
+    // do something with result
+}</code></pre></dd>
 </dl>
 <h3><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h3>
 <ul>
   <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/DatabaseServiceDslExample.kts">Database Service Examples</a></li>
-</ul><div class="callout note "><div class="callout-title">Note</div>
-<p>After getting handle to <code>DSLContext</code>, methods like <code>fetchAsync</code>, <code>executeAsync</code> etc are available for querying database. If these methods return <code>Future</code> then script writer will need to await for sequential flow.</p></div>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/dsl/services/database-service.md" title="Edit this page" class="md-source-file md-edit">

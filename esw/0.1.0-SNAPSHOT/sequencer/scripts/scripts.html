@@ -135,12 +135,20 @@ tmtsoftware/esw
 
 </div>
 <ul>
+  <li><a href="../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
+  <ul>
+    <li><a href="../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html" class="page">Sequence Component</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/Sequencers.html" class="page">Sequencers</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/state-transition.html" class="page">Sequencer Lifecycle</a></li>
+  </ul></li>
   <li><a href="../../sequencer/scripts/scripts.html" class="active page">Sequencer Scripts</a>
   <ul>
+    <li><a href="../../sequencer/scripts/script-styles.html" class="page">Sequencer Script Styles</a></li>
     <li><a href="../../sequencer/scripts/dsl/script-constructs.html" class="page">Script DSL Constructs</a></li>
     <li><a href="../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a></li>
   </ul></li>
-  <li><a href="../../sequencer/state-transition.html" class="page">Sequencer State Transition</a></li>
+  <li><a href="../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../apps/apps.html" class="page">Applications</a>
   <ul>
     <li><a href="../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
@@ -164,40 +172,61 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#sequencer-scripts" name="sequencer-scripts" class="anchor"><span class="anchor-link"></span></a>Sequencer Scripts</h1>
-<p>All logic in Sequencer is implemented in Sequencer scripts. Scripts are written in in Kotlin using a TMT developed Domain Specific Language (DSL) to facilitate development. This section describes the DSL in detail. </p>
-<p>As an alternate to procedural style scripting, some framework DSL has been provided to allow scripting using a Finite State Machine (FSM) (still in development). </p>
+<p>All logic in a Sequencer is implemented in Sequencer Scripts. Scripts are written in a TMT developed Domain Specific Language (DSL) to facilitate development based on the Kotlin programming language. This section describes the DSL in detail.</p>
+<p>In order to provide thread-safe concurrency, the Active Object design pattern is used for Scripts. The Active Object design pattern features a single “Executor” thread, in which all requests are sent to, such that only one request is processed at a time. This allows the Script to maintain global state variables that can be accessed in a thread-safe way.</p><div class="callout note "><div class="callout-title">Do not starve the execution thread!</div>
+<p>The Script DSL is written to execute with a single thread. Script processing steps should not stay busy for long periods. For instance, do not execute a CPU-bound routine on the single thread. In stead, use an asynchronous approach using a different thread.</p></div>
+<p>Scripts can be written in two styles: handler-oriented and state machine-oriented. See the page on <a href="script-styles.html">Scripting Styles</a> for more information. </p>
+<div class="toc ">
 <ul>
-  <li>
-    <p>Script DSL Constructs</p>
-    <ul>
-      <li><a href="dsl/constructs/define-script.html">Defining Script</a></li>
-      <li><a href="dsl/constructs/handlers.html">Script Handlers</a></li>
-      <li><a href="dsl/constructs/loop.html">Looping</a></li>
-      <li><a href="dsl/constructs/fsm.html">Finite State Machines</a></li>
-      <li><a href="dsl/constructs/misc.html">Other</a></li>
-    </ul>
-  </li>
-  <li>
-    <p>CSW Services DSL</p>
-    <ul>
-      <li><a href="dsl/services/location-service.html">Location Service</a></li>
-      <li><a href="dsl/services/config-service.html">Config Service</a></li>
-      <li><a href="dsl/services/command-service.html">Assembly/HCD Command Service</a></li>
-      <li><a href="dsl/services/sequencer-command-service.html">Sequencer Command Service</a></li>
-      <li><a href="dsl/services/params.html">Working with Params</a></li>
-      <li><a href="dsl/services/submit-response-extensions.html">Submit Response Extensions</a></li>
-      <li><a href="dsl/services/event-service.html">Event Service</a></li>
-      <li><a href="dsl/services/logging-service.html">Logging Service</a></li>
-      <li><a href="dsl/services/alarm-service.html">Alarm Service</a></li>
-      <li><a href="dsl/services/time-service.html">Time Service</a></li>
-      <li><a href="dsl/services/database-service.html">Database Service</a></li>
-    </ul>
-  </li>
-</ul><div class="callout note "><div class="callout-title">Note</div>
+  <li><a href="../../sequencer/scripts/script-styles.html" class="page">Sequencer Script Styles</a>
+  <ul>
+    <li><a href="../../sequencer/scripts/script-styles.html#handler-oriented-scripts" class="header">Handler-Oriented Scripts</a></li>
+    <li><a href="../../sequencer/scripts/script-styles.html#state-machine-oriented-scripts" class="header">State Machine-Oriented Scripts</a></li>
+    <li><a href="../../sequencer/scripts/script-styles.html#mixing-the-two-styles" class="header">Mixing the Two Styles</a></li>
+  </ul></li>
+  <li><a href="../../sequencer/scripts/dsl/script-constructs.html" class="page">Script DSL Constructs</a>
+  <ul>
+    <li><a href="../../sequencer/scripts/dsl/constructs/define-script.html" class="page">Defining A Script</a></li>
+    <li><a href="../../sequencer/scripts/dsl/constructs/handlers.html" class="page">Script Handlers</a></li>
+    <li><a href="../../sequencer/scripts/dsl/constructs/loop.html" class="page">Including Looping in Scripts</a></li>
+    <li><a href="../../sequencer/scripts/dsl/constructs/fsm.html" class="page">Finite State Machines</a></li>
+    <li><a href="../../sequencer/scripts/dsl/constructs/other-dsl.html" class="page">Other DSL</a></li>
+  </ul></li>
+  <li><a href="../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a>
+  <ul>
+    <li><a href="../../sequencer/scripts/dsl/services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/config-service.html" class="page">Using the Configuration Service in Scripts</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/command-service.html" class="page">Command Service for Assemblies and HCDs</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/sequencer-command-service.html" class="page">Sequencer Command Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/logging-service.html" class="page">Logging Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/time-service.html" class="page">Time Service Access in Scripts</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/database-service.html" class="page">Database Service</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/submit-response-extensions.html" class="page">Extension utilities on SubmitResponse</a></li>
+    <li><a href="../../sequencer/scripts/dsl/services/params.html" class="page">Parameters</a></li>
+  </ul></li>
+</ul>
+</div><div class="callout note "><div class="callout-title">Note</div>
 <p>All the examples shown in each individual section assume that you have following import in place in <code>script</code></p>
 <pre class="prettyprint"><code class="language-kotlin">// import all the models, helpers, extensions
 import esw.ocs.dsl.highlevel.models.*
 </code></pre></div>
+<p>A decision has been made to implement Scripts using a Domain Specific Language (DSL) written in Kotlin instead of true scripts in a more dynamic scripting language (however, we still refer to them as Scripts). This is for several reasons:</p>
+<ul>
+  <li>Scripts can be developed in an IDE, with full syntax checking and auto-completion support.</li>
+  <li>Unit tests can easily be written using widely-used testing frameworks.</li>
+  <li>Scripts can be compiled, with compile-time error checking.</li>
+  <li>Build tools can be used to bundle scripts into Sequencer applications.</li>
+  <li>Code from other Scripts can be accessed and used more easily.</li>
+  <li>Seamless integration with Common Software and Sequencer Framework.</li>
+  <li>Kotlin features type safety (enhancing compile time error checking) and functional programming (if desired).</li>
+  <li>Kotlin&rsquo;s use of <em>coroutines</em> allows for simpler procedural-style scripting without blocking.</li>
+  <li>One less &ldquo;glue&rdquo; service layer implementation needed.</li>
+</ul>
+<p>The most important feature of &ldquo;scripting&rdquo; languages that we wanted to retain is the ability to quickly modify and reload a script without recompiling and deploying software. Another important feature is interactivity. Scripting languages are usually based around a &ldquo;shell&rdquo; that allows interactive usage. This is provided with the <code>csw-shell</code> companion project <a href="https://github.com/tmtsoftware/csw-shell">here</a></p>
+<p>At the ESW FDR, we planned using Scala for the scripting DSL. While this did work, the extra syntax of using Future&rsquo;s was cumbersome for the scripting use case, and Kotlin provided the coroutine environment that provided the asynchronous feature of futures, but with a much clearer syntax.</p>
+<p>The scripting capability is in progress and we look forward to comments and suggestions from users of Release 1.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/scripts/scripts.md" title="Edit this page" class="md-source-file md-edit">
@@ -216,7 +245,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../index.html" title="TMT Executive Software (ESW)" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../sequencer/seqcompsequencer/state-transition.html" title="Sequencer Lifecycle" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -225,17 +254,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-TMT Executive Software (ESW)
+Sequencer Lifecycle
 </span>
 </div>
 </a>
-<a href="../../sequencer/scripts/dsl/script-constructs.html" title="Script DSL Constructs" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../sequencer/scripts/script-styles.html" title="Sequencer Script Styles" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Script DSL Constructs
+Sequencer Script Styles
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
