@@ -203,11 +203,19 @@ tmtsoftware/esw
 <p>There are commands which are more restrictive which need eng or above role and some commands which just need user level role. Also, these more restrictive eng commands need a fined grained control mechanism so that they can be safely executed by authorized person having specific role at subsystem level. To achieve this we need to have a role hierarchy at subsystem level along with a config table containing the mapping between more restrictive commands and these roles.</p>
 <h4><a href="#role-hierarchy" name="role-hierarchy" class="anchor"><span class="anchor-link"></span></a>Role Hierarchy</h4>
 <p><img src="../images/eswgateway/role-hierarchy-keycloak.png" alt="Role Hierarchy" /></p>
-<p>This type of role hierarchy is created in Keycloak as one time setup. As per this hierarchy there should be three roles present for each subsystem which are composed in specific order. * E.g. TCS-admin -&gt; TCS-eng -&gt; TCS-user. </p>
-<pre><code>* When you assign a user TCS-eng role, keycloak will automatically add TCS-user role to that user
-* When you assign a user TCS-admin role, keycloak will automatically add TCS-eng and TCS-user role to that user
-</code></pre>
-<p>Also, there are three special roles. OSW-admin, OSW-eng and OSW-user which are composed of all respective subsystem  level roles. * E.g. When you assign a user OSW-eng role, keycloak will automatically add roles TCS-eng, APS-eng and so on to that user and these roles will automatically add their respective lower level roles TCS-user, APS-user and so on</p>
+<p>This type of role hierarchy is created in Keycloak as one time setup. As per this hierarchy there should be three roles present for each subsystem which are composed in specific order.</p>
+<ul>
+  <li>E.g. TCS-admin -&gt; TCS-eng -&gt; TCS-user.
+    <ul>
+      <li>When you assign a user TCS-eng role, keycloak will automatically add TCS-user role to that user</li>
+      <li>When you assign a user TCS-admin role, keycloak will automatically add TCS-eng and TCS-user role to that user</li>
+    </ul>
+  </li>
+</ul>
+<p>Also, there are three special roles. OSW-admin, OSW-eng and OSW-user which are composed of all respective subsystem  level roles. </p>
+<ul>
+  <li>E.g. When you assign a user OSW-eng role, keycloak will automatically add roles TCS-eng, APS-eng and so on to that user and these roles will automatically add their respective lower level roles TCS-user, APS-user and so on</li>
+</ul>
 <h4><a href="#examples-" name="examples-" class="anchor"><span class="anchor-link"></span></a>Examples:</h4>
 <p><img src="../images/eswgateway/user-roles.png" alt="User Roles" /></p>
 <h4><a href="#command-role-mapping" name="command-role-mapping" class="anchor"><span class="anchor-link"></span></a>Command Role Mapping</h4>
@@ -216,7 +224,7 @@ tmtsoftware/esw
 IRIS.filter.wheel.stopExposure: [IRIS-user, APS-eng]
 </code></pre>
 <p>We need to create a config containing role mapping entries like shown above and use it when starting esw-gateway server. </p>
-<h4><a href="#examples-" name="examples-" class="anchor"><span class="anchor-link"></span></a>Examples:</h4>
+<h4><a href="#how-to-start-gateway" name="how-to-start-gateway" class="anchor"><span class="anchor-link"></span></a>How to start Gateway</h4>
 <p>Use command role mapping file from local file system</p>
 <pre><code>./esw-gateway-server start --local --command-role-config-path /local/path/filename.conf
 </code></pre>
@@ -230,7 +238,11 @@ IRIS.filter.wheel.stopExposure: [IRIS-user, APS-eng]
 <pre><code>./esw-gateway-server start -c /path/filename.conf
 </code></pre>
 <h3><a href="#protection-on-sequencer-endpoints-on-gateway-" name="protection-on-sequencer-endpoints-on-gateway-" class="anchor"><span class="anchor-link"></span></a>Protection on Sequencer endpoints on Gateway.</h3>
-<p>On protected endpoints of sequencer commands in esw-gateway, {subsystem}-user role check is performed. * Subsystem is obtained form componentId.prefix.subsystem * E.g. If current sequence to be executed is for esw.primary then user should have minimum ESW-user role.</p>
+<p>On protected endpoints of sequencer commands in esw-gateway, {subsystem}-user role check is performed. </p>
+<ul>
+  <li>Subsystem is obtained form componentId.prefix.subsystem</li>
+  <li>E.g. If current sequence to be executed is for esw.primary then user should have minimum ESW-user role.</li>
+</ul>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/eswgateway/esw-gateway.md" title="Edit this page" class="md-source-file md-edit">
