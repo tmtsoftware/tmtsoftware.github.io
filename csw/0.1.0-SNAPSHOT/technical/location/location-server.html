@@ -270,15 +270,13 @@ tmtsoftware/csw
 </ol><div class="callout note "><div class="callout-title">Note</div>
 <p>At any point in time, <code>Assembly</code> can choose to cancel tracking. On cancellation, this persistent connection will be released.</p></div>
 <h3><a href="#location-service-with-authentication-and-authorization" name="location-service-with-authentication-and-authorization" class="anchor"><span class="anchor-link"></span></a>Location Service with Authentication and Authorization</h3>
-<p>Note : <code>Outside</code> below means any machine not present in this Akka cluster.</p>
-<p>Below diagram illustrate how Akka cluster will look when authentication and authorization is enabled in <code>Location Server</code>. By default when you start <code>Location Server</code>, it will start in local-only mode (Authentication and authorization  Disabled) and bind to <code>127.0.0.1</code>. To start <code>Location Server</code> in public mode (Authentication and authorization enabled) and bind to <code>0.0.0.0</code>, use  <code>--publicNetwork</code> command line  option when <a href="../../apps/cswlocationserver.html">starting location server</a></p>
-<p><img src="../../images/locationservice/location-service-auth.png" alt="Location Authentication and Authorization" /></p>
-<p>Why is this needed ?</p>
-<ol>
-  <li>As <code>Location Server</code> is by default bind to <code>127.0.0.1</code>, no application can establish Http connection from  <code>Outside</code>.</li>
-  <li>In production environment, you may need a capability to access protected resources of <code>Location Server</code> and provide  Authentication and Authorization for such resources. E.g. ability to register/unregister components(which has to  undergo maintenance) from a system operator machine present <code>Outside</code>.</li>
-  <li>To enable this we need to bind few instances of <code>Location Server</code> to <code>0.0.0.0</code>, so that <code>Outside</code> Http connections  can be made and applications with valid token, can access its protected resources.</li>
-</ol>
+<p><code>AAS</code> means Authentication and Authorization Service</p>
+<ul>
+  <li>
+  <p>By default when you start <code>Location Server</code>, it will start in <code>local-only</code> mode with AAS <code>Disabled</code> and bind to <code>127.0.0.1</code>.</p></li>
+  <li>
+  <p>Use <code>--publicNetwork</code> command line option when <a href="../../apps/cswlocationserver.html">starting location server</a> to start <code>Location Server</code> in <code>public mode</code> with AAS <code>enabled</code> and bind to <a href="../../deployment/network-topology.html">public IP</a></p></li>
+</ul>
 <h2><a href="#internals" name="internals" class="anchor"><span class="anchor-link"></span></a>Internals</h2>
 <p>The <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/Main.scala">Main</a> class delegates the job of creating the cluster actor and HTTP server instance to the <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/internal/ServerWiring.scala">ServerWiring</a> class.</p>
 <p>The default TCP ports for the actor and HTTP servers are specified in <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/resources/application.conf">application.conf</a>.</p><div class="callout note "><div class="callout-title">Note</div>
