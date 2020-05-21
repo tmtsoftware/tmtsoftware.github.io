@@ -188,6 +188,7 @@ tmtsoftware/csw
   <li><a href="../commons/deployment.html" class="page">Deployment</a>
   <ul>
     <li><a href="../deployment/env-vars.html" class="page">Environment variables</a></li>
+    <li><a href="../deployment/network-topology.html" class="page">Network Topology</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
@@ -266,7 +267,7 @@ tmtsoftware/csw
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/resources/sample-alarms.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">alarms: [
   {
-    prefix = esw.SampleAssembly
+    prefix = csw.sample
     name = counterTooHighAlarm
     description = &quot;Warns when counter value is too high&quot;
     location = &quot;enclosure&quot;
@@ -290,15 +291,16 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlersAlarm.scala#L133-L151" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val safeRange  = 0 to 10
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlersAlarm.scala#L134-L153" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val safeRange  = 0 to 10
 private val warnRange  = 11 to 15
 private val majorRange = 16 to 20
-private def getCounterSeverity(counter: Int) = counter match {
-  case x if safeRange contains x  =&gt; AlarmSeverity.Okay
-  case x if warnRange contains x  =&gt; AlarmSeverity.Warning
-  case x if majorRange contains x =&gt; AlarmSeverity.Major
-  case _                          =&gt; AlarmSeverity.Critical
-}
+private def getCounterSeverity(counter: Int) =
+  counter match {
+    case x if safeRange contains x  =&gt; AlarmSeverity.Okay
+    case x if warnRange contains x  =&gt; AlarmSeverity.Warning
+    case x if majorRange contains x =&gt; AlarmSeverity.Major
+    case _                          =&gt; AlarmSeverity.Critical
+  }
 
 private val counterAlarmKey = AlarmKey(componentInfo.prefix, &quot;CounterTooHighAlarm&quot;)
 private def setCounterAlarm(counter: Int): Unit = {
@@ -346,7 +348,7 @@ private void setCounterAlarm(int counter) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlersAlarm.scala#L116-L129" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def processEvent(event: Event): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlersAlarm.scala#L116-L130" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def processEvent(event: Event): Unit = {
   log.info(s&quot;Event received: ${event.eventKey}&quot;)
   event match {
     case e: SystemEvent =&gt;
@@ -355,6 +357,7 @@ private void setCounterAlarm(int counter) {
           val counter = e(hcdCounterKey).head
           log.info(s&quot;Counter = $counter&quot;)
           setCounterAlarm(counter)
+
         case _ =&gt; log.warn(&quot;Unexpected event received.&quot;)
       }
     case _: ObserveEvent =&gt; log.warn(&quot;Unexpected ObserveEvent received.&quot;) // not expected
@@ -379,15 +382,15 @@ private void setCounterAlarm(int counter) {
     }
 }</code></pre></dd>
 </dl>
-<p>To see the effect, let&rsquo;s use the CLI to set up a subscription to the alarm. Note the alarm key is the component&rsquo;s prefix (<code>esw.sampleassembly</code> for Scala, <code>esw.jsampleassembly</code> for Java), and the alarm name (<code>counterTooHighAlarm</code>).</p>
+<p>To see the effect, let&rsquo;s use the CLI to set up a subscription to the alarm. Note the alarm key is the component&rsquo;s prefix (<code>csw.sample</code>), and the alarm name (<code>counterTooHighAlarm</code>).</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre><code>csw-alarm-cli severity subscribe --subsystem esw --component sampleassembly --name counterTooHighAlarm
+  <pre><code>csw-alarm-cli severity subscribe --subsystem csw --component sample --name counterTooHighAlarm
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre><code>csw-alarm-cli severity subscribe --subsystem esw --component jsampleassembly --name counterTooHighAlarm
+  <pre><code>csw-alarm-cli severity subscribe --subsystem csw --component sample --name counterTooHighAlarm
 </code></pre></dd>
 </dl>
 <p>Note that the alarm severity is currently <code>Disconnected</code>. This is the appropriate state, since we are not running the components. Now, run the Assembly and HCD, and you will see the severity of our alarm updated in the CLI as the severity changes.</p>

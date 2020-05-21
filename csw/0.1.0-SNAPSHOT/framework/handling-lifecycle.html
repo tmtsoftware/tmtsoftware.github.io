@@ -188,6 +188,7 @@ tmtsoftware/csw
   <li><a href="../commons/deployment.html" class="page">Deployment</a>
   <ul>
     <li><a href="../deployment/env-vars.html" class="page">Environment variables</a></li>
+    <li><a href="../deployment/network-topology.html" class="page">Network Topology</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
@@ -273,36 +274,38 @@ tmtsoftware/csw
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L40-L69" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def initialize(): Future[Unit] = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L40-L71" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def initialize(): Future[Unit] =
+  async {
 
-  // Initialization could include following steps :
+    // Initialization could include following steps :
 
-  // 1. fetch config (preferably from configuration service)
-  val calculationConfig = await(getAssemblyConfig)
+    // 1. fetch config (preferably from configuration service)
+    val calculationConfig = await(getAssemblyConfig)
 
-  // 2. create a worker actor which is used by this assembly
-  val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.behavior(calculationConfig))
+    // 2. create a worker actor which is used by this assembly
+    val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.behavior(calculationConfig))
 
-  // 3. find a Hcd connection from the connections provided in componentInfo
-  val maybeConnection =
-    componentInfo.connections.find(connection =&gt; connection.componentId.componentType == ComponentType.HCD)
+    // 3. find a Hcd connection from the connections provided in componentInfo
+    val maybeConnection =
+      componentInfo.connections.find(connection =&gt; connection.componentId.componentType == ComponentType.HCD)
 
-  // 4. If an Hcd is found as a connection, resolve its location from location service and create other
-  // required worker actors required by this assembly
+    // 4. If an Hcd is found as a connection, resolve its location from location service and create other
+    // required worker actors required by this assembly
 
-  maybeConnection match {
-    case Some(_) =&gt;
-      resolveHcd().map {
-        case Some(hcd) =&gt;
-          runningHcds = runningHcds.updated(maybeConnection.get, Some(CommandServiceFactory.make(hcd)(ctx.system)))
-          diagnosticsPublisher = ctx.spawnAnonymous(DiagnosticsPublisher.behavior(runningHcds(maybeConnection.get).get, worker))
-          commandHandler = ctx.spawnAnonymous(CommandHandler.behavior(calculationConfig, runningHcds(maybeConnection.get)))
-        case None =&gt; // do something
-      }
-    case None =&gt; Future.successful(())
-  }
+    maybeConnection match {
+      case Some(_) =&gt;
+        resolveHcd().map {
+          case Some(hcd) =&gt;
+            runningHcds = runningHcds.updated(maybeConnection.get, Some(CommandServiceFactory.make(hcd)(ctx.system)))
+            diagnosticsPublisher =
+              ctx.spawnAnonymous(DiagnosticsPublisher.behavior(runningHcds(maybeConnection.get).get, worker))
+            commandHandler = ctx.spawnAnonymous(CommandHandler.behavior(calculationConfig, runningHcds(maybeConnection.get)))
+          case None =&gt; // do something
+        }
+      case None =&gt; Future.successful(())
+    }
 
-}</code></pre></dd>
+  }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L75-L103" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
@@ -335,19 +338,20 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L44-L56" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def initialize(): Future[Unit] = async {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L44-L57" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def initialize(): Future[Unit] =
+  async {
 
-  // fetch config (preferably from configuration service)
-  val hcdConfig = await(getHcdConfig)
+    // fetch config (preferably from configuration service)
+    val hcdConfig = await(getHcdConfig)
 
-  // create a worker actor which is used by this hcd
-  val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.behavior(hcdConfig))
+    // create a worker actor which is used by this hcd
+    val worker: ActorRef[WorkerActorMsg] = ctx.spawnAnonymous(WorkerActor.behavior(hcdConfig))
 
-  // initialise some state by using the worker actor created above
-  current = await(worker ? InitialState)
-  stats = await(worker ? GetStatistics)
+    // initialise some state by using the worker actor created above
+    current = await(worker ? InitialState)
+    stats = await(worker ? GetStatistics)
 
-}</code></pre></dd>
+  }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L66-L84" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
@@ -383,9 +387,10 @@ public CompletableFuture&lt;Void&gt; jInitialize() {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L106-L108" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onShutdown(): Future[Unit] = async {
-  // clean up resources
-}</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L111-L114" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onShutdown(): Future[Unit] =
+  async {
+    // clean up resources
+  }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L167-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
@@ -395,9 +400,10 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L93-L95" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onShutdown(): Future[Unit] = async {
-  // clean up resources
-}</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L97-L100" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onShutdown(): Future[Unit] =
+  async {
+    // clean up resources
+  }</code></pre></dd>
   <dt>Hcd/Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JHcdComponentHandlers.java#L146-L151" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
@@ -424,7 +430,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L94-L96" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOffline(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L99-L101" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOffline(): Unit = {
   // do something when going offline
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
@@ -435,7 +441,7 @@ public void onGoOffline() {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L81-L83" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOffline(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L85-L87" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOffline(): Unit = {
   // do something when going offline
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
@@ -450,7 +456,7 @@ public void onGoOffline() {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L100-L102" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOnline(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L105-L107" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOnline(): Unit = {
   // do something when going online
 }</code></pre></dd>
   <dt>Assembly/Java</dt>
@@ -461,7 +467,7 @@ public void onGoOnline() {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L87-L89" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOnline(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/HcdComponentHandlers.scala#L91-L93" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onGoOnline(): Unit = {
   // do something when going online
 }</code></pre></dd>
   <dt>Hcd/Java</dt>
@@ -537,7 +543,7 @@ private ValidateCommandResponse validateSleep(Id runId, Setup setup) {
 }</code></pre></dd>
   <dt>Hcd/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/samplehcd/SampleHcdHandlers.scala#L90-L97" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, command: ControlCommand): ValidateCommandResponse =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/samplehcd/SampleHcdHandlers.scala#L91-L98" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, command: ControlCommand): ValidateCommandResponse =
   command.commandName match {
     case `hcdSleep` | `hcdImmediate` =&gt;
       Accepted(runId)
@@ -585,10 +591,11 @@ public SubmitResponse onSubmit(Id runId, ControlCommand command) {
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L87-L90" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onOneway(runId: Id, controlCommand: ControlCommand): Unit = controlCommand match {
-  case setup: Setup     =&gt; onewaySetup(runId, setup)     // includes logic to handle Oneway with Setup config command
-  case observe: Observe =&gt; onewayObserve(runId, observe) // includes logic to handle Oneway with Observe config command
-}</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L91-L95" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onOneway(runId: Id, controlCommand: ControlCommand): Unit =
+  controlCommand match {
+    case setup: Setup     =&gt; onewaySetup(runId, setup)     // includes logic to handle Oneway with Setup config command
+    case observe: Observe =&gt; onewayObserve(runId, observe) // includes logic to handle Oneway with Observe config command
+  }</code></pre></dd>
   <dt>Assembly/Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L135-L141" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
@@ -609,7 +616,7 @@ public void onOneway(Id runId, ControlCommand controlCommand) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/framework/SampleComponentHandlers.scala#L115-L127" target="_blank" title="Go to snippet source"></a><code class="language-scala">// While dealing with mutable state, make sure you create a worker actor to avoid concurrency issues
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/framework/SampleComponentHandlers.scala#L116-L128" target="_blank" title="Go to snippet source"></a><code class="language-scala">// While dealing with mutable state, make sure you create a worker actor to avoid concurrency issues
 // For functionality demonstration, we have simply used a mutable variable without worker actor
 var diagModeCancellable: Option[Cancellable] = None
 
@@ -648,7 +655,7 @@ public void onDiagnosticMode(UTCTime startTime, String hint) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/framework/SampleComponentHandlers.scala#L131-L133" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onOperationsMode(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/framework/SampleComponentHandlers.scala#L132-L134" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onOperationsMode(): Unit = {
   diagModeCancellable.foreach(_.cancel())
 }</code></pre></dd>
   <dt>Java</dt>

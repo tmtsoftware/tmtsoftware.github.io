@@ -188,6 +188,7 @@ tmtsoftware/csw
   <li><a href="../commons/deployment.html" class="page">Deployment</a>
   <ul>
     <li><a href="../deployment/env-vars.html" class="page">Environment variables</a></li>
+    <li><a href="../deployment/network-topology.html" class="page">Network Topology</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
@@ -309,16 +310,17 @@ eventService.defaultPublisher().publish(event);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventPublishExamples.scala#L48-L60" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventPublishExamples.scala#L48-L61" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val publisher        = eventService.defaultPublisher
   val baseEvent: Event = SystemEvent(componentInfo.prefix, EventName(&quot;filter_wheel&quot;))
   val interval         = 100.millis
 
   // this holds the logic for event generation, could be based on some computation or current state of HCD
-  def eventGenerator(): Option[Event] = baseEvent match {
-    case e: SystemEvent  =&gt; Some(e.copy(eventId = Id(), eventTime = UTCTime.now()))
-    case e: ObserveEvent =&gt; Some(e.copy(eventId = Id(), eventTime = UTCTime.now()))
-  }
+  def eventGenerator(): Option[Event] =
+    baseEvent match {
+      case e: SystemEvent  =&gt; Some(SystemEvent(e.source, e.eventName, e.paramSet))
+      case e: ObserveEvent =&gt; Some(ObserveEvent(e.source, e.eventName, e.paramSet))
+    }
 
   publisher.publish(eventGenerator(), interval)
 }</code></pre></dd>
@@ -463,13 +465,12 @@ public static class JEventHandler {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L63-L71" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L63-L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val subscriber = eventService.defaultSubscriber
 
   subscriber
     .subscribe(Set(EventKey(hcd.prefix, EventName(&quot;filter_wheel&quot;))))
-    .to(Sink.foreach { event =&gt; /*do something*/
-    })
+    .to(Sink.foreach { event =&gt; /*do something*/ })
     .run()
 }</code></pre></dd>
   <dt>Java</dt>
@@ -486,7 +487,7 @@ return subscriber.subscribe(Set.of(filterWheelEventKey)).to(Sink.foreach(event -
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L76-L85" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L75-L84" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val subscriber = eventService.defaultSubscriber
 
   subscriber.subscribeCallback(
@@ -515,7 +516,7 @@ return subscriber.subscribeCallback(Set.of(filterWheelEventKey), event -&gt; { /
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L90-L93" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/event/EventSubscribeExamples.scala#L89-L92" target="_blank" title="Go to snippet source"></a><code class="language-scala">{
   val subscriber = eventService.defaultSubscriber
   subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event =&gt; { /*do something*/ })
 }</code></pre></dd>

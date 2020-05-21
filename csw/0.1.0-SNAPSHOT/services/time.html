@@ -188,6 +188,7 @@ tmtsoftware/csw
   <li><a href="../commons/deployment.html" class="page">Deployment</a>
   <ul>
     <li><a href="../deployment/env-vars.html" class="page">Environment variables</a></li>
+    <li><a href="../deployment/network-topology.html" class="page">Network Topology</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
@@ -442,15 +443,16 @@ scheduler.scheduleOnce(utcTime, task);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L34-L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SchedulingHandler {
-  def behavior: Behavior[UTCTime] = Behaviors.setup { ctx =&gt;
-    //setup required for the actor
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L34-L49" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SchedulingHandler {
+  def behavior: Behavior[UTCTime] =
+    Behaviors.setup { ctx =&gt;
+      //setup required for the actor
 
-    Behaviors.receiveMessage {
-      case _ =&gt; // handle the message to execute the task on scheduled time and return new behavior
-        Behaviors.same
+      Behaviors.receiveMessage {
+        case _ =&gt; // handle the message to execute the task on scheduled time and return new behavior
+          Behaviors.same
+      }
     }
-  }
 }
 
 private val actorRef: ActorRef = ctx.spawnAnonymous(SchedulingHandler.behavior).toClassic
@@ -478,7 +480,7 @@ Cancellable schedule() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">timeServiceScheduler.schedulePeriodically(Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L53" target="_blank" title="Go to snippet source"></a><code class="language-scala">timeServiceScheduler.schedulePeriodically(Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L59-L61" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};
@@ -489,7 +491,7 @@ scheduler.schedulePeriodically(Duration.ofMillis(50), task);</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L56" target="_blank" title="Go to snippet source"></a><code class="language-scala">timeServiceScheduler.schedulePeriodically(utcTime, Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/time/SchedulerExamples.scala#L57" target="_blank" title="Go to snippet source"></a><code class="language-scala">timeServiceScheduler.schedulePeriodically(utcTime, Duration.ofMillis(50)) { /* do something*/ }</code></pre></dd>
   <dt>Java</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/time/JSchedulerExamples.java#L59-L66" target="_blank" title="Go to snippet source"></a><code class="language-java">Runnable task = () -&gt; {/* do something*/};

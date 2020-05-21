@@ -188,6 +188,7 @@ tmtsoftware/csw
   <li><a href="../commons/deployment.html" class="page">Deployment</a>
   <ul>
     <li><a href="../deployment/env-vars.html" class="page">Environment variables</a></li>
+    <li><a href="../deployment/network-topology.html" class="page">Network Topology</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
@@ -345,15 +346,15 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/resources/SampleHcdStandalone.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">prefix = &quot;nfiraos.SampleHcd&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/resources/SampleHcdStandalone.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">prefix = &quot;csw.samplehcd&quot;
 componentType = hcd
-behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.SampleHcdBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;org.tmt.csw.samplehcd.SampleHcdBehaviorFactory&quot;
 locationServiceUsage = RegisterOnly</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/resources/JSampleHcdStandalone.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">prefix = &quot;nfiraos.JSampleHcd&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/resources/JSampleHcdStandalone.conf" target="_blank" title="Go to snippet source"></a><code class="language-conf">prefix = &quot;csw.samplehcd&quot;
 componentType = hcd
-behaviorFactoryClassName = &quot;org.tmt.nfiraos.samplehcd.JSampleHcdBehaviorFactory&quot;
+behaviorFactoryClassName = &quot;org.tmt.csw.samplehcd.JSampleHcdBehaviorFactory&quot;
 locationServiceUsage = RegisterOnly</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">What is a behaviorFactoryClassName?</div>
 <p><code>behaviorFactoryClassName</code> refers to class name of the a concrete implementation of <code>ComponentBehaviorFactory</code>, which is <code>SampleHcdBehaviorFactory</code> for Scala in above example, <code>JSampleHcdBehaviorFactory</code> for Java.</p></div>
@@ -427,7 +428,7 @@ locationServiceUsage = RegisterOnly</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/samplehcd/SampleHcdHandlers.scala#L56-L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L56-L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
 override def initialize(): Future[Unit] = {
   log.info(&quot;In HCD initialize&quot;)
   maybePublishingGenerator = Some(publishCounter())
@@ -444,7 +445,7 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/samplehcd/JSampleHcdHandlers.java#L88-L106" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L88-L106" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
 
 @Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
@@ -491,7 +492,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/samplehcd/SampleHcdHandlers.scala#L94-L100" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L95-L101" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = {
   log.info(s&quot;Validating command: ${controlCommand.commandName.name}&quot;)
   controlCommand.commandName.name match {
     case &quot;sleep&quot; =&gt; Accepted(runId)
@@ -500,7 +501,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/samplehcd/JSampleHcdHandlers.java#L130-L138" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L130-L138" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public CommandResponse.ValidateCommandResponse validateCommand(Id runId, ControlCommand controlCommand) {
     String commandName = controlCommand.commandName().name();
     log.info(() -&gt; &quot;Validating command: &quot; + commandName);
@@ -523,7 +524,7 @@ public CommandResponse.ValidateCommandResponse validateCommand(Id runId, Control
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/samplehcd/SampleHcdHandlers.scala#L104-L128" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(runId: Id, controlCommand: ControlCommand): SubmitResponse = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L105-L129" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(runId: Id, controlCommand: ControlCommand): SubmitResponse = {
   log.info(s&quot;Handling command: ${controlCommand.commandName}&quot;)
 
   controlCommand match {
@@ -550,7 +551,7 @@ def onSetup(runId: Id, setup: Setup): SubmitResponse = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/samplehcd/JSampleHcdHandlers.java#L143-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L143-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public CommandResponse.SubmitResponse onSubmit(Id runId, ControlCommand controlCommand) {
     log.info(() -&gt; &quot;Handling command: &quot; + controlCommand.commandName());
 
@@ -587,7 +588,7 @@ private void onSetup(Id runId, Setup setup) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/samplehcd/SampleHcdHandlers.scala#L33-L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">sealed trait WorkerCommand
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L33-L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">sealed trait WorkerCommand
 case class Sleep(runId: Id, timeInMillis: Long) extends WorkerCommand
 
 private val workerActor =
@@ -609,7 +610,7 @@ private val workerActor =
   )</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/samplehcd/JSampleHcdHandlers.java#L54-L84" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L54-L84" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
 }
 
 private static final class Sleep implements WorkerCommand {
@@ -651,14 +652,15 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/samplehcd/SampleHcdHandlers.scala#L74-L90" target="_blank" title="Go to snippet source"></a><code class="language-scala">import scala.concurrent.duration._
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L74-L91" target="_blank" title="Go to snippet source"></a><code class="language-scala">import scala.concurrent.duration._
 private def publishCounter(): Cancellable = {
   var counter = 0
-  def incrementCounterEvent() = Option {
-    counter += 1
-    val param: Parameter[Int] = KeyType.IntKey.make(&quot;counter&quot;).set(counter)
-    SystemEvent(componentInfo.prefix, EventName(&quot;HcdCounter&quot;)).add(param)
-  }
+  def incrementCounterEvent() =
+    Option {
+      counter += 1
+      val param: Parameter[Int] = KeyType.IntKey.make(&quot;counter&quot;).set(counter)
+      SystemEvent(componentInfo.prefix, EventName(&quot;HcdCounter&quot;)).add(param)
+    }
 
   log.info(&quot;Starting publish stream.&quot;)
   eventService.defaultPublisher.publish(incrementCounterEvent(), 2.second, err =&gt; log.error(err.getMessage, ex = err))
@@ -666,11 +668,11 @@ private def publishCounter(): Cancellable = {
 
 private def stopPublishingGenerator(): Unit = {
   log.info(&quot;Stopping publish stream&quot;)
-  maybePublishingGenerator.foreach(_.cancel)
+  maybePublishingGenerator.foreach(_.cancel())
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/samplehcd/JSampleHcdHandlers.java#L110-L126" target="_blank" title="Go to snippet source"></a><code class="language-java">private int counter = 0;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L110-L126" target="_blank" title="Go to snippet source"></a><code class="language-java">private int counter = 0;
 
 private Optional&lt;Event&gt; incrementCounterEvent() {
     counter += 1;
@@ -694,7 +696,7 @@ private void stopPublishingGenerator() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/nfiraos/samplehcd/SampleHcdHandlers.scala#L56-L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L56-L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
 override def initialize(): Future[Unit] = {
   log.info(&quot;In HCD initialize&quot;)
   maybePublishingGenerator = Some(publishCounter())
@@ -711,7 +713,7 @@ override def onShutdown(): Future[Unit] = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/nfiraos/samplehcd/JSampleHcdHandlers.java#L88-L106" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L88-L106" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
 
 @Override
 public CompletableFuture&lt;Void&gt; jInitialize() {
@@ -734,13 +736,14 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <h2><a href="#starting-csw-services" name="starting-csw-services" class="anchor"><span class="anchor-link"></span></a>Starting CSW Services</h2>
 <p>Before we run our application, we must first start the Location Service and the Event Service. A script has been provided to simplify the starting and stopping of CSW services, and is included in the application bundle that comes with each release. The application bundle is called </p>
 <p>csw-apps-0.1.0-SNAPSHOT.zip </p>
-<p>and the script is named <code>csw-services.sh</code>. The version must match the CSW release in use!</p>
+<p>and the script is named <code>csw-services.sh</code>. The script has been modified for CSW 2.0 to automatically pull in the correct dependencies it needs.</p>
+<p>To simplify usage, the script is now included as part of the giter8 template. Therefore, if you are using the template, you do not need to download the CSW apps bundle.</p>
 <p>The <code>csw-services.sh</code> script has two basic commands: <code>start</code> and <code>stop</code>. The start command can start specific services using passed in flags, or all services without any. Services are started on default ports but those ports can be overridden using command line arguments. It is important to pass in a network interface name that is appropriate for your system. These can be obtained using <code>ifconfig</code> on Linux and Mac computers. <code>en0</code> typically, works for most machines. This can alternatively be set using the environment variable <code>INTERFACE_NAME</code>. Setting the interface name at the command with this script also sets this environment variable.</p><div class="callout note "><div class="callout-title">Environment Variables used by CSW</div>
 <p>There are several environment variables that are used by the CSW framework and services. The environment variables used by CSW services are specified <a href="../deployment/env-vars.html">here</a>. </p></div>
 <p>To get information on the arguments for the tool, use <code>csw-services.sh --help</code> or <code>csw-services.sh start --help</code>.</p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
-<p>Let&rsquo;s go ahead and start our CSW Services using the script. Go to the <a href="https://github.com/tmtsoftware/csw/releases">release page</a> and download and unpack the CSW application bundle. Then go into the <code>bin</code> directory and enter the command</p>
-<pre><code>./csw-services.sh start -a -i &lt;iname&gt;
+<p>Let&rsquo;s go ahead and start our CSW Services using the script. Go into the <code>scripts</code> directory in your project and enter the command</p>
+<pre><code>./csw-services.sh start -i &lt;iname&gt;
 </code></pre>
 <p>where <code>&lt;iname&gt;</code> is your interface name (e.g. <code>en0</code>).</p>
 <h2><a href="#building-and-running-component-in-standalone-mode" name="building-and-running-component-in-standalone-mode" class="anchor"><span class="anchor-link"></span></a>Building and Running component in standalone mode</h2>
@@ -749,18 +752,18 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <p>Our template includes a wrapper application around ContainerCmd that we can use in the deployment module. To run our HCD in a standalone mode, go to the project root directory and type <code>sbt &quot;&lt;deploy-module&gt;/runMain &lt;mainClass&gt; --local --standalone &lt;path-to-config-file&gt;&quot;</code>, where</p>
 <ul>
   <li><code>&lt;deploy-module&gt;</code> is the name of the deployment module created by the template (<code>sample-deploy</code> if using defaults)</li>
-  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;package&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>org.tmt.esw.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt &lt;deploy-module&gt;/run</code> and it will prompt you the possibilities.</li>
+  <li><code>&lt;mainClass&gt;</code> is the full class name of our ContainerCmd application, which the template names <code>&lt;package&gt;.&lt;name&gt;deploy.&lt;Name&gt;ContainerCmdApp</code>. If you accept the defaults for the template, it will be <code>org.tmt.csw.sampledeploy.SampleContainerCmdApp</code>. If you are having problems determining the class name, use <code>sbt &lt;deploy-module&gt;/run</code> and it will prompt you the possibilities.</li>
   <li><code>&lt;path-to-config-file&gt;</code> is the filename, which can be an absolute path or relative to the directory of the deployment module. If using defaults, this would be <code>src/main/resources/SampleHcdStandalone.conf</code> for Scala, and <code>src/main/resources/JSampleHcdStandalone.conf</code> for Java.</li>
 </ul>
 <p>So if using the template defaults, the full command would be </p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.esw.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/SampleHcdStandalone.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.csw.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/SampleHcdStandalone.conf&quot;
 </code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.esw.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/JSampleHcdStandalone.conf&quot;
+  <pre><code>sbt &quot;sample-deploy/runMain org.tmt.csw.sampledeploy.SampleContainerCmdApp --local --standalone src/main/resources/JSampleHcdStandalone.conf&quot;
 </code></pre></dd>
 </dl>
 <p>To run the component using the deployment package, perform the following steps:</p>

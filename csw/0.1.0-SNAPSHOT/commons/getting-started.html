@@ -188,6 +188,7 @@ tmtsoftware/csw
   <li><a href="../commons/deployment.html" class="page">Deployment</a>
   <ul>
     <li><a href="../deployment/env-vars.html" class="page">Environment variables</a></li>
+    <li><a href="../deployment/network-topology.html" class="page">Network Topology</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
@@ -290,6 +291,7 @@ tmtsoftware/csw
       <li><a href="https://plugins.jetbrains.com/plugin/8236-scalafmt">Scalafmt</a></li>
     </ul>
   </li>
+  <li>Install <a href="https://redis.io/download">Redis</a> - Version should be greater than 4.0.0</li>
   <li>Recommended testing frameworks/tools:
     <ul>
       <li><a href="http://www.scalatest.org/">ScalaTest</a></li>
@@ -309,23 +311,45 @@ tmtsoftware/csw
 <p>Then select the directory created by the template and click Open.</p>
 <p>You will then see a dialog asking how to import the project. </p>
 <p><img src="../images/gettingstarted/intellijImport.png" alt="intellijImport" /></p>
-<p>Be sure the Import project from external model radio button and sbt options are selected and click Next. Then click Finish on the next dialog to accept the defaults.</p>
+<p>On the next dialog, click the Project JDK dropdown and select Java 11.</p>
+<p><img src="../images/gettingstarted/intellijJava.png" alt="intellijJava" /></p>
+<p>Then click Finish to create the project. Once IntelliJ loads with the new project, you may have to import changes to properly load it.</p>
 <p>Let’s take a look at what just got generated:</p>
-<p>In this example, a project was created with default parameters. The complete project structure looks like this:</p>
-<ol>
-  <li>As you can see in below snapshot, template will create three projects:
-    <ul>
-      <li><code>sample-assembly</code></li>
-      <li><code>sample-hcd</code></li>
-      <li><code>sample-deploy</code></li>
-    </ul>
-  </li>
-</ol>
+<p>In this example, a project was created with default parameters. Below, we show some pictures and outline the project structure. Much of what is described below is described in more detail on the subsequent pages.</p>
+<p>As you can see in below snapshot, template will create three projects:</p>
+<pre><code>- `sample`
+- `samplehcd`
+- `sample-deploy`
+</code></pre>
 <p><img src="../images/gettingstarted/sampleProjectLayout.png" alt="sample-project-structure" /></p>
 <ol>
-  <li><code>sample-deploy</code> project is used to create a concrete implementation. This allows for the construction of a complete binary package bundled with all dependencies, and a launching application.</li>
+  <li>
+  <p>This shows where the module for the assembly is located, called <code>sample</code></p></li>
+  <li>
+  <p>The template generates handlers and factories for both Java and Scala. Both are not required to develop a component. After you choose which language you want to develop in, you can delete the other. We encourage you to use Scala! It has good support for asynchronous programming. </p></li>
+  <li>
+  <p>This is the factory for creating your component actor behavior, which is created by the framework. This does not need to be modified.</p></li>
+  <li>
+  <p>This is the handlers class where you implement your custom logic.</p></li>
+  <li>
+  <p>The template creates an example test fixture for testing your code in both Java and Scala.</p></li>
+  <li>
+  <p>Sample component configuration files are created to facilitate testing. The actual component configuration files needed for running your component are located in the deploy module (see below). </p></li>
+  <li>
+  <p>The HCD code is in a separate module here.</p></li>
 </ol>
-<p><img src="../images/gettingstarted/sampleDeploy.png" alt="sample-deploy" /> 3. Template comes with <code>csw</code> and other useful library dependencies. It also includes bunch of plugins as explained in below snapshot</p>
+<p>The following diagram shows the deploy folder and the project folder:</p>
+<p><img src="../images/gettingstarted/sampleDeploy.png" alt="sample-deploy" /></p>
+<ol>
+  <li>
+  <p><code>sample-deploy</code> project is used to create a concrete implementation. This allows for the construction of a complete binary package bundled with all dependencies, and a launching application. This part shows the configuration files used in component or container construction.</p></li>
+  <li>
+  <p>These are the applications used for component and container construction. These don&rsquo;t need to be modified.</p></li>
+  <li>
+  <p>This folder contains the project build settings, along with the build.sbt file. You shouldn&rsquo;t have to modify anything here other than your dependencies (see below).</p></li>
+  <li>
+  <p>If you need to add a library or other dependency to you project, the Dependencies and Libs files may need to be updated. Libs contains a list of all external libraries, and Dependencies indicate which libraries are used by each module. The template comes with <code>csw</code> and other useful library dependencies already included. </p></li>
+</ol>
 <p><img src="../images/gettingstarted/sampleProjectFolder.png" alt="sample-project" /></p>
 <h2><a href="#add-new-sbt-project-module" name="add-new-sbt-project-module" class="anchor"><span class="anchor-link"></span></a>Add new sbt project module</h2>
 <p>If you want to add another component to the project, for example, with the name <code>sample-io</code>, you have to create a new sbt module:</p>
@@ -348,16 +372,16 @@ tmtsoftware/csw
   <pre><code>lazy val `sample-io` = project
   .settings( libraryDependencies ++= Dependencies.SampleIO )
   .dependsOn(
-`sample-assembly`,
-`sample-hcd`
+`sample`,
+`samplehcd`
   )
 </code></pre></li>
   <li>
   <p>Update the deployment dependencies:</p>
   <pre><code>lazy val `sample-deploy` = project
   .dependsOn(
-`sample-assembly`,
-`sample-hcd`,
+`sample`,
+`samplehcd`,
 `sample-io`
   )
 </code></pre></li>

@@ -188,6 +188,7 @@ tmtsoftware/csw
   <li><a href="../commons/deployment.html" class="page">Deployment</a>
   <ul>
     <li><a href="../deployment/env-vars.html" class="page">Environment variables</a></li>
+    <li><a href="../deployment/network-topology.html" class="page">Network Topology</a></li>
   </ul></li>
   <li><a href="../commons/testing.html" class="page">Testing</a></li>
   <li><a href="../commons/sbt-tasks.html" class="page">sbt Tasks</a></li>
@@ -264,29 +265,29 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleAssemblyTest.scala#L13-L14" target="_blank" title="Go to snippet source"></a><code class="language-scala">class BasicSampleAssemblyTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with AnyFunSuiteLike {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L14-L15" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with AnyFunSuiteLike {
   import frameworkTestKit.frameworkWiring._</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleAssemblyTest.java#L24-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JSampleAssemblyTest extends JUnitSuite {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L24-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JSampleTest extends JUnitSuite {
     @ClassRule
     public static final FrameworkTestKitJunitResource testKit =
             new FrameworkTestKitJunitResource(Arrays.asList(JCSWService.AlarmServer, JCSWService.EventServer));</code></pre></dd>
 </dl>
 <p>For our tests, we will want to run the Assembly first. We will do this in the <code>beforeAll</code> method in Scala, and in a method with a <code>@BeforeClass</code> annotation in Java, so that it is run only once, before any of the tests are run. The Component Configuration files use are the one provided by the giter8 template. Note that for Scala, we must call the superclass&rsquo;s <code>beforeAll</code> method to ensure the services are run.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>This code has been provided as part of the giter8 template, so the relevant line only needs to be uncommented.</p></div>
+<p>This code has been provided as part of the giter8 template.</p></div>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleAssemblyTest.scala#L18-L21" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def beforeAll(): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L19-L22" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def beforeAll(): Unit = {
   super.beforeAll()
-  spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;BasicSampleAssemblyStandalone.conf&quot;))
+  spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;SampleStandalone.conf&quot;))
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleAssemblyTest.java#L31-L34" target="_blank" title="Go to snippet source"></a><code class="language-java">@BeforeClass
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L31-L34" target="_blank" title="Go to snippet source"></a><code class="language-java">@BeforeClass
 public static void setup() {
-    testKit.spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;JBasicSampleAssemblyStandalone.conf&quot;));
+    testKit.spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;JSampleStandalone.conf&quot;));
 }</code></pre></dd>
 </dl>
 <p>Next, let&rsquo;s add a test. We will add a simple test that uses the Location Service to make sure the Assembly is running and resolve the registration information for it. </p><div class="callout note "><div class="callout-title">Note</div>
@@ -294,52 +295,49 @@ public static void setup() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleAssemblyTest.scala#L25-L31" target="_blank" title="Go to snippet source"></a><code class="language-scala">import scala.concurrent.duration._
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L26-L32" target="_blank" title="Go to snippet source"></a><code class="language-scala">import scala.concurrent.duration._
 test(&quot;Assembly should be locatable using Location Service&quot;) {
-  val connection   = AkkaConnection(ComponentId(Prefix(Subsystem.ESW, &quot;SampleAssembly&quot;), ComponentType.Assembly))
+  val connection   = AkkaConnection(ComponentId(Prefix(CSW, &quot;sample&quot;), ComponentType.Assembly))
   val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
   akkaLocation.connection shouldBe connection
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleAssemblyTest.java#L38-L45" target="_blank" title="Go to snippet source"></a><code class="language-java">@Test
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L38-L45" target="_blank" title="Go to snippet source"></a><code class="language-java">@Test
 public void testAssemblyShouldBeLocatableUsingLocationService() throws ExecutionException, InterruptedException {
-    AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.ESW, &quot;JSampleAssembly&quot;), JComponentType.Assembly));
+    AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.CSW, &quot;sample&quot;), JComponentType.Assembly));
     ILocationService locationService = testKit.jLocationService();
     AkkaLocation location = locationService.resolve(connection, Duration.ofSeconds(10)).get().orElseThrow();
 
     Assert.assertEquals(location.connection(), connection);
 }</code></pre></dd>
 </dl>
-<p>You can try running the test either using sbt (<code>sbt test</code> from the project root directory) or directly in the IDE. If you are using IntelliJ, you can run the test by right-clicking on the file in the project explorer and clicking on <code>Run &#39;SampleAssemblyTest&#39;</code> or <code>Run &#39;JSampleAssemblyTest&#39;</code>. You can also right-click in the class body or the specific test body, if you want to run a single test.</p>
+<p>You can try running the test either using sbt (<code>sbt test</code> from the project root directory) or directly in the IDE. If you are using IntelliJ, you can run the test by right-clicking on the file in the project explorer and clicking on <code>Run &#39;SampleTest&#39;</code> or <code>Run &#39;JSampleTest&#39;</code>. You can also right-click in the class body or the specific test body, if you want to run a single test.</p>
 <p>The Assembly we have written does not have much of a public API, so we&rsquo;ll turn to the HCD now, which has a few additional things we can test, including the publishing of Events and the handling of commands.</p>
 <p>First, we will set up the test fixtures similarly as we did for the Assembly, and add a similar test to show the component registers itself with the Location Service on startup.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>This also has been provided in the giter8 template. Uncomment the line that launches the HCD before tests are run.</p></div>
+<p>This also has been provided in the giter8 template.</p></div>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L24-L41" target="_blank" title="Go to snippet source"></a><code class="language-scala">class BasicSampleHcdTest
-    extends ScalaTestFrameworkTestKit(AlarmServer, EventServer)
-    with AnyFunSuiteLike
-    with BeforeAndAfterEach {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/samplehcd/SampleHcdTest.scala#L24-L38" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleHcdTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with AnyFunSuiteLike with BeforeAndAfterEach {
   import frameworkTestKit.frameworkWiring._
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;BasicSampleHcdStandalone.conf&quot;))
+    spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;SampleHcdStandalone.conf&quot;))
   }
 
   import scala.concurrent.duration._
   test(&quot;HCD should be locatable using Location Service&quot;) {
-    val connection   = AkkaConnection(ComponentId(Prefix(Subsystem.ESW, &quot;SampleHcd&quot;), ComponentType.HCD))
+    val connection   = AkkaConnection(ComponentId(Prefix(&quot;CSW.samplehcd&quot;), ComponentType.HCD))
     val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
     akkaLocation.connection shouldBe connection
   }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L44-L64" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JSampleHcdTest extends JUnitSuite {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/samplehcd/JSampleHcdTest.java#L44-L63" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JSampleHcdTest extends JUnitSuite {
 
     @ClassRule
     public static final FrameworkTestKitJunitResource testKit =
@@ -348,13 +346,12 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 
     @BeforeClass
     public static void setup() {
-        testKit.spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;JBasicSampleHcdStandalone.conf&quot;));
+        testKit.spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;JSampleHcdStandalone.conf&quot;));
     }
 
-    // DEOPSCSW-39: examples of Location Service
     @Test
     public void testHCDShouldBeLocatableUsingLocationService() throws ExecutionException, InterruptedException {
-        AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.ESW, &quot;JSampleHcd&quot;), JComponentType.HCD));
+        AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.CSW, &quot;samplehcd&quot;), JComponentType.HCD));
         ILocationService locationService = testKit.jLocationService();
         AkkaLocation location = locationService.resolve(connection, Duration.ofSeconds(10)).get().orElseThrow();
 
@@ -365,8 +362,8 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L45-L80" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should be able to subscribe to HCD events&quot;) {
-  val counterEventKey = EventKey(Prefix(&quot;ESW.SampleHcd&quot;), EventName(&quot;HcdCounter&quot;))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L45-L78" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should be able to subscribe to HCD events&quot;) {
+  val counterEventKey = EventKey(Prefix(&quot;CSW.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
   val hcdCounterKey   = KeyType.IntKey.make(&quot;counter&quot;)
 
   val eventService = eventServiceFactory.make(locationService)(actorSystem)
@@ -376,9 +373,7 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
   Thread.sleep(2000)
 
   val subscriptionEventList = mutable.ListBuffer[Event]()
-  subscriber.subscribeCallback(Set(counterEventKey), { ev =&gt;
-    subscriptionEventList.append(ev)
-  })
+  subscriber.subscribeCallback(Set(counterEventKey), { ev =&gt; subscriptionEventList.append(ev) })
 
   // Sleep for 5 seconds, to allow HCD to publish events
   Thread.sleep(5000)
@@ -403,9 +398,9 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L68-L110" target="_blank" title="Go to snippet source"></a><code class="language-java">@Test
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L68-L109" target="_blank" title="Go to snippet source"></a><code class="language-java">@Test
 public void testShouldBeAbleToSubscribeToHCDEvents() throws InterruptedException {
-    EventKey counterEventKey = new EventKey(Prefix.apply(JSubsystem.ESW, &quot;JSampleHcd&quot;), new EventName(&quot;HcdCounter&quot;));
+    EventKey counterEventKey = new EventKey(Prefix.apply(JSubsystem.CSW, &quot;samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
     Key&lt;Integer&gt; hcdCounterKey = JKeyType.IntKey().make(&quot;counter&quot;);
 
     IEventService eventService = testKit.jEventService();
@@ -413,7 +408,6 @@ public void testShouldBeAbleToSubscribeToHCDEvents() throws InterruptedException
 
     // wait for a bit to ensure HCD has started and published an event
     Thread.sleep(5000);
-
 
     ArrayList&lt;Event&gt; subscriptionEventList = new ArrayList&lt;&gt;();
     subscriber.subscribeCallback(Set.of(counterEventKey), subscriptionEventList::add);
@@ -451,20 +445,20 @@ public void testShouldBeAbleToSubscribeToHCDEvents() throws InterruptedException
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L84-L106" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val typedActorSystem: ActorSystem[_] = actorSystem
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L82-L104" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val typedActorSystem: ActorSystem[_] = actorSystem
 test(&quot;basic: should be able to send sleep command to HCD&quot;) {
   import scala.concurrent.duration._
   implicit val sleepCommandTimeout: Timeout = Timeout(10000.millis)
 
   // Construct Setup command
-  val testPrefix: Prefix = Prefix(&quot;ESW.test&quot;)
+  val testPrefix: Prefix = Prefix(&quot;CSW.test&quot;)
 
   // Helper to get units set
   def setSleepTime(setup: Setup, milli: Long): Setup = setup.add(sleepTimeKey.set(milli).withUnits(Units.millisecond))
 
   val setupCommand = setSleepTime(Setup(testPrefix, hcdSleep, Some(ObsId(&quot;2018A-001&quot;))), 5000)
 
-  val connection = AkkaConnection(ComponentId(Prefix(Subsystem.ESW, &quot;SampleHcd&quot;), ComponentType.HCD))
+  val connection = AkkaConnection(ComponentId(Prefix(Subsystem.CSW, &quot;samplehcd&quot;), ComponentType.HCD))
 
   val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
@@ -476,7 +470,7 @@ test(&quot;basic: should be able to send sleep command to HCD&quot;) {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L114-L135" target="_blank" title="Go to snippet source"></a><code class="language-java">private ActorSystem&lt;SpawnProtocol.Command&gt; typedActorSystem = testKit.actorSystem();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L113-L134" target="_blank" title="Go to snippet source"></a><code class="language-java">private ActorSystem&lt;SpawnProtocol.Command&gt; typedActorSystem = testKit.actorSystem();
 
 // DEOPSCSW-39: examples of Location Service
 @Test
@@ -489,7 +483,7 @@ public void testShouldBeAbleToSendSleepCommandToHCD() throws ExecutionException,
 
     Timeout commandResponseTimeout = new Timeout(10, TimeUnit.SECONDS);
 
-    AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.ESW, &quot;JSampleHcd&quot;), JComponentType.HCD));
+    AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.CSW, &quot;samplehcd&quot;), JComponentType.HCD));
     ILocationService locationService = testKit.jLocationService();
     AkkaLocation location = locationService.resolve(connection, Duration.ofSeconds(10)).get().orElseThrow();
 
@@ -503,19 +497,19 @@ public void testShouldBeAbleToSendSleepCommandToHCD() throws ExecutionException,
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L110-L133" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should get timeout exception if submit timeout is too small&quot;) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L108-L131" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should get timeout exception if submit timeout is too small&quot;) {
   import scala.concurrent.duration._
   implicit val sleepCommandTimeout: Timeout = Timeout(1000.millis)
 
   // Construct Setup command
-  val testPrefix: Prefix    = Prefix(&quot;ESW.test&quot;)
+  val testPrefix: Prefix    = Prefix(&quot;CSW.test&quot;)
   val hcdSleep: CommandName = CommandName(&quot;hcdSleep&quot;)
   // Helper to get units set
   def setSleepTime(milli: Long): Parameter[Long] = sleepTimeKey.set(milli).withUnits(Units.millisecond)
 
   val setupCommand = Setup(testPrefix, hcdSleep, Some(ObsId(&quot;2018A-001&quot;))).add(setSleepTime(5000))
 
-  val connection = AkkaConnection(ComponentId(Prefix(Subsystem.ESW, &quot;SampleHcd&quot;), ComponentType.HCD))
+  val connection = AkkaConnection(ComponentId(Prefix(Subsystem.CSW, &quot;samplehcd&quot;), ComponentType.HCD))
 
   val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
@@ -529,7 +523,7 @@ public void testShouldBeAbleToSendSleepCommandToHCD() throws ExecutionException,
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L139-L161" target="_blank" title="Go to snippet source"></a><code class="language-java">@Rule
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L138-L160" target="_blank" title="Go to snippet source"></a><code class="language-java">@Rule
 public ExpectedException thrown = ExpectedException.none();
 
 @Test
@@ -543,7 +537,7 @@ public void testShouldGetExecutionExceptionIfSubmitTimeoutIsTooSmall() throws Ex
 
     Timeout commandResponseTimeout = new Timeout(1, TimeUnit.SECONDS);
 
-    AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.ESW, &quot;JSampleHcd&quot;), JComponentType.HCD));
+    AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.CSW, &quot;samplehcd&quot;), JComponentType.HCD));
     ILocationService locationService = testKit.jLocationService();
     AkkaLocation location = locationService.resolve(connection, Duration.ofSeconds(10)).get().orElseThrow();
 
