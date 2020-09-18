@@ -208,15 +208,13 @@ tmtsoftware/csw
 </ul>
 <p>The Location Service and AAS can be running on different machines. To start the Location Service and AAS server on a local machine, you can make use of the csw-services.sh script.</p>
 <h2><a href="#application-configurations" name="application-configurations" class="anchor"><span class="anchor-link"></span></a>Application Configurations</h2>
-<p>All auth related configurations go inside an <code>auth-config</code> block. There are three configurations applicable for an Akka HTTP server application i.e. <code>realm</code>, <code>client-id</code> &amp; <code>enable-permissions</code>. </p>
+<p>All auth related configurations go inside an <code>auth-config</code> block. There are two configurations applicable for an Akka HTTP server application i.e. <code>realm</code>, &amp; <code>client-id</code>. </p>
 <p>THe <code>realm</code> has a default value of <code>TMT</code>, if not specified. Ideally all apps in TMT should not have to override this, however it might be useful to override this while testing your app.</p>
-<p><code>enable-permissions</code> is optional config with a default value of <code>false</code>. Typically, roles are used for authorization and specific permissions are not needed. However, if your Akka HTTP server application uses permission based authorization policies, this config needs to be set to true.</p>
 <p><code>client-id</code> is a mandatory configuration which specifies the client ID of the app as per its registration in AAS.</p>
 <p><code>disabled</code> is an optional config with default value of <code>false</code>. This flag can be turned on for local development and testing purposes. When turned on, all http requests bypass all security policies. Clients don&rsquo;t have to pass any token in the requests. It can greatly ease the process of testing business logic without having to go through the process of creating users, managing roles and logging in with user credentials to generate valid access tokens.</p><div class="callout warning "><div class="callout-title">Caution</div>
 <p>Please use <code>disabled</code> flag with caution. If accidentally turned on in production, confidential data can be compromised </p></div>
 <pre class="prettyprint"><code class="language-hocon">auth-config {
   realm = TMT # DEFAULT
-  enable-permissions = false # DEFAULT
   client-id = demo-cli # REQUIRED
   disabled = false # DEFAULT
 } 
@@ -226,7 +224,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/SampleHttpApp.scala#L13-L37" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SampleHttpApp extends HttpApp with App {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/SampleHttpApp.scala#L18-L42" target="_blank" title="Go to snippet source"></a><code class="language-scala">object SampleHttpApp extends App {
 
   implicit val actorSystem: ActorSystem[SpawnProtocol.Command] = typed.ActorSystem(SpawnProtocol(), &quot;sample-http-app&quot;)
   implicit val ec: ExecutionContext                            = actorSystem.executionContext
@@ -236,7 +234,7 @@ tmtsoftware/csw
   val directives      = SecurityDirectives(config, locationService)
   import directives._
 
-  override protected def routes: Route =
+  def routes: Route =
     pathPrefix(&quot;api&quot;) {
       get {
         complete(&quot;SUCCESS&quot;)
@@ -249,7 +247,7 @@ tmtsoftware/csw
   private val host = &quot;0.0.0.0&quot;
   private val port = 9003
 
-  startServer(host, port)
+  Http().newServerAt(host, port).bind(routes)
 }</code></pre></dd>
 </dl>
 <p>Importing everything from security directives is recommended as it imports some implicit methods along with all security directives.</p>
@@ -274,8 +272,6 @@ tmtsoftware/csw
 <p>An authorization policy is a way to provide filtering on incoming HTTP requests based on standard rules. Following policies can be applied to protect routes.</p>
 <ul>
   <li><a href="csw-aas-http.html#realmrolepolicy">ReamRolePolicy</a></li>
-  <li><a href="csw-aas-http.html#clientrolepolicy">ClientRolePolicy</a></li>
-  <li><a href="csw-aas-http.html#permissionpolicy">PermissionPolicy</a></li>
   <li><a href="csw-aas-http.html#custompolicy">CustomPolicy</a></li>
   <li><a href="csw-aas-http.html#custompolicyasync">CustomPolicyAsync</a></li>
   <li><a href="csw-aas-http.html#emptypolicy">EmptyPolicy</a></li>
@@ -286,27 +282,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L72-L74" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithRealmRolePolicy: Route = sGet(RealmRolePolicy(&quot;admin&quot;)) {
-  complete(&quot;OK&quot;)
-}</code></pre></dd>
-</dl>
-<h3><a href="#clientrolepolicy" name="clientrolepolicy" class="anchor"><span class="anchor-link"></span></a>ClientRolePolicy</h3>
-<p>Client roles are basically a namespace dedicated to a client. Each client gets its own namespace.</p>
-<p>This policy filters requests based on Client Role. In the following example, the policy will authorize amrequest if user has been assigned the <code>accounts-admin</code> role for the clientId specified in the configuration.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L78-L80" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithClientRolePolicy: Route = sGet(ClientRolePolicy(&quot;accounts-admin&quot;)) {
-  complete(&quot;OK&quot;)
-}</code></pre></dd>
-</dl>
-<h3><a href="#permissionpolicy" name="permissionpolicy" class="anchor"><span class="anchor-link"></span></a>PermissionPolicy</h3>
-<p>This policy filters requests based on permissions. It expects the name of the scope and the name of the resource on which the permission is created in AAS. </p>
-<p>In the following example policy will authorize a request if the user has the appropriate permission associated in AAS which specifies the <code>delete</code> scope for the <code>account</code> resource.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L90-L92" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithPermissions: Route = sDelete(PermissionPolicy(&quot;delete&quot;, &quot;account&quot;)) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L79-L81" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithRealmRolePolicy: Route = sGet(RealmRolePolicy(&quot;admin&quot;)) {
   complete(&quot;OK&quot;)
 }</code></pre></dd>
 </dl>
@@ -316,7 +292,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L84-L86" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithCustomPolicy: Route = sPost(CustomPolicy(token =&gt; token.given_name.contains(&quot;test-user&quot;))) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L85-L87" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeWithCustomPolicy: Route = sPost(CustomPolicy(token =&gt; token.given_name.contains(&quot;test-user&quot;))) {
   complete(&quot;OK&quot;)
 }</code></pre></dd>
 </dl>
@@ -325,7 +301,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L53-L59" target="_blank" title="Go to snippet source"></a><code class="language-scala">//GET http://[host]:[port]/files?fileId=[fileId]
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L60-L66" target="_blank" title="Go to snippet source"></a><code class="language-scala">//GET http://[host]:[port]/files?fileId=[fileId]
 val route: Route =
   path(&quot;files&quot; / LongNumber) { fileId =&gt;
     sGet(CustomPolicyAsync(token =&gt; Database.doesUserOwnFile(token.preferred_username, fileId))) {
@@ -339,7 +315,7 @@ val route: Route =
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L63-L68" target="_blank" title="Go to snippet source"></a><code class="language-scala">val authenticationOnlyRoute: Route = // GET http://[host]:[post]/api
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L70-L75" target="_blank" title="Go to snippet source"></a><code class="language-scala">val authenticationOnlyRoute: Route = // GET http://[host]:[post]/api
   path(&quot;api&quot;) {
     sGet(EmptyPolicy) {
       complete(&quot;OK&quot;)
@@ -388,7 +364,7 @@ val route: Route =
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L36-L48" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeExampleWithToken: Route = sDelete(EmptyPolicy) { token =&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L43-L55" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routeExampleWithToken: Route = sDelete(EmptyPolicy) { token =&gt;
   parameter(&quot;entityId&quot;.as[Long]) { entityId =&gt;
     ThirdPartyService.deleteEntity(entityId, token.preferred_username)
     complete(s&quot;user ${token.given_name} ${token.family_name} deleted entity $entityId&quot;)
@@ -410,11 +386,11 @@ val routeExampleWithoutToken: Route = sDelete(EmptyPolicy) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L98-L104" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routes: Route =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L93-L99" target="_blank" title="Go to snippet source"></a><code class="language-scala">val routes: Route =
   sGet(RealmRolePolicy(&quot;admin&quot;) | CustomPolicy(_.email.contains(&quot;super-admin@tmt.org&quot;))) {
     complete(&quot;OK&quot;)
   } ~
-    sPost(ClientRolePolicy(&quot;finance_user&quot;) &amp; PermissionPolicy(&quot;edit&quot;)) {
+    sPost(RealmRolePolicy(&quot;finance_user&quot;) &amp; RealmRolePolicy(&quot;finance_admin&quot;)) {
       complete(&quot;OK&quot;)
     }</code></pre></dd>
 </dl>
@@ -427,13 +403,13 @@ val routeExampleWithoutToken: Route = sDelete(EmptyPolicy) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L114" target="_blank" title="Go to snippet source"></a><code class="language-scala">sGet(RealmRolePolicy(&quot;admin&quot;)) &amp; sGet(ClientRolePolicy(&quot;sales_admin&quot;))</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L109" target="_blank" title="Go to snippet source"></a><code class="language-scala">sGet(RealmRolePolicy(&quot;admin&quot;)) &amp; sGet(RealmRolePolicy(&quot;sales_admin&quot;))</code></pre></dd>
 </dl>
 <p>The same can be achieved via <a href="csw-aas-http.html#policy-expressions">Policy Expressions</a> as shown below</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L110" target="_blank" title="Go to snippet source"></a><code class="language-scala">sGet(RealmRolePolicy(&quot;admin&quot;) &amp; ClientRolePolicy(&quot;sales_admin&quot;))</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/auth/AuthDocumentation.scala#L105" target="_blank" title="Go to snippet source"></a><code class="language-scala">sGet(RealmRolePolicy(&quot;admin&quot;) &amp; RealmRolePolicy(&quot;sales_admin&quot;))</code></pre></dd>
 </dl>
 <p>If you want to combine two directives <strong><em>and both of them are CSW security directives</em></strong>, we strongly recommend that you use <a href="csw-aas-http.html#policy-expressions">Policy Expressions</a>. The reason for this is that when you combine two CSW security directives, the authentication check happens twice (or multiple times based on how many CSW security directives are combined). Since this was meant to happen only once, it causes performance slowdown. You can however combine CSW security directives with other directives freely without worrying about performance.</p>
 <h2><a href="#source-code-for-above-examples" name="source-code-for-above-examples" class="anchor"><span class="anchor-link"></span></a>Source code for above examples</h2>

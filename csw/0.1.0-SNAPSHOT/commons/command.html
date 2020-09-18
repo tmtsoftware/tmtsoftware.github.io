@@ -401,7 +401,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala/submit w/queryFinal</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L208-L223" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def sleepHCD(runId: Id, setup: Setup, sleepTime: Long): Unit =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L206-L221" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def sleepHCD(runId: Id, setup: Setup, sleepTime: Long): Unit =
   hcdCS match {
     case Some(cs) =&gt;
       val s = Setup(prefix, hcdSleep, None).add(setSleepTime(sleepTime))
@@ -419,7 +419,7 @@ tmtsoftware/csw
   }</code></pre></dd>
   <dt>Java/submit w/queryFinal</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L245-L263" target="_blank" title="Go to snippet source"></a><code class="language-java">private void sleepHCD(Id runId, Setup setup, Long sleepTime) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L243-L261" target="_blank" title="Go to snippet source"></a><code class="language-java">private void sleepHCD(Id runId, Setup setup, Long sleepTime) {
   if (hcdCS.isPresent()) {
     ICommandService cs = hcdCS.get();
     Setup s = new Setup(prefix, hcdSleep, Optional.empty()).add(setSleepTime(sleepTime));
@@ -477,7 +477,7 @@ Await.result(invalidCommandF, 5.seconds) shouldBe a[Invalid]</code></pre></dd>
 <dl>
   <dt>Scala/submit immediate command</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L152-L157" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def onSetup(runId: Id, setup: Setup): SubmitResponse =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/tutorial/basic/sampleassembly/SampleAssemblyHandlers.scala#L150-L155" target="_blank" title="Go to snippet source"></a><code class="language-scala">private def onSetup(runId: Id, setup: Setup): SubmitResponse =
   setup.commandName match {
     case `immediateCommand` =&gt;
       val localValue = 1000L
@@ -485,7 +485,7 @@ Await.result(invalidCommandF, 5.seconds) shouldBe a[Invalid]</code></pre></dd>
       Completed(runId, Result().add(resultKey.set(localValue)))</code></pre></dd>
   <dt>Java/submit immediate command</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L186-L191" target="_blank" title="Go to snippet source"></a><code class="language-java">private SubmitResponse onSetup(Id runId, Setup setup) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/tutorial/basic/sampleassembly/JSampleAssemblyHandlers.java#L184-L189" target="_blank" title="Go to snippet source"></a><code class="language-java">private SubmitResponse onSetup(Id runId, Setup setup) {
   CommandName cmd = setup.commandName();
   if (cmd.equals(immediateCommand)) {
     // Assembly preforms a calculation or reads state information storing in a result
@@ -530,7 +530,7 @@ val immediateCommandF: Future[SubmitResponse] = async {
   <dt>Scala/submitAndWait w/immediate-response
   </dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/CommandAssemblyHandlers.scala#L100-L110" target="_blank" title="Go to snippet source"></a><code class="language-scala">case `longRunningCmdToAsm` =&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/scala/csw/common/components/command/CommandAssemblyHandlers.scala#L99-L109" target="_blank" title="Go to snippet source"></a><code class="language-scala">case `longRunningCmdToAsm` =&gt;
   hcdComponent.submitAndWait(longRunning).foreach {
     case _: Completed =&gt;
       commandResponseManager.updateCommand(Completed(runId))
@@ -817,7 +817,7 @@ Subscription subscription = hcdCmdService.subscribeCurrentState(currentState -&g
 cswCtx.currentStatePublisher.publish(currentState)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L165-L169" target="_blank" title="Go to snippet source"></a><code class="language-java">Key&lt;Integer&gt; encoder = JKeyType.IntKey().make(&quot;encoder&quot;, JUnits.encoder);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/csw-framework/src/test/java/csw/framework/javadsl/components/JSampleComponentHandlers.java#L163-L167" target="_blank" title="Go to snippet source"></a><code class="language-java">Key&lt;Integer&gt; encoder = JKeyType.IntKey().make(&quot;encoder&quot;, JUnits.encoder);
 int expectedEncoderValue = setup.jGet(encoder).orElseThrow().head();
 
 CurrentState currentState = new CurrentState(prefix(), new StateName(&quot;HCDState&quot;)).add(encoder().set(expectedEncoderValue));

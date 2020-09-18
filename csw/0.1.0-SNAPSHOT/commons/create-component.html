@@ -428,31 +428,27 @@ locationServiceUsage = RegisterOnly</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L56-L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
-override def initialize(): Future[Unit] = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L56-L68" target="_blank" title="Go to snippet source"></a><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
+override def initialize(): Unit = {
   log.info(&quot;In HCD initialize&quot;)
   maybePublishingGenerator = Some(publishCounter())
-  Future.unit
 }
 
 override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
   log.debug(s&quot;TrackingEvent received: ${trackingEvent.connection.name}&quot;)
 }
 
-override def onShutdown(): Future[Unit] = {
+override def onShutdown(): Unit = {
   log.info(&quot;HCD is shutting down&quot;)
-  Future.unit
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L88-L106" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L87-L103" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
 
 @Override
-public CompletableFuture&lt;Void&gt; jInitialize() {
-    return CompletableFuture.runAsync(() -&gt; {
-        log.info(&quot;In HCD initialize&quot;);
-        maybePublishingGenerator = Optional.of(publishCounter());
-    });
+public void jInitialize() {
+    log.info(&quot;In HCD initialize&quot;);
+    maybePublishingGenerator = Optional.of(publishCounter());
 }
 
 @Override
@@ -461,8 +457,8 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 }
 
 @Override
-public CompletableFuture&lt;Void&gt; jOnShutdown() {
-    return CompletableFuture.runAsync(() -&gt; log.info(&quot;HCD is shutting down&quot;));
+public void jOnShutdown() {
+    log.info(&quot;HCD is shutting down&quot;);
 }</code></pre></dd>
 </dl>
 <p>In the example code, you&rsquo;ll notice we have added some functionality to start publishing events. We will cover the Event Service later. You can leave that code out for now.</p>
@@ -492,7 +488,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L95-L101" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L93-L99" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = {
   log.info(s&quot;Validating command: ${controlCommand.commandName.name}&quot;)
   controlCommand.commandName.name match {
     case &quot;sleep&quot; =&gt; Accepted(runId)
@@ -501,7 +497,7 @@ public CompletableFuture&lt;Void&gt; jOnShutdown() {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L130-L138" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L127-L135" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public CommandResponse.ValidateCommandResponse validateCommand(Id runId, ControlCommand controlCommand) {
     String commandName = controlCommand.commandName().name();
     log.info(() -&gt; &quot;Validating command: &quot; + commandName);
@@ -524,7 +520,7 @@ public CommandResponse.ValidateCommandResponse validateCommand(Id runId, Control
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L105-L129" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(runId: Id, controlCommand: ControlCommand): SubmitResponse = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L103-L127" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onSubmit(runId: Id, controlCommand: ControlCommand): SubmitResponse = {
   log.info(s&quot;Handling command: ${controlCommand.commandName}&quot;)
 
   controlCommand match {
@@ -551,7 +547,7 @@ def onSetup(runId: Id, setup: Setup): SubmitResponse = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L143-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L140-L168" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public CommandResponse.SubmitResponse onSubmit(Id runId, ControlCommand controlCommand) {
     log.info(() -&gt; &quot;Handling command: &quot; + controlCommand.commandName());
 
@@ -610,7 +606,7 @@ private val workerActor =
   )</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L54-L84" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L53-L83" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
 }
 
 private static final class Sleep implements WorkerCommand {
@@ -652,7 +648,7 @@ private ActorRef&lt;WorkerCommand&gt; createWorkerActor() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L74-L91" target="_blank" title="Go to snippet source"></a><code class="language-scala">import scala.concurrent.duration._
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L72-L89" target="_blank" title="Go to snippet source"></a><code class="language-scala">import scala.concurrent.duration._
 private def publishCounter(): Cancellable = {
   var counter = 0
   def incrementCounterEvent() =
@@ -672,7 +668,7 @@ private def stopPublishingGenerator(): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L110-L126" target="_blank" title="Go to snippet source"></a><code class="language-java">private int counter = 0;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L107-L123" target="_blank" title="Go to snippet source"></a><code class="language-java">private int counter = 0;
 
 private Optional&lt;Event&gt; incrementCounterEvent() {
     counter += 1;
@@ -696,31 +692,27 @@ private void stopPublishingGenerator() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L56-L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
-override def initialize(): Future[Unit] = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/samplehcd/SampleHcdHandlers.scala#L56-L68" target="_blank" title="Go to snippet source"></a><code class="language-scala">var maybePublishingGenerator: Option[Cancellable] = None
+override def initialize(): Unit = {
   log.info(&quot;In HCD initialize&quot;)
   maybePublishingGenerator = Some(publishCounter())
-  Future.unit
 }
 
 override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
   log.debug(s&quot;TrackingEvent received: ${trackingEvent.connection.name}&quot;)
 }
 
-override def onShutdown(): Future[Unit] = {
+override def onShutdown(): Unit = {
   log.info(&quot;HCD is shutting down&quot;)
-  Future.unit
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L88-L106" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L87-L103" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
 
 @Override
-public CompletableFuture&lt;Void&gt; jInitialize() {
-    return CompletableFuture.runAsync(() -&gt; {
-        log.info(&quot;In HCD initialize&quot;);
-        maybePublishingGenerator = Optional.of(publishCounter());
-    });
+public void jInitialize() {
+    log.info(&quot;In HCD initialize&quot;);
+    maybePublishingGenerator = Optional.of(publishCounter());
 }
 
 @Override
@@ -729,8 +721,8 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 }
 
 @Override
-public CompletableFuture&lt;Void&gt; jOnShutdown() {
-    return CompletableFuture.runAsync(() -&gt; log.info(&quot;HCD is shutting down&quot;));
+public void jOnShutdown() {
+    log.info(&quot;HCD is shutting down&quot;);
 }</code></pre></dd>
 </dl>
 <h2><a href="#starting-csw-services" name="starting-csw-services" class="anchor"><span class="anchor-link"></span></a>Starting CSW Services</h2>

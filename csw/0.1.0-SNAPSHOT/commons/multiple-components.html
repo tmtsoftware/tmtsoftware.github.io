@@ -283,32 +283,28 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/sample/SampleHandlers.scala#L128-L138" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
-override def initialize(): Future[Unit] = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/sample/SampleHandlers.scala#L128-L136" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
+override def initialize(): Unit = {
   log.info(&quot;In Assembly initialize&quot;)
   maybeEventSubscription = Some(subscribeToHcd())
-  Future.unit
 }
 
-override def onShutdown(): Future[Unit] = {
+override def onShutdown(): Unit = {
   log.info(&quot;Assembly is shutting down.&quot;)
-  Future.unit
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L158-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L161-L172" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
 
 @Override
-public CompletableFuture&lt;Void&gt; jInitialize() {
-    return CompletableFuture.runAsync(() -&gt; {
-        log.info(&quot;In Assembly initialize&quot;);
-        maybeEventSubscription = Optional.of(subscribeToHcd());
-    });
+public void jInitialize() {
+    log.info(&quot;In Assembly initialize&quot;);
+    maybeEventSubscription = Optional.of(subscribeToHcd());
 }
 
 @Override
-public CompletableFuture&lt;Void&gt; jOnShutdown() {
-    return CompletableFuture.runAsync(() -&gt; log.info(&quot;Assembly is shutting down.&quot;));
+public void jOnShutdown() {
+    log.info(&quot;Assembly is shutting down.&quot;);
 }</code></pre></dd>
 </dl>
 <p>Once again, ignore the code about setting up the event subscription. This will be covered later when we discuss subscribing to events.</p>
@@ -438,7 +434,7 @@ connectionType: akka
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/sample/SampleHandlers.scala#L142-L150" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/sample/SampleHandlers.scala#L140-L148" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
   log.debug(s&quot;onLocationTrackingEvent called: $trackingEvent&quot;)
   trackingEvent match {
     case LocationUpdated(location) =&gt;
@@ -449,7 +445,7 @@ connectionType: akka
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L175-L186" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L176-L187" target="_blank" title="Go to snippet source"></a><code class="language-java">@Override
 public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
     log.debug(() -&gt; &quot;onLocationTrackingEvent called: &quot; + trackingEvent.toString());
     if (trackingEvent instanceof LocationUpdated) {
@@ -470,7 +466,7 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L209-L217" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val system: ActorSystem[Nothing] = ctx.system
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/AssemblyComponentHandlers.scala#L206-L214" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val system: ActorSystem[Nothing] = ctx.system
 
 val eventualCommandService: Future[CommandService] =
   cswCtx.locationService.resolve(hcdConnection.of[AkkaLocation], 5.seconds).map {
@@ -481,7 +477,7 @@ val eventualCommandService: Future[CommandService] =
 eventualCommandService.foreach { commandService =&gt; hcd = commandService }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L339-L348" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolvedHcdLocation = locationService.resolve(hcdConnection, Duration.ofSeconds(5));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JAssemblyComponentHandlers.java#L354-L363" target="_blank" title="Go to snippet source"></a><code class="language-java">CompletableFuture&lt;Optional&lt;AkkaLocation&gt;&gt; resolvedHcdLocation = locationService.resolve(hcdConnection, Duration.ofSeconds(5));
 
 CompletableFuture&lt;ICommandService&gt; eventualCommandService = resolvedHcdLocation.thenApply((Optional&lt;AkkaLocation&gt; hcdLocation) -&gt; {
     if (hcdLocation.isPresent())
@@ -546,7 +542,7 @@ def handle(hcd: CommandService): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L62-L117" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L65-L120" target="_blank" title="Go to snippet source"></a><code class="language-java">private interface WorkerCommand {
 }
 
 private static final class SendCommand implements WorkerCommand {
@@ -619,7 +615,7 @@ private void handle(Id runId, ICommandService hcd) {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/sample/SampleHandlers.scala#L154-L179" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val counterEventKey = EventKey(Prefix(&quot;CSW.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/sample/SampleHandlers.scala#L152-L177" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val counterEventKey = EventKey(Prefix(&quot;CSW.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
 private val hcdCounterKey   = KeyType.IntKey.make(&quot;counter&quot;)
 
 private def processEvent(event: Event): Unit = {
@@ -647,7 +643,7 @@ private def unsubscribeHcd(): Unit = {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L190-L217" target="_blank" title="Go to snippet source"></a><code class="language-java">private EventKey counterEventKey = new EventKey(Prefix.apply(JSubsystem.CSW, &quot;samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L191-L218" target="_blank" title="Go to snippet source"></a><code class="language-java">private EventKey counterEventKey = new EventKey(Prefix.apply(JSubsystem.CSW, &quot;samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
 private Key&lt;Integer&gt; hcdCounterKey = JKeyType.IntKey().make(&quot;counter&quot;, JUnits.NoUnits);
 
 private void processEvent(Event event) {
@@ -681,32 +677,28 @@ private void unsubscribeHcd() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/sample/SampleHandlers.scala#L128-L138" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
-override def initialize(): Future[Unit] = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/org/tmt/csw/sample/SampleHandlers.scala#L128-L136" target="_blank" title="Go to snippet source"></a><code class="language-scala">private var maybeEventSubscription: Option[EventSubscription] = None
+override def initialize(): Unit = {
   log.info(&quot;In Assembly initialize&quot;)
   maybeEventSubscription = Some(subscribeToHcd())
-  Future.unit
 }
 
-override def onShutdown(): Future[Unit] = {
+override def onShutdown(): Unit = {
   log.info(&quot;Assembly is shutting down.&quot;)
-  Future.unit
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L158-L171" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/sample/JSampleHandlers.java#L161-L172" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;IEventSubscription&gt; maybeEventSubscription = Optional.empty();
 
 @Override
-public CompletableFuture&lt;Void&gt; jInitialize() {
-    return CompletableFuture.runAsync(() -&gt; {
-        log.info(&quot;In Assembly initialize&quot;);
-        maybeEventSubscription = Optional.of(subscribeToHcd());
-    });
+public void jInitialize() {
+    log.info(&quot;In Assembly initialize&quot;);
+    maybeEventSubscription = Optional.of(subscribeToHcd());
 }
 
 @Override
-public CompletableFuture&lt;Void&gt; jOnShutdown() {
-    return CompletableFuture.runAsync(() -&gt; log.info(&quot;Assembly is shutting down.&quot;));
+public void jOnShutdown() {
+    log.info(&quot;Assembly is shutting down.&quot;);
 }</code></pre></dd>
 </dl>
 <h2><a href="#deploying-and-running-components" name="deploying-and-running-components" class="anchor"><span class="anchor-link"></span></a>Deploying and Running Components</h2>

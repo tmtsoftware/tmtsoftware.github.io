@@ -285,7 +285,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L29-L33" target="_blank" title="Go to snippet source"></a><code class="language-scala">val dbFactory = new DatabaseServiceFactory(ctx.system)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L27-L31" target="_blank" title="Go to snippet source"></a><code class="language-scala">val dbFactory = new DatabaseServiceFactory(ctx.system)
 
 dbFactory
   .makeDsl(locationService, &quot;postgres&quot;)         // postgres is dbName
@@ -311,7 +311,7 @@ dbFactory
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L37-L39" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L35-L37" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
   .makeDsl(locationService, &quot;postgres&quot;, &quot;DB_WRITE_USERNAME&quot;, &quot;DB_WRITE_PASSWORD&quot;)
   .foreach((dsl: DSLContext) =&gt; this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
@@ -326,7 +326,7 @@ dbFactory
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L43-L45" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L41-L43" target="_blank" title="Go to snippet source"></a><code class="language-scala">dbFactory
   .makeDsl()
   .foreach((dsl: DSLContext) =&gt; this.dsl = dsl) // save returned dsl to a local variable</code></pre></dd>
   <dt>Java</dt>
@@ -379,14 +379,14 @@ dbFactory
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L52-L56" target="_blank" title="Go to snippet source"></a><code class="language-scala">val createQuery: Query = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L50-L54" target="_blank" title="Go to snippet source"></a><code class="language-scala">val createQuery: Query = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;)
 
 import csw.database.scaladsl.JooqExtentions.RichQuery
 val createResultF: Future[Integer] = createQuery.executeAsyncScala()
 createResultF.foreach(result =&gt; println(s&quot;Films table created with $result&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L87-L89" target="_blank" title="Go to snippet source"></a><code class="language-java">Query createQuery = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;);
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L85-L87" target="_blank" title="Go to snippet source"></a><code class="language-java">Query createQuery = dsl.query(&quot;CREATE TABLE films (id SERIAL PRIMARY KEY, Name VARCHAR (10) NOT NULL)&quot;);
 CompletionStage&lt;Integer&gt; createResultF = createQuery.executeAsync();
 createResultF.thenAccept(result -&gt; System.out.println(&quot;Films table created with &quot; + result));</code></pre></dd>
 </dl>
@@ -395,7 +395,7 @@ createResultF.thenAccept(result -&gt; System.out.println(&quot;Films table creat
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L60-L69" target="_blank" title="Go to snippet source"></a><code class="language-scala">val movie_2 = &quot;movie_2&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L58-L67" target="_blank" title="Go to snippet source"></a><code class="language-scala">val movie_2 = &quot;movie_2&quot;
 
 val queries = dsl.queries(
   dsl.query(&quot;INSERT INTO films(name) VALUES (?)&quot;, &quot;movie_1&quot;),
@@ -407,7 +407,7 @@ val batchResultF: Future[List[Int]] = queries.executeBatchAsync()
 batchResultF.foreach(results =&gt; println(s&quot;executed queries [$queries] with results [$results]&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L93-L102" target="_blank" title="Go to snippet source"></a><code class="language-java">String movie_2 = &quot;movie_2&quot;;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L91-L100" target="_blank" title="Go to snippet source"></a><code class="language-java">String movie_2 = &quot;movie_2&quot;;
 
 Queries queries = dsl.queries(
         dsl.query(&quot;INSERT INTO films(name) VALUES (?)&quot;, &quot;movie_1&quot;),
@@ -428,7 +428,7 @@ batchResultF.thenAccept(results -&gt;
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L73-L81" target="_blank" title="Go to snippet source"></a><code class="language-scala">// domain model
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L71-L79" target="_blank" title="Go to snippet source"></a><code class="language-scala">// domain model
 case class Films(id: Int, name: String) // variable name and type should be same as column&#39;s name and type in database
 
 // fetch data from table and map it to Films class
@@ -439,11 +439,12 @@ val selectResultF: Future[List[Films]] = selectQuery.fetchAsyncScala[Films]
 selectResultF.foreach(names =&gt; s&quot;Fetched names of films $names&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L106-L115" target="_blank" title="Go to snippet source"></a><code class="language-java">// domain model
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L104-L114" target="_blank" title="Go to snippet source"></a><code class="language-java">// domain model
 class Films {
     private Integer id;  // variable name (id) and type (Integer) should be same as column&#39;s name and type in database
     private String name; // variable name (name) and type (String) should be same as column&#39;s name and type in database
-};
+}
+;
 
 // fetch data from table and map it to Films class
 ResultQuery&lt;Record&gt; selectQuery = dsl.resultQuery(&quot;SELECT id, name FROM films WHERE id = ?&quot;, 1);
@@ -456,7 +457,7 @@ selectResultF.thenAccept(names -&gt; System.out.println(&quot;Fetched names of f
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L85-L97" target="_blank" title="Go to snippet source"></a><code class="language-scala">val functionQuery = dsl
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/database/AssemblyComponentHandlers.scala#L83-L95" target="_blank" title="Go to snippet source"></a><code class="language-scala">val functionQuery = dsl
   .query(
     &quot;&quot;&quot;
     |CREATE FUNCTION inc(val integer) RETURNS integer AS $$
@@ -471,7 +472,7 @@ val functionResultF: Future[Integer] = functionQuery.executeAsyncScala()
 functionResultF.foreach(result =&gt; println(s&quot;Function inc created with $result&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L119-L126" target="_blank" title="Go to snippet source"></a><code class="language-java">Query functionQuery = dsl.query(&quot;CREATE FUNCTION inc(val integer) RETURNS integer AS $$\n&quot; +
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L118-L125" target="_blank" title="Go to snippet source"></a><code class="language-java">Query functionQuery = dsl.query(&quot;CREATE FUNCTION inc(val integer) RETURNS integer AS $$\n&quot; +
         &quot;BEGIN\n&quot; +
         &quot;RETURN val + 1;\n&quot; +
         &quot;END; $$\n&quot; +
