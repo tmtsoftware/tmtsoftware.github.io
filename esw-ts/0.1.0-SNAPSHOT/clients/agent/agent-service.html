@@ -144,7 +144,7 @@ Agent Service
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#agent-service" name="agent-service" class="anchor"><span class="anchor-link"></span></a>Agent Service</h1>
-<p>This service provides a handle to spawn sequence manager and sequence components, to kill the components.</p>
+<p>Agent service provides HTTP interface to interact with all agent machines uniquely located using agent prefix. APIs to spawn components takes agent prefix as parameter. Agent prefix is used to locate agent machine using location service. After agent is located, command like spawn sequence manager or spwan sequence component is forwarded to that agent machine. Agent service provides APIs to spawn sequence manager, sequence components and to kill spawned components.</p>
 <p>Agent service has following <a href="#apis">APIs</a>:</p>
 <table>
   <thead>
@@ -176,10 +176,11 @@ Agent Service
 <h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
 <h4><a href="#in-order-to-use-agent-service-apis-" name="in-order-to-use-agent-service-apis-" class="anchor"><span class="anchor-link"></span></a>In order to use agent service APIs:</h4>
 <ol>
-  <li>Agent machine should be up and running. Its location should be registered with location service.</li>
-  <li>Authorization Token with correct access role.  To read more on how to fetch access token, <a href="../../aas/csw-aas-js.html">click here</a>.</li>
+  <li>Agent machines should be up and running.</li>
+  <li>Locations of agent machines should be registered in Location Service.</li>
+  <li>Authorization Token with correct access role.  Documentation on how to fetch access token could be found <a href="../../aas/csw-aas-js.html">here</a>.</li>
 </ol>
-<h4><a href="#to-create-agent-client" name="to-create-agent-client" class="anchor"><span class="anchor-link"></span></a>To create Agent client</h4>
+<h4><a href="#to-create-agent-client-" name="to-create-agent-client-" class="anchor"><span class="anchor-link"></span></a>To create Agent client:</h4>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -190,7 +191,7 @@ const agentService: AgentService = await AgentService(tokenFactory)</code></pre>
 <h2><a href="#apis" name="apis" class="anchor"><span class="anchor-link"></span></a>APIs</h2>
 <h3><a href="#spawnsequencemanager" name="spawnsequencemanager" class="anchor"><span class="anchor-link"></span></a>spawnSequenceManager</h3>
 <p>This API spawns new sequence manager on given agent machine.</p>
-<p>It takes prefix of the agent machine on which sequence manager needs to be spawned. Observation mode config file can  be present on local(agent machine) or on config server. In case of local file, absolute path should be provided.  Sequence manager version is an optional field. When version isn&rsquo;t specified, default version gets picked up.</p>
+<p>It takes a prefix of the agent machine on which sequence manager needs to be spawned. Observation mode config file can  be present on local(agent machine) or on config server. In case of local file, absolute path should be provided.  Sequence manager version is an optional field. When version isn&rsquo;t specified, default version gets picked up.</p>
 <p>API returns <code>Spawned</code> as a response when sequence manager has spawned successfully.  API returns <code>Failed</code> as a response if a sequence manager is already present.</p>
 <p>The following example shows how to call spawnSequenceManager API :</p>
 <dl>
@@ -200,7 +201,7 @@ const agentService: AgentService = await AgentService(tokenFactory)</code></pre>
 const obsModeConfigPath = &#39;/obs-mode.conf&#39;
 const sequenceManagerVersion = &#39;1.0.0&#39;
 
-const spawnResponse1 = agentService.spawnSequenceManager(
+const spawnResponse1: SpawnResponse = await agentService.spawnSequenceManager(
   agentPrefix,
   obsModeConfigPath,
   false,
@@ -208,22 +209,22 @@ const spawnResponse1 = agentService.spawnSequenceManager(
 )</code></pre></dd>
 </dl>
 <h3><a href="#spawnsequencecomponent" name="spawnsequencecomponent" class="anchor"><span class="anchor-link"></span></a>spawnSequenceComponent</h3>
-<p>This API spawns new sequence component on given agent machine.</p>
-<p>It takes prefix of the agent machine, component name and ocs-app library version. Version is an optional field.  When version isn&rsquo;t specified, default version gets picked up.</p>
+<p>This API spawns new sequence component on agent machine which is located using agent prefix provided.</p>
+<p>It takes a prefix of the agent machine, component name and ocs-app library version. Version is an optional field.  When version isn&rsquo;t specified, default version gets picked up.</p>
 <p>API returns <code>Spawned</code> as a response when sequence component has spawned successfully.  API returns <code>Failed</code> as a response if a sequence component with given component name and agent&rsquo;s subsystem is already present on any agent machine.</p>
-<p>The following example shows how to call spawnSeqeunceComponent API :</p>
+<p>The following example shows how to call spawnSequenceComponent API :</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L25-L30" target="_blank" title="Go to snippet source"></a><code class="language-ts">const ocsAppVersion = &#39;1.2.1&#39;
-const spawnResponse2 = agentService.spawnSequenceComponent(
+const spawnResponse2: SpawnResponse = await agentService.spawnSequenceComponent(
   agentPrefix,
   &#39;component1&#39;,
   ocsAppVersion
 )</code></pre></dd>
 </dl>
 <h3><a href="#killcomponent" name="killcomponent" class="anchor"><span class="anchor-link"></span></a>killComponent</h3>
-<p>This API is used to kill any component registered with location service. It takes <code>Connection</code> as a input which can be  either of following: <code>AkkaConnection</code>, <code>HttpConnection</code>, <code>TcpConnection</code>.</p>
+<p>This API allows to kill any component registered with location service. It takes <code>Connection</code> as a input which can be  either of following: <code>AkkaConnection</code>, <code>HttpConnection</code>, <code>TcpConnection</code>.</p>
 <p>API returns <code>Killed</code> as a response if component is killed successfully.  API returns <code>Failed</code> as a response if it fails to kill the component.</p>
 <p>The following example shows how to call killComponent API :</p>
 <dl>
@@ -234,7 +235,7 @@ const httpConnection: HttpConnection = HttpConnection(
   componentPrefix,
   &#39;SequenceComponent&#39;
 )
-const killResponse = agentService.killComponent(httpConnection)</code></pre></dd>
+const killResponse: KillResponse = await agentService.killComponent(httpConnection)</code></pre></dd>
 </dl>
 </div>
 <div>
