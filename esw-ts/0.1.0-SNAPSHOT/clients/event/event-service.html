@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../assets/images/favicon.png">
-<title>Admin Service · TMT JavaScript/Typescript Library</title>
+<title>Event Service · TMT JavaScript/Typescript Library</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT JavaScript/Typescript Library
 </span>
 <span class="md-header-nav__topic">
-Admin Service
+Event Service
 </span>
 </div>
 </div>
@@ -107,11 +107,11 @@ TMT JavaScript/Typescript Library
 <ul>
   <li><a href="../../clients/index.html" class="page">Clients</a>
   <ul>
-    <li><a href="../../clients/admin/admin-service.html" class="active page">Admin Service</a></li>
+    <li><a href="../../clients/admin/admin-service.html" class="page">Admin Service</a></li>
     <li><a href="../../clients/agent/agent-service.html" class="page">Agent Service</a></li>
     <li><a href="../../clients/command/command-service.html" class="page">Command Service</a></li>
     <li><a href="../../clients/config/config-service.html" class="page">Config Service</a></li>
-    <li><a href="../../clients/event/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../../clients/event/event-service.html" class="active page">Event Service</a></li>
     <li><a href="../../clients/location/location-service.html" class="page">Location Service</a></li>
     <li><a href="../../clients/sequencer/sequencer-service.html" class="page">Sequencer Service</a></li>
   </ul></li>
@@ -130,10 +130,11 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../clients/admin/admin-service.html#admin-service" class="header">Admin Service</a>
+  <li><a href="../../clients/event/event-service.html#event-service" class="header">Event Service</a>
   <ul>
-    <li><a href="../../clients/admin/admin-service.html#creation-of-admin-service" class="header">Creation of Admin Service</a></li>
-    <li><a href="../../clients/admin/admin-service.html#apis" class="header">APIs</a></li>
+    <li><a href="../../clients/event/event-service.html#creation-of-event-service" class="header">Creation of Event Service</a></li>
+    <li><a href="../../clients/event/event-service.html#event-model" class="header">Event Model</a></li>
+    <li><a href="../../clients/event/event-service.html#apis" class="header">APIs</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -155,10 +156,11 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../clients/admin/admin-service.html#admin-service" class="header">Admin Service</a>
+  <li><a href="../../clients/event/event-service.html#event-service" class="header">Event Service</a>
   <ul>
-    <li><a href="../../clients/admin/admin-service.html#creation-of-admin-service" class="header">Creation of Admin Service</a></li>
-    <li><a href="../../clients/admin/admin-service.html#apis" class="header">APIs</a></li>
+    <li><a href="../../clients/event/event-service.html#creation-of-event-service" class="header">Creation of Event Service</a></li>
+    <li><a href="../../clients/event/event-service.html#event-model" class="header">Event Model</a></li>
+    <li><a href="../../clients/event/event-service.html#apis" class="header">APIs</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -169,9 +171,9 @@ TMT JavaScript/Typescript Library
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#admin-service" name="admin-service" class="anchor"><span class="anchor-link"></span></a>Admin Service</h1>
-<p>This service provides a handle to admin related APIs which includes logging related APIs</p>
-<p>Admin service has following <a href="#apis">APIs</a>:</p>
+<h1><a href="#event-service" name="event-service" class="anchor"><span class="anchor-link"></span></a>Event Service</h1>
+<p>This service provides methods to interact with the event server which implements the publish/subscribe messaging paradigm where one component publishes an event and all clients that have subscribed receive the event.</p>
+<p>Event service has the following <a href="#apis">APIs</a>:</p>
 <table>
   <thead>
     <tr>
@@ -182,46 +184,134 @@ TMT JavaScript/Typescript Library
   </thead>
   <tbody>
     <tr>
-      <td><a href="#getlogmetadata">getLogMetadata</a> </td>
-      <td>componentId </td>
-      <td>LogMetadata </td>
+      <td><a href="#publish">publish</a> </td>
+      <td>event </td>
+      <td>Done </td>
     </tr>
     <tr>
-      <td><a href="#setloglevel">setLogLevel</a> </td>
-      <td>componentId, level </td>
-      <td>Done </td>
+      <td><a href="#get">get</a> </td>
+      <td>eventKeys </td>
+      <td>Event[] </td>
+    </tr>
+    <tr>
+      <td><a href="#subscribe">subscribe</a> </td>
+      <td>eventKeys, maxFrequency, onEventCallback </td>
+      <td>Subscription </td>
+    </tr>
+    <tr>
+      <td><a href="#psubscribe">pSubscribe</a> </td>
+      <td>eventKeys, maxFrequency, pattern, onEventCallback </td>
+      <td>Subscription </td>
     </tr>
   </tbody>
 </table>
-<h2><a href="#creation-of-admin-service" name="creation-of-admin-service" class="anchor"><span class="anchor-link"></span></a>Creation of Admin Service</h2>
-<h4><a href="#to-create-admin-client-" name="to-create-admin-client-" class="anchor"><span class="anchor-link"></span></a>To create Admin client:</h4>
+<h2><a href="#creation-of-event-service" name="creation-of-event-service" class="anchor"><span class="anchor-link"></span></a>Creation of Event Service</h2>
+<h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
+<ol>
+  <li>The Location Service and Event Service Server needs to be running in the network</li>
+  <li>The necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s) for the Location Service nodes.</li>
+</ol>
+<h4><a href="#examples-to-create-client-for-event-service" name="examples-to-create-client-for-event-service" class="anchor"><span class="anchor-link"></span></a>Examples to create client for Event service</h4>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L4" target="_blank" title="Go to snippet source"></a><code class="language-ts">const adminService: AdminService = await AdminService()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L16" target="_blank" title="Go to snippet source"></a><code class="language-ts">const eventService: EventService = await EventService()</code></pre></dd>
 </dl>
+<h2><a href="#event-model" name="event-model" class="anchor"><span class="anchor-link"></span></a>Event Model</h2>
+<ul>
+  <li>Event : it includes informatio related to an particular event
+    <ul>
+      <li>type : ObserveEvent / SystemEvent</li>
+      <li>eventId: unique id for an event</li>
+      <li>source: prefix of the source from which event is sent</li>
+      <li>eventName: event key / logical name for the event</li>
+      <li>eventTime: instant at which event is created</li>
+    </ul>
+  </li>
+</ul>
 <h2><a href="#apis" name="apis" class="anchor"><span class="anchor-link"></span></a>APIs</h2>
-<h3><a href="#getlogmetadata" name="getlogmetadata" class="anchor"><span class="anchor-link"></span></a>getLogMetadata</h3>
-<p>This API gives basic logging configuration values for specific component.</p>
-<p>The following example shows how to call getLogMetadata API :</p>
+<h3><a href="#publish" name="publish" class="anchor"><span class="anchor-link"></span></a>publish</h3>
+<p>This API publishes an event to the event server and returns Done as a promise.</p>
+<p>Example for publish looks like following:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L8-L10" target="_blank" title="Go to snippet source"></a><code class="language-ts">const prefix = new Prefix(&#39;TCS&#39;, &#39;filter.wheel&#39;)
-const componentId = new ComponentId(prefix, &#39;HCD&#39;)
-const logMetaData: LogMetadata = await adminService.getLogMetadata(componentId)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L20-L27" target="_blank" title="Go to snippet source"></a><code class="language-ts">const sourcePrefix = new Prefix(&#39;IRIS&#39;, &#39;component&#39;)
+const eventName = new EventName(&#39;move-event&#39;)
+let positionParameter = intKey(&#39;positions&#39;, &#39;centimeter&#39;).set([10, 20, 30])
+const paramSet: Parameter&lt;IntKey&gt;[] = [positionParameter]
+
+const event = ObserveEvent.make(sourcePrefix, eventName, paramSet)
+
+const done: Done = await eventService.publish(event)</code></pre></dd>
 </dl>
-<h3><a href="#setloglevel" name="setloglevel" class="anchor"><span class="anchor-link"></span></a>setLogLevel</h3>
-<p>This API allows setting log level of specific component.</p>
-<p>The following example shows how to call setLogLevel API :</p>
+<h3><a href="#get" name="get" class="anchor"><span class="anchor-link"></span></a>get</h3>
+<p>This API takes set of EventKeys as input and receives the list of events against those specific set of EventKeys.</p>
+<p>Example for get looks like following:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L14" target="_blank" title="Go to snippet source"></a><code class="language-ts">const actionStatus: Done = await adminService.setLogLevel(componentId, &#39;WARN&#39;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L31-L38" target="_blank" title="Go to snippet source"></a><code class="language-ts">const sourcePrefix = new Prefix(&#39;IRIS&#39;, &#39;component&#39;)
+
+const eventKey1 = new EventKey(sourcePrefix, new EventName(&#39;eventKey1&#39;))
+const eventKey2 = new EventKey(sourcePrefix, new EventName(&#39;eventKey2&#39;))
+
+const eventKeys = new Set([eventKey1, eventKey2])
+const events: Event[] = await eventService.get(eventKeys)
+</code></pre></dd>
+</dl>
+<h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
+<p>This API subscribes to multiple <code>eventKeys</code> and receive events at <code>every</code> frequency to given callback and return subscription handle which can be used as a kill switch. It takes callback function which gets triggered when ever the events are received. The latest events available for the given Event Keys will be received first.</p>
+<p>Example for subscribe looks like following:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L43-L58" target="_blank" title="Go to snippet source"></a><code class="language-ts">const sourcePrefix = new Prefix(&#39;IRIS&#39;, &#39;component&#39;)
+
+const eventKey1 = new EventKey(sourcePrefix, new EventName(&#39;eventKey1&#39;))
+const eventKey2 = new EventKey(sourcePrefix, new EventName(&#39;eventKey2&#39;))
+
+const onEventCallback = (event: Event) =&gt; {
+  console.log(event)
+  // make use of ${event} inside this callback function
+}
+const eventKeys = new Set([eventKey1, eventKey2])
+
+const subscription: Subscription = eventService.subscribe(
+  eventKeys,
+  10
+)(onEventCallback)
+</code></pre></dd>
+</dl>
+<h3><a href="#psubscribe" name="psubscribe" class="anchor"><span class="anchor-link"></span></a>pSubscribe</h3>
+<p>This API subscribes to events of a EventKey specified using a <code>subsystem</code> and a <code>pattern</code> to match the remaining Event Key and return subscription handle which can be used as a kill switch. It takes callback function which gets triggered when ever the events are received. The latest events available for the given Event Keys will be received first.</p>
+<p>Example for pSubscribe looks like following:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L64-L82" target="_blank" title="Go to snippet source"></a><code class="language-ts">const onEventCallback = (event: Event) =&gt; {
+  // make use of ${event} inside this callback function
+  console.log(event)
+}
+
+// subscribe to all esw subsystem&#39;s event
+const subscription: Subscription = eventService.pSubscribe(
+  &#39;ESW&#39;,
+  10,
+  &#39;.*&#39;
+)(onEventCallback)
+
+// subscribe to specific events having hcd in the event name
+const specificSubscription: Subscription = eventService.pSubscribe(
+  &#39;ESW&#39;,
+  10,
+  &#39;(hcd)&#39;
+)(onEventCallback)
+</code></pre></dd>
 </dl>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/clients/admin/admin-service.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/clients/event/event-service.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -237,7 +327,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../clients/index.html" title="Clients" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../clients/config/config-service.html" title="Config Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -246,17 +336,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Clients
+Config Service
 </span>
 </div>
 </a>
-<a href="../../clients/agent/agent-service.html" title="Agent Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../clients/location/location-service.html" title="Location Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Agent Service
+Location Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
