@@ -135,7 +135,8 @@ TMT JavaScript/Typescript Library
   <ul>
     <li><a href="../../clients/location/location-service.html#creation-of-location-service" class="header">Creation of Location Service</a></li>
     <li><a href="../../clients/location/location-service.html#apis" class="header">APIs</a></li>
-    <li><a href="../../clients/location/location-service.html#models" class="header">Models</a></li>
+    <li><a href="../../clients/location/location-service.html#location-models" class="header">Location Models</a></li>
+    <li><a href="../../clients/location/location-service.html#connections" class="header">Connections</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -161,7 +162,8 @@ TMT JavaScript/Typescript Library
   <ul>
     <li><a href="../../clients/location/location-service.html#creation-of-location-service" class="header">Creation of Location Service</a></li>
     <li><a href="../../clients/location/location-service.html#apis" class="header">APIs</a></li>
-    <li><a href="../../clients/location/location-service.html#models" class="header">Models</a></li>
+    <li><a href="../../clients/location/location-service.html#location-models" class="header">Location Models</a></li>
+    <li><a href="../../clients/location/location-service.html#connections" class="header">Connections</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -250,7 +252,7 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L15-L22" target="_blank" title="Go to snippet source"></a><code class="language-ts">const tokenFactory = () =&gt; auth.token
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L15-L22" target="_blank" title="Go to snippet source"></a><code class="language-ts">const tokenFactory = () =&gt; auth.token
 
 const locationServiceWithToken: LocationService = await LocationService(
   tokenFactory
@@ -261,17 +263,29 @@ const locationService: LocationService = await LocationService()
 </dl>
 <h2><a href="#apis" name="apis" class="anchor"><span class="anchor-link"></span></a>APIs</h2><div class="callout note "><div class="callout-title">Async-Await</div>
 <p>Note that the examples are using async/await which makes handling of promises more readable.</p></div>
-<h2><a href="#models" name="models" class="anchor"><span class="anchor-link"></span></a>Models</h2>
-<h3><a href="#components" name="components" class="anchor"><span class="anchor-link"></span></a>Components</h3>
-<h3><a href="#connections" name="connections" class="anchor"><span class="anchor-link"></span></a>Connections</h3>
-<h3><a href="#resolving-connections" name="resolving-connections" class="anchor"><span class="anchor-link"></span></a>Resolving connections</h3>
+<h2><a href="#location-models" name="location-models" class="anchor"><span class="anchor-link"></span></a>Location Models</h2>
+<h3><a href="#location-info" name="location-info" class="anchor"><span class="anchor-link"></span></a>Location Info</h3>
+<p>An Application, Sequencer, Assembly, HCD, or Service may need to be used by another component as part of normal observatory operations. It must register its location information with Location Service so that other components can find it.  Location information comprises:</p>
+<p><strong>ComponentId</strong> : A component ID consisting of</p>
+<p><strong>ComponentName</strong> : a name describing the component.</p>
+<p><strong>ComponentType</strong> : such as Container, Sequencer, HCD, Assembly, Service.</p>
+<h2><a href="#connections" name="connections" class="anchor"><span class="anchor-link"></span></a>Connections</h2>
+<p>The means to reach components. These are categorized as Akka, HTTP, or Tcp type connections.</p>
+<p>Examples of Connection looks like following :</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L140-L142" target="_blank" title="Go to snippet source"></a><code class="language-ts">const httpConnection: HttpConnection = HttpConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)
+const akkaConnection: AkkaConnection = AkkaConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)
+const tcpConnection: TcpConnection = TcpConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)</code></pre></dd>
+</dl>
 <h3><a href="#list" name="list" class="anchor"><span class="anchor-link"></span></a>list</h3>
 <p>This API returns a list of Locations of components that are registered in the location service.</p>
 <p>The following example shows how to call list API :</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L25-L29" target="_blank" title="Go to snippet source"></a><code class="language-ts">const locations: Location[] = await locationService.list()
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L25-L29" target="_blank" title="Go to snippet source"></a><code class="language-ts">const locations: Location[] = await locationService.list()
 //
 // iterate over locations to do further computation
 // .
@@ -283,7 +297,7 @@ const locationService: LocationService = await LocationService()
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L33-L45" target="_blank" title="Go to snippet source"></a><code class="language-ts">// valid Component type&#39;s : &quot;HCD&quot; | &quot;Assembly&quot; | &quot;Service&quot; | &quot;Container&quot; | &quot;Sequencer&quot; | &quot;SequenceComponent&quot; | &quot;Machine&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L33-L45" target="_blank" title="Go to snippet source"></a><code class="language-ts">// valid Component type&#39;s : &quot;HCD&quot; | &quot;Assembly&quot; | &quot;Service&quot; | &quot;Container&quot; | &quot;Sequencer&quot; | &quot;SequenceComponent&quot; | &quot;Machine&quot;
 
 const sequencerLocations: Location[] = await locationService.listByComponentType(
   &#39;Sequencer&#39;
@@ -303,7 +317,7 @@ const assemblyLocations: Location[] = await locationService.listByComponentType(
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L49-L61" target="_blank" title="Go to snippet source"></a><code class="language-ts">// valid Connection types: &quot;akka&quot; | &quot;http&quot; | &quot;tcp&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L49-L61" target="_blank" title="Go to snippet source"></a><code class="language-ts">// valid Connection types: &quot;akka&quot; | &quot;http&quot; | &quot;tcp&quot;
 const akkaLocations: Location[] = await locationService.listByConnectionType(
   &#39;akka&#39;
 )
@@ -323,7 +337,7 @@ const tcpLocations: Location[] = await locationService.listByConnectionType(
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L64-L75" target="_blank" title="Go to snippet source"></a><code class="language-ts">const remoteLocations: Location[] = await locationService.listByHostname(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L64-L75" target="_blank" title="Go to snippet source"></a><code class="language-ts">const remoteLocations: Location[] = await locationService.listByHostname(
   &#39;192.0.162.178&#39;
 )
 
@@ -342,7 +356,7 @@ const localLocations: Location[] = await locationService.listByHostname(
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L79-L81" target="_blank" title="Go to snippet source"></a><code class="language-ts">const eswComponentLocations: Option&lt;Location&gt; = await locationService.find(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L79-L81" target="_blank" title="Go to snippet source"></a><code class="language-ts">const eswComponentLocations: Option&lt;Location&gt; = await locationService.find(
   HttpConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)
 )</code></pre></dd>
 </dl>
@@ -352,7 +366,7 @@ const localLocations: Location[] = await locationService.listByHostname(
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L85-L94" target="_blank" title="Go to snippet source"></a><code class="language-ts">// Find the location of Hcd with esw.component-1 prefix
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L85-L94" target="_blank" title="Go to snippet source"></a><code class="language-ts">// Find the location of Hcd with esw.component-1 prefix
 // ConnectionType&#39;s : HttpConnection , AkkaConnection &amp; TCPConnection
 const maybeLocation: Option&lt;Location&gt; = await locationService.find(
   HttpConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)
@@ -369,7 +383,7 @@ if (maybeLocation) {
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L98-L102" target="_blank" title="Go to snippet source"></a><code class="language-ts">// ConnectionType&#39;s : HttpConnection , AkkaConnection &amp; TCPConnection
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L98-L102" target="_blank" title="Go to snippet source"></a><code class="language-ts">// ConnectionType&#39;s : HttpConnection , AkkaConnection &amp; TCPConnection
 const done: Done = await locationServiceWithToken.unregister(
   HttpConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)
 )
@@ -381,7 +395,7 @@ const done: Done = await locationServiceWithToken.unregister(
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L106-L120" target="_blank" title="Go to snippet source"></a><code class="language-ts">// ConnectionType&#39;s : HttpConnection , AkkaConnection &amp; TCPConnection
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L106-L120" target="_blank" title="Go to snippet source"></a><code class="language-ts">// ConnectionType&#39;s : HttpConnection , AkkaConnection &amp; TCPConnection
 // Time unit : seconds, milliseconds, nanoseconds, microseconds, minutes, hours, days
 
 const connection = HttpConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)
@@ -403,7 +417,7 @@ if (maybeLocation1) {
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/locationExample.ts#L124-L136" target="_blank" title="Go to snippet source"></a><code class="language-ts">// a callback function
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L124-L136" target="_blank" title="Go to snippet source"></a><code class="language-ts">// a callback function
 const onTrackingEvent = (event: TrackingEvent) =&gt; {
   if (event._type === &#39;LocationRemoved&#39;) {
     // do something when connection&#39;s location is removed from the location service

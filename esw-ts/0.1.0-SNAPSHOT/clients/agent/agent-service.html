@@ -332,90 +332,81 @@ const killResponse: KillResponse = await agentService.killComponent(
 </code></pre></dd>
 </dl>
 <h2><a href="#sample-usage" name="sample-usage" class="anchor"><span class="anchor-link"></span></a>Sample usage</h2>
-<p>The following examples shows how to call agent api&rsquo;s and handling errors and different response types that are received from the server</p>
+<p>The following examples shows how to call AgentService api&rsquo;s and handle the response <code>SpawnResponse</code> and <code>KillResponse</code>.</p>
+<p>This example also illustrates error handling of service specific exception <code>AgentNotFoundException</code> along with the generic errors <code>TransportError</code> and <code>InternalServerError</code> will look like.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L53-L133" target="_blank" title="Go to snippet source"></a><code class="language-ts">// common function to handle error scenario&#39;s
-const handleError = (err: Error) =&gt; {
-  if (err instanceof GenericError) {
-    // depending on use case, error can be handled on following fields
-    //  - err.status      ( 5XX, 4XX, 3XX)
-    //  - err.statusText  (http status associated with status)
-    //  - err.errorType   (TransportError, InternalServerError, TokenMissingError, AuthorizationError, AuthenticationError)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L53-L123" target="_blank" title="Go to snippet source"></a><code class="language-ts"> // common function to handle error scenario&#39;s
+ const handleError = (err: Error) =&gt; {
+   if (err instanceof GenericError) {
+     // depending on use case, error can be handled on following fields
+     //  - err.status      ( 5XX, 4XX, 3XX)
+     //  - err.errorType   (AgentNotFoundException, TransportError, InternalServerError)
 
-    switch (err.errorType) {
-      case &#39;AgentNotFoundException&#39;:
-        // do something on getting AgentNotFoundException&#39;
-        break
-      case &#39;TransportError&#39;:
-        // console.log(err.message)
-        // do something on getting TransportError (4XX, 3XX, etc)
-        break
-      case &#39;InternalServerError&#39;:
-        // it could be null pointer exception, / by zero exceptions,etc.
-        break
-      case &#39;TokenMissingError&#39;:
-        // do something on getting TokenMissingError
-        break
-      case &#39;AuthorizationError&#39;:
-        // do something on getting AuthorizationError
-        break
-      case &#39;AuthenticationError&#39;:
-        // do something on getting AuthenticationError
-        break
-    }
-  }
-}
+     switch (err.errorType) {
+       case &#39;AgentNotFoundException&#39;:
+         console.log(&#39;do something on getting AgentNotFoundException&#39;)
+         break
+       case &#39;TransportError&#39;:
+         console.log(&#39;do something on getting TransportError (4XX, 3XX, etc))&#39;)
+         break
+       case &#39;InternalServerError&#39;:
+         console.log(&#39;do something on null pointer exception, / by zero exceptions,etc.&#39;)
+         break
+     }
+   }
+ }
 
-const componentPrefix = new Prefix(&#39;ESW&#39;, &#39;component1&#39;)
-const httpConnection: HttpConnection = HttpConnection(
-  componentPrefix,
-  &#39;SequenceComponent&#39;
-)
+// setup
+ const componentPrefix = new Prefix(&#39;ESW&#39;, &#39;component1&#39;)
+ const httpConnection: HttpConnection = HttpConnection(
+   componentPrefix,
+   &#39;SequenceComponent&#39;
+ )
 
-// ---- spawn api example starts here ---
-try {
-  const spawnResponse: SpawnResponse = await agentService.spawnSequenceManager(
-    agentPrefix,
-    obsModeConfigPath,
-    false,
-    sequenceManagerVersion
-  )
+ // ---- spawn api example starts here ---
+ try {
+   const spawnResponse: SpawnResponse = await agentService.spawnSequenceManager(
+     agentPrefix,
+     obsModeConfigPath,
+     false,
+     sequenceManagerVersion
+   )
 
-  // spawn response handling (200 status code)
-  switch (spawnResponse._type) {
-    case &#39;Spawned&#39;:
-      // do something on successful spawn operation
-      break
-    case &#39;Failed&#39;:
-      // do something on failed response
-      break
-  }
-} catch (err) {
-  handleError(err)
-}
+   // spawn response handling (200 status code)
+   switch (spawnResponse._type) {
+     case &#39;Spawned&#39;:
+       // do something on successful spawn operation
+       break
+     case &#39;Failed&#39;:
+       // do something on failed response
+       break
+   }
+ } catch (err) {
+   handleError(err)
+ }
 
-// ---- spawn example ends here ---
+ // ---- spawn example ends here ---
 
-// ---- kill example starts here ---
-try {
-  const killResponse: KillResponse = await agentService.killComponent(
-    httpConnection
-  )
-  // kill response handling (200 status code)
-  switch (killResponse._type) {
-    case &#39;Killed&#39;:
-      // do something on successful kill operation
-      break
-    case &#39;Failed&#39;:
-      // do something on failed response
-      break
-  }
-} catch (err) {
-  handleError(err)
-}
-// ---- kill example ends here ---
+ // ---- kill example starts here ---
+ try {
+   const killResponse: KillResponse = await agentService.killComponent(
+     httpConnection
+   )
+   // kill response handling (200 status code)
+   switch (killResponse._type) {
+     case &#39;Killed&#39;:
+       // do something on successful kill operation
+       break
+     case &#39;Failed&#39;:
+       // do something on failed response
+       break
+   }
+ } catch (err) {
+   handleError(err)
+ }
+ // ---- kill example ends here ---
 </code></pre></dd>
 </dl>
 </div>
