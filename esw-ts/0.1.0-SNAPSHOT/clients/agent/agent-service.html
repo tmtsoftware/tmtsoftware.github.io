@@ -114,6 +114,7 @@ TMT JavaScript/Typescript Library
     <li><a href="../../clients/event/event-service.html" class="page">Event Service</a></li>
     <li><a href="../../clients/location/location-service.html" class="page">Location Service</a></li>
     <li><a href="../../clients/sequencer/sequencer-service.html" class="page">Sequencer Service</a></li>
+    <li><a href="../../clients/sequence-manager/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
   </ul></li>
   <li><a href="../../params/index.html" class="page">Params</a>
   <ul>
@@ -134,6 +135,7 @@ TMT JavaScript/Typescript Library
   <ul>
     <li><a href="../../clients/agent/agent-service.html#creation-of-agent-service" class="header">Creation of Agent Service</a></li>
     <li><a href="../../clients/agent/agent-service.html#apis" class="header">APIs</a></li>
+    <li><a href="../../clients/agent/agent-service.html#sample-usage" class="header">Sample usage</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -159,6 +161,7 @@ TMT JavaScript/Typescript Library
   <ul>
     <li><a href="../../clients/agent/agent-service.html#creation-of-agent-service" class="header">Creation of Agent Service</a></li>
     <li><a href="../../clients/agent/agent-service.html#apis" class="header">APIs</a></li>
+    <li><a href="../../clients/agent/agent-service.html#sample-usage" class="header">Sample usage</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -172,32 +175,11 @@ TMT JavaScript/Typescript Library
 <h1><a href="#agent-service" name="agent-service" class="anchor"><span class="anchor-link"></span></a>Agent Service</h1>
 <p>Agent service provides HTTP interface to interact with all agent machines uniquely located using agent prefix. APIs to spawn components takes agent prefix as parameter. Agent prefix is used to locate agent machine using location service. After agent is located, command like spawn sequence manager or spwan sequence component is forwarded to that agent machine. Agent service provides APIs to spawn sequence manager, sequence components and to kill spawned components.</p>
 <p>Agent service has following <a href="#apis">APIs</a>:</p>
-<table>
-  <thead>
-    <tr>
-      <th>API </th>
-      <th>Input args </th>
-      <th>Returns </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a href="#spawnsequencemanager">spawnSequenceManager</a> </td>
-      <td>agentPrefix, obsModeConfigPath, isConfigLocal, version </td>
-      <td>SpawnResponse </td>
-    </tr>
-    <tr>
-      <td><a href="#spawnsequencecomponent">spawnSequenceComponent</a> </td>
-      <td>agentPrefix, componentName, version </td>
-      <td>SpawnResponse </td>
-    </tr>
-    <tr>
-      <td><a href="#killcomponent">killComponent</a> </td>
-      <td>connection </td>
-      <td>KillResponse </td>
-    </tr>
-  </tbody>
-</table>
+<ul>
+  <li><a href="#spawnsequencemanager">spawnSequenceManager</a></li>
+  <li><a href="#spawnsequencecomponent">spawnSequenceComponent</a></li>
+  <li><a href="#killcomponent">killComponent</a></li>
+</ul>
 <h2><a href="#creation-of-agent-service" name="creation-of-agent-service" class="anchor"><span class="anchor-link"></span></a>Creation of Agent Service</h2>
 <h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
 <h4><a href="#in-order-to-use-agent-service-apis-" name="in-order-to-use-agent-service-apis-" class="anchor"><span class="anchor-link"></span></a>In order to use agent service APIs:</h4>
@@ -210,7 +192,7 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L12-L14" target="_blank" title="Go to snippet source"></a><code class="language-ts">const tokenFactory = () =&gt; auth.token
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L13-L15" target="_blank" title="Go to snippet source"></a><code class="language-ts">const tokenFactory = () =&gt; auth.token
 
 const agentService: AgentService = await AgentService(tokenFactory)</code></pre></dd>
 </dl>
@@ -219,12 +201,47 @@ const agentService: AgentService = await AgentService(tokenFactory)</code></pre>
 <h3><a href="#spawnsequencemanager" name="spawnsequencemanager" class="anchor"><span class="anchor-link"></span></a>spawnSequenceManager</h3>
 <p>This API spawns new sequence manager on given agent machine.</p>
 <p>It takes a prefix of the agent machine on which sequence manager needs to be spawned. Observation mode config file can  be present on local(agent machine) or on config server. In case of local file, absolute path should be provided.  Sequence manager version is an optional field. When version isn&rsquo;t specified, default version gets picked up.</p>
-<p>API returns <code>Spawned</code> as a response when sequence manager has spawned successfully.  API returns <code>Failed</code> as a response if a sequence manager is already present.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Arguments </th>
+      <th>Description </th>
+      <th>Required/Optional </th>
+      <th>Default </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>agentPrefix: <a href="../../params/commands.html#prefix">Prefix</a> </td>
+      <td>prefix of the agent machine on which sequence manager needs to be spawned </td>
+      <td>Required </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>obsModeConfigPath: <strong>string</strong> </td>
+      <td>path of the observation mode (local path or remote i.e config server path) </td>
+      <td>Required </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>isConfigLocal: <strong>boolean</strong> </td>
+      <td>true if configPath is local path, false in case of remote path. </td>
+      <td>Required </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>version: <strong>string</strong> </td>
+      <td>The sequence manager version. </td>
+      <td>Optional </td>
+      <td>latest </td>
+    </tr>
+  </tbody>
+</table>
 <p>The following example shows how to call spawnSequenceManager API :</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L18-L27" target="_blank" title="Go to snippet source"></a><code class="language-ts">const agentPrefix = new Prefix(&#39;ESW&#39;, &#39;agent1&#39;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L19-L28" target="_blank" title="Go to snippet source"></a><code class="language-ts">const agentPrefix = new Prefix(&#39;ESW&#39;, &#39;agent1&#39;)
 const obsModeConfigPath = &#39;/obs-mode.conf&#39;
 const sequenceManagerVersion = &#39;1.0.0&#39;
 
@@ -238,12 +255,41 @@ const spawnResponse1: SpawnResponse = await agentService.spawnSequenceManager(
 <h3><a href="#spawnsequencecomponent" name="spawnsequencecomponent" class="anchor"><span class="anchor-link"></span></a>spawnSequenceComponent</h3>
 <p>This API spawns new sequence component on agent machine which is located using agent prefix provided.</p>
 <p>It takes a prefix of the agent machine, component name and ocs-app library version. Version is an optional field.  When version isn&rsquo;t specified, default version gets picked up.</p>
-<p>API returns <code>Spawned</code> as a response when sequence component has spawned successfully.  API returns <code>Failed</code> as a response if a sequence component with given component name and agent&rsquo;s subsystem is already present on any agent machine.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Arguments </th>
+      <th>Description </th>
+      <th>Required/Optional </th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>agentPrefix: <a href="../../params/commands.html#prefix">Prefix</a> </td>
+      <td>prefix of the agent machine on which sequence manager needs to be spawned </td>
+      <td>Required </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>componentName: <strong>string</strong> </td>
+      <td>The name of the component </td>
+      <td>Required </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>version: <strong>string</strong> </td>
+      <td>The OCS App version. </td>
+      <td>Optional </td>
+      <td>latest </td>
+    </tr>
+  </tbody>
+</table>
 <p>The following example shows how to call spawnSequenceComponent API :</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L31-L36" target="_blank" title="Go to snippet source"></a><code class="language-ts">const ocsAppVersion = &#39;1.2.1&#39;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L32-L37" target="_blank" title="Go to snippet source"></a><code class="language-ts">const ocsAppVersion = &#39;1.2.1&#39;
 const spawnResponse2: SpawnResponse = await agentService.spawnSequenceComponent(
   agentPrefix,
   &#39;component1&#39;,
@@ -251,20 +297,126 @@ const spawnResponse2: SpawnResponse = await agentService.spawnSequenceComponent(
 )</code></pre></dd>
 </dl>
 <h3><a href="#killcomponent" name="killcomponent" class="anchor"><span class="anchor-link"></span></a>killComponent</h3>
-<p>This API allows to kill any component registered with location service. It takes <code>Connection</code> as a input which can be  either of following: <code>AkkaConnection</code>, <code>HttpConnection</code>, <code>TcpConnection</code>.</p>
-<p>API returns <code>Killed</code> as a response if component is killed successfully.  API returns <code>Failed</code> as a response if it fails to kill the component.</p>
+<p>This API allows to kill any component registered with location service.</p>
+<p>It takes <code>Connection</code> as a input which can be either of following: <code>AkkaConnection</code>, <code>HttpConnection</code>, <code>TcpConnection</code>.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Arguments </th>
+      <th>Description </th>
+      <th>Required/Optional </th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>connection: <a href="../../clients/location/location-service.html#connections">Connection</a> </td>
+      <td>The Connection of the machine where component is spawned. </td>
+      <td>Required </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
 <p>The following example shows how to call killComponent API :</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L40-L47" target="_blank" title="Go to snippet source"></a><code class="language-ts">const componentPrefix = new Prefix(&#39;ESW&#39;, &#39;component1&#39;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L41-L49" target="_blank" title="Go to snippet source"></a><code class="language-ts">const componentPrefix = new Prefix(&#39;ESW&#39;, &#39;component1&#39;)
 const httpConnection: HttpConnection = HttpConnection(
   componentPrefix,
   &#39;SequenceComponent&#39;
 )
 const killResponse: KillResponse = await agentService.killComponent(
   httpConnection
-)</code></pre></dd>
+)
+</code></pre></dd>
+</dl>
+<h2><a href="#sample-usage" name="sample-usage" class="anchor"><span class="anchor-link"></span></a>Sample usage</h2>
+<p>The following examples shows how to call agent api&rsquo;s and handling errors and different response types that are received from the server</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L53-L133" target="_blank" title="Go to snippet source"></a><code class="language-ts">// common function to handle error scenario&#39;s
+const handleError = (err: Error) =&gt; {
+  if (err instanceof GenericError) {
+    // depending on use case, error can be handled on following fields
+    //  - err.status      ( 5XX, 4XX, 3XX)
+    //  - err.statusText  (http status associated with status)
+    //  - err.errorType   (TransportError, InternalServerError, TokenMissingError, AuthorizationError, AuthenticationError)
+
+    switch (err.errorType) {
+      case &#39;AgentNotFoundException&#39;:
+        // do something on getting AgentNotFoundException&#39;
+        break
+      case &#39;TransportError&#39;:
+        // console.log(err.message)
+        // do something on getting TransportError (4XX, 3XX, etc)
+        break
+      case &#39;InternalServerError&#39;:
+        // it could be null pointer exception, / by zero exceptions,etc.
+        break
+      case &#39;TokenMissingError&#39;:
+        // do something on getting TokenMissingError
+        break
+      case &#39;AuthorizationError&#39;:
+        // do something on getting AuthorizationError
+        break
+      case &#39;AuthenticationError&#39;:
+        // do something on getting AuthenticationError
+        break
+    }
+  }
+}
+
+const componentPrefix = new Prefix(&#39;ESW&#39;, &#39;component1&#39;)
+const httpConnection: HttpConnection = HttpConnection(
+  componentPrefix,
+  &#39;SequenceComponent&#39;
+)
+
+// ---- spawn api example starts here ---
+try {
+  const spawnResponse: SpawnResponse = await agentService.spawnSequenceManager(
+    agentPrefix,
+    obsModeConfigPath,
+    false,
+    sequenceManagerVersion
+  )
+
+  // spawn response handling (200 status code)
+  switch (spawnResponse._type) {
+    case &#39;Spawned&#39;:
+      // do something on successful spawn operation
+      break
+    case &#39;Failed&#39;:
+      // do something on failed response
+      break
+  }
+} catch (err) {
+  handleError(err)
+}
+
+// ---- spawn example ends here ---
+
+// ---- kill example starts here ---
+try {
+  const killResponse: KillResponse = await agentService.killComponent(
+    httpConnection
+  )
+  // kill response handling (200 status code)
+  switch (killResponse._type) {
+    case &#39;Killed&#39;:
+      // do something on successful kill operation
+      break
+    case &#39;Failed&#39;:
+      // do something on failed response
+      break
+  }
+} catch (err) {
+  handleError(err)
+}
+// ---- kill example ends here ---
+</code></pre></dd>
 </dl>
 </div>
 <div>

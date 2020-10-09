@@ -114,6 +114,7 @@ TMT JavaScript/Typescript Library
     <li><a href="../clients/event/event-service.html" class="page">Event Service</a></li>
     <li><a href="../clients/location/location-service.html" class="page">Location Service</a></li>
     <li><a href="../clients/sequencer/sequencer-service.html" class="page">Sequencer Service</a></li>
+    <li><a href="../clients/sequence-manager/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
   </ul></li>
   <li><a href="../params/index.html" class="page">Params</a>
   <ul>
@@ -176,29 +177,34 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/StateVariableExample.ts#L14-L54" target="_blank" title="Go to snippet source"></a><code class="language-ts">//prefix
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/StateVariableExample.ts#L14-L59" target="_blank" title="Go to snippet source"></a><code class="language-ts">//prefix
 
-const prefix = Prefix.fromString(&quot;wfos.prog.cloudcover&quot;)
+const prefix = Prefix.fromString(&#39;wfos.prog.cloudcover&#39;)
 
 //key
-const charKey1    = charKey(&quot;charKey&quot;)
-const intKey1     = intKey(&quot;intKey&quot;, &#39;meter&#39;)
-const booleanKey1 = booleanKey(&quot;booleanKey&quot;)
-const utcTimeKey1 = utcTimeKey(&quot;utcTimeKey&quot;)
-const notUsedKey = stringKey(&quot;notUsed&quot;)
+const charKey1 = charKey(&#39;charKey&#39;)
+const intKey1 = intKey(&#39;intKey&#39;, &#39;meter&#39;)
+const booleanKey1 = booleanKey(&#39;booleanKey&#39;)
+const utcTimeKey1 = utcTimeKey(&#39;utcTimeKey&#39;)
+const notUsedKey = stringKey(&#39;notUsed&#39;)
 
 //parameters
-const charParam    = charKey1.set([&#39;A&#39;, &#39;B&#39;, &#39;C&#39;])
-const intParam     = intKey1.set([1, 2, 3])
+const charParam = charKey1.set([&#39;A&#39;, &#39;B&#39;, &#39;C&#39;])
+const intParam = intKey1.set([1, 2, 3])
 const booleanParam = booleanKey1.set([true, false])
-const utcTime      = utcTimeKey1.set([new Date().toUTCString()])
+const utcTime = utcTimeKey1.set([new Date().toUTCString()])
 
 //create CurrentState and use sequential add
-const cs1 = new CurrentState(prefix, &quot;testStateName&quot;).add(charParam).add(intParam)
+const cs1 = new CurrentState(prefix, &#39;testStateName&#39;)
+  .add(charParam)
+  .add(intParam)
 //create CurrentState and add more than one Parameters using madd
-const cs2 = new CurrentState(prefix,&quot;testStateName&quot;).madd([intParam, booleanParam])
+const cs2 = new CurrentState(prefix, &#39;testStateName&#39;).madd([
+  intParam,
+  booleanParam
+])
 //create CurrentState using apply
-const cs3 = new CurrentState(prefix,&quot;testStateName&quot;, [utcTime])
+const cs3 = new CurrentState(prefix, &#39;testStateName&#39;, [utcTime])
 
 //access keys
 const charKeyExists = cs1.exists(charKey1) //true
@@ -207,15 +213,15 @@ const charKeyExists = cs1.exists(charKey1) //true
 const p1: Option&lt;Parameter&lt;IntKey&gt;&gt; = cs1.get(intKey1)
 
 //access values
-const v1: Option&lt;string[]&gt;  = cs1.get(charKey1)?.values
+const v1: Option&lt;string[]&gt; = cs1.get(charKey1)?.values
 const v2: Option&lt;boolean[]&gt; = cs2.get(booleanKey1)?.values
 
 //remove keys
 const cs4 = cs3.remove(utcTimeKey1)
 
 //update existing keys - set it back by an hour
-var today = new Date();
-today.setHours(today.getHours() - 1 );
+var today = new Date()
+today.setHours(today.getHours() - 1)
 const cs5 = cs3.add(utcTimeKey1.set([today.toUTCString()]))</code></pre></dd>
 </dl>
 </div>

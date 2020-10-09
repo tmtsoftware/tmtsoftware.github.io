@@ -114,6 +114,7 @@ TMT JavaScript/Typescript Library
     <li><a href="../clients/event/event-service.html" class="page">Event Service</a></li>
     <li><a href="../clients/location/location-service.html" class="page">Location Service</a></li>
     <li><a href="../clients/sequencer/sequencer-service.html" class="page">Sequencer Service</a></li>
+    <li><a href="../clients/sequence-manager/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
   </ul></li>
   <li><a href="../params/index.html" class="page">Params</a>
   <ul>
@@ -180,8 +181,8 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/EventExample.ts#L14-L19" target="_blank" title="Go to snippet source"></a><code class="language-ts">const source = new Prefix(&quot;IRIS&quot;, &quot;filter.wheel&quot;)
-const eventName = new EventName(&quot;temperatures&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/EventExample.ts#L14-L19" target="_blank" title="Go to snippet source"></a><code class="language-ts">const source = new Prefix(&#39;IRIS&#39;, &#39;filter.wheel&#39;)
+const eventName = new EventName(&#39;temperatures&#39;)
 const event = SystemEvent.make(source, eventName)
 
 // accessing eventTime
@@ -194,21 +195,21 @@ const eventTime = event.eventTime</code></pre></dd>
   <dt>Typescript</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/EventExample.ts#L23-L65" target="_blank" title="Go to snippet source"></a><code class="language-ts">//keys
-const k1 = intKey(&quot;encoder&quot;)
-const k2 = intKey(&quot;speed&quot;)
-const k3 = stringKey(&quot;filter&quot;)
-const k4 = intKey(&quot;notUsed&quot;)
+const k1 = intKey(&#39;encoder&#39;)
+const k2 = intKey(&#39;speed&#39;)
+const k3 = stringKey(&#39;filter&#39;)
+const k4 = intKey(&#39;notUsed&#39;)
 
 //prefixes
-const ck1 = Prefix.fromString(&quot;wfos.red.filter&quot;)
-const name1 = new EventName(&quot;filterWheel&quot;)
-const ck3 = Prefix.fromString(&quot;iris.imager.filter&quot;)
-const name3 = new EventName(&quot;status&quot;)
+const ck1 = Prefix.fromString(&#39;wfos.red.filter&#39;)
+const name1 = new EventName(&#39;filterWheel&#39;)
+const ck3 = Prefix.fromString(&#39;iris.imager.filter&#39;)
+const name3 = new EventName(&#39;status&#39;)
 
 //parameters
 const p1: Parameter&lt;IntKey&gt; = k1.set([22])
 const p2: Parameter&lt;IntKey&gt; = k2.set([44])
-const p3: Parameter&lt;StringKey&gt; = k3.set([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;])
+const p3: Parameter&lt;StringKey&gt; = k3.set([&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;])
 
 //Create SystemEvent using madd
 const se1: SystemEvent = SystemEvent.make(ck1, name1).madd([p1, p2])
@@ -231,7 +232,7 @@ const v2: Option&lt;number[]&gt; = se2.get(k2)?.values
 const se4: SystemEvent = se3.remove(k3)
 
 //add more than one parameters, using madd
-const se5: SystemEvent = se4.madd([k3.set([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;]), k4.set([99, 100])])
+const se5: SystemEvent = se4.madd([k3.set([&#39;X&#39;, &#39;Y&#39;, &#39;Z&#39;]), k4.set([99, 100])])
 const paramSize: number = se5.size()
 
 //update existing key with set
@@ -243,42 +244,45 @@ const se6: SystemEvent = se5.add(k2.set([5, 6, 7, 8]))</code></pre></dd>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/EventExample.ts#L70-L106" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>//keys
-  const k1 = intKey(&quot;readoutsCompleted&quot;)
-  const k2 = intKey(&quot;coaddsCompleted&quot;)
-  const k3 = stringKey(&quot;fileID&quot;)
-  const k4 = intKey(&quot;notUsed&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/EventExample.ts#L70-L109" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>//keys
+const k1 = intKey(&#39;readoutsCompleted&#39;)
+const k2 = intKey(&#39;coaddsCompleted&#39;)
+const k3 = stringKey(&#39;fileID&#39;)
+const k4 = intKey(&#39;notUsed&#39;)
 
 //prefixes
-  const ck1 = Prefix.fromString(&quot;iris.ifu.detectorAssembly&quot;)
-  const name1 = new EventName(&quot;readoutEnd&quot;)
-  const ck3 = Prefix.fromString(&quot;wfos.red.detector&quot;)
-  const name3 = new EventName(&quot;exposureStarted&quot;)
+const ck1 = Prefix.fromString(&#39;iris.ifu.detectorAssembly&#39;)
+const name1 = new EventName(&#39;readoutEnd&#39;)
+const ck3 = Prefix.fromString(&#39;wfos.red.detector&#39;)
+const name3 = new EventName(&#39;exposureStarted&#39;)
 
 //parameters
-  const p1: Parameter&lt;IntKey&gt; = k1.set([4])
-  const p2: Parameter&lt;IntKey&gt; = k2.set([2])
-  const p3: Parameter&lt;StringKey&gt; = k3.set([&quot;WFOS-RED-0001&quot;])
+const p1: Parameter&lt;IntKey&gt; = k1.set([4])
+const p2: Parameter&lt;IntKey&gt; = k2.set([2])
+const p3: Parameter&lt;StringKey&gt; = k3.set([&#39;WFOS-RED-0001&#39;])
 
 //Create ObserveEvent using madd
-  const se1: ObserveEvent = ObserveEvent.make(ck1, name1).madd([p1, p2])
+const se1: ObserveEvent = ObserveEvent.make(ck1, name1).madd([p1, p2])
 //Create ObserveEvent using apply
-  const se2: ObserveEvent = ObserveEvent.make(ck3, name3, [p1, p2])
+const se2: ObserveEvent = ObserveEvent.make(ck3, name3, [p1, p2])
 //Create ObserveEvent and use add
-  const se3: ObserveEvent = ObserveEvent.make(ck3, name3).add(p1).add(p2).add(p3)
+const se3: ObserveEvent = ObserveEvent.make(ck3, name3)
+  .add(p1)
+  .add(p2)
+  .add(p3)
 
 //access keys
-  const k1Exists: Boolean = se1.exists(k1) //true
+const k1Exists: Boolean = se1.exists(k1) //true
 
 //access Parameters
-  const p4: Option&lt;Parameter&lt;IntKey&gt;&gt; = se1.get(k1)
+const p4: Option&lt;Parameter&lt;IntKey&gt;&gt; = se1.get(k1)
 
 //access values
-  const v1: Option&lt;number[]&gt; = se1.get(k1)?.values
-  const v2: Option&lt;number[]&gt; = se2.get(k2)?.values
+const v1: Option&lt;number[]&gt; = se1.get(k1)?.values
+const v2: Option&lt;number[]&gt; = se2.get(k2)?.values
 
 //remove keys
-  const se4: ObserveEvent = se3.remove(k3)</code></pre></dd>
+const se4: ObserveEvent = se3.remove(k3)</code></pre></dd>
 </dl>
 <h1><a href="#unique-key-constraint" name="unique-key-constraint" class="anchor"><span class="anchor-link"></span></a>Unique Key Constraint</h1>
 <p>By choice, a ParameterSet in either ObserveEvent or SystemEvent event will be optimized to store only unique keys. When using <code>add</code> or <code>madd</code> methods on events to add new parameters, if the parameter being added has a key which is already present in the paramSet, the already stored parameter will be replaced by the given parameter.</p><div class="callout note "><div class="callout-title">Note</div>
@@ -287,42 +291,48 @@ const se6: SystemEvent = se5.add(k2.set([5, 6, 7, 8]))</code></pre></dd>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/EventExample.ts#L112-L147" target="_blank" title="Go to snippet source"></a><code class="language-ts">  //keys
-  const encoderKey = intKey(&quot;encoder&quot;)
-  const filterKey = intKey(&quot;filter&quot;)
-  const miscKey = intKey(&quot;misc&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/EventExample.ts#L114-L155" target="_blank" title="Go to snippet source"></a><code class="language-ts">//keys
+const encoderKey = intKey(&#39;encoder&#39;)
+const filterKey = intKey(&#39;filter&#39;)
+const miscKey = intKey(&#39;misc&#39;)
 
 //prefix
-  const prefix = Prefix.fromString(&quot;wfos.blue.filter&quot;)
+const prefix = Prefix.fromString(&#39;wfos.blue.filter&#39;)
 
-  const name1 = new EventName(&quot;filterWheel&quot;)
+const name1 = new EventName(&#39;filterWheel&#39;)
 
 //params
-  const encParam1 = encoderKey.set([1])
-  const encParam2 = encoderKey.set([2])
+const encParam1 = encoderKey.set([1])
+const encParam2 = encoderKey.set([2])
 
-  const encParam3 = encoderKey.set([3])
-  const filterParam1 = filterKey.set([1])
-  const filterParam2 = filterKey.set([2])
+const encParam3 = encoderKey.set([3])
+const filterParam1 = filterKey.set([1])
+const filterParam2 = filterKey.set([2])
 
-  const filterParam3 = filterKey.set([3])
+const filterParam3 = filterKey.set([3])
 
-  const miscParam1 = miscKey.set([100])
+const miscParam1 = miscKey.set([100])
 //StatusEvent with duplicate key via constructor
-  const systemEvent =
-    SystemEvent.make(prefix, name1, [encParam1, encParam2, encParam3, filterParam1, filterParam2, filterParam3])
+const systemEvent = SystemEvent.make(prefix, name1, [
+  encParam1,
+  encParam2,
+  encParam3,
+  filterParam1,
+  filterParam2,
+  filterParam3
+])
 
 //try adding duplicate keys via add + madd
-  const changedStatusEvent = systemEvent
-    .add(encParam3)
-    .madd([filterParam1, filterParam2, filterParam3])
+const changedStatusEvent = systemEvent
+  .add(encParam3)
+  .madd([filterParam1, filterParam2, filterParam3])
 //duplicate keys will not be added. Should contain one Encoder and one Filter key
-  const uniqueKeys2 = changedStatusEvent.paramSet.map(x =&gt; x.keyName)
+const uniqueKeys2 = changedStatusEvent.paramSet.map((x) =&gt; x.keyName)
 
 //miscKey(unique) will be added; encoderKey(duplicate) will not be added
-  const finalStatusEvent = systemEvent.madd([miscParam1, encParam1])
+const finalStatusEvent = systemEvent.madd([miscParam1, encParam1])
 //now contains encoderKey, filterKey, miscKey
-  const uniqueKeys3 = finalStatusEvent.paramSet.map(x =&gt; x.keyName)</code></pre></dd>
+const uniqueKeys3 = finalStatusEvent.paramSet.map((x) =&gt; x.keyName)</code></pre></dd>
 </dl>
 </div>
 <div>
