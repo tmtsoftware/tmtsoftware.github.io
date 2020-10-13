@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../../assets/images/favicon.png">
 <title>Sequencer Scripts · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/esw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/esw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,21 +104,8 @@ tmtsoftware/esw
 TMT Executive Software (ESW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/esw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/esw
-</div>
-</a>
-
-</div>
 <ul>
+  <li><a href="../../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
   <ul>
     <li><a href="../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
@@ -151,9 +122,19 @@ tmtsoftware/esw
   <li><a href="../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../apps/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
+    <li><a href="../../apps/sequencer-app.html" class="page">Sequencer App</a></li>
+    <li><a href="../../apps/sequence-manager-app.html" class="page">Sequence Manager App</a></li>
+    <li><a href="../../apps/agent-service-app.html" class="page">Agent Service App</a></li>
+    <li><a href="../../apps/agent-app.html" class="page">Agent App</a></li>
+    <li><a href="../../apps/gateway-app.html" class="page">ESW Gateway App</a></li>
   </ul></li>
   <li><a href="../../eswgateway/esw-gateway.html" class="page">Esw Gateway</a></li>
+  <li><a href="../../technical/technical.html" class="page">Technical Design Documents</a>
+  <ul>
+    <li><a href="../../technical/sequencemanager/index.html" class="page">Sequence Manager</a></li>
+    <li><a href="../../technical/agent/agent.html" class="page">Agent</a></li>
+    <li><a href="../../technical/agentservice/agent-service.html" class="page">Agent Service</a></li>
+  </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 </nav>
@@ -175,7 +156,7 @@ tmtsoftware/esw
 <h1><a href="#sequencer-scripts" name="sequencer-scripts" class="anchor"><span class="anchor-link"></span></a>Sequencer Scripts</h1>
 <p>All logic in a Sequencer is implemented in Sequencer Scripts. Scripts are written in a TMT developed Domain Specific Language (DSL) to facilitate development based on the Kotlin programming language. This section describes the DSL in detail.</p>
 <p>In order to provide thread-safe concurrency, the Active Object design pattern is used for Scripts. The Active Object design pattern features a single “Executor” thread, in which all requests are sent to, such that only one request is processed at a time. This allows the Script to maintain global state variables that can be accessed in a thread-safe way.</p><div class="callout note "><div class="callout-title">Do not starve the execution thread!</div>
-<p>The Script DSL is written to execute with a single thread. Script processing steps should not stay busy for long periods. For instance, do not execute a CPU-bound routine on the single thread. In stead, use an asynchronous approach using a different thread.</p></div>
+<p>The Script DSL is written to execute with a single thread. Script processing steps should not stay busy for long periods. For instance, do not execute a CPU-bound routine on the single thread. In stead, follow patterns mentioned <a href="dsl/constructs/blocking.html">here</a>.</p></div>
 <p>Scripts can be written in two styles: handler-oriented and state machine-oriented. See the page on <a href="script-styles.html">Scripting Styles</a> for more information. </p>
 <div class="toc ">
 <ul>
@@ -191,6 +172,7 @@ tmtsoftware/esw
     <li><a href="../../sequencer/scripts/dsl/constructs/handlers.html" class="page">Script Handlers</a></li>
     <li><a href="../../sequencer/scripts/dsl/constructs/loop.html" class="page">Including Looping in Scripts</a></li>
     <li><a href="../../sequencer/scripts/dsl/constructs/fsm.html" class="page">Finite State Machines</a></li>
+    <li><a href="../../sequencer/scripts/dsl/constructs/blocking.html" class="page">Blocking Operations Within Script</a></li>
     <li><a href="../../sequencer/scripts/dsl/constructs/other-dsl.html" class="page">Other DSL</a></li>
   </ul></li>
   <li><a href="../../sequencer/scripts/dsl/csw-services.html" class="page">CSW Services DSL</a>
@@ -225,7 +207,7 @@ import esw.ocs.dsl.highlevel.models.*
   <li>Kotlin&rsquo;s use of <em>coroutines</em> allows for simpler procedural-style scripting without blocking.</li>
   <li>One less &ldquo;glue&rdquo; service layer implementation needed.</li>
 </ul>
-<p>The most important feature of &ldquo;scripting&rdquo; languages that we wanted to retain is the ability to quickly modify and reload a script without recompiling and deploying software. Another important feature is interactivity. Scripting languages are usually based around a &ldquo;shell&rdquo; that allows interactive usage. This is provided with the <code>csw-shell</code> companion project <a href="https://github.com/tmtsoftware/csw-shell">here</a></p>
+<p>The most important feature of &ldquo;scripting&rdquo; languages that we wanted to retain is the ability to quickly modify and reload a script without recompiling and deploying software. Another important feature is interactivity. Scripting languages are usually based around a &ldquo;shell&rdquo; that allows interactive usage. This is provided with the <code>esw-shell</code> companion project <a href="https://github.com/tmtsoftware/esw/tree/master/esw-shell">here</a></p>
 <p>At the ESW FDR, we planned using Scala for the scripting DSL. While this did work, the extra syntax of using Future&rsquo;s was cumbersome for the scripting use case, and Kotlin provided the coroutine environment that provided the asynchronous feature of futures, but with a much clearer syntax.</p>
 <p>The scripting capability is in progress and we look forward to comments and suggestions from users of Release 1.</p>
 </div>

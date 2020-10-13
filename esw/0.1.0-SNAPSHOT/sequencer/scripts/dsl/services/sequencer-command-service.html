@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../../../../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../../../../assets/images/favicon.png">
 <title>Sequencer Command Service · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../../../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/esw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/esw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,21 +104,8 @@ tmtsoftware/esw
 TMT Executive Software (ESW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/esw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/esw
-</div>
-</a>
-
-</div>
 <ul>
+  <li><a href="../../../../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../../../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
   <ul>
     <li><a href="../../../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
@@ -151,9 +122,19 @@ tmtsoftware/esw
   <li><a href="../../../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../../../apps/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../../../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
+    <li><a href="../../../../apps/sequencer-app.html" class="page">Sequencer App</a></li>
+    <li><a href="../../../../apps/sequence-manager-app.html" class="page">Sequence Manager App</a></li>
+    <li><a href="../../../../apps/agent-service-app.html" class="page">Agent Service App</a></li>
+    <li><a href="../../../../apps/agent-app.html" class="page">Agent App</a></li>
+    <li><a href="../../../../apps/gateway-app.html" class="page">ESW Gateway App</a></li>
   </ul></li>
   <li><a href="../../../../eswgateway/esw-gateway.html" class="page">Esw Gateway</a></li>
+  <li><a href="../../../../technical/technical.html" class="page">Technical Design Documents</a>
+  <ul>
+    <li><a href="../../../../technical/sequencemanager/index.html" class="page">Sequence Manager</a></li>
+    <li><a href="../../../../technical/agent/agent.html" class="page">Agent</a></li>
+    <li><a href="../../../../technical/agentservice/agent-service.html" class="page">Agent Service</a></li>
+  </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
@@ -209,22 +190,22 @@ tmtsoftware/esw
 <p>First a Sequencer instance is needed. To create a Sequencer instance, the following parameters need to be passed to the Sequencer method:</p>
 <ul>
   <li><code>subsystem</code>: Subsystem of the Sequencer to be resolved and sent commands (for eg. TCS, IRIS)</li>
-  <li><code>observingMode</code>: observing mode of the Sequencer to be resolved and send commands to (for eg. wfos_imaging, wfos_spec)</li>
+  <li><code>obsMode</code>: observing mode of the Sequencer to be resolved and send commands to (for eg. wfos_imaging, wfos_spec)</li>
   <li><code>defaultTimeout</code>: optional max timeout to wait for completion of Sequences sent with <code>sumbitAndWait</code> or <code>queryFinal</code>. The default value for this option is set to 10 hours since it will be common that the handling of Sequences can take a long time, and we don&rsquo;t want unexpected timeouts to occur in production. For development, it might make sense to set this to some smaller value. This can always be overridden in the specific <code>submitAndWait</code> and <code>queryFinal</code> calls, when appropriate (see below).</li>
 </ul>
 <p>Here is an example:</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L19-L20" target="_blank" title="Go to snippet source"></a><code class="language-kts">// create a sequencer entity
-val wfos = Sequencer(WFOS, &quot;wfos_darknight&quot;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L20-L21" target="_blank" title="Go to snippet source"></a><code class="language-kts">// create a sequencer entity
+val wfos = Sequencer(WFOS, ObsMode(&quot;wfos_darknight&quot;))</code></pre></dd>
 </dl>
 <p>and here is one showing the setting of the default timeout:</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L24-L25" target="_blank" title="Go to snippet source"></a><code class="language-kts">// create a sequencer entity with a timeout
-val wfos2 = Sequencer(WFOS, &quot;wfos_darknight&quot;, 5.minutes)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L25-L26" target="_blank" title="Go to snippet source"></a><code class="language-kts">// create a sequencer entity with a timeout
+val wfos2 = Sequencer(WFOS, ObsMode(&quot;wfos_darknight&quot;), 5.minutes)</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Resolving a Component with Location Service</div>
 <p>Since all the components in the TMT architecture are dynamic in nature, which implies they can be shutdown and spawned dynamically on some other location, the Sequencer is resolved each time the Command Service DSL is used. It is possible to create a Sequencer entity for a non-existent component, but a command to the component will fail because the component is resolved when the command is sent. </p></div>
 <h2><a href="#submitting-sequences-to-a-sequencer-querying-the-response" name="submitting-sequences-to-a-sequencer-querying-the-response" class="anchor"><span class="anchor-link"></span></a>Submitting Sequences to a Sequencer &amp; Querying the Response</h2>
@@ -233,7 +214,7 @@ val wfos2 = Sequencer(WFOS, &quot;wfos_darknight&quot;, 5.minutes)</code></pre><
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L30-L32" target="_blank" title="Go to snippet source"></a><code class="language-kts">val wfosCommand1: SequenceCommand = Setup(&quot;ESW.wfos_darknight&quot;, &quot;wfosCommand1&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L31-L33" target="_blank" title="Go to snippet source"></a><code class="language-kts">val wfosCommand1: SequenceCommand = Setup(&quot;ESW.wfos_darknight&quot;, &quot;wfosCommand1&quot;)
 val wfosCommand2: SequenceCommand = Setup(&quot;ESW.wfos_darknight&quot;, &quot;wfosCommand2&quot;)
 val sequence: Sequence = sequenceOf(wfosCommand1, wfosCommand2)</code></pre></dd>
 </dl>
@@ -244,7 +225,7 @@ val sequence: Sequence = sequenceOf(wfosCommand1, wfosCommand2)</code></pre></dd
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L36-L37" target="_blank" title="Go to snippet source"></a><code class="language-kts">val submitResponse: SubmitResponse = wfos.submit(sequence)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L37-L38" target="_blank" title="Go to snippet source"></a><code class="language-kts">val submitResponse: SubmitResponse = wfos.submit(sequence)
 val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></pre></dd>
 </dl>
 <p>The <code>query</code> DSL method allows checking on the state of the <code>Sequence</code>. <code>query</code> returns the current response immediately, which could be either a final response (eg. <code>Completed</code>) or the <code>Started</code> response. The <code>runId</code> of the submitted <code>Sequence</code> can be obtained from the <code>SubmitResponse</code> returned by <code>submit</code>. <code>query</code> is useful in the case where polling of the command is needed or the script needs to take other actions and periodically check for the completion of the <code>Sequence</code>. </p>
@@ -254,33 +235,33 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L41" target="_blank" title="Go to snippet source"></a><code class="language-kts">val response: SubmitResponse = wfos.submit(sequence, resumeOnError = true)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L42" target="_blank" title="Go to snippet source"></a><code class="language-kts">val response: SubmitResponse = wfos.submit(sequence, resumeOnError = true)</code></pre></dd>
 </dl>
 <h4><a href="#queryfinal" name="queryfinal" class="anchor"><span class="anchor-link"></span></a>QueryFinal</h4>
 <p>While <code>query</code> returns immediately, <code>queryFinal</code> will wait for the final response of the <code>Sequence</code> for the <code>defaultTimeout</code> specified at the time of creation of the <code>Sequencer</code> instance.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L45" target="_blank" title="Go to snippet source"></a><code class="language-kts">val finalResponse: SubmitResponse = wfos.queryFinal(submitResponse.runId())</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L46" target="_blank" title="Go to snippet source"></a><code class="language-kts">val finalResponse: SubmitResponse = wfos.queryFinal(submitResponse.runId())</code></pre></dd>
 </dl>
 <p>If you want to increase/decrease the <code>defaultTimeout</code>, you can use the other variation of the same <code>queryFinal</code> DSL method which takes a timeout.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L49" target="_blank" title="Go to snippet source"></a><code class="language-kts">val finalRes: SubmitResponse = wfos.queryFinal(submitResponse.runId(), 5.seconds)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L50" target="_blank" title="Go to snippet source"></a><code class="language-kts">val finalRes: SubmitResponse = wfos.queryFinal(submitResponse.runId(), 5.seconds)</code></pre></dd>
 </dl>
 <h4><a href="#sending-a-sequence-with-submitandwait" name="sending-a-sequence-with-submitandwait" class="anchor"><span class="anchor-link"></span></a>Sending a Sequence with submitAndWait</h4>
 <p>The <code>submitAndWait</code> DSL method is a combination of <code>submit</code> followed with <code>queryFinal</code>. If you are not interested in the initial response but only in final response of the Sequence, the <code>submitAndWait</code> DSL method is more convenient. It submits the <code>Sequence</code> and waits for the final response. If the <code>Sequence</code> was successfully <code>Started</code>, it will wait until the <code>defaultTimeout</code> specified at the time of creation of the <code>Sequencer</code> instance.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L53" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sequenceResponse: SubmitResponse = wfos.submitAndWait(sequence)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L54" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sequenceResponse: SubmitResponse = wfos.submitAndWait(sequence)</code></pre></dd>
 </dl>
 <p>If you want to increase/decrease the default timeout, you can use the other variation of the same DSL method which takes a timeout.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L57" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sequenceRes: SubmitResponse = wfos.submitAndWait(sequence, 5.seconds)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L58" target="_blank" title="Go to snippet source"></a><code class="language-kts">val sequenceRes: SubmitResponse = wfos.submitAndWait(sequence, 5.seconds)</code></pre></dd>
 </dl>
 <h2><a href="#handling-online-and-offline" name="handling-online-and-offline" class="anchor"><span class="anchor-link"></span></a>Handling Online and Offline</h2>
 <p>As with Assemblies and HCDs, a Sequencer can also indicate to another Sequencer to go offline or online using the Sequencer Command Service DSL.</p>
@@ -290,7 +271,7 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L61" target="_blank" title="Go to snippet source"></a><code class="language-kts">val onlineResponse: GoOnlineResponse = wfos.goOnline()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L62" target="_blank" title="Go to snippet source"></a><code class="language-kts">val onlineResponse: GoOnlineResponse = wfos.goOnline()</code></pre></dd>
 </dl>
 <h3><a href="#sequencer-sends-gooffline" name="sequencer-sends-gooffline" class="anchor"><span class="anchor-link"></span></a>Sequencer Sends goOffline</h3>
 <p>Go offline command is received in 2 states only.</p>
@@ -302,7 +283,7 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L65" target="_blank" title="Go to snippet source"></a><code class="language-kts">val offlineResponse: GoOfflineResponse = wfos.goOffline()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L66" target="_blank" title="Go to snippet source"></a><code class="language-kts">val offlineResponse: GoOfflineResponse = wfos.goOffline()</code></pre></dd>
 </dl>
 <h2><a href="#handling-diagnostic-and-operations-mode" name="handling-diagnostic-and-operations-mode" class="anchor"><span class="anchor-link"></span></a>Handling Diagnostic and Operations Mode</h2>
 <h3><a href="#diagnostic-mode" name="diagnostic-mode" class="anchor"><span class="anchor-link"></span></a>Diagnostic Mode</h3>
@@ -310,14 +291,14 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L69" target="_blank" title="Go to snippet source"></a><code class="language-kts">val diagnosticModeResponse: DiagnosticModeResponse = wfos.diagnosticMode(utcTimeNow(), &quot;engineering&quot;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L70" target="_blank" title="Go to snippet source"></a><code class="language-kts">val diagnosticModeResponse: DiagnosticModeResponse = wfos.diagnosticMode(utcTimeNow(), &quot;engineering&quot;)</code></pre></dd>
 </dl>
 <h3><a href="#operations-mode" name="operations-mode" class="anchor"><span class="anchor-link"></span></a>Operations Mode</h3>
 <p>The <code>operationsMode</code> command returns a Sequencer in a diagnostic data mode to normal operation. <code>operationsMode</code> is accepted by Sequencers in all states and an <code>OperationsModeResponse</code> is returned to the sender. If the Sequencer has defined its <a href="../constructs/handlers.html#operations-mode-handler">operations mode handlers</a>, they will be called. If the handlers execute successfully, an <code>Ok</code> response is sent; otherwise, the <code>OperationsHookFailed</code> response is sent.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L73" target="_blank" title="Go to snippet source"></a><code class="language-kts">val operationsModeResponse: OperationsModeResponse = wfos.operationsMode()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L74" target="_blank" title="Go to snippet source"></a><code class="language-kts">val operationsModeResponse: OperationsModeResponse = wfos.operationsMode()</code></pre></dd>
 </dl>
 <h2><a href="#aborting-and-stopping-a-sequence" name="aborting-and-stopping-a-sequence" class="anchor"><span class="anchor-link"></span></a>Aborting and Stopping a Sequence</h2>
 <p>Stopping and aborting are meant to handle early termination of observing sequences in instruments. Aborting indicates that the current observe should stop as soon as possible and save the data if possible. Stop indicates that the current observe should stop at the end of the current step. In both cases, the observation is over and no subsequent steps can be executed.</p>
@@ -328,14 +309,14 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L77" target="_blank" title="Go to snippet source"></a><code class="language-kts">val abortResponse: OkOrUnhandledResponse = wfos.abortSequence()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L78" target="_blank" title="Go to snippet source"></a><code class="language-kts">val abortResponse: OkOrUnhandledResponse = wfos.abortSequence()</code></pre></dd>
 </dl>
 <h3><a href="#stopping-a-sequence" name="stopping-a-sequence" class="anchor"><span class="anchor-link"></span></a>Stopping a Sequence</h3>
 <p>Stopping a Sequence is very similar to aborting. The only difference is that instead of abort handlers, the <a href="../constructs/handlers.html#stop-handler">stop handlers</a> are called.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L81" target="_blank" title="Go to snippet source"></a><code class="language-kts">val stopResponse: OkOrUnhandledResponse = wfos.stop()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L82" target="_blank" title="Go to snippet source"></a><code class="language-kts">val stopResponse: OkOrUnhandledResponse = wfos.stop()</code></pre></dd>
 </dl>
 </div>
 <div>

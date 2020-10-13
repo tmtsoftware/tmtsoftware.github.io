@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../../assets/images/favicon.png">
 <title>Sequencer Lifecycle · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/esw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/esw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,21 +104,8 @@ tmtsoftware/esw
 TMT Executive Software (ESW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/esw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/esw
-</div>
-</a>
-
-</div>
 <ul>
+  <li><a href="../../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
   <ul>
     <li><a href="../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
@@ -151,18 +122,21 @@ tmtsoftware/esw
   <li><a href="../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../apps/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
+    <li><a href="../../apps/sequencer-app.html" class="page">Sequencer App</a></li>
+    <li><a href="../../apps/sequence-manager-app.html" class="page">Sequence Manager App</a></li>
+    <li><a href="../../apps/agent-service-app.html" class="page">Agent Service App</a></li>
+    <li><a href="../../apps/agent-app.html" class="page">Agent App</a></li>
+    <li><a href="../../apps/gateway-app.html" class="page">ESW Gateway App</a></li>
   </ul></li>
   <li><a href="../../eswgateway/esw-gateway.html" class="page">Esw Gateway</a></li>
-</ul>
-<nav class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">Table of contents</label>
-<ul>
-  <li><a href="../../sequencer/seqcompsequencer/state-transition.html#sequencer-lifecycle" class="header">Sequencer Lifecycle</a>
+  <li><a href="../../technical/technical.html" class="page">Technical Design Documents</a>
   <ul>
-    <li><a href="../../sequencer/seqcompsequencer/state-transition.html#sequence-component-lifecycle" class="header">Sequence Component Lifecycle</a></li>
+    <li><a href="../../technical/sequencemanager/index.html" class="page">Sequence Manager</a></li>
+    <li><a href="../../technical/agent/agent.html" class="page">Agent</a></li>
+    <li><a href="../../technical/agentservice/agent-service.html" class="page">Agent Service</a></li>
   </ul></li>
 </ul>
+<nav class="md-nav md-nav--secondary">
 </nav>
 
 </nav>
@@ -173,22 +147,6 @@ tmtsoftware/esw
 </label>
 </li>
 </ul>
-</div>
-</div>
-</div>
-<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-<div class="md-sidebar__scrollwrap">
-<div class="md-sidebar__inner">
-<nav class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">Table of contents</label>
-<ul>
-  <li><a href="../../sequencer/seqcompsequencer/state-transition.html#sequencer-lifecycle" class="header">Sequencer Lifecycle</a>
-  <ul>
-    <li><a href="../../sequencer/seqcompsequencer/state-transition.html#sequence-component-lifecycle" class="header">Sequence Component Lifecycle</a></li>
-  </ul></li>
-</ul>
-</nav>
-
 </div>
 </div>
 </div>
@@ -219,15 +177,6 @@ tmtsoftware/esw
   <p><strong>Killed:</strong> This is the final state of the Sequencer, achieved when receiving a <code>shutdown</code> command. The shutdown command can be sent in any state, hence a Sequencer can transition to this state from any other state. However, a Sequencer doesn&rsquo;t stay in this state long; when a Sequencer is killed, it is removed from the Location Service, and ActorSystem is shutdown, effectively destroying the Sequencer.</p></li>
 </ul>
 <p><img src="../../images/ocs/state-transition.png" alt="sequencer-state-transition" /></p>
-<h1><a href="#sequence-component-lifecycle" name="sequence-component-lifecycle" class="anchor"><span class="anchor-link"></span></a>Sequence Component Lifecycle</h1>
-<p>The Sequence Component also has a lifecycle, but it is simpler than the Sequencer lifecycle. The following figure shows the Sequence Component has two states: <code>Idle</code> and <code>Running</code>.</p>
-<ul>
-  <li>
-  <p><strong>Idle:</strong> This is the default state of a Sequence Component when it is started. It is ready for the loading of a Script that will create a Sequencer, which occurs on a <code>LoadScript</code> command. If successful, the Sequence Component transitions to the <code>Running</code> state. While in the <code>Idle</code> state, the Sequence Component responds to the <code>GetStatus</code> message and ignores the <code>UnloadScript</code> message without error.</p></li>
-  <li>
-  <p><strong>Running:</strong> Once a Sequence Component has successfully loaded a Script, it is in the <code>Running</code> state. The new Sequencer will be available to process Sequences until it receives an <code>UnloadScript</code> message and transitions back to the <code>Idle</code> state. While in the <code>Running</code> state, the Sequence Component can also receive a <code>Restart</code> message, which restarts a Sequencer by unloading the Script and shutting down the Sequencer, immediately followed by the loading of the Script again. This has the effect of initializing the script. The <code>LoadScript</code> message is ignored without error while in the <code>Running</code> state. The Sequence Component responds successfully to the <code>GetStatus</code> message.</p></li>
-</ul>
-<p><img src="../../images/ocs/OCS-SeqCompLifecycle.png" alt="sequencecomp-lifecycle" /></p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/sequencer/seqcompsequencer/state-transition.md" title="Edit this page" class="md-source-file md-edit">

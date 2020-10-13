@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../../assets/images/favicon.png">
 <title>Sequence Component · TMT Executive Software (ESW)</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/esw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/esw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,21 +104,8 @@ tmtsoftware/esw
 TMT Executive Software (ESW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/esw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/esw
-</div>
-</a>
-
-</div>
 <ul>
+  <li><a href="../../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../../sequencer/seqcompsequencer/index.html" class="page">Sequence Components and Sequencers</a>
   <ul>
     <li><a href="../../sequencer/seqcompsequencer/Terms.html" class="page">OCS Terms</a></li>
@@ -151,15 +122,29 @@ tmtsoftware/esw
   <li><a href="../../commons/contracts.html" class="page">ESW Service contract</a></li>
   <li><a href="../../apps/apps.html" class="page">Applications</a>
   <ul>
-    <li><a href="../../apps/sequencerapp.html" class="page">sequencer-app</a></li>
+    <li><a href="../../apps/sequencer-app.html" class="page">Sequencer App</a></li>
+    <li><a href="../../apps/sequence-manager-app.html" class="page">Sequence Manager App</a></li>
+    <li><a href="../../apps/agent-service-app.html" class="page">Agent Service App</a></li>
+    <li><a href="../../apps/agent-app.html" class="page">Agent App</a></li>
+    <li><a href="../../apps/gateway-app.html" class="page">ESW Gateway App</a></li>
   </ul></li>
   <li><a href="../../eswgateway/esw-gateway.html" class="page">Esw Gateway</a></li>
+  <li><a href="../../technical/technical.html" class="page">Technical Design Documents</a>
+  <ul>
+    <li><a href="../../technical/sequencemanager/index.html" class="page">Sequence Manager</a></li>
+    <li><a href="../../technical/agent/agent.html" class="page">Agent</a></li>
+    <li><a href="../../technical/agentservice/agent-service.html" class="page">Agent Service</a></li>
+  </ul></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
   <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#sequence-component" class="header">Sequence Component</a>
   <ul>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#introduction" class="header">Introduction</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#modules" class="header">Modules</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#implementation-details" class="header">Implementation Details</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#sequence-component-lifecycle" class="header">Sequence Component Lifecycle</a></li>
     <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#sequence-component-technical-design" class="header">Sequence Component Technical Design</a></li>
   </ul></li>
 </ul>
@@ -184,6 +169,10 @@ tmtsoftware/esw
 <ul>
   <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#sequence-component" class="header">Sequence Component</a>
   <ul>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#introduction" class="header">Introduction</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#modules" class="header">Modules</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#implementation-details" class="header">Implementation Details</a></li>
+    <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#sequence-component-lifecycle" class="header">Sequence Component Lifecycle</a></li>
     <li><a href="../../sequencer/seqcompsequencer/SeqComp.html#sequence-component-technical-design" class="header">Sequence Component Technical Design</a></li>
   </ul></li>
 </ul>
@@ -196,10 +185,22 @@ tmtsoftware/esw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#sequence-component" name="sequence-component" class="anchor"><span class="anchor-link"></span></a>Sequence Component</h1>
-<p>The Sequence Component is a standalone application that can load scripts and become a Sequencer. The Sequence Component application and its arguments are described <a href="../../apps/sequencerapp.html">here</a>.</p>
+<h2><a href="#introduction" name="introduction" class="anchor"><span class="anchor-link"></span></a>Introduction</h2>
+<p>The Sequence Component is a standalone application that can load scripts and become a Sequencer. Primary motivation behind Sequence Component is to reduce boot time of Sequencer Script. Sequence Component will be a continuously running JVM process which will load and unload different script. Sequencer will be started as a part of existing Sequence Component process, This results is minimizing boot up time for Sequencer.</p>
+<p>The Sequence Component application and its arguments are described <a href="../../apps/sequencer-app.html">here</a>.</p>
+<h2><a href="#modules" name="modules" class="anchor"><span class="anchor-link"></span></a>Modules</h2>
+<ul>
+  <li>
+  <p>esw-ocs-api - This is cross module, which is compiled into JVM as well as JS code. This consists of <code>SequenceComponentApi</code> which defines an interface for sequence component. This module also consists of core models, actor client, JVM and JS client for sequence component.</p></li>
+  <li>
+  <p>esw-ocs-impl - This module consists of core implementation of sequence component which is <code>SequenceComponentActor</code>.</p></li>
+  <li>
+  <p>esw-ocs-app - This module consists of wiring as well as cli application to start Sequence Component.</p></li>
+</ul>
+<h2><a href="#implementation-details" name="implementation-details" class="anchor"><span class="anchor-link"></span></a>Implementation Details</h2>
 <p>The Sequence Component is written in Scala to provide integration with the CSW Component Framework and Services. Since component developers do not need to modify Sequence Component code, there is no Java version.</p>
 <p>The Sequence Component registers itself with the Location Service when started. This allows the Sequence Manager to find the Sequence Component and send it commands. Sequence Component is started with a Subsystem and an optional name. While the Subsystem for a Sequence Component identifies to which subsystem the Sequence Component belongs, a Sequence Component can load Scripts for any subsystem, and therefore become a Sequencer for any subsystem. For example, if for some reason the IRIS Sequence Component is not reachable, an IRIS Script can be loaded into an ESW Sequence Component and it can then be used as the IRIS Instrument Sequencer.</p>
-<p>The following table describes the registration of a Sequence Component in the Location Service</p>
+<p>Sequence Component will be registered as Akka Connection in Location Service. The following table describes the registration of a Sequence Component in the Location Service:</p>
 <table>
   <thead>
     <tr>
@@ -220,7 +221,8 @@ tmtsoftware/esw
       <td align="center">ESW.primary </td>
     </tr>
   </tbody>
-</table>
+</table><div class="callout note "><div class="callout-title">Note</div>
+<p>If <code>Name</code> is not provided while starting Sequence Component, it will be uniquely generated using pattern -<code>Subsystem</code>.<code>Subsystem</code>_<code>&lt;Random number 1 to 100&gt;</code>. There exists possibility that, this generated name is already taken by another Sequence Component. To solve this scenario, Sequence Component registration involves retry mechanism which then generates another name and starts Sequence Component.</p></div>
 <p>Note that CSW always capitalizes a subsystem when it is displayed. Arguments can be entered as lowercase.</p>
 <p>The Sequence Component provides framework code to support the loading and unloading of Scripts and a few other useful capabilities.</p>
 <table>
@@ -240,16 +242,30 @@ tmtsoftware/esw
       <td align="left">Unloads a loaded script returning a Sequence Component. </td>
     </tr>
     <tr>
-      <td align="center">Restart </td>
+      <td align="center">RestartScript </td>
       <td align="left">Unloads and reloads a script causing initialization of state. </td>
     </tr>
     <tr>
       <td align="center">GetStatus </td>
       <td align="left">Returns the Location of the Sequence Component&rsquo;s loaded Sequencer </td>
     </tr>
+    <tr>
+      <td align="center">Shutdown </td>
+      <td align="left">Shutdown sequence component and sequencer loaded(if any) </td>
+    </tr>
   </tbody>
 </table>
-<p>For more details on the messages handled by the Sequence Component see <a href="https://github.com/tmtsoftware/esw/blob/master/esw-ocs/esw-ocs-api/jvm/src/main/scala/esw/ocs/api/actor/messages/SequenceComponentMsg.scala">here</a></p>
+<p>For more details on the messages handled by the Sequence Component see <a href="https://github.com/tmtsoftware/esw/tree/master/esw-ocs/esw-ocs-api/jvm/src/main/scala/esw/ocs/api/actor/messages/SequenceComponentMsg.scala">here</a></p>
+<h2><a href="#sequence-component-lifecycle" name="sequence-component-lifecycle" class="anchor"><span class="anchor-link"></span></a>Sequence Component Lifecycle</h2>
+<p>Sequence Component is implemented as Finite State Machine using Akka Actor as core. The Sequence Component also has a lifecycle, but it is simpler than the Sequencer lifecycle. The following figure shows the Sequence Component has two states: <code>Idle</code> and <code>Running</code>.</p>
+<ul>
+  <li>
+  <p><strong>Idle:</strong> This is the default state of a Sequence Component when it is started. It is ready for the loading of a Script that will create a Sequencer, which occurs on a <code>LoadScript</code> command. If successful, the Sequence Component transitions to the <code>Running</code> state. While in the <code>Idle</code> state, the Sequence Component responds to the <code>GetStatus</code> message and ignores the <code>UnloadScript</code> message without error. For <code>RestartScript</code> message, sequence component responds with error saying <code>RestartScript</code> in unhandled in <code>idle</code> state.</p></li>
+  <li>
+  <p><strong>Running:</strong> Once a Sequence Component has successfully loaded a Script, it is in the <code>Running</code> state. The new Sequencer will be available to process Sequences until it receives an <code>UnloadScript</code> message and transitions back to the <code>Idle</code> state. While in the <code>Running</code> state, the Sequence Component can also receive a <code>RestartScript</code> message, which restarts a Sequencer by unloading the Script and shutting down the Sequencer, immediately followed by the loading of the Script again. This has the effect of initializing the script. For <code>LoadScript</code> message, sequence component responds with error saying that <code>LoadScript</code> is unhandled in <code>Running</code> state. The Sequence Component responds successfully to the <code>GetStatus</code> message.</p></li>
+</ul><div class="callout note "><div class="callout-title">Note</div>
+<p><code>Shutdown</code> sequence component message is handled in both <code>Idle</code> and <code>Running</code> state. In <code>Idle</code> state, it un-registers sequence component in location service, terminates actor system and gracefully shutdown sequence component. In <code>Running</code> state, shutdown consist of additional step apart from <code>Idle</code> state shutdown, which is shutting down sequencer loaded on the sequence component.</p></div>
+<p><img src="../../images/ocs/OCS-SeqCompLifecycle.png" alt="sequencecomp-lifecycle" /></p>
 <h2><a href="#sequence-component-technical-design" name="sequence-component-technical-design" class="anchor"><span class="anchor-link"></span></a>Sequence Component Technical Design</h2>
 <p>This section will be updated with the Sequence Component technical design information in a future release.</p>
 </div>
