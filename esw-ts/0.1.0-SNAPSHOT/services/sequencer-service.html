@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Params · TMT JavaScript/Typescript Library</title>
+<title>Sequencer Service · TMT JavaScript/Typescript Library</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT JavaScript/Typescript Library
 </span>
 <span class="md-header-nav__topic">
-Params
+Sequencer Service
 </span>
 </div>
 </div>
@@ -115,9 +115,9 @@ TMT JavaScript/Typescript Library
     <li><a href="../services/event-service.html" class="page">Event Service</a></li>
     <li><a href="../services/location-service.html" class="page">Location Service</a></li>
     <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
-    <li><a href="../services/sequencer-service.html" class="page">Sequencer Service</a></li>
+    <li><a href="../services/sequencer-service.html" class="active page">Sequencer Service</a></li>
   </ul></li>
-  <li><a href="../params/index.html" class="active page">Params</a>
+  <li><a href="../params/index.html" class="page">Params</a>
   <ul>
     <li><a href="../params/commands.html" class="page">Commands</a></li>
     <li><a href="../params/events.html" class="page">Events</a></li>
@@ -140,6 +140,14 @@ TMT JavaScript/Typescript Library
   <li><a href="../common/ts-docs.html" class="page">Type Definations</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../services/sequencer-service.html#sequencer-service" class="header">Sequencer Service</a>
+  <ul>
+    <li><a href="../services/sequencer-service.html#creation-of-sequencer-service" class="header">Creation of Sequencer Service</a></li>
+    <li><a href="../services/sequencer-service.html#apis" class="header">APIs</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </nav>
@@ -153,67 +161,79 @@ TMT JavaScript/Typescript Library
 </div>
 </div>
 </div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../services/sequencer-service.html#sequencer-service" class="header">Sequencer Service</a>
+  <ul>
+    <li><a href="../services/sequencer-service.html#creation-of-sequencer-service" class="header">Creation of Sequencer Service</a></li>
+    <li><a href="../services/sequencer-service.html#apis" class="header">APIs</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#params" name="params" class="anchor"><span class="anchor-link"></span></a>Params</h1>
-<p>In the distributed environment of TMT observatory, Components communicate with each other by sending asynchronous Messages. These messages have a Command payload, which flows down through the Sequencer components to the Assemblies, HCDs and finally to the hardware. At each hop Commands are validated, interpreted and further propagated making their journey to its destination. Commands provide flexible placeholders to store values to convey precise intent of the sender component.</p>
-<p><strong>Params</strong> module plays a significant role as it caters to the diverse communication requirements. Consumer of this module will be able to create Commands, Events, States to store ParameterSets.</p>
-<p>Params has following models :</p>
-<div class="toc main">
+<h1><a href="#sequencer-service" name="sequencer-service" class="anchor"><span class="anchor-link"></span></a>Sequencer Service</h1>
+<p>This service provides a handle to send commands to a sequencer which is registered in location service.</p>
+<h2><a href="#creation-of-sequencer-service" name="creation-of-sequencer-service" class="anchor"><span class="anchor-link"></span></a>Creation of Sequencer Service</h2>
+<h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
+<h4><a href="#in-order-to-use-sequencer-service-client-for-a-specific-sequencer-" name="in-order-to-use-sequencer-service-client-for-a-specific-sequencer-" class="anchor"><span class="anchor-link"></span></a>In order to use sequencer service client for a specific sequencer:</h4>
+<ol>
+  <li>The sequencer and gateway server should be running. <code>GatewayException(InvalidComponent)</code> will be thrown if the specified sequencer not found in the location service.</li>
+  <li>Authorization Token with correct access role.  Documentation on how to fetch access token could be found <a href="../aas/csw-aas-js.html">here</a>.</li>
+</ol>
+<h4><a href="#to-create-sequencer-service" name="to-create-sequencer-service" class="anchor"><span class="anchor-link"></span></a>To create Sequencer Service</h4>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/sequencer/SequencerExamples.ts#L23-L28" target="_blank" title="Go to snippet source"></a><code class="language-ts">const tokenFactory = () =&gt; auth.token
+
+const sequencerService: SequencerService = await SequencerService(
+  new ComponentId(new Prefix(&#39;ESW&#39;, &#39;darknight&#39;), &#39;Sequencer&#39;),
+  tokenFactory
+)</code></pre></dd>
+</dl>
+<h2><a href="#apis" name="apis" class="anchor"><span class="anchor-link"></span></a>APIs</h2><div class="callout note "><div class="callout-title">Async-Await</div>
+<p>Note that the examples are using async/await which makes handling of promises more readable.</p></div>
+<p>Sequencer service has following APIs:</p>
 <ul>
-  <li><a href="../params/commands.html" class="page">Commands</a>
-  <ul>
-    <li><a href="../params/commands.html#obsid" class="header">ObsId</a></li>
-    <li><a href="../params/commands.html#prefix" class="header">Prefix</a></li>
-    <li><a href="../params/commands.html#commandname" class="header">CommandName</a></li>
-    <li><a href="../params/commands.html#setup-command" class="header">Setup Command</a></li>
-    <li><a href="../params/commands.html#observe-command" class="header">Observe Command</a></li>
-    <li><a href="../params/commands.html#wait-command" class="header">Wait Command</a></li>
-    <li><a href="../params/commands.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
-  </ul></li>
-  <li><a href="../params/events.html" class="page">Events</a>
-  <ul>
-    <li><a href="../params/events.html#eventtime" class="header">EventTime</a></li>
-    <li><a href="../params/events.html#system-event" class="header">System Event</a></li>
-    <li><a href="../params/events.html#observe-event" class="header">Observe Event</a></li>
-    <li><a href="../params/events.html#unique-key-constraint" class="header">Unique Key Constraint</a></li>
-  </ul></li>
-  <li><a href="../params/keys-and-parameters.html" class="page">Keys and Parameters</a>
-  <ul>
-    <li><a href="../params/keys-and-parameters.html#how-to-create-a-parameter-using-the-helper-functions" class="header">How to create a Parameter using the helper functions</a></li>
-    <li><a href="../params/keys-and-parameters.html#primitive-datatypes" class="header">Primitive Datatypes</a></li>
-    <li><a href="../params/keys-and-parameters.html#array-datatypes" class="header">Array Datatypes</a></li>
-    <li><a href="../params/keys-and-parameters.html#matrix-datatypes" class="header">Matrix Datatypes</a></li>
-    <li><a href="../params/keys-and-parameters.html#domain-specific-types" class="header">Domain Specific Types</a></li>
-    <li><a href="../params/keys-and-parameters.html#coordinate-types" class="header">Coordinate Types</a></li>
-  </ul></li>
-  <li><a href="../params/result.html" class="page">Result</a></li>
-  <li><a href="../params/subsystem.html" class="page">Subsystem</a>
-  <ul>
-    <li><a href="../params/subsystem.html#list-of-subsystems" class="header">List of Subsystems</a></li>
-    <li><a href="../params/subsystem.html#usage-examples" class="header">Usage Examples</a></li>
-  </ul></li>
-  <li><a href="../params/state-variables.html" class="page">State variables</a>
-  <ul>
-    <li><a href="../params/state-variables.html#currentstate" class="header">CurrentState</a></li>
-  </ul></li>
-  <li><a href="../params/units.html" class="page">Units</a>
-  <ul>
-    <li><a href="../params/units.html#default-units-for-keys" class="header">Default Units for Keys</a></li>
-    <li><a href="../params/units.html#si-units" class="header">SI Units</a></li>
-    <li><a href="../params/units.html#cgs-units" class="header">CGS Units</a></li>
-    <li><a href="../params/units.html#astrophysical-units" class="header">Astrophysical Units</a></li>
-    <li><a href="../params/units.html#imperial-units" class="header">Imperial Units</a></li>
-    <li><a href="../params/units.html#others-engineering" class="header">Others - Engineering</a></li>
-    <li><a href="../params/units.html#usage-examples" class="header">Usage Examples</a></li>
-  </ul></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#loadsequence">loadSequence</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#startsequence">startSequence</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#add">add</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#prepend">prepend</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#replace">replace</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#insertafter">insertAfter</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#delete">delete</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#addbreakpoint">addBreakpoint</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#removebreakpoint">removeBreakpoint</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#reset">reset</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#resume">resume</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#pause">pause</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#getsequence">getSequence</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#isavailable">isAvailable</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#isonline">isOnline</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#goonline">goOnline</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#gooffline">goOffline</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#abortsequence">abortSequence</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#stop">stop</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#diagnosticmode">diagnosticMode</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#operationsmode">operationsMode</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#query">query</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#queryfinal">queryFinal</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#submit">submit</a></li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.sequencerservice.html#submitandwait">submitAndWait</a></li>
 </ul>
 </div>
-<p>Type definition for all common models used by services can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html">here</a></p>
-</div>
 <div>
-<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/params/index.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/services/sequencer-service.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -229,7 +249,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../services/sequencer-service.html" title="Sequencer Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../services/logging-service.html" title="Logging Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -238,17 +258,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Sequencer Service
+Logging Service
 </span>
 </div>
 </a>
-<a href="../params/commands.html" title="Commands" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../params/index.html" title="Params" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Commands
+Params
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

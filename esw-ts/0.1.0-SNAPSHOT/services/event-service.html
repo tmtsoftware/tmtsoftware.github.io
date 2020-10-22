@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Params · TMT JavaScript/Typescript Library</title>
+<title>Event Service · TMT JavaScript/Typescript Library</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT JavaScript/Typescript Library
 </span>
 <span class="md-header-nav__topic">
-Params
+Event Service
 </span>
 </div>
 </div>
@@ -112,12 +112,12 @@ TMT JavaScript/Typescript Library
     <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
     <li><a href="../services/command-service.html" class="page">Command Service</a></li>
     <li><a href="../services/config-service.html" class="page">Config Service</a></li>
-    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../services/event-service.html" class="active page">Event Service</a></li>
     <li><a href="../services/location-service.html" class="page">Location Service</a></li>
     <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
     <li><a href="../services/sequencer-service.html" class="page">Sequencer Service</a></li>
   </ul></li>
-  <li><a href="../params/index.html" class="active page">Params</a>
+  <li><a href="../params/index.html" class="page">Params</a>
   <ul>
     <li><a href="../params/commands.html" class="page">Commands</a></li>
     <li><a href="../params/events.html" class="page">Events</a></li>
@@ -140,6 +140,14 @@ TMT JavaScript/Typescript Library
   <li><a href="../common/ts-docs.html" class="page">Type Definations</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../services/event-service.html#event-service" class="header">Event Service</a>
+  <ul>
+    <li><a href="../services/event-service.html#creation-of-event-service" class="header">Creation of Event Service</a></li>
+    <li><a href="../services/event-service.html#usages-of-event-service" class="header">Usages of Event Service</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </nav>
@@ -153,67 +161,130 @@ TMT JavaScript/Typescript Library
 </div>
 </div>
 </div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../services/event-service.html#event-service" class="header">Event Service</a>
+  <ul>
+    <li><a href="../services/event-service.html#creation-of-event-service" class="header">Creation of Event Service</a></li>
+    <li><a href="../services/event-service.html#usages-of-event-service" class="header">Usages of Event Service</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#params" name="params" class="anchor"><span class="anchor-link"></span></a>Params</h1>
-<p>In the distributed environment of TMT observatory, Components communicate with each other by sending asynchronous Messages. These messages have a Command payload, which flows down through the Sequencer components to the Assemblies, HCDs and finally to the hardware. At each hop Commands are validated, interpreted and further propagated making their journey to its destination. Commands provide flexible placeholders to store values to convey precise intent of the sender component.</p>
-<p><strong>Params</strong> module plays a significant role as it caters to the diverse communication requirements. Consumer of this module will be able to create Commands, Events, States to store ParameterSets.</p>
-<p>Params has following models :</p>
-<div class="toc main">
-<ul>
-  <li><a href="../params/commands.html" class="page">Commands</a>
-  <ul>
-    <li><a href="../params/commands.html#obsid" class="header">ObsId</a></li>
-    <li><a href="../params/commands.html#prefix" class="header">Prefix</a></li>
-    <li><a href="../params/commands.html#commandname" class="header">CommandName</a></li>
-    <li><a href="../params/commands.html#setup-command" class="header">Setup Command</a></li>
-    <li><a href="../params/commands.html#observe-command" class="header">Observe Command</a></li>
-    <li><a href="../params/commands.html#wait-command" class="header">Wait Command</a></li>
-    <li><a href="../params/commands.html#unique-key-constraint" class="header">Unique Key constraint</a></li>
-  </ul></li>
-  <li><a href="../params/events.html" class="page">Events</a>
-  <ul>
-    <li><a href="../params/events.html#eventtime" class="header">EventTime</a></li>
-    <li><a href="../params/events.html#system-event" class="header">System Event</a></li>
-    <li><a href="../params/events.html#observe-event" class="header">Observe Event</a></li>
-    <li><a href="../params/events.html#unique-key-constraint" class="header">Unique Key Constraint</a></li>
-  </ul></li>
-  <li><a href="../params/keys-and-parameters.html" class="page">Keys and Parameters</a>
-  <ul>
-    <li><a href="../params/keys-and-parameters.html#how-to-create-a-parameter-using-the-helper-functions" class="header">How to create a Parameter using the helper functions</a></li>
-    <li><a href="../params/keys-and-parameters.html#primitive-datatypes" class="header">Primitive Datatypes</a></li>
-    <li><a href="../params/keys-and-parameters.html#array-datatypes" class="header">Array Datatypes</a></li>
-    <li><a href="../params/keys-and-parameters.html#matrix-datatypes" class="header">Matrix Datatypes</a></li>
-    <li><a href="../params/keys-and-parameters.html#domain-specific-types" class="header">Domain Specific Types</a></li>
-    <li><a href="../params/keys-and-parameters.html#coordinate-types" class="header">Coordinate Types</a></li>
-  </ul></li>
-  <li><a href="../params/result.html" class="page">Result</a></li>
-  <li><a href="../params/subsystem.html" class="page">Subsystem</a>
-  <ul>
-    <li><a href="../params/subsystem.html#list-of-subsystems" class="header">List of Subsystems</a></li>
-    <li><a href="../params/subsystem.html#usage-examples" class="header">Usage Examples</a></li>
-  </ul></li>
-  <li><a href="../params/state-variables.html" class="page">State variables</a>
-  <ul>
-    <li><a href="../params/state-variables.html#currentstate" class="header">CurrentState</a></li>
-  </ul></li>
-  <li><a href="../params/units.html" class="page">Units</a>
-  <ul>
-    <li><a href="../params/units.html#default-units-for-keys" class="header">Default Units for Keys</a></li>
-    <li><a href="../params/units.html#si-units" class="header">SI Units</a></li>
-    <li><a href="../params/units.html#cgs-units" class="header">CGS Units</a></li>
-    <li><a href="../params/units.html#astrophysical-units" class="header">Astrophysical Units</a></li>
-    <li><a href="../params/units.html#imperial-units" class="header">Imperial Units</a></li>
-    <li><a href="../params/units.html#others-engineering" class="header">Others - Engineering</a></li>
-    <li><a href="../params/units.html#usage-examples" class="header">Usage Examples</a></li>
-  </ul></li>
-</ul>
-</div>
-<p>Type definition for all common models used by services can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html">here</a></p>
+<h1><a href="#event-service" name="event-service" class="anchor"><span class="anchor-link"></span></a>Event Service</h1>
+<p>Event service provides methods to interact with the event server which implements the publish/subscribe messaging paradigm where one component publishes an event and all clients that have subscribed receive the event.</p>
+<h2><a href="#creation-of-event-service" name="creation-of-event-service" class="anchor"><span class="anchor-link"></span></a>Creation of Event Service</h2>
+<h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
+<ol>
+  <li>The Location Service, Event Service and Gateway Server needs to be running in the network</li>
+  <li>The necessary configuration, environment variables or system properties should be defined to point to the correct host and port number(s) for the Location Service nodes.</li>
+</ol>
+<h4><a href="#examples-to-create-a-client-for-event-service" name="examples-to-create-a-client-for-event-service" class="anchor"><span class="anchor-link"></span></a>Examples to create a client for Event service</h4>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L16" target="_blank" title="Go to snippet source"></a><code class="language-ts">const eventService: EventService = await EventService()</code></pre></dd>
+</dl>
+<h2><a href="#usages-of-event-service" name="usages-of-event-service" class="anchor"><span class="anchor-link"></span></a>Usages of Event Service</h2>
+<p>Type definitions for All Event Service APIs can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.eventservice.html">here</a>.</p>
+<h3><a href="#publishing-an-event" name="publishing-an-event" class="anchor"><span class="anchor-link"></span></a>Publishing an Event</h3>
+<p>Event service allows you to publish an <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#event">Event</a> to the event server.</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L20-L27" target="_blank" title="Go to snippet source"></a><code class="language-ts">const sourcePrefix = new Prefix(&#39;IRIS&#39;, &#39;component&#39;)
+const eventName = new EventName(&#39;move-event&#39;)
+const positionParameter = intKey(&#39;positions&#39;, &#39;centimeter&#39;).set([10, 20, 30])
+const paramSet: Parameter&lt;IntKey&gt;[] = [positionParameter]
+
+const event = ObserveEvent.make(sourcePrefix, eventName, paramSet)
+
+const done: Done = await eventService.publish(event)</code></pre></dd>
+</dl>
+<h3><a href="#get-events" name="get-events" class="anchor"><span class="anchor-link"></span></a>Get events</h3>
+<p>The get API is used to get events for set of <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.eventkey.html">EventKeys</a>. This is different from subscribing event. Use this API when occurred events are required. If you want to consume live events, use subscription APIs.</p>
+<p>Example for getting events:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L31-L38" target="_blank" title="Go to snippet source"></a><code class="language-ts">const sourcePrefix = new Prefix(&#39;IRIS&#39;, &#39;component&#39;)
+
+const eventKey1 = new EventKey(sourcePrefix, new EventName(&#39;eventKey1&#39;))
+const eventKey2 = new EventKey(sourcePrefix, new EventName(&#39;eventKey2&#39;))
+
+const eventKeys = new Set([eventKey1, eventKey2])
+const events: Event[] = await eventService.get(eventKeys)
+</code></pre></dd>
+</dl>
+<h3><a href="#subscribe-to-the-events" name="subscribe-to-the-events" class="anchor"><span class="anchor-link"></span></a>Subscribe to the events</h3>
+<p>Subscribing Event can be done via two ways. User can subscribe to -</p>
+<ol>
+  <li>Multiple EventKeys.</li>
+  <li>All the EventKeys of specific <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#subsystem">subsystem</a> and pattern.</li>
+</ol>
+<p>When events are subscribed for given EventKeys, events are received at <code>every</code> frequency. The APIs take callback function which gets triggered whenever the events are received.</p>
+<p>Example for subscribing events with given EventKeys:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L43-L60" target="_blank" title="Go to snippet source"></a><code class="language-ts">const sourcePrefix = new Prefix(&#39;IRIS&#39;, &#39;component&#39;)
+
+const eventKey1 = new EventKey(sourcePrefix, new EventName(&#39;eventKey1&#39;))
+const eventKey2 = new EventKey(sourcePrefix, new EventName(&#39;eventKey2&#39;))
+
+const onEventCallback = (event: Event) =&gt; {
+  console.log(event)
+  // make use of ${event} inside this callback function
+}
+const eventKeys = new Set([eventKey1, eventKey2])
+
+const subscription: Subscription = eventService.subscribe(
+  eventKeys,
+  10
+)(onEventCallback)
+
+//To cancel the subscription
+subscription.cancel()</code></pre></dd>
+</dl>
+<p>Example for subscribing events with given subsystem:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/event/EventExample.ts#L66-L86" target="_blank" title="Go to snippet source"></a><code class="language-ts">const onEventCallback = (event: Event) =&gt; {
+  // make use of ${event} inside this callback function
+  console.log(event)
+}
+
+// subscribe to all esw subsystem&#39;s event
+const subscription: Subscription = eventService.pSubscribe(
+  &#39;ESW&#39;,
+  10,
+  &#39;.*&#39;
+)(onEventCallback)
+
+// subscribe to specific events having hcd in the event name
+const specificSubscription: Subscription = eventService.pSubscribe(
+  &#39;ESW&#39;,
+  10,
+  &#39;(hcd)&#39;
+)(onEventCallback)
+
+//To cancel the subscription
+subscription.cancel()</code></pre></dd>
+</dl>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/params/index.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/services/event-service.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -229,7 +300,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../services/sequencer-service.html" title="Sequencer Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../services/config-service.html" title="Config Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -238,17 +309,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Sequencer Service
+Config Service
 </span>
 </div>
 </a>
-<a href="../params/commands.html" title="Commands" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../services/location-service.html" title="Location Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Commands
+Location Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
