@@ -106,17 +106,6 @@ TMT JavaScript/Typescript Library
 </label>
 <ul>
   <li><a href="../common/getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="../services/index.html" class="page">Services</a>
-  <ul>
-    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
-    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
-    <li><a href="../services/command-service.html" class="page">Command Service</a></li>
-    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
-    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
-    <li><a href="../services/location-service.html" class="page">Location Service</a></li>
-    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
-    <li><a href="../services/sequencer-service.html" class="page">Sequencer Service</a></li>
-  </ul></li>
   <li><a href="../params/index.html" class="page">Params</a>
   <ul>
     <li><a href="../params/commands.html" class="page">Commands</a></li>
@@ -128,16 +117,27 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/units.html" class="page">Units</a></li>
   </ul></li>
   <li><a href="../aas/csw-aas-js.html" class="page">Javascript Adapter (csw-aas-js)</a></li>
-  <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   <li><a href="../common/response-handling.html" class="page">Response Handling</a></li>
   <li><a href="../common/error-handling.html" class="active page">Error Handling</a></li>
+  <li><a href="../services/index.html" class="page">Services</a>
+  <ul>
+    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
+    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../services/command-service.html" class="page">Command Service</a></li>
+    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
+    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
+  </ul></li>
   <li><a href="../technical/index.html" class="page">Technical Design Documentation</a>
   <ul>
     <li><a href="../services/agent-service.html" class="page">Agent Service</a></li>
+    <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
     <li><a href="../services/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
     <li><a href="../technical/csw-aas-js.html" class="page">csw-aas-js - Javascript adapter</a></li>
+    <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   </ul></li>
-  <li><a href="../common/ts-docs.html" class="page">Type Definations</a></li>
+  <li><a href="../common/ts-docs.html" class="page">Type Definitions</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
@@ -145,7 +145,7 @@ TMT JavaScript/Typescript Library
   <li><a href="../common/error-handling.html#error-handling" class="header">Error Handling</a>
   <ul>
     <li><a href="../common/error-handling.html#error-types" class="header">Error Types</a></li>
-    <li><a href="../common/error-handling.html#handling-error-pattern" class="header">Handling Error pattern</a></li>
+    <li><a href="../common/error-handling.html#error-handling-pattern" class="header">Error Handling pattern</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -170,7 +170,7 @@ TMT JavaScript/Typescript Library
   <li><a href="../common/error-handling.html#error-handling" class="header">Error Handling</a>
   <ul>
     <li><a href="../common/error-handling.html#error-types" class="header">Error Types</a></li>
-    <li><a href="../common/error-handling.html#handling-error-pattern" class="header">Handling Error pattern</a></li>
+    <li><a href="../common/error-handling.html#error-handling-pattern" class="header">Error Handling pattern</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -182,17 +182,33 @@ TMT JavaScript/Typescript Library
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#error-handling" name="error-handling" class="anchor"><span class="anchor-link"></span></a>Error Handling</h1>
-<p>Most of the errors received from backend will be contained a defined shape ( <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.serviceerror.html">Service error</a>) that helps developer to build application based on the defined fields rather than depending on base browser&rsquo;s Error type. Service&rsquo;s api calls will be returning promise based results and network calls may go wrong for many reasons like server not found, some invalid configuration while setting up application, etc. all these cases are supposed to be handled at some places. For ex: some errors can be silently logged and redirect user to error page. At application level, error/exceptions must be handled in application code because that will help user to make further decisions. In TMT Arhcitecture, <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.serviceerror.html">Service error</a> captures all/most of the application level errors/exceptions.</p>
+<p>Errors/Exceptions must be handled in application code because that will help user to make further decisions for controlled user interactions with the UI.</p>
 <p>To read more on exception handling, refer this <a href="https://www.sitepoint.com/exceptional-exception-handling-in-javascript/">document</a> which gives detailed explanation.</p>
 <h2><a href="#error-types" name="error-types" class="anchor"><span class="anchor-link"></span></a>Error Types</h2>
 <h3><a href="#service-error" name="service-error" class="anchor"><span class="anchor-link"></span></a>Service Error</h3>
-<pre><code>TODO explaination
-</code></pre>
-<p>Type defination for Service Error <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.serviceerror.html">here</a></p>
+<p>In TMT Architecture, <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.serviceerror.html">Service error</a> captures all/most of the Service/Network level errors/exceptions. A runtime error which gets thrown <strong>after</strong> making Service&rsquo;s API and gets caught in the Service call&rsquo;s scaffolding snippet falls into this category.</p>
+<p>For example:</p>
+<p>When using CommandService to submit a command for a non-existing component will result into <code>LocationNotFound</code>.</p>
+<p>LocationNotFoundException is a Service Error, and it would contain following fields :</p>
+<ul>
+  <li><strong>errorType</strong>: LocationNotFound,</li>
+  <li><strong>message</strong>: &lsquo;Could not resolve location matching connection: $non_existent_component_connection&rsquo;,</li>
+  <li><strong>status</strong>: 500,</li>
+  <li><strong>statusText</strong>: Internal Server error</li>
+</ul>
+<p>Type definition for Service Error can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.serviceerror.html">here</a></p>
 <h3><a href="#client-side-error" name="client-side-error" class="anchor"><span class="anchor-link"></span></a>Client Side Error</h3>
-<pre><code>TODO explaination
-</code></pre>
-<h2><a href="#handling-error-pattern" name="handling-error-pattern" class="anchor"><span class="anchor-link"></span></a>Handling Error pattern</h2>
+<p>Any runtime error which gets thrown <strong>before</strong> making Service&rsquo;s API call falls into this category. Errors/ Exception caught at validation or at data creation time will be thrown before making api calls. When creating a domain object which has validations for sending it as a payload will throw a runtime exception while performing validations check, and those are not met.</p>
+<p>For Example: <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.prefix.html">Prefix</a> has a validation that it cannot have <code>-</code> or space in the componentName field.</p>
+<p>Following snippet will result into runtime error : it is a native browser&rsquo;s Error object with the message field and stacktrace. <code>message</code> field will contain the reason for which the validation failed.</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L87" target="_blank" title="Go to snippet source"></a><code class="language-ts">const prefix = new Prefix(&#39;ESW&#39;, &#39;filter-wheel&#39;)</code></pre></dd>
+</dl>
+<p>For the given case it will have the following information.</p>
+<p>message: <code>Requirement failed - component name filter-wheel has &#39;-&#39;</code></p>
+<h2><a href="#error-handling-pattern" name="error-handling-pattern" class="anchor"><span class="anchor-link"></span></a>Error Handling pattern</h2>
 <p>The following examples shows how to call AgentService api&rsquo;s and handle the response <code>SpawnResponse</code> and <code>KillResponse</code>.</p>
 <p>This example also illustrates error handling of service specific exception <code>AgentNotFoundException</code> along with the generic errors like <code>TransportError</code> and <code>ArithmeticException</code> will look like.</p><div class="callout warning "><div class="callout-title">Exploiting try-catch is an anti-pattern</div>
 <p>The example uses <code>try-catch</code> to handle errors and exceptions. Generally those errors/exceptions are handled at UI framework level on boundaries of service calls. This example will be updated once we have frontend framework setup in place.</p></div>
@@ -200,7 +216,7 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L48-L79" target="_blank" title="Go to snippet source"></a><code class="language-ts">// common function to handle error scenario&#39;s
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L20-L51" target="_blank" title="Go to snippet source"></a><code class="language-ts">// common function to handle error scenario&#39;s
 const handleError = (err: Error) =&gt; {
   if (err instanceof ServiceError) {
     // depending on use case, error can be handled on following fields
@@ -237,7 +253,9 @@ const handleError = (err: Error) =&gt; {
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L84-L108" target="_blank" title="Go to snippet source"></a><code class="language-ts">// setup
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L56-L82" target="_blank" title="Go to snippet source"></a><code class="language-ts">// setup
+const agentService: AgentService = await AgentService(tokenFactory)
+
 const agentPrefix = new Prefix(&#39;ESW&#39;, &#39;agent1&#39;)
 const obsModeConfigPath = &#39;/obs-mode.conf&#39;
 const sequenceManagerVersion = &#39;1.0.0&#39;
@@ -294,13 +312,13 @@ Response Handling
 </span>
 </div>
 </a>
-<a href="../technical/index.html" title="Technical Design Documentation" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../services/index.html" title="Services" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Technical Design Documentation
+Services
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

@@ -106,17 +106,6 @@ TMT JavaScript/Typescript Library
 </label>
 <ul>
   <li><a href="../common/getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="../services/index.html" class="page">Services</a>
-  <ul>
-    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
-    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
-    <li><a href="../services/command-service.html" class="page">Command Service</a></li>
-    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
-    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
-    <li><a href="../services/location-service.html" class="page">Location Service</a></li>
-    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
-    <li><a href="../services/sequencer-service.html" class="page">Sequencer Service</a></li>
-  </ul></li>
   <li><a href="../params/index.html" class="page">Params</a>
   <ul>
     <li><a href="../params/commands.html" class="page">Commands</a></li>
@@ -128,25 +117,29 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/units.html" class="page">Units</a></li>
   </ul></li>
   <li><a href="../aas/csw-aas-js.html" class="page">Javascript Adapter (csw-aas-js)</a></li>
-  <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   <li><a href="../common/response-handling.html" class="active page">Response Handling</a></li>
   <li><a href="../common/error-handling.html" class="page">Error Handling</a></li>
+  <li><a href="../services/index.html" class="page">Services</a>
+  <ul>
+    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
+    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../services/command-service.html" class="page">Command Service</a></li>
+    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
+    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
+  </ul></li>
   <li><a href="../technical/index.html" class="page">Technical Design Documentation</a>
   <ul>
     <li><a href="../services/agent-service.html" class="page">Agent Service</a></li>
+    <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
     <li><a href="../services/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
     <li><a href="../technical/csw-aas-js.html" class="page">csw-aas-js - Javascript adapter</a></li>
+    <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   </ul></li>
-  <li><a href="../common/ts-docs.html" class="page">Type Definations</a></li>
+  <li><a href="../common/ts-docs.html" class="page">Type Definitions</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">Table of contents</label>
-<ul>
-  <li><a href="../common/response-handling.html#response-handling" class="header">Response Handling</a>
-  <ul>
-    <li><a href="../common/response-handling.html#patterns" class="header">Patterns</a></li>
-  </ul></li>
-</ul>
 </nav>
 
 </nav>
@@ -160,29 +153,89 @@ TMT JavaScript/Typescript Library
 </div>
 </div>
 </div>
-<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-<div class="md-sidebar__scrollwrap">
-<div class="md-sidebar__inner">
-<nav class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">Table of contents</label>
-<ul>
-  <li><a href="../common/response-handling.html#response-handling" class="header">Response Handling</a>
-  <ul>
-    <li><a href="../common/response-handling.html#patterns" class="header">Patterns</a></li>
-  </ul></li>
-</ul>
-</nav>
-
-</div>
-</div>
-</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#response-handling" name="response-handling" class="anchor"><span class="anchor-link"></span></a>Response Handling</h1>
-<h2><a href="#patterns" name="patterns" class="anchor"><span class="anchor-link"></span></a>Patterns</h2>
-<h3><a href="#how-to-handle-adt" name="how-to-handle-adt" class="anchor"><span class="anchor-link"></span></a>How to handle ADT</h3>
-<h3><a href="#how-to-handle-normal-type-tbd-" name="how-to-handle-normal-type-tbd-" class="anchor"><span class="anchor-link"></span></a>How to handle normal type (TBD)</h3>
+<p>This sections helps to understand how responses have been modeled in TMT architecture and, also how they can be handled at UI application side.</p>
+<p>If you have not gone the Services Section, We Recommend you to check <a href="../services/index.html">Services</a> out first. Assuming you have read through the Services section and what all types of response can be returned by the Service of your current interest.</p>
+<p>Response types which are Union types/ADT&rsquo;s , all of them are tagged by <code>_type</code> field, which provides information at compile time to developers of all possible response variation at runtime for the current response.</p>
+<p>For example : Command Service&rsquo;s submit method&rsquo;s response type is <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#submitresponse">SubmitResponse</a> which can be one of 6 different response.</p>
+<p>Depending on how you would want to use SubmitResponse, you can handle all variations or few of the responses.</p>
+<p>2 ways of response handling have been showcase here:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L92-L159" target="_blank" title="Go to snippet source"></a><code class="language-ts">// response handlers
+const onCancelled = () =&gt; {
+  // do something on receiving Cancelled type
+}
+const onCompleted = () =&gt; {
+  // do something on receiving Completed type
+}
+const onStarted = () =&gt; {
+  // do something on receiving Started type
+}
+const onError = () =&gt; {
+  // do something on receiving Error type
+}
+const onInvalid = () =&gt; {
+  // do something on receiving Invalid type
+}
+const onLocked = () =&gt; {
+  // do something on receiving Locked type
+}
+
+const prefix = new Prefix(&#39;ESW&#39;, &#39;component_1&#39;)
+const componentId = new ComponentId(prefix, &#39;Assembly&#39;)
+const commandService: CommandService = await CommandService(
+  componentId,
+  tokenFactory
+)
+
+const setup = new Setup(prefix, &#39;move&#39;, [])
+const submitResponse: SubmitResponse = await commandService.submit(setup)
+
+// Handle all variations (Exhaustive switch pattern)
+switch (submitResponse._type) {
+  case &#39;Cancelled&#39;:
+    onCancelled()
+    break
+  case &#39;Completed&#39;:
+    onCompleted()
+    break
+  case &#39;Started&#39;:
+    onStarted()
+    break
+  case &#39;Error&#39;:
+    onError()
+    break
+  case &#39;Invalid&#39;:
+    onInvalid()
+    break
+  case &#39;Locked&#39;:
+    onLocked()
+    break
+}
+
+// or handle few types
+
+switch (submitResponse._type) {
+  case &#39;Completed&#39;:
+    onCompleted()
+    break
+  case &#39;Started&#39;:
+    onStarted()
+    break
+  case &#39;Error&#39;:
+    onError()
+    break
+  default: // !!important!!
+  // do something by default for other cases
+}
+</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>All non-ADT or Normal response types (for ex: Done, LogMetadata, etc.) does not require extra effort of handling it with switch cases. because those models does not have any discriminatory field like <code>_type</code> and there will always be one variation, and the information about all fields inside model will be statically known.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/common/response-handling.md" title="Edit this page" class="md-source-file md-edit">
@@ -201,7 +254,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../common/contract.html" title="Service Contract" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../aas/csw-aas-js.html" title="Javascript Adapter (csw-aas-js)" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -210,7 +263,7 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Service Contract
+Javascript Adapter (csw-aas-js)
 </span>
 </div>
 </a>

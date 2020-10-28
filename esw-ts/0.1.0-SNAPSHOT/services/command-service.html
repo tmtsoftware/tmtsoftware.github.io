@@ -106,17 +106,6 @@ TMT JavaScript/Typescript Library
 </label>
 <ul>
   <li><a href="../common/getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="../services/index.html" class="page">Services</a>
-  <ul>
-    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
-    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
-    <li><a href="../services/command-service.html" class="active page">Command Service</a></li>
-    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
-    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
-    <li><a href="../services/location-service.html" class="page">Location Service</a></li>
-    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
-    <li><a href="../services/sequencer-service.html" class="page">Sequencer Service</a></li>
-  </ul></li>
   <li><a href="../params/index.html" class="page">Params</a>
   <ul>
     <li><a href="../params/commands.html" class="page">Commands</a></li>
@@ -128,16 +117,27 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/units.html" class="page">Units</a></li>
   </ul></li>
   <li><a href="../aas/csw-aas-js.html" class="page">Javascript Adapter (csw-aas-js)</a></li>
-  <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   <li><a href="../common/response-handling.html" class="page">Response Handling</a></li>
   <li><a href="../common/error-handling.html" class="page">Error Handling</a></li>
+  <li><a href="../services/index.html" class="page">Services</a>
+  <ul>
+    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
+    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../services/command-service.html" class="active page">Command Service</a></li>
+    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
+    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
+  </ul></li>
   <li><a href="../technical/index.html" class="page">Technical Design Documentation</a>
   <ul>
     <li><a href="../services/agent-service.html" class="page">Agent Service</a></li>
+    <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
     <li><a href="../services/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
     <li><a href="../technical/csw-aas-js.html" class="page">csw-aas-js - Javascript adapter</a></li>
+    <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   </ul></li>
-  <li><a href="../common/ts-docs.html" class="page">Type Definations</a></li>
+  <li><a href="../common/ts-docs.html" class="page">Type Definitions</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
@@ -148,6 +148,14 @@ TMT JavaScript/Typescript Library
     <li><a href="../services/command-service.html#type-of-actions" class="header">Type of Actions</a></li>
     <li><a href="../services/command-service.html#control-commands" class="header">Control Commands</a></li>
     <li><a href="../services/command-service.html#usages-of-command-service" class="header">Usages of Command Service</a></li>
+    <li><a href="../services/command-service.html#validating-command" class="header">Validating Command</a></li>
+    <li><a href="../services/command-service.html#submitting-a-command" class="header">Submitting a Command</a></li>
+    <li><a href="../services/command-service.html#submitandwait" class="header">SubmitAndWait</a></li>
+    <li><a href="../services/command-service.html#submitallandwait" class="header">SubmitAllAndWait</a></li>
+    <li><a href="../services/command-service.html#oneway" class="header">Oneway</a></li>
+    <li><a href="../services/command-service.html#query" class="header">Query</a></li>
+    <li><a href="../services/command-service.html#queryfinal" class="header">QueryFinal</a></li>
+    <li><a href="../services/command-service.html#subscribecurrentstate" class="header">SubscribeCurrentState</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -175,6 +183,14 @@ TMT JavaScript/Typescript Library
     <li><a href="../services/command-service.html#type-of-actions" class="header">Type of Actions</a></li>
     <li><a href="../services/command-service.html#control-commands" class="header">Control Commands</a></li>
     <li><a href="../services/command-service.html#usages-of-command-service" class="header">Usages of Command Service</a></li>
+    <li><a href="../services/command-service.html#validating-command" class="header">Validating Command</a></li>
+    <li><a href="../services/command-service.html#submitting-a-command" class="header">Submitting a Command</a></li>
+    <li><a href="../services/command-service.html#submitandwait" class="header">SubmitAndWait</a></li>
+    <li><a href="../services/command-service.html#submitallandwait" class="header">SubmitAllAndWait</a></li>
+    <li><a href="../services/command-service.html#oneway" class="header">Oneway</a></li>
+    <li><a href="../services/command-service.html#query" class="header">Query</a></li>
+    <li><a href="../services/command-service.html#queryfinal" class="header">QueryFinal</a></li>
+    <li><a href="../services/command-service.html#subscribecurrentstate" class="header">SubscribeCurrentState</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -239,9 +255,10 @@ const observeCommand: Observe = new Observe(
 </dl><div class="callout note "><div class="callout-title">Async-Await</div>
 <p>Note that the examples are using async/await which makes handling of promises more readable.</p></div>
 <h2><a href="#usages-of-command-service" name="usages-of-command-service" class="anchor"><span class="anchor-link"></span></a>Usages of Command Service</h2>
-<p>Type definitions of all Command Service APIs can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html">here</a></p>
-<h3><a href="#validating-command" name="validating-command" class="anchor"><span class="anchor-link"></span></a>Validating Command</h3>
+<p>Type definitions of all Command Service methods can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html">here</a></p>
+<h2><a href="#validating-command" name="validating-command" class="anchor"><span class="anchor-link"></span></a>Validating Command</h2>
 <p>A validate message is used to ask a destination component to validate a command and determine if the command can be executed. It does not execute the command and only returns the result of validation. In some scenarios, it may be useful to test to see if a command can be executed prior to trying to execute the command.</p>
+<p>Type definitions of <code>validate</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html#validate">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -254,8 +271,9 @@ const validateResponse2: ValidateResponse = await commandService.validate(
 )
 </code></pre></dd>
 </dl>
-<h3><a href="#submitting-a-command" name="submitting-a-command" class="anchor"><span class="anchor-link"></span></a>Submitting a Command</h3>
+<h2><a href="#submitting-a-command" name="submitting-a-command" class="anchor"><span class="anchor-link"></span></a>Submitting a Command</h2>
 <p>A submit message can be used when the sender of a command needs to do additional work before long-running actions are completed. For instance, send another command to execute in parallel. If commands are short, submit and submitAndWait behave the same way. When the actions started by submit are long-running, the caller can wait for the actions to complete if needed using the <a href="#queryfinal">queryFinal</a> call.</p>
+<p>Type definitions of <code>submit</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html#submit">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -268,8 +286,9 @@ const submitResponse2: SubmitResponse = await commandService.submit(
 )
 </code></pre></dd>
 </dl>
-<h3><a href="#submitandwait" name="submitandwait" class="anchor"><span class="anchor-link"></span></a>SubmitAndWait</h3>
+<h2><a href="#submitandwait" name="submitandwait" class="anchor"><span class="anchor-link"></span></a>SubmitAndWait</h2>
 <p>This is a convenience method which sends a <a href="#submit">submit</a> message and then, if the command is long-running, it waits for final completion. Sending a submit message with a command returns a <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#submitresponse">SubmitResponse</a> as a Future.</p>
+<p>Type definitions of <code>submitAndWait</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html#submitandwait">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -280,8 +299,9 @@ const submitAndWaitResponse: SubmitResponse = await commandService.submitAndWait
   10
 )</code></pre></dd>
 </dl>
-<h3><a href="#submitallandwait" name="submitallandwait" class="anchor"><span class="anchor-link"></span></a>SubmitAllAndWait</h3>
+<h2><a href="#submitallandwait" name="submitallandwait" class="anchor"><span class="anchor-link"></span></a>SubmitAllAndWait</h2>
 <p>Similar to <a href="#submitandwait">SubmitAndWait</a>, submitAllAndWait can be used to send multiple commands sequentially to the same component. This could be used to send initialization commands to an HCD, for instance. The argument for submitAllAndWait is a list of commands. submitAllAndWait returns a list of SubmitResponses – one for each command in the list.</p>
+<p>Type definitions of <code>submitAllAndWait</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html#submitallandwait">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -292,8 +312,9 @@ const submitAllAndWaitResponse: SubmitResponse[] = await commandService.submitAl
   10
 )</code></pre></dd>
 </dl>
-<h3><a href="#oneway" name="oneway" class="anchor"><span class="anchor-link"></span></a>Oneway</h3>
+<h2><a href="#oneway" name="oneway" class="anchor"><span class="anchor-link"></span></a>Oneway</h2>
 <p>Oneway is useful when Command Service needs to send commands to an HCD as quickly as possible. The command is validated on the destination and the validation response is returned, but no other responses are provided.</p>
+<p>Type definitions of <code>oneway</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html#oneway">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -306,8 +327,9 @@ const onewayResponse2: OnewayResponse = await commandService.oneway(
 )
 </code></pre></dd>
 </dl>
-<h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>Query</h3>
+<h2><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>Query</h2>
 <p>If a submitted command returns a <code>Started</code> response indicating it has long-running actions, and the caller needs to determine that the actions have started properly, or wishes to poll the destination component for the final response, the query method of CommandService can be used.</p>
+<p>Type definitions of <code>query</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html#query">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -319,8 +341,9 @@ const res: SubmitResponse = await commandService.submit(setupCommand)
 // Get the current result of long running command as :
 const queryResponse: SubmitResponse = await commandService.query(res.runId)</code></pre></dd>
 </dl>
-<h3><a href="#queryfinal" name="queryfinal" class="anchor"><span class="anchor-link"></span></a>QueryFinal</h3>
+<h2><a href="#queryfinal" name="queryfinal" class="anchor"><span class="anchor-link"></span></a>QueryFinal</h2>
 <p>Like <a href="#query">query</a>, queryFinal uses the Id returned by Started. But in this case, rather than returning immediately like query, it waits and only returns when the final SubmitResponse is sent. queryFinal is used exclusively with submit in the case where some other activity must be done before the actions started by the submit complete.</p>
+<p>Type definitions of <code>queryFinal</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html#queryfinal">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -335,8 +358,9 @@ const queryFinalResponse: SubmitResponse = await commandService.queryFinal(
   10
 )</code></pre></dd>
 </dl>
-<h3><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>SubscribeCurrentState</h3>
+<h2><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>SubscribeCurrentState</h2>
 <p>This method can be used to subscribe to the <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.currentstate.html">CurrentState</a> of a component by providing a callback that is called with the arrival of every CurrentState item.</p>
+<p>Type definitions of <code>subscribeCurrentState</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.commandservice.html#subscribecurrentstate">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>

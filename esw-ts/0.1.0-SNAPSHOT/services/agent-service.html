@@ -106,17 +106,6 @@ TMT JavaScript/Typescript Library
 </label>
 <ul>
   <li><a href="../common/getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="../services/index.html" class="page">Services</a>
-  <ul>
-    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
-    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
-    <li><a href="../services/command-service.html" class="page">Command Service</a></li>
-    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
-    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
-    <li><a href="../services/location-service.html" class="page">Location Service</a></li>
-    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
-    <li><a href="../services/sequencer-service.html" class="page">Sequencer Service</a></li>
-  </ul></li>
   <li><a href="../params/index.html" class="page">Params</a>
   <ul>
     <li><a href="../params/commands.html" class="page">Commands</a></li>
@@ -128,16 +117,27 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/units.html" class="page">Units</a></li>
   </ul></li>
   <li><a href="../aas/csw-aas-js.html" class="page">Javascript Adapter (csw-aas-js)</a></li>
-  <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   <li><a href="../common/response-handling.html" class="page">Response Handling</a></li>
   <li><a href="../common/error-handling.html" class="page">Error Handling</a></li>
+  <li><a href="../services/index.html" class="page">Services</a>
+  <ul>
+    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
+    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../services/command-service.html" class="page">Command Service</a></li>
+    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
+    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../services/location-service.html" class="page">Location Service</a></li>
+    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
+  </ul></li>
   <li><a href="../technical/index.html" class="page">Technical Design Documentation</a>
   <ul>
     <li><a href="../services/agent-service.html" class="active page">Agent Service</a></li>
+    <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
     <li><a href="../services/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
     <li><a href="../technical/csw-aas-js.html" class="page">csw-aas-js - Javascript adapter</a></li>
+    <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   </ul></li>
-  <li><a href="../common/ts-docs.html" class="page">Type Definations</a></li>
+  <li><a href="../common/ts-docs.html" class="page">Type Definitions</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
@@ -146,6 +146,8 @@ TMT JavaScript/Typescript Library
   <ul>
     <li><a href="../services/agent-service.html#creation-of-agent-service" class="header">Creation of Agent Service</a></li>
     <li><a href="../services/agent-service.html#usages-of-agent-service" class="header">Usages of Agent Service</a></li>
+    <li><a href="../services/agent-service.html#spawning-a-sequence-manager" class="header">Spawning a Sequence Manager</a></li>
+    <li><a href="../services/agent-service.html#spawning-a-sequence-component" class="header">Spawning a Sequence Component</a></li>
     <li><a href="../services/agent-service.html#kill-component" class="header">Kill Component</a></li>
   </ul></li>
 </ul>
@@ -172,6 +174,8 @@ TMT JavaScript/Typescript Library
   <ul>
     <li><a href="../services/agent-service.html#creation-of-agent-service" class="header">Creation of Agent Service</a></li>
     <li><a href="../services/agent-service.html#usages-of-agent-service" class="header">Usages of Agent Service</a></li>
+    <li><a href="../services/agent-service.html#spawning-a-sequence-manager" class="header">Spawning a Sequence Manager</a></li>
+    <li><a href="../services/agent-service.html#spawning-a-sequence-component" class="header">Spawning a Sequence Component</a></li>
     <li><a href="../services/agent-service.html#kill-component" class="header">Kill Component</a></li>
   </ul></li>
 </ul>
@@ -204,9 +208,10 @@ const agentService: AgentService = await AgentService(tokenFactory)</code></pre>
 </dl><div class="callout note "><div class="callout-title">Async-Await</div>
 <p>Note that the examples are using async/await which makes handling of promises more readable.</p></div>
 <h2><a href="#usages-of-agent-service" name="usages-of-agent-service" class="anchor"><span class="anchor-link"></span></a>Usages of Agent Service</h2>
-<p>Type definitions for All Agent Service APIs can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html">here</a></p>
-<h3><a href="#spawning-a-sequence-manager" name="spawning-a-sequence-manager" class="anchor"><span class="anchor-link"></span></a>Spawning a Sequence Manager</h3>
+<p>Type definitions for All Agent Service methods can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html">here</a></p>
+<h2><a href="#spawning-a-sequence-manager" name="spawning-a-sequence-manager" class="anchor"><span class="anchor-link"></span></a>Spawning a Sequence Manager</h2>
 <p>Agent Service requires agent(a component of type :<code>Machine</code>) to be able to process requests. once it locates an agent using location service with the help of agent prefix, it sends a spawn sequence manager command to the agent machine. The corresponding api call fails If the Sequence Manager is already running, or the underlying agent fails to spawn it.</p>
+<p>Type definitions for <code>spawnSequenceManager</code> can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html#spawnsequencemanager">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -221,8 +226,9 @@ const spawnResponse1: SpawnResponse = await agentService.spawnSequenceManager(
   sequenceManagerVersion
 )</code></pre></dd>
 </dl>
-<h3><a href="#spawning-a-sequence-component" name="spawning-a-sequence-component" class="anchor"><span class="anchor-link"></span></a>Spawning a Sequence Component</h3>
+<h2><a href="#spawning-a-sequence-component" name="spawning-a-sequence-component" class="anchor"><span class="anchor-link"></span></a>Spawning a Sequence Component</h2>
 <p>Similar to spawning a <a href="#spawning-a-sequence-manager">Sequence Manager</a>, Agent service locates an agent then it sends a spawn sequence component command to the agent machine. the corresponding api call fails If the Sequence Component is already running, or the underlying agent fails to spawn it.</p>
+<p>Type definitions for <code>spawnSequenceComponent</code> can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html#spawnsequencecomponent">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -235,6 +241,7 @@ const spawnResponse2: SpawnResponse = await agentService.spawnSequenceComponent(
 </dl>
 <h2><a href="#kill-component" name="kill-component" class="anchor"><span class="anchor-link"></span></a>Kill Component</h2>
 <p>Agent service kills any process running on the agent machine using the process id (<a href="https://www.computerhope.com/jargon/p/pid.htm">pid</a>) of that component. it uses location service to find the process id from the metadata field of <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#location">location information.</a></p>
+<p>Type definitions for <code>killComponent</code> can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html#killcomponent">here</a></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -275,13 +282,13 @@ Technical Design Documentation
 </span>
 </div>
 </a>
-<a href="../services/sequence-manager-service.html" title="Sequence Manager Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../technical/sequencer-service.html" title="Sequencer Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Sequence Manager Service
+Sequencer Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

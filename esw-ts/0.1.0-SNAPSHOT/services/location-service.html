@@ -106,17 +106,6 @@ TMT JavaScript/Typescript Library
 </label>
 <ul>
   <li><a href="../common/getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="../services/index.html" class="page">Services</a>
-  <ul>
-    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
-    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
-    <li><a href="../services/command-service.html" class="page">Command Service</a></li>
-    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
-    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
-    <li><a href="../services/location-service.html" class="active page">Location Service</a></li>
-    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
-    <li><a href="../services/sequencer-service.html" class="page">Sequencer Service</a></li>
-  </ul></li>
   <li><a href="../params/index.html" class="page">Params</a>
   <ul>
     <li><a href="../params/commands.html" class="page">Commands</a></li>
@@ -128,16 +117,27 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/units.html" class="page">Units</a></li>
   </ul></li>
   <li><a href="../aas/csw-aas-js.html" class="page">Javascript Adapter (csw-aas-js)</a></li>
-  <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   <li><a href="../common/response-handling.html" class="page">Response Handling</a></li>
   <li><a href="../common/error-handling.html" class="page">Error Handling</a></li>
+  <li><a href="../services/index.html" class="page">Services</a>
+  <ul>
+    <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
+    <li><a href="../services/alarm-service.html" class="page">Alarm Service</a></li>
+    <li><a href="../services/command-service.html" class="page">Command Service</a></li>
+    <li><a href="../services/config-service.html" class="page">Config Service</a></li>
+    <li><a href="../services/event-service.html" class="page">Event Service</a></li>
+    <li><a href="../services/location-service.html" class="active page">Location Service</a></li>
+    <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
+  </ul></li>
   <li><a href="../technical/index.html" class="page">Technical Design Documentation</a>
   <ul>
     <li><a href="../services/agent-service.html" class="page">Agent Service</a></li>
+    <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
     <li><a href="../services/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
     <li><a href="../technical/csw-aas-js.html" class="page">csw-aas-js - Javascript adapter</a></li>
+    <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   </ul></li>
-  <li><a href="../common/ts-docs.html" class="page">Type Definations</a></li>
+  <li><a href="../common/ts-docs.html" class="page">Type Definitions</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
@@ -146,6 +146,10 @@ TMT JavaScript/Typescript Library
   <ul>
     <li><a href="../services/location-service.html#creation-of-location-service" class="header">Creation of Location Service</a></li>
     <li><a href="../services/location-service.html#usages-of-location-service" class="header">Usages of Location Service</a></li>
+    <li><a href="../services/location-service.html#listing-filtering-locations" class="header">Listing &amp; Filtering Locations</a></li>
+    <li><a href="../services/location-service.html#resolving-connection" class="header">Resolving Connection</a></li>
+    <li><a href="../services/location-service.html#unregister-a-connection" class="header">Unregister a Connection</a></li>
+    <li><a href="../services/location-service.html#tracking-connection" class="header">Tracking Connection</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -171,6 +175,10 @@ TMT JavaScript/Typescript Library
   <ul>
     <li><a href="../services/location-service.html#creation-of-location-service" class="header">Creation of Location Service</a></li>
     <li><a href="../services/location-service.html#usages-of-location-service" class="header">Usages of Location Service</a></li>
+    <li><a href="../services/location-service.html#listing-filtering-locations" class="header">Listing &amp; Filtering Locations</a></li>
+    <li><a href="../services/location-service.html#resolving-connection" class="header">Resolving Connection</a></li>
+    <li><a href="../services/location-service.html#unregister-a-connection" class="header">Unregister a Connection</a></li>
+    <li><a href="../services/location-service.html#tracking-connection" class="header">Tracking Connection</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -182,18 +190,15 @@ TMT JavaScript/Typescript Library
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#location-service" name="location-service" class="anchor"><span class="anchor-link"></span></a>Location Service</h1>
-<p>The Location Service handles component (i.e., Applications, Sequencers, Assemblies, HCDs, and Services) discovery in the distributed TMT software system.</p>
+<p>The Location Service handles component (i.e. Applications, Sequencers, Assemblies, HCDs, and Services) discovery in the distributed TMT software system.</p>
 <p>A component’s location information can be used by other components and services to connect to it and use it.</p>
-<p>Type definition for location information can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#location">here.</a></p>
+<p>Type definition for location model can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#location">here</a>.</p>
 <h2><a href="#creation-of-location-service" name="creation-of-location-service" class="anchor"><span class="anchor-link"></span></a>Creation of Location Service</h2>
 <h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
-<p>Access token is not necessary for using location service query APIs.</p>
-<p>If You are using location service to unregister a component, you would need to have the access token with specific permissions :</p>
-<ol>
-  <li>Authorization Token with correct access role. Documentation on how to fetch access token could be found <a href="../aas/csw-aas-js.html">here</a>.</li>
-</ol>
-<h4><a href="#examples-to-create-client-for-location-service" name="examples-to-create-client-for-location-service" class="anchor"><span class="anchor-link"></span></a>Examples to create client for Location service</h4>
-<p>Location service constructor takes optional tokenFactory and optional location server configuration(host/port pair).</p>
+<p>Access token is not necessary for using Location Service query APIs.</p>
+<p>If You are using Location Service to unregister a component, you would need to have the authorization Token with correct access role. Documentation on how to fetch access token could be found <a href="../aas/csw-aas-js.html">here</a>.</p>
+<h4><a href="#examples-to-create-a-client-for-location-service" name="examples-to-create-a-client-for-location-service" class="anchor"><span class="anchor-link"></span></a>Examples to create a client for Location Service</h4>
+<p>Location Service constructor takes optional tokenFactory and optional location server configuration(host/port pair).</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -207,14 +212,23 @@ const locationService: LocationService = await LocationService()
 </code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Async-Await</div>
 <p>Note that the examples are using async/await which makes handling of promises more readable.</p></div>
-<p>Type definitions for all APIs can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html">here.</a></p>
 <h2><a href="#usages-of-location-service" name="usages-of-location-service" class="anchor"><span class="anchor-link"></span></a>Usages of Location Service</h2>
-<h3><a href="#listing-filtering-locations" name="listing-filtering-locations" class="anchor"><span class="anchor-link"></span></a>Listing &amp; Filtering Locations</h3>
-<p>Location service provides multiple ways to get list of locations registered in the TMT cluster.</p>
+<p>Type definitions for all methods can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html">here</a>.</p>
+<h2><a href="#listing-filtering-locations" name="listing-filtering-locations" class="anchor"><span class="anchor-link"></span></a>Listing &amp; Filtering Locations</h2>
+<p>Location Service provides multiple ways to get list of locations registered in the TMT cluster.</p>
+<p>Type definitions for relevant listings methods can be found by following links:</p>
+<ol>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#list">list</a>.</li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#listbyprefix">listByPrefix</a>.</li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#listbyhostname">listByHostname</a>.</li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#listbycomponenttype">listByComponentType</a>.</li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#listbyconnectiontype">listByConnectionType</a>.</li>
+</ol>
+<p>Following example showcases the listByComponentType api usage</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L36-L48" target="_blank" title="Go to snippet source"></a><code class="language-ts">// valid Component type&#39;s : &quot;HCD&quot; | &quot;Assembly&quot; | &quot;Service&quot; | &quot;Container&quot; | &quot;Sequencer&quot; | &quot;SequenceComponent&quot; | &quot;Machine&quot;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L36-L48" target="_blank" title="Go to snippet source"></a><code class="language-ts">// valid Component types : HCD, Assembly, Service, Container, Sequencer, SequenceComponent and Machine
 
 const sequencerLocations: Location[] = await locationService.listByComponentType(
   &#39;Sequencer&#39;
@@ -228,25 +242,22 @@ const assemblyLocations: Location[] = await locationService.listByComponentType(
   &#39;Assembly&#39;
 )</code></pre></dd>
 </dl>
-<p>Type Definitions for all flavours of listing apis are as follows:</p>
-<ul>
-  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#list">list</a></li>
-  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#listByComponentType">listByComponentType</a></li>
-  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#listByConnectionType">listByConnectionType</a></li>
-  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#listByHostname">listByHostname</a></li>
-  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#listByPrefix">listByPrefix</a></li>
-</ul>
-<h3><a href="#resolving-connection" name="resolving-connection" class="anchor"><span class="anchor-link"></span></a>Resolving Connection</h3>
+<h2><a href="#resolving-connection" name="resolving-connection" class="anchor"><span class="anchor-link"></span></a>Resolving Connection</h2>
 <p>There are two ways to get/fetch a location information of a connection:</p>
 <ol>
   <li>Using resolve API</li>
   <li>Using find API</li>
 </ol>
-<p>Location service&rsquo;s <code>resolve</code> api uses <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#connection-1">Connection</a> a component to resolve the location within some timeout duration. However, <code>find</code> api does not wait to resolve location. if the location is not present, it returns <code>undefined</code>.</p>
+<p>Location Service&rsquo;s <code>resolve</code> API uses <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#connection-1">Connection</a> a component to resolve the location within some timeout duration. However, <code>find</code> API does not wait to resolve location. If the location is not present, it returns <code>undefined</code>.</p>
+<p>Type definitions for both methods can be found by following links:</p>
+<ol>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#find">find</a>.</li>
+  <li><a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#resolve">resolve</a>.</li>
+</ol>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L109-L123" target="_blank" title="Go to snippet source"></a><code class="language-ts">// ConnectionType&#39;s : HttpConnection , AkkaConnection &amp; TCPConnection
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L108-L122" target="_blank" title="Go to snippet source"></a><code class="language-ts">// ConnectionTypes : HttpConnection, AkkaConnection &amp; TcpConnection
 // Time unit : seconds, milliseconds, nanoseconds, microseconds, minutes, hours, days
 
 const connection = HttpConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)
@@ -262,30 +273,32 @@ if (maybeLocation1) {
   // location did not resolved in 10 seconds
 }</code></pre></dd>
 </dl>
-<h3><a href="#unregister-a-connection" name="unregister-a-connection" class="anchor"><span class="anchor-link"></span></a>Unregister a Connection</h3>
-<p>This is a secure API and takes a type of Connection as an input argument to be unregistered from the location service and returns Done once unregistered.</p>
-<p>The following example shows unregister API can be called:</p>
+<h2><a href="#unregister-a-connection" name="unregister-a-connection" class="anchor"><span class="anchor-link"></span></a>Unregister a Connection</h2>
+<p>This is a secure API and takes a type of Connection as an input argument to be unregistered from the Location Service and returns Done once unregistered.</p>
+<p>Type definitions for <code>unregister</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#unregister">here</a></p>
+<p>The following example shows <code>unregister</code> method can be called:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L101-L105" target="_blank" title="Go to snippet source"></a><code class="language-ts">// ConnectionType&#39;s : HttpConnection , AkkaConnection &amp; TCPConnection
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L100-L104" target="_blank" title="Go to snippet source"></a><code class="language-ts">// ConnectionTypes : HttpConnection, AkkaConnection &amp; TcpConnection
 const done: Done = await locationServiceWithToken.unregister(
   HttpConnection(new Prefix(&#39;ESW&#39;, &#39;component&#39;), &#39;HCD&#39;)
 )
 </code></pre></dd>
 </dl>
-<h3><a href="#tracking-connection" name="tracking-connection" class="anchor"><span class="anchor-link"></span></a>Tracking Connection</h3>
-<p>The lifecycle of a connection of interest can be followed using either the <code>track</code> API. The connection update events will be received by the callback provided to this api. This api returns a subscription which can be used to cancel the tracking subscription.</p>
-<p>The following example shows track API can be called:</p>
+<h2><a href="#tracking-connection" name="tracking-connection" class="anchor"><span class="anchor-link"></span></a>Tracking Connection</h2>
+<p>The lifecycle of a connection of interest can be followed using either the <code>track</code> API. The connection update events will be received by the callback provided to this method. This method returns a subscription which can be used to cancel the tracking subscription.</p>
+<p>Type definitions for <code>track</code> method can be found <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.locationservice.html#track">here</a></p>
+<p>The following example shows <code>track</code> method can be called:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L127-L139" target="_blank" title="Go to snippet source"></a><code class="language-ts">// a callback function
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/location/LocationExample.ts#L126-L138" target="_blank" title="Go to snippet source"></a><code class="language-ts">// a callback function
 const onTrackingEvent = (event: TrackingEvent) =&gt; {
   if (event._type === &#39;LocationRemoved&#39;) {
     // do something when connection&#39;s location is removed from the location service
   } else if (event._type === &#39;LocationUpdated&#39;) {
-    // do something when connection&#39;s location is update from the location service
+    // do something when connection&#39;s location is updated from the location service
   }
 }
 // connection to be tracked
