@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Error Handling in ESW-TS · TMT JavaScript/Typescript Library</title>
+<title>Auth Components · TMT JavaScript/Typescript Library</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT JavaScript/Typescript Library
 </span>
 <span class="md-header-nav__topic">
-Error Handling in ESW-TS
+Auth Components
 </span>
 </div>
 </div>
@@ -119,7 +119,7 @@ TMT JavaScript/Typescript Library
   </ul></li>
   <li><a href="../aas/auth-components.html" class="page">Auth Components</a></li>
   <li><a href="../common/response-handling.html" class="page">Response Handling in ESW-TS</a></li>
-  <li><a href="../common/error-handling.html" class="active page">Error Handling in ESW-TS</a></li>
+  <li><a href="../common/error-handling.html" class="page">Error Handling in ESW-TS</a></li>
   <li><a href="../services/index.html" class="page">Services</a>
   <ul>
     <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
@@ -135,7 +135,7 @@ TMT JavaScript/Typescript Library
     <li><a href="../technical/agent-service.html" class="page">Agent Service</a></li>
     <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
     <li><a href="../technical/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
-    <li><a href="../technical/auth-components.html" class="page">Auth Components</a></li>
+    <li><a href="../technical/auth-components.html" class="active page">Auth Components</a></li>
     <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   </ul></li>
   <li><a href="../common/ts-docs.html" class="page">Type Definitions</a></li>
@@ -143,10 +143,11 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../common/error-handling.html#error-handling-in-esw-ts" class="header">Error Handling in ESW-TS</a>
+  <li><a href="../technical/auth-components.html#auth-components" class="header">Auth Components</a>
   <ul>
-    <li><a href="../common/error-handling.html#error-types" class="header">Error Types</a></li>
-    <li><a href="../common/error-handling.html#error-handling-pattern" class="header">Error Handling pattern</a></li>
+    <li><a href="../technical/auth-components.html#implementation" class="header">Implementation</a></li>
+    <li><a href="../technical/auth-components.html#keycloak" class="header">Keycloak</a></li>
+    <li><a href="../technical/auth-components.html#working-of-auth-components" class="header">Working of Auth Components</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -168,10 +169,11 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../common/error-handling.html#error-handling-in-esw-ts" class="header">Error Handling in ESW-TS</a>
+  <li><a href="../technical/auth-components.html#auth-components" class="header">Auth Components</a>
   <ul>
-    <li><a href="../common/error-handling.html#error-types" class="header">Error Types</a></li>
-    <li><a href="../common/error-handling.html#error-handling-pattern" class="header">Error Handling pattern</a></li>
+    <li><a href="../technical/auth-components.html#implementation" class="header">Implementation</a></li>
+    <li><a href="../technical/auth-components.html#keycloak" class="header">Keycloak</a></li>
+    <li><a href="../technical/auth-components.html#working-of-auth-components" class="header">Working of Auth Components</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -182,109 +184,104 @@ TMT JavaScript/Typescript Library
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#error-handling-in-esw-ts" name="error-handling-in-esw-ts" class="anchor"><span class="anchor-link"></span></a>Error Handling in ESW-TS</h1>
-<p>Errors/Exceptions must be handled in application code because that will help user to make further decisions for controlled user interactions with the UI.</p>
-<p>To read more on exception handling, refer this <a href="https://www.sitepoint.com/exceptional-exception-handling-in-javascript/">document</a> which gives detailed explanation.</p>
-<h2><a href="#error-types" name="error-types" class="anchor"><span class="anchor-link"></span></a>Error Types</h2>
-<h3><a href="#service-error" name="service-error" class="anchor"><span class="anchor-link"></span></a>Service Error</h3>
-<p>In TMT Architecture, <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-RC1+1-4a48114b+20201111-1833/ts-docs/classes/models.serviceerror.html">Service error</a> captures all/most of the Service/Network level errors and exceptions. A runtime error which gets thrown <strong>after</strong> making Service&rsquo;s API and gets caught in the Service call&rsquo;s scaffolding snippet falls into this category.</p>
-<p>For example:</p>
-<p>Using <code>CommandService</code> to submit a command for a non-existing component will result into <code>LocationNotFound</code>.</p>
-<p><code>LocationNotFoundException</code> is a Service Error, and it would contain following fields:</p>
+<h1><a href="#auth-components" name="auth-components" class="anchor"><span class="anchor-link"></span></a>Auth Components</h1>
+<p><code>esw-ts</code> exposes react components to enable authentication and authorization. It is built in TypeScript on top of <a href="https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_adapter">keycloak-js</a> which is JavaScript adapter provided by Keycloak.</p>
+<h2><a href="#implementation" name="implementation" class="anchor"><span class="anchor-link"></span></a>Implementation</h2>
+<p>Core implementation of Auth Components of <code>ESW-TS</code>, uses</p>
 <ul>
-  <li><strong>errorType</strong>: LocationNotFound</li>
-  <li><strong>message</strong>: &lsquo;Could not resolve location matching connection: $non_existent_component_connection&rsquo;</li>
-  <li><strong>status</strong>: 500</li>
-  <li><strong>statusText</strong>: Internal Server error</li>
+  <li><a href="https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_adapter">keycloak-js</a> - keycloak JavaScript adapter</li>
+  <li><a href="https://reactjs.org/">React</a> - JavaScript library for building user interfaces</li>
+  <li><a href="https://www.typescriptlang.org/">Typescript</a> - Types superset of JavaScript which compiles to JavaScript</li>
+  <li><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/location">csw-location-service</a> - resolve keycloak using Location Service HTTP endpoint</li>
 </ul>
-<p>Type definition for Service Error can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-RC1+1-4a48114b+20201111-1833/ts-docs/classes/models.serviceerror.html">here</a></p>
-<h3><a href="#client-side-error" name="client-side-error" class="anchor"><span class="anchor-link"></span></a>Client Side Error</h3>
-<p>Any runtime error which gets thrown <strong>before</strong> making Service&rsquo;s API call falls into this category. The Errors and Exception caught at validation or at data creation time will be thrown before making API calls.</p>
-<p>For Example: <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-RC1+1-4a48114b+20201111-1833/ts-docs/classes/models.prefix.html">Prefix</a> has a validation that it cannot have <code>-</code> or space in the componentName field.</p>
-<p>Following snippet will result into runtime error : it is a native browser&rsquo;s Error object with the message field and stacktrace. <code>message</code> field will contain the reason for which the validation failed.</p>
+<h2><a href="#keycloak" name="keycloak" class="anchor"><span class="anchor-link"></span></a>Keycloak</h2>
+<p>In order for web application utilize keycloak following steps are needed:</p>
+<ul>
+  <li>
+  <p>Registered web application as a public keycloak client Please refer to <a href="https://www.keycloak.org/docs/latest/getting_started/index.html">keycloak documentation</a> for details.</p></li>
+  <li>
+  <p>Create new Keycloak client instance This instantiation expects config which includes keycloak server URL and some application specific config like <code>realm</code> and <code>clientId</code>. Auth Service uses CSW Location Service to resolve keycloak server.</p></li>
+</ul>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L87" target="_blank" title="Go to snippet source"></a><code class="language-ts">const prefix = new Prefix(&#39;ESW&#39;, &#39;filter-wheel&#39;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/config/AppConfig.ts#L2-L6" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const AppConfig = {
+  realm: &#39;TMT&#39;,
+  clientId: &#39;tmt-frontend-app&#39;,
+  applicationName: &#39;test-app&#39;
+}</code></pre></dd>
 </dl>
-<p>For the given case it will have the following information.</p>
-<p>message: <code>Requirement failed - component name filter-wheel has &#39;-&#39;</code></p>
-<h2><a href="#error-handling-pattern" name="error-handling-pattern" class="anchor"><span class="anchor-link"></span></a>Error Handling pattern</h2>
-<p>The following examples shows how to call Agent Service methods and handle the response <code>SpawnResponse</code> and <code>KillResponse</code>.</p>
-<p>This example also illustrates error handling of service specific exception <code>AgentNotFoundException</code> along with the generic errors like <code>TransportError</code> and <code>ArithmeticException</code>.</p><div class="callout warning "><div class="callout-title">Exploiting try-catch is an anti-pattern</div>
-<p>The example uses <code>try-catch</code> to handle errors and exceptions. Generally those errors/exceptions are handled at UI framework level on boundaries of service calls. This example will be updated once we have frontend framework setup in place.</p></div>
-<p>A function whose responsibility is to handle errors and exceptions:</p>
+<ul>
+  <li>To call secure end point, web application first needs to be authenticated using keycloak server. There are two options to make this adapter automatically authenticate - <code>login-required</code> and <code>check-sso</code>. <code>login-required</code> will automatically authenticate if the user is already logged-in, otherwise it will display keycloak login page. <code>check-sso</code> will only authenticate if the user is already logged-in. If the user is not logged-in the browser will be redirected back to the application and remain unauthenticated.</li>
+</ul>
+<p>Auth components of <code>ESW-TS</code> use <code>check-sso</code> to instantiate keycloak. It shows secure components if user is already logged in. If user is not authenticated then Login component gets rendered. If user clicks on login button, it instantiates keycloak using <code>login-required</code>. This redirects user to keycloak login page. As access token has very short life span, at time of keycloak instantiation, these Auth Components also add hooks to refresh token. This gives seamless user experience as user will not have to login again.</p>
+<p>Keycloak adapter supports three authorization flows e.g. authorization code flow, implicit flow and hybrid flow. Auth components in <code>ESW-TS</code>, uses hybrid flow as it has better performance than authorization code flow and unlike implicit flow, hybrid flow makes refresh token available to application. For more information please refer <a href="https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_implicit_flow">keyclok documentaion for authorization flows</a>.</p>
+<h2><a href="#working-of-auth-components" name="working-of-auth-components" class="anchor"><span class="anchor-link"></span></a>Working of Auth Components</h2>
+<p>When user opens Web application in the browser:</p>
+<ul>
+  <li>
+  <p><code>AuthContextProvider</code> component gets mounted. Which does instantiation of keycloak client and initialize keycloak JavaScript adapter with <code>check-sso</code> and <code>hybrid</code> authorization flow.</p></li>
+  <li>
+  <p>It also creates hooks for refreshing token, and when token expires it silently refreshes token resulting seamless user experience once logged in.</p></li>
+  <li>
+  <p>After authentication is done via keycloak JavaScript adapter, <code>AuthContext</code> is extracted in domain model and this data is passed down the component tree using React Context API.</p></li>
+  <li>
+  <p><code>AuthContext</code> gives handle to token, realm and resource roles, <code>userInfo</code>. Any component which want to use this information can become consumer of <code>AuthContext</code>.</p></li>
+</ul>
+<p>For example:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L20-L51" target="_blank" title="Go to snippet source"></a><code class="language-ts">// common function to handle error scenario&#39;s
-const handleError = (err: Error) =&gt; {
-  if (err instanceof ServiceError) {
-    // depending on use case, error can be handled on following fields
-    //  - err.status      (5XX, 4XX, 3XX)
-    //  - err.errorType   (AgentNotFoundException, TransportError, ArithmeticException, NullPointerException, etc)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/config/context/ConfigServiceProvider.tsx#L18" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const { auth } = useContext(authContext)</code></pre></dd>
+</dl>
+<p>Access token can be extracted from <code>auth</code> and it can be sent in <code>Authorization</code> header for calling secure API.</p>
+<p>For example:</p>
+<pre class="prettyprint"><code class="language-typescript">const SampleComponent = () =&gt; {
 
-    // Other fields present in error model
-    // err.message : contains the reason which can be used to show on UI
-    // err.statusText :  Forbidden , Unauthorised, BadRequest, Not Found, etc.
+    const url = &#39;http://localhost:8080/secure-restful-service&#39;;
+    const auth = useContext(AuthContext) //AuthContext from esw-ts
 
-    switch (err.errorType) {
-      case &#39;AgentNotFoundException&#39;:
-        console.log(err.message) // Location not found for $agentPrefix
-        console.log(&#39;do something on getting AgentNotFoundException&#39;)
-        break
-      case &#39;TransportError&#39;:
-        console.log(err.statusText)
-        console.log(&#39;do something on getting TransportError (4XX, 3XX, etc))&#39;)
-        break
-      case &#39;ArithmeticException&#39;:
-        console.log(err.statusText) // InternalServerError
-        console.log(err.message) // Reason : / by zero
-        break
-      default:
-        throw Error(err.message)
+    const req = new XMLHttpRequest();
+    req.open(&#39;GET&#39;, url, true);
+    req.setRequestHeader(&#39;Accept&#39;, &#39;application/json&#39;);
+
+    //extract token from auth context and set Authorization header
+    req.setRequestHeader(&#39;Authorization&#39;, &#39;Bearer &#39; + auth.token);
+
+    req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                alert(&#39;Success&#39;);
+            } else if (req.status == 403) {
+                alert(&#39;Forbidden&#39;);
+            }
+        }
     }
-  } else {
-    // client side error occurred at validations and operations before making api call to the server
-    // for ex: Prefix can throw runtime error if componentName is invalid.
-  }
-}</code></pre></dd>
-</dl>
-<p>Example for <code>spawnSequenceManager</code> method call with error handling looks like following:</p>
-<dl>
-  <dt>Typescript</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L56-L82" target="_blank" title="Go to snippet source"></a><code class="language-ts">// setup
-const agentService: AgentService = await AgentService(tokenFactory)
 
-const agentPrefix = new Prefix(&#39;ESW&#39;, &#39;agent1&#39;)
-const obsModeConfigPath = &#39;/obs-mode.conf&#39;
-const sequenceManagerVersion = &#39;1.0.0&#39;
-
-try {
-  const spawnResponse: SpawnResponse = await agentService.spawnSequenceManager(
-    agentPrefix,
-    obsModeConfigPath,
-    false,
-    sequenceManagerVersion
-  )
-
-  // spawn response handling (200 status code)
-  switch (spawnResponse._type) {
-    case &#39;Spawned&#39;:
-      // do something on successful spawn operation
-      break
-    case &#39;Failed&#39;:
-      // do something on failed response
-      break
-  }
-} catch (err) {
-  handleError(err)
-}</code></pre></dd>
-</dl>
+    req.send();
+};
+</code></pre>
+<p>The following diagram explains JavaScript application flow for making request to secure HTTP API:</p>
+<p><img src="../assets/javascript-app-workflow.png" alt="javascript-app-flow" /></p>
+<ul>
+  <li>
+  <p>When user opens Web application in the browser, csw-aas-js checks if user is already logged in using <code>check-sso</code> mode.</p></li>
+  <li>
+  <p>If user is not logged in then <code>Login</code> button is shown.</p></li>
+  <li>
+  <p>When user clicks on &ldquo;login&rdquo;, user will be redirected to keyclok login page.</p></li>
+  <li>
+  <p>This completes authentication process. Once authentication is done, <code>AuthContextProvider</code> extracts <code>AuthContext</code> domain model and make it available to consumers of <code>AuthContext</code>.</p></li>
+  <li>
+  <p>Protected react components can be shown based on information in <code>AuthContext</code>.</p></li>
+  <li>
+  <p>For example, <code>CreateConfig</code> component can be shown only to users having <code>config admin</code> role. After the user is authenticated the application can make requests to RESTful services secured by Keycloak by including the bearer token in the <code>Authorization</code> header.</p></li>
+  <li>
+  <p>This completes workflow for web application calling secure HTTP endpoint.</p></li>
+</ul>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/common/error-handling.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/technical/auth-components.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -300,7 +297,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../common/response-handling.html" title="Response Handling in ESW-TS" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../technical/sequence-manager-service.html" title="Sequence Manager Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -309,17 +306,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Response Handling in ESW-TS
+Sequence Manager Service
 </span>
 </div>
 </a>
-<a href="../services/index.html" title="Services" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../common/contract.html" title="Service Contract" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Services
+Service Contract
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Error Handling in ESW-TS · TMT JavaScript/Typescript Library</title>
+<title>Subsystem · TMT JavaScript/Typescript Library</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT JavaScript/Typescript Library
 </span>
 <span class="md-header-nav__topic">
-Error Handling in ESW-TS
+Subsystem
 </span>
 </div>
 </div>
@@ -113,13 +113,13 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/events.html" class="page">Events</a></li>
     <li><a href="../params/keys-and-parameters.html" class="page">Keys and Parameters</a></li>
     <li><a href="../params/result.html" class="page">Result</a></li>
-    <li><a href="../params/subsystem.html" class="page">Subsystem</a></li>
+    <li><a href="../params/subsystem.html" class="active page">Subsystem</a></li>
     <li><a href="../params/state-variables.html" class="page">State variables</a></li>
     <li><a href="../params/units.html" class="page">Units</a></li>
   </ul></li>
   <li><a href="../aas/auth-components.html" class="page">Auth Components</a></li>
   <li><a href="../common/response-handling.html" class="page">Response Handling in ESW-TS</a></li>
-  <li><a href="../common/error-handling.html" class="active page">Error Handling in ESW-TS</a></li>
+  <li><a href="../common/error-handling.html" class="page">Error Handling in ESW-TS</a></li>
   <li><a href="../services/index.html" class="page">Services</a>
   <ul>
     <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
@@ -143,10 +143,10 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../common/error-handling.html#error-handling-in-esw-ts" class="header">Error Handling in ESW-TS</a>
+  <li><a href="../params/subsystem.html#subsystem" class="header">Subsystem</a>
   <ul>
-    <li><a href="../common/error-handling.html#error-types" class="header">Error Types</a></li>
-    <li><a href="../common/error-handling.html#error-handling-pattern" class="header">Error Handling pattern</a></li>
+    <li><a href="../params/subsystem.html#list-of-subsystems" class="header">List of Subsystems</a></li>
+    <li><a href="../params/subsystem.html#usage-examples" class="header">Usage Examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -168,10 +168,10 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../common/error-handling.html#error-handling-in-esw-ts" class="header">Error Handling in ESW-TS</a>
+  <li><a href="../params/subsystem.html#subsystem" class="header">Subsystem</a>
   <ul>
-    <li><a href="../common/error-handling.html#error-types" class="header">Error Types</a></li>
-    <li><a href="../common/error-handling.html#error-handling-pattern" class="header">Error Handling pattern</a></li>
+    <li><a href="../params/subsystem.html#list-of-subsystems" class="header">List of Subsystems</a></li>
+    <li><a href="../params/subsystem.html#usage-examples" class="header">Usage Examples</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -182,109 +182,142 @@ TMT JavaScript/Typescript Library
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#error-handling-in-esw-ts" name="error-handling-in-esw-ts" class="anchor"><span class="anchor-link"></span></a>Error Handling in ESW-TS</h1>
-<p>Errors/Exceptions must be handled in application code because that will help user to make further decisions for controlled user interactions with the UI.</p>
-<p>To read more on exception handling, refer this <a href="https://www.sitepoint.com/exceptional-exception-handling-in-javascript/">document</a> which gives detailed explanation.</p>
-<h2><a href="#error-types" name="error-types" class="anchor"><span class="anchor-link"></span></a>Error Types</h2>
-<h3><a href="#service-error" name="service-error" class="anchor"><span class="anchor-link"></span></a>Service Error</h3>
-<p>In TMT Architecture, <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-RC1+1-4a48114b+20201111-1833/ts-docs/classes/models.serviceerror.html">Service error</a> captures all/most of the Service/Network level errors and exceptions. A runtime error which gets thrown <strong>after</strong> making Service&rsquo;s API and gets caught in the Service call&rsquo;s scaffolding snippet falls into this category.</p>
-<p>For example:</p>
-<p>Using <code>CommandService</code> to submit a command for a non-existing component will result into <code>LocationNotFound</code>.</p>
-<p><code>LocationNotFoundException</code> is a Service Error, and it would contain following fields:</p>
-<ul>
-  <li><strong>errorType</strong>: LocationNotFound</li>
-  <li><strong>message</strong>: &lsquo;Could not resolve location matching connection: $non_existent_component_connection&rsquo;</li>
-  <li><strong>status</strong>: 500</li>
-  <li><strong>statusText</strong>: Internal Server error</li>
-</ul>
-<p>Type definition for Service Error can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-RC1+1-4a48114b+20201111-1833/ts-docs/classes/models.serviceerror.html">here</a></p>
-<h3><a href="#client-side-error" name="client-side-error" class="anchor"><span class="anchor-link"></span></a>Client Side Error</h3>
-<p>Any runtime error which gets thrown <strong>before</strong> making Service&rsquo;s API call falls into this category. The Errors and Exception caught at validation or at data creation time will be thrown before making API calls.</p>
-<p>For Example: <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-RC1+1-4a48114b+20201111-1833/ts-docs/classes/models.prefix.html">Prefix</a> has a validation that it cannot have <code>-</code> or space in the componentName field.</p>
-<p>Following snippet will result into runtime error : it is a native browser&rsquo;s Error object with the message field and stacktrace. <code>message</code> field will contain the reason for which the validation failed.</p>
-<dl>
-  <dt>Typescript</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L87" target="_blank" title="Go to snippet source"></a><code class="language-ts">const prefix = new Prefix(&#39;ESW&#39;, &#39;filter-wheel&#39;)</code></pre></dd>
-</dl>
-<p>For the given case it will have the following information.</p>
-<p>message: <code>Requirement failed - component name filter-wheel has &#39;-&#39;</code></p>
-<h2><a href="#error-handling-pattern" name="error-handling-pattern" class="anchor"><span class="anchor-link"></span></a>Error Handling pattern</h2>
-<p>The following examples shows how to call Agent Service methods and handle the response <code>SpawnResponse</code> and <code>KillResponse</code>.</p>
-<p>This example also illustrates error handling of service specific exception <code>AgentNotFoundException</code> along with the generic errors like <code>TransportError</code> and <code>ArithmeticException</code>.</p><div class="callout warning "><div class="callout-title">Exploiting try-catch is an anti-pattern</div>
-<p>The example uses <code>try-catch</code> to handle errors and exceptions. Generally those errors/exceptions are handled at UI framework level on boundaries of service calls. This example will be updated once we have frontend framework setup in place.</p></div>
-<p>A function whose responsibility is to handle errors and exceptions:</p>
-<dl>
-  <dt>Typescript</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L20-L51" target="_blank" title="Go to snippet source"></a><code class="language-ts">// common function to handle error scenario&#39;s
-const handleError = (err: Error) =&gt; {
-  if (err instanceof ServiceError) {
-    // depending on use case, error can be handled on following fields
-    //  - err.status      (5XX, 4XX, 3XX)
-    //  - err.errorType   (AgentNotFoundException, TransportError, ArithmeticException, NullPointerException, etc)
-
-    // Other fields present in error model
-    // err.message : contains the reason which can be used to show on UI
-    // err.statusText :  Forbidden , Unauthorised, BadRequest, Not Found, etc.
-
-    switch (err.errorType) {
-      case &#39;AgentNotFoundException&#39;:
-        console.log(err.message) // Location not found for $agentPrefix
-        console.log(&#39;do something on getting AgentNotFoundException&#39;)
-        break
-      case &#39;TransportError&#39;:
-        console.log(err.statusText)
-        console.log(&#39;do something on getting TransportError (4XX, 3XX, etc))&#39;)
-        break
-      case &#39;ArithmeticException&#39;:
-        console.log(err.statusText) // InternalServerError
-        console.log(err.message) // Reason : / by zero
-        break
-      default:
-        throw Error(err.message)
-    }
-  } else {
-    // client side error occurred at validations and operations before making api call to the server
-    // for ex: Prefix can throw runtime error if componentName is invalid.
-  }
-}</code></pre></dd>
-</dl>
-<p>Example for <code>spawnSequenceManager</code> method call with error handling looks like following:</p>
-<dl>
-  <dt>Typescript</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L56-L82" target="_blank" title="Go to snippet source"></a><code class="language-ts">// setup
-const agentService: AgentService = await AgentService(tokenFactory)
-
-const agentPrefix = new Prefix(&#39;ESW&#39;, &#39;agent1&#39;)
-const obsModeConfigPath = &#39;/obs-mode.conf&#39;
-const sequenceManagerVersion = &#39;1.0.0&#39;
-
-try {
-  const spawnResponse: SpawnResponse = await agentService.spawnSequenceManager(
-    agentPrefix,
-    obsModeConfigPath,
-    false,
-    sequenceManagerVersion
-  )
-
-  // spawn response handling (200 status code)
-  switch (spawnResponse._type) {
-    case &#39;Spawned&#39;:
-      // do something on successful spawn operation
-      break
-    case &#39;Failed&#39;:
-      // do something on failed response
-      break
-  }
-} catch (err) {
-  handleError(err)
-}</code></pre></dd>
-</dl>
+<h1><a href="#subsystem" name="subsystem" class="anchor"><span class="anchor-link"></span></a>Subsystem</h1>
+<p>TMT Observatory system is composed of many subsystems. The subsystems that are known participants in the TMT Software System are predefined and the list is covered under the <code>Subsystem</code> enumeration. They are identified using an abbreviation typically of 3 or 4 letters.</p>
+<p><strong>Subsystem</strong> values are used to construct <strong><a href="commands.html#Prefix">Prefix</a></strong> and are used in communication vehicles such as Commands, Events and States.</p>
+<p>Type definition for Subsystem can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-RC1+1-4a48114b+20201111-1833/ts-docs/modules/models.html#subsystem">here</a></p>
+<h2><a href="#list-of-subsystems" name="list-of-subsystems" class="anchor"><span class="anchor-link"></span></a>List of Subsystems</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Abbreviation </th>
+      <th>Subsystem name </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>AOESW </td>
+      <td>AO Executive Software </td>
+    </tr>
+    <tr>
+      <td>APS </td>
+      <td>Alignment and Phasing System </td>
+    </tr>
+    <tr>
+      <td>CIS </td>
+      <td>Communications and Information Systems </td>
+    </tr>
+    <tr>
+      <td>CLN </td>
+      <td>Mirror Cleaning System </td>
+    </tr>
+    <tr>
+      <td>CRYO </td>
+      <td>Cryogenic Cooling System </td>
+    </tr>
+    <tr>
+      <td>CSW </td>
+      <td>Common Software </td>
+    </tr>
+    <tr>
+      <td>DMS </td>
+      <td>Data Management System </td>
+    </tr>
+    <tr>
+      <td>DPS </td>
+      <td>Data Processing System </td>
+    </tr>
+    <tr>
+      <td>ESEN </td>
+      <td>Engineering Sensor System </td>
+    </tr>
+    <tr>
+      <td>ESW </td>
+      <td>Executive Software System </td>
+    </tr>
+    <tr>
+      <td>FMCS </td>
+      <td>Facility Management Control System </td>
+    </tr>
+    <tr>
+      <td>GMS </td>
+      <td>Global Metrology System Controls </td>
+    </tr>
+    <tr>
+      <td>IRIS </td>
+      <td>InfraRed Imaging Spectrometer </td>
+    </tr>
+    <tr>
+      <td>LGSF </td>
+      <td>Laser Guide Star Facility </td>
+    </tr>
+    <tr>
+      <td>M1CS </td>
+      <td>M1 Control System </td>
+    </tr>
+    <tr>
+      <td>MODHIS </td>
+      <td>Multi-Object Diffraction-limited High-resolution Infrared Spectrograph </td>
+    </tr>
+    <tr>
+      <td>NFIRAOS </td>
+      <td>Narrow Field Infrared AO System </td>
+    </tr>
+    <tr>
+      <td>NSCU </td>
+      <td>NFIRAOS Science Calibration Unit </td>
+    </tr>
+    <tr>
+      <td>OSS </td>
+      <td>Observatory Safety System </td>
+    </tr>
+    <tr>
+      <td>PFCS </td>
+      <td>Prime Focus Camera Controls </td>
+    </tr>
+    <tr>
+      <td>PSFR </td>
+      <td>NFIRAOS AO PSF Reconstructor </td>
+    </tr>
+    <tr>
+      <td>REFR </td>
+      <td>Refrigeration Control System </td>
+    </tr>
+    <tr>
+      <td>RTC </td>
+      <td>NFIRAOS Real-time Controller </td>
+    </tr>
+    <tr>
+      <td>RPG </td>
+      <td>NFIRAOS AO Reconstructor Parameter Generator </td>
+    </tr>
+    <tr>
+      <td>SCMS </td>
+      <td>Site Conditions Monitoring System </td>
+    </tr>
+    <tr>
+      <td>SOSS </td>
+      <td>Science Operations Support System </td>
+    </tr>
+    <tr>
+      <td>TCS </td>
+      <td>Telescope Control System </td>
+    </tr>
+    <tr>
+      <td>WFOS </td>
+      <td>Wide Field Optical Spectrometer </td>
+    </tr>
+    <tr>
+      <td>Container </td>
+      <td>Container subsystem </td>
+    </tr>
+  </tbody>
+</table>
+<h2><a href="#usage-examples" name="usage-examples" class="anchor"><span class="anchor-link"></span></a>Usage Examples</h2>
+<p>The usage examples can be found in <a href="../services/event-service.html">Events</a>, <a href="commands.html">Commands</a>, <a href="./state-variables.html">States</a></p>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/common/error-handling.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/params/subsystem.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -300,7 +333,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../common/response-handling.html" title="Response Handling in ESW-TS" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../params/result.html" title="Result" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -309,17 +342,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Response Handling in ESW-TS
+Result
 </span>
 </div>
 </a>
-<a href="../services/index.html" title="Services" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../params/state-variables.html" title="State variables" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Services
+State variables
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
