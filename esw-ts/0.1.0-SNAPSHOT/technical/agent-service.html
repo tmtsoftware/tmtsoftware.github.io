@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Technical Design Documentation · TMT JavaScript/Typescript Library</title>
+<title>Agent Service · TMT JavaScript/Typescript Library</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT JavaScript/Typescript Library
 </span>
 <span class="md-header-nav__topic">
-Technical Design Documentation
+Agent Service
 </span>
 </div>
 </div>
@@ -130,9 +130,9 @@ TMT JavaScript/Typescript Library
     <li><a href="../services/location-service.html" class="page">Location Service</a></li>
     <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
   </ul></li>
-  <li><a href="../technical/index.html" class="active page">Technical Design Documentation</a>
+  <li><a href="../technical/index.html" class="page">Technical Design Documentation</a>
   <ul>
-    <li><a href="../technical/agent-service.html" class="page">Agent Service</a></li>
+    <li><a href="../technical/agent-service.html" class="active page">Agent Service</a></li>
     <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
     <li><a href="../technical/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
     <li><a href="../technical/auth-components.html" class="page">Auth Components</a></li>
@@ -143,9 +143,13 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../technical/index.html#technical-design-documentation" class="header">Technical Design Documentation</a>
+  <li><a href="../technical/agent-service.html#agent-service" class="header">Agent Service</a>
   <ul>
-    <li><a href="../technical/index.html#architectural-overview" class="header">Architectural overview</a></li>
+    <li><a href="../technical/agent-service.html#creation-of-agent-service" class="header">Creation of Agent Service</a></li>
+    <li><a href="../technical/agent-service.html#usages-of-agent-service" class="header">Usages of Agent Service</a></li>
+    <li><a href="../technical/agent-service.html#spawning-a-sequence-manager" class="header">Spawning a Sequence Manager</a></li>
+    <li><a href="../technical/agent-service.html#spawning-a-sequence-component" class="header">Spawning a Sequence Component</a></li>
+    <li><a href="../technical/agent-service.html#kill-a-sequence-component" class="header">Kill a Sequence Component</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -167,9 +171,13 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../technical/index.html#technical-design-documentation" class="header">Technical Design Documentation</a>
+  <li><a href="../technical/agent-service.html#agent-service" class="header">Agent Service</a>
   <ul>
-    <li><a href="../technical/index.html#architectural-overview" class="header">Architectural overview</a></li>
+    <li><a href="../technical/agent-service.html#creation-of-agent-service" class="header">Creation of Agent Service</a></li>
+    <li><a href="../technical/agent-service.html#usages-of-agent-service" class="header">Usages of Agent Service</a></li>
+    <li><a href="../technical/agent-service.html#spawning-a-sequence-manager" class="header">Spawning a Sequence Manager</a></li>
+    <li><a href="../technical/agent-service.html#spawning-a-sequence-component" class="header">Spawning a Sequence Component</a></li>
+    <li><a href="../technical/agent-service.html#kill-a-sequence-component" class="header">Kill a Sequence Component</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -180,22 +188,73 @@ TMT JavaScript/Typescript Library
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#technical-design-documentation" name="technical-design-documentation" class="anchor"><span class="anchor-link"></span></a>Technical Design Documentation</h1>
-<h2><a href="#architectural-overview" name="architectural-overview" class="anchor"><span class="anchor-link"></span></a>Architectural overview</h2>
-<p>Following diagram explains UI application flow for making request to TMT backend component and explains where does the ESW-TS service fits in the whole TMT architecture.</p>
-<p><img src="../assets/esw-ts-architecture-overview.png" alt="esw-ts-overview" /></p>
-<p>For example: A Web application specifically created for sending Control Command to a HCD component.</p>
+<h1><a href="#agent-service" name="agent-service" class="anchor"><span class="anchor-link"></span></a>Agent Service</h1>
+<p>Agent Service provides HTTP interface to interact with all agent machines uniquely located using agent prefix. APIs to spawn components takes agent prefix as parameter. Agent prefix is used to locate agent machine using Location Service.</p>
+<p>Agent Service provides APIs to spawn Sequence Manager, Sequence Components and to kill spawned components.</p>
+<h2><a href="#creation-of-agent-service" name="creation-of-agent-service" class="anchor"><span class="anchor-link"></span></a>Creation of Agent Service</h2>
+<h3><a href="#pre-requisite" name="pre-requisite" class="anchor"><span class="anchor-link"></span></a>Pre-requisite</h3>
+<h4><a href="#in-order-to-use-agent-service-apis" name="in-order-to-use-agent-service-apis" class="anchor"><span class="anchor-link"></span></a>In order to use agent service APIs</h4>
 <ol>
-  <li>User clicks on &ldquo;submit&rdquo; button.</li>
-  <li>Command Service of ESW-TS creates appropriate payload adhering to <a href="../common/contract.html">service contract</a> exposed by Gateway Server.</li>
-  <li><strong>ESW-TS</strong> service uses fetch API of browser to make request.</li>
-  <li>Gateway Server on receiving correct payload, processes it and sends the Control Command to the destined HCD component.</li>
-  <li>On successfully handling of command by HCD component, Gateway Server returns a <code>SuccessResponse</code>.</li>
-  <li>ESW-TS handles the response and returns it, as it was received to the caller Web-UI component  or in case of error throws <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.serviceerror.html">ServiceError</a>.</li>
+  <li>Agent machines should be up and running.</li>
+  <li>Locations of agent machines should be registered in Location Service.</li>
+  <li>Authorization token with correct access role.  Documentation on how to fetch authorization token could be found <a href="../aas/auth-components.html">here</a>.</li>
 </ol>
+<h4><a href="#to-create-agent-service-client" name="to-create-agent-service-client" class="anchor"><span class="anchor-link"></span></a>To create Agent Service client</h4>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L13-L15" target="_blank" title="Go to snippet source"></a><code class="language-ts">const tokenFactory = () =&gt; auth.token
+
+const agentService: AgentService = await AgentService(tokenFactory)</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Async-Await</div>
+<p>Note that the examples are using async/await which makes handling of promises more readable.</p></div>
+<h2><a href="#usages-of-agent-service" name="usages-of-agent-service" class="anchor"><span class="anchor-link"></span></a>Usages of Agent Service</h2>
+<p>Type definitions for all Agent Service methods can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html">here</a></p>
+<h2><a href="#spawning-a-sequence-manager" name="spawning-a-sequence-manager" class="anchor"><span class="anchor-link"></span></a>Spawning a Sequence Manager</h2>
+<p>Agent Service requires agent (a component of type :<code>Machine</code>) to be able to process requests. Once it locates an agent using Location Service with the help of agent prefix, it sends a spawn Sequence Manager command to the agent machine. The corresponding AP call fails if the Sequence Manager is already running, or the underlying agent fails to spawn it.</p>
+<p>Type definitions for <code>spawnSequenceManager</code> can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html#spawnsequencemanager">here</a></p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L19-L28" target="_blank" title="Go to snippet source"></a><code class="language-ts">const agentPrefix = new Prefix(&#39;ESW&#39;, &#39;agent1&#39;)
+const obsModeConfigPath = &#39;/obs-mode.conf&#39;
+const sequenceManagerVersion = &#39;1.0.0&#39;
+
+const spawnResponse1: SpawnResponse = await agentService.spawnSequenceManager(
+  agentPrefix,
+  obsModeConfigPath,
+  false,
+  sequenceManagerVersion
+)</code></pre></dd>
+</dl>
+<h2><a href="#spawning-a-sequence-component" name="spawning-a-sequence-component" class="anchor"><span class="anchor-link"></span></a>Spawning a Sequence Component</h2>
+<p>Similar to spawning a <a href="agent-service.html#spawning-a-sequence-manager">Sequence Manager</a>, Agent Service locates an agent and then it sends a spawn Sequence Component command to the agent machine. The corresponding API call fails if the Sequence Component is already running, or the underlying agent fails to spawn it.</p>
+<p>Type definitions for <code>spawnSequenceComponent</code> can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html#spawnsequencecomponent">here</a></p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L32-L37" target="_blank" title="Go to snippet source"></a><code class="language-ts">const ocsAppVersion = &#39;1.2.1&#39;
+const spawnResponse2: SpawnResponse = await agentService.spawnSequenceComponent(
+  agentPrefix,
+  &#39;component1&#39;,
+  ocsAppVersion
+)</code></pre></dd>
+</dl>
+<h2><a href="#kill-a-sequence-component" name="kill-a-sequence-component" class="anchor"><span class="anchor-link"></span></a>Kill a Sequence Component</h2>
+<p>Agent service kills any process running on the agent machine using the process id (<a href="https://www.computerhope.com/jargon/p/pid.htm">pid</a>) of that component. it uses location service to find the process id from the metadata field of <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#location">location information.</a></p>
+<p>Type definitions for <code>killComponent</code> can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.agentservice.html#killcomponent">here</a></p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/agent/AgentServiceExamples.ts#L40-L44" target="_blank" title="Go to snippet source"></a><code class="language-ts">const compPrefix = new Prefix(&#39;ESW&#39;, &#39;SomeComponent&#39;)
+const componentToBeKilled = new ComponentId(compPrefix, &#39;Service&#39;)
+const killResponse: KillResponse = await agentService.killComponent(
+  componentToBeKilled
+)</code></pre></dd>
+</dl>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/technical/index.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/technical/agent-service.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -211,7 +270,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../services/logging-service.html" title="Logging Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../technical/index.html" title="Technical Design Documentation" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -220,17 +279,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Logging Service
+Technical Design Documentation
 </span>
 </div>
 </a>
-<a href="../technical/agent-service.html" title="Agent Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../technical/sequencer-service.html" title="Sequencer Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Agent Service
+Sequencer Service
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Technical Design Documentation · TMT JavaScript/Typescript Library</title>
+<title>Auth Components · TMT JavaScript/Typescript Library</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT JavaScript/Typescript Library
 </span>
 <span class="md-header-nav__topic">
-Technical Design Documentation
+Auth Components
 </span>
 </div>
 </div>
@@ -130,12 +130,12 @@ TMT JavaScript/Typescript Library
     <li><a href="../services/location-service.html" class="page">Location Service</a></li>
     <li><a href="../services/logging-service.html" class="page">Logging Service</a></li>
   </ul></li>
-  <li><a href="../technical/index.html" class="active page">Technical Design Documentation</a>
+  <li><a href="../technical/index.html" class="page">Technical Design Documentation</a>
   <ul>
     <li><a href="../technical/agent-service.html" class="page">Agent Service</a></li>
     <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
     <li><a href="../technical/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
-    <li><a href="../technical/auth-components.html" class="page">Auth Components</a></li>
+    <li><a href="../technical/auth-components.html" class="active page">Auth Components</a></li>
     <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   </ul></li>
   <li><a href="../common/ts-docs.html" class="page">Type Definitions</a></li>
@@ -143,9 +143,11 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../technical/index.html#technical-design-documentation" class="header">Technical Design Documentation</a>
+  <li><a href="../technical/auth-components.html#auth-components" class="header">Auth Components</a>
   <ul>
-    <li><a href="../technical/index.html#architectural-overview" class="header">Architectural overview</a></li>
+    <li><a href="../technical/auth-components.html#implementation" class="header">Implementation</a></li>
+    <li><a href="../technical/auth-components.html#keycloak" class="header">Keycloak</a></li>
+    <li><a href="../technical/auth-components.html#working-of-auth-components" class="header">Working of Auth Components</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -167,9 +169,11 @@ TMT JavaScript/Typescript Library
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../technical/index.html#technical-design-documentation" class="header">Technical Design Documentation</a>
+  <li><a href="../technical/auth-components.html#auth-components" class="header">Auth Components</a>
   <ul>
-    <li><a href="../technical/index.html#architectural-overview" class="header">Architectural overview</a></li>
+    <li><a href="../technical/auth-components.html#implementation" class="header">Implementation</a></li>
+    <li><a href="../technical/auth-components.html#keycloak" class="header">Keycloak</a></li>
+    <li><a href="../technical/auth-components.html#working-of-auth-components" class="header">Working of Auth Components</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -180,22 +184,104 @@ TMT JavaScript/Typescript Library
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#technical-design-documentation" name="technical-design-documentation" class="anchor"><span class="anchor-link"></span></a>Technical Design Documentation</h1>
-<h2><a href="#architectural-overview" name="architectural-overview" class="anchor"><span class="anchor-link"></span></a>Architectural overview</h2>
-<p>Following diagram explains UI application flow for making request to TMT backend component and explains where does the ESW-TS service fits in the whole TMT architecture.</p>
-<p><img src="../assets/esw-ts-architecture-overview.png" alt="esw-ts-overview" /></p>
-<p>For example: A Web application specifically created for sending Control Command to a HCD component.</p>
-<ol>
-  <li>User clicks on &ldquo;submit&rdquo; button.</li>
-  <li>Command Service of ESW-TS creates appropriate payload adhering to <a href="../common/contract.html">service contract</a> exposed by Gateway Server.</li>
-  <li><strong>ESW-TS</strong> service uses fetch API of browser to make request.</li>
-  <li>Gateway Server on receiving correct payload, processes it and sends the Control Command to the destined HCD component.</li>
-  <li>On successfully handling of command by HCD component, Gateway Server returns a <code>SuccessResponse</code>.</li>
-  <li>ESW-TS handles the response and returns it, as it was received to the caller Web-UI component  or in case of error throws <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/classes/models.serviceerror.html">ServiceError</a>.</li>
-</ol>
+<h1><a href="#auth-components" name="auth-components" class="anchor"><span class="anchor-link"></span></a>Auth Components</h1>
+<p><code>esw-ts</code> exposes react components to enable authentication and authorization. It is built in TypeScript on top of <a href="https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_adapter">keycloak-js</a> which is JavaScript adapter provided by Keycloak.</p>
+<h2><a href="#implementation" name="implementation" class="anchor"><span class="anchor-link"></span></a>Implementation</h2>
+<p>Core implementation of Auth Components of <code>ESW-TS</code>, uses</p>
+<ul>
+  <li><a href="https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_adapter">keycloak-js</a> - keycloak JavaScript adapter</li>
+  <li><a href="https://reactjs.org/">React</a> - JavaScript library for building user interfaces</li>
+  <li><a href="https://www.typescriptlang.org/">Typescript</a> - Types superset of JavaScript which compiles to JavaScript</li>
+  <li><a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/location">csw-location-service</a> - resolve keycloak using Location Service HTTP endpoint</li>
+</ul>
+<h2><a href="#keycloak" name="keycloak" class="anchor"><span class="anchor-link"></span></a>Keycloak</h2>
+<p>In order for web application utilize keycloak following steps are needed:</p>
+<ul>
+  <li>
+  <p>Registered web application as a public keycloak client Please refer to <a href="https://www.keycloak.org/docs/latest/getting_started/index.html">keycloak documentation</a> for details.</p></li>
+  <li>
+  <p>Create new Keycloak client instance This instantiation expects config which includes keycloak server URL and some application specific config like <code>realm</code> and <code>clientId</code>. Auth Service uses CSW Location Service to resolve keycloak server.</p></li>
+</ul>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/config/AppConfig.ts#L2-L6" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const AppConfig = {
+  realm: &#39;TMT&#39;,
+  clientId: &#39;tmt-frontend-app&#39;,
+  applicationName: &#39;test-app&#39;
+}</code></pre></dd>
+</dl>
+<ul>
+  <li>To call secure end point, web application first needs to be authenticated using keycloak server. There are two options to make this adapter automatically authenticate - <code>login-required</code> and <code>check-sso</code>. <code>login-required</code> will automatically authenticate if the user is already logged-in, otherwise it will display keycloak login page. <code>check-sso</code> will only authenticate if the user is already logged-in. If the user is not logged-in the browser will be redirected back to the application and remain unauthenticated.</li>
+</ul>
+<p>Auth components of <code>ESW-TS</code> use <code>check-sso</code> to instantiate keycloak. It shows secure components if user is already logged in. If user is not authenticated then Login component gets rendered. If user clicks on login button, it instantiates keycloak using <code>login-required</code>. This redirects user to keycloak login page. As access token has very short life span, at time of keycloak instantiation, these Auth Components also add hooks to refresh token. This gives seamless user experience as user will not have to login again.</p>
+<p>Keycloak adapter supports three authorization flows e.g. authorization code flow, implicit flow and hybrid flow. Auth components in <code>ESW-TS</code>, uses hybrid flow as it has better performance than authorization code flow and unlike implicit flow, hybrid flow makes refresh token available to application. For more information please refer <a href="https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_implicit_flow">keyclok documentaion for authorization flows</a>.</p>
+<h2><a href="#working-of-auth-components" name="working-of-auth-components" class="anchor"><span class="anchor-link"></span></a>Working of Auth Components</h2>
+<p>When user opens Web application in the browser:</p>
+<ul>
+  <li>
+  <p><code>AuthContextProvider</code> component gets mounted. Which does instantiation of keycloak client and initialize keycloak JavaScript adapter with <code>check-sso</code> and <code>hybrid</code> authorization flow.</p></li>
+  <li>
+  <p>It also creates hooks for refreshing token, and when token expires it silently refreshes token resulting seamless user experience once logged in.</p></li>
+  <li>
+  <p>After authentication is done via keycloak JavaScript adapter, <code>AuthContext</code> is extracted in domain model and this data is passed down the component tree using React Context API.</p></li>
+  <li>
+  <p><code>AuthContext</code> gives handle to token, realm and resource roles, <code>userInfo</code>. Any component which want to use this information can become consumer of <code>AuthContext</code>.</p></li>
+</ul>
+<p>For example:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/config/context/ConfigServiceProvider.tsx#L18" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const { auth } = useContext(authContext)</code></pre></dd>
+</dl>
+<p>Access token can be extracted from <code>auth</code> and it can be sent in <code>Authorization</code> header for calling secure API.</p>
+<p>For example:</p>
+<pre class="prettyprint"><code class="language-typescript">const SampleComponent = () =&gt; {
+
+    const url = &#39;http://localhost:8080/secure-restful-service&#39;;
+    const auth = useContext(AuthContext) //AuthContext from esw-ts
+
+    const req = new XMLHttpRequest();
+    req.open(&#39;GET&#39;, url, true);
+    req.setRequestHeader(&#39;Accept&#39;, &#39;application/json&#39;);
+
+    //extract token from auth context and set Authorization header
+    req.setRequestHeader(&#39;Authorization&#39;, &#39;Bearer &#39; + auth.token);
+
+    req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                alert(&#39;Success&#39;);
+            } else if (req.status == 403) {
+                alert(&#39;Forbidden&#39;);
+            }
+        }
+    }
+
+    req.send();
+};
+</code></pre>
+<p>The following diagram explains JavaScript application flow for making request to secure HTTP API:</p>
+<p><img src="../assets/javascript-app-workflow.png" alt="javascript-app-flow" /></p>
+<ul>
+  <li>
+  <p>When user opens Web application in the browser, csw-aas-js checks if user is already logged in using <code>check-sso</code> mode.</p></li>
+  <li>
+  <p>If user is not logged in then <code>Login</code> button is shown.</p></li>
+  <li>
+  <p>When user clicks on &ldquo;login&rdquo;, user will be redirected to keyclok login page.</p></li>
+  <li>
+  <p>This completes authentication process. Once authentication is done, <code>AuthContextProvider</code> extracts <code>AuthContext</code> domain model and make it available to consumers of <code>AuthContext</code>.</p></li>
+  <li>
+  <p>Protected react components can be shown based on information in <code>AuthContext</code>.</p></li>
+  <li>
+  <p>For example, <code>CreateConfig</code> component can be shown only to users having <code>config admin</code> role. After the user is authenticated the application can make requests to RESTful services secured by Keycloak by including the bearer token in the <code>Authorization</code> header.</p></li>
+  <li>
+  <p>This completes workflow for web application calling secure HTTP endpoint.</p></li>
+</ul>
 </div>
 <div>
-<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/technical/index.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/technical/auth-components.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
@@ -211,7 +297,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../services/logging-service.html" title="Logging Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../technical/sequence-manager-service.html" title="Sequence Manager Service" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -220,17 +306,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Logging Service
+Sequence Manager Service
 </span>
 </div>
 </a>
-<a href="../technical/agent-service.html" title="Agent Service" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../common/contract.html" title="Service Contract" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Agent Service
+Service Contract
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

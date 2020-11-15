@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Response Handling · TMT JavaScript/Typescript Library</title>
+<title>Response Handling in ESW-TS · TMT JavaScript/Typescript Library</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT JavaScript/Typescript Library
 </span>
 <span class="md-header-nav__topic">
-Response Handling
+Response Handling in ESW-TS
 </span>
 </div>
 </div>
@@ -105,7 +105,8 @@ TMT JavaScript/Typescript Library
 </a>
 </label>
 <ul>
-  <li><a href="../common/getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="../UIOverview.html" class="page">User Interfaces in ESW and TMT</a></li>
+  <li><a href="../common/getting-started.html" class="page">Getting Started with ESW-TS</a></li>
   <li><a href="../params/index.html" class="page">Params</a>
   <ul>
     <li><a href="../params/commands.html" class="page">Commands</a></li>
@@ -116,9 +117,9 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/state-variables.html" class="page">State variables</a></li>
     <li><a href="../params/units.html" class="page">Units</a></li>
   </ul></li>
-  <li><a href="../aas/csw-aas-js.html" class="page">Javascript Adapter (csw-aas-js)</a></li>
-  <li><a href="../common/response-handling.html" class="active page">Response Handling</a></li>
-  <li><a href="../common/error-handling.html" class="page">Error Handling</a></li>
+  <li><a href="../aas/auth-components.html" class="page">Auth Components</a></li>
+  <li><a href="../common/response-handling.html" class="active page">Response Handling in ESW-TS</a></li>
+  <li><a href="../common/error-handling.html" class="page">Error Handling in ESW-TS</a></li>
   <li><a href="../services/index.html" class="page">Services</a>
   <ul>
     <li><a href="../services/admin-service.html" class="page">Admin Service</a></li>
@@ -131,15 +132,22 @@ TMT JavaScript/Typescript Library
   </ul></li>
   <li><a href="../technical/index.html" class="page">Technical Design Documentation</a>
   <ul>
-    <li><a href="../services/agent-service.html" class="page">Agent Service</a></li>
+    <li><a href="../technical/agent-service.html" class="page">Agent Service</a></li>
     <li><a href="../technical/sequencer-service.html" class="page">Sequencer Service</a></li>
-    <li><a href="../services/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
-    <li><a href="../technical/csw-aas-js.html" class="page">csw-aas-js - Javascript adapter</a></li>
+    <li><a href="../technical/sequence-manager-service.html" class="page">Sequence Manager Service</a></li>
+    <li><a href="../technical/auth-components.html" class="page">Auth Components</a></li>
     <li><a href="../common/contract.html" class="page">Service Contract</a></li>
   </ul></li>
   <li><a href="../common/ts-docs.html" class="page">Type Definitions</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../common/response-handling.html#response-handling-in-esw-ts" class="header">Response Handling in ESW-TS</a>
+  <ul>
+    <li><a href="../common/response-handling.html#asynchronous-programming" class="header">Asynchronous Programming</a></li>
+  </ul></li>
+</ul>
 </nav>
 
 </nav>
@@ -153,16 +161,29 @@ TMT JavaScript/Typescript Library
 </div>
 </div>
 </div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../common/response-handling.html#response-handling-in-esw-ts" class="header">Response Handling in ESW-TS</a>
+  <ul>
+    <li><a href="../common/response-handling.html#asynchronous-programming" class="header">Asynchronous Programming</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#response-handling" name="response-handling" class="anchor"><span class="anchor-link"></span></a>Response Handling</h1>
-<p>This sections helps to understand how responses have been modeled in TMT architecture and, also how they can be handled at UI application side.</p>
-<p>If you have not gone the Services Section, We Recommend you to check <a href="../services/index.html">Services</a> out first. Assuming you have read through the Services section and what all types of response can be returned by the Service of your current interest.</p>
-<p>Response types which are Union types/ADT&rsquo;s , all of them are tagged by <code>_type</code> field, which provides information at compile time to developers of all possible response variation at runtime for the current response.</p>
-<p>For example : Command Service&rsquo;s submit method&rsquo;s response type is <a href="https://tmtsoftware.github.io/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#submitresponse">SubmitResponse</a> which can be one of 6 different response.</p>
-<p>Depending on how you would want to use SubmitResponse, you can handle all variations or few of the responses.</p>
-<p>2 ways of response handling have been showcase here:</p>
+<h1><a href="#response-handling-in-esw-ts" name="response-handling-in-esw-ts" class="anchor"><span class="anchor-link"></span></a>Response Handling in ESW-TS</h1>
+<p>This section helps to understand how responses have been modeled in TMT architecture and, also how they can be handled at UI application side.</p>
+<p>If you have not gone the Services Section, we recommend you to check <a href="../services/index.html">Services</a> out first. Assuming you have read through the Services section and what all types of response can be returned by the Service of your current interest.</p>
+<p>The Response types are Union types/ADT&rsquo;s. All of them are tagged by <code>_type</code> field, this field provides information at compile time to developers of all possible response variation at runtime for the current response.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -234,8 +255,120 @@ switch (submitResponse._type) {
   // do something by default for other cases
 }
 </code></pre></dd>
-</dl><div class="callout note "><div class="callout-title">Note</div>
-<p>All non-ADT or Normal response types (for ex: Done, LogMetadata, etc.) does not require extra effort of handling it with switch cases. because those models does not have any discriminatory field like <code>_type</code> and there will always be one variation, and the information about all fields inside model will be statically known.</p></div>
+</dl><div class="callout note "><div class="callout-title">Normal response</div>
+<p>All non-ADT or Normal response types (for ex: <code>Done</code>, <code>LogMetadata</code>, etc.) does not require extra effort of handling it with switch cases. Those models do not have any discriminatory field like <code>_type</code> and there will always be one variation, and the information about all fields inside model will be statically known.</p></div>
+<h2><a href="#asynchronous-programming" name="asynchronous-programming" class="anchor"><span class="anchor-link"></span></a>Asynchronous Programming</h2>
+<p>You may have notice that we have used <code>async-await</code> syntax in all examples provided in the different pages of this documentation. However, one may still want to write using combinators provided by Promise, since most of the ESW-TS service methods are Promise based.</p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> is provided by Javascript language,Using which we can write asynchronous programs in a more manageable way. Using Async/Await syntax, a promise-based asynchronous code can be written in a synchronous format which saves a lot of time and code becomes scalable. We recommend using async-await syntax for writing asynchronous code as it increases readability of the code. When using <code>callbacks</code> or <code>combinators</code> on top of Promise, issues like <code>callback hell</code> emerges over time.</p>
+<p>For instance, following example showcases two scenarios without <strong>async-await</strong> syntax and how it would look like</p>
+<ol>
+  <li>Sending submit commands using CommandService in <strong>sequence</strong></li>
+  <li>Sending submit commands using CommandService in <strong>parallel</strong></li>
+</ol>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/Promises.ts#L11-L62" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>const prefix = new Prefix(&#39;ESW&#39;, &#39;component_1&#39;)
+const componentId = new ComponentId(prefix, &#39;HCD&#39;)
+
+CommandService(componentId)
+  .then((commandService) =&gt; {
+    const setup1 = new Setup(prefix, &#39;move&#39;, [])
+    const setup2 = new Setup(prefix, &#39;rotate&#39;, [])
+    const setup3 = new Setup(prefix, &#39;set&#39;, [])
+
+    const responsePromise = commandService.submit(setup1)
+
+    //sequential way to handle multiple submit calls
+    responsePromise
+      .then((submitResponse1) =&gt; {
+        handleResponse(submitResponse1)
+        commandService.submit(setup2).then((submitResponse2) =&gt; {
+          handleResponse(submitResponse2)
+          commandService.query(submitResponse2.runId).then(fetchNewESWState)
+        })
+      })
+      .catch(handleError)
+
+    // parallel way to handle multiple promises
+    const responsePromise3 = commandService.submit(setup3)
+
+    Promise.all([responsePromise, responsePromise3]).then(
+      (submitResponses) =&gt; {
+        submitResponses.forEach(handleResponse)
+        const lastResponse = submitResponses.pop()
+        if (lastResponse) {
+          commandService.query(lastResponse.runId).then(fetchNewESWState)
+        }
+      }
+    )
+  })
+  .catch((err) =&gt; {
+    handleError(err)
+  })
+
+const handleError = (error: Error) =&gt; {
+  // See Error handling section for in general details
+  throw new Error(error.message)
+}
+const handleResponse = (response: SubmitResponse) =&gt; {
+  // See Response handling section for in general details
+  console.log(response)
+}
+
+const fetchNewESWState = () =&gt; {
+  // fetch new state from backend
+}</code></pre></dd>
+</dl>
+<p>The following example showcases the same above scenarios with <strong>async-await</strong> syntax.</p>
+<ol>
+  <li>Sending multiple submit commands with async-await syntax</li>
+</ol>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/Promises.ts#L68-L108" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>const handleError = (error: Error) =&gt; {
+  // See Error handling section for details
+  throw new Error(error.message)
+}
+const handleResponse = (response: SubmitResponse) =&gt; {
+  // See Response handling section for more details
+  console.log(response)
+}
+
+const prefix = new Prefix(&#39;ESW&#39;, &#39;component_1&#39;)
+const componentId = new ComponentId(prefix, &#39;HCD&#39;)
+try {
+  const commandService = await CommandService(componentId)
+  const setup1 = new Setup(prefix, &#39;move&#39;, [])
+  const setup2 = new Setup(prefix, &#39;rotate&#39;, [])
+  const setup3 = new Setup(prefix, &#39;set&#39;, [])
+
+  //sequential way to handle multiple submit calls
+  await commandService.submit(setup1)
+  const responsePromise2 = await commandService.submit(setup2)
+  const queryResponse = await commandService.query(responsePromise2.runId)
+  handleResponse(queryResponse)
+
+  // parallel way to handle multiple promises
+  const responsePromise3 = commandService.submit(setup3)
+  const responsePromise4 = commandService.submit(setup1)
+
+  const submitResponses = await Promise.all([
+    responsePromise3,
+    responsePromise4
+  ])
+
+  submitResponses.forEach(handleResponse)
+  const lastResponse = submitResponses.pop()
+  if (lastResponse) {
+    const queryRes = commandService.query(lastResponse.runId)
+  }
+} catch (err) {
+  handleError(err)
+}</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">async-await</div>
+<p>We strongly recommend to use async-await while writing asynchronous code in Javascript.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/common/response-handling.md" title="Edit this page" class="md-source-file md-edit">
@@ -254,7 +387,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../aas/csw-aas-js.html" title="Javascript Adapter (csw-aas-js)" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../aas/auth-components.html" title="Auth Components" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -263,17 +396,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Javascript Adapter (csw-aas-js)
+Auth Components
 </span>
 </div>
 </a>
-<a href="../common/error-handling.html" title="Error Handling" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../common/error-handling.html" title="Error Handling in ESW-TS" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Error Handling
+Error Handling in ESW-TS
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
