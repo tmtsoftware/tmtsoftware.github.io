@@ -215,7 +215,7 @@ TMT Common Software (CSW)
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 3.0.0-RC4
+<i class="md-icon" title="Version">label_outline</i> 3.0.0
 </label>
 </li>
 </ul>
@@ -285,10 +285,10 @@ TMT Common Software (CSW)
   <li>Supports the locking functionality for the component (see <a href="create-component.html#lock">Locking</a>)</li>
   <li>Receives external commands and passes them to the correct component handlers.</li>
 </ul>
-<p>The source code of the Supervisor actor can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorBehavior.scala">here</a></p>
+<p>The source code of the Supervisor actor can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-framework/src/main/scala/csw/framework/internal/supervisor/SupervisorBehavior.scala">here</a></p>
 <h2><a href="#top-level-actor" name="top-level-actor" class="anchor"><span class="anchor-link"></span></a>Top Level Actor</h2>
 <p>While the Supervisor works as the external interface for the component and the manager of its lifecycle, the functional implementation of a component is implemented in a Top Level Actor (TLA), spawned by the Supervisor actor for each component. However, the developer is not expected to implement a TLA code entirely. Instead, the component-specific functionality of the TLA is added by implementing the <code>ComponentHandlers</code> abstract class, consisting of a set of methods, or <code>hooks</code>, called by the TLA during specific lifecycle and command events (see <a href="create-component.html#handlers">Handlers</a>). The <code>ComponentHandlers</code> implementation is specified during construction using a factory (see <a href="create-component.html#constructing-the-component">Constructing The Component</a>) </p>
-<p>The source code of the Top Level Actor can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-framework/src/main/scala/csw/framework/internal/component/ComponentBehavior.scala">here</a>.</p>
+<p>The source code of the Top Level Actor can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-framework/src/main/scala/csw/framework/internal/component/ComponentBehavior.scala">here</a>.</p>
 <h2><a href="#handlers" name="handlers" class="anchor"><span class="anchor-link"></span></a>Handlers</h2>
 <p>The following hooks may be overridden in your ComponentHandlers implementation class:</p>
 <ul>
@@ -303,9 +303,9 @@ TMT Common Software (CSW)
   <li><code>onLocationTrackingEvent</code>: called when a tracked dependency changes location state. (see <a href="multiple-components.html#tracking-dependencies">Tracking Dependencies</a>)</li>
   <li><code>onShutdown</code>: called when the component is shutting down.</li>
 </ul>
-<p>The source code of <code>ComponentHandlers</code> can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentHandlers.scala">here</a>. </p>
+<p>The source code of <code>ComponentHandlers</code> can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-framework/src/main/scala/csw/framework/scaladsl/ComponentHandlers.scala">here</a>. </p>
 <p>More details about handler significance and invocation can be found <a href="../framework/handling-lifecycle.html">here</a></p><div class="callout note "><div class="callout-title">Component Handlers in Java</div>
-<p>If the component developer wishes to write the component handler implementation in Java, they need to implement the Java version of <code>ComponentHandlers</code> called <code>JComponentHandlers</code>. The source code of <code>JComponentHandlers</code> can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-framework/src/main/scala/csw/framework/javadsl/JComponentHandlers.scala">here</a>. Any further reference to <code>ComponentHandlers</code> should be inferred as also applying to <code>JComponentHandlers</code>.</p></div>
+<p>If the component developer wishes to write the component handler implementation in Java, they need to implement the Java version of <code>ComponentHandlers</code> called <code>JComponentHandlers</code>. The source code of <code>JComponentHandlers</code> can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-framework/src/main/scala/csw/framework/javadsl/JComponentHandlers.scala">here</a>. Any further reference to <code>ComponentHandlers</code> should be inferred as also applying to <code>JComponentHandlers</code>.</p></div>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
 <p>As seen in the <a href="getting-started.html">Getting Started</a> page, if you are using the giter8 template, component handler classes for both the HCD and Assembly are written for you, with implementations stubbed out. We will walk-through filling them in below.</p>
 <h2><a href="#constructing-the-component" name="constructing-the-component" class="anchor"><span class="anchor-link"></span></a>Constructing the Component</h2>
@@ -330,13 +330,13 @@ behaviorFactoryClassName = &quot;org.tmt.csw.samplehcd.JSampleHcdBehaviorFactory
 locationServiceUsage = RegisterOnly</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">What is a behaviorFactoryClassName?</div>
 <p><code>behaviorFactoryClassName</code> refers to class name of the a concrete implementation of <code>ComponentBehaviorFactory</code>, which is <code>SampleHcdBehaviorFactory</code> for Scala in above example, <code>JSampleHcdBehaviorFactory</code> for Java.</p></div>
-<p>The <code>prefix</code> and <code>componentType</code> are used to create the <code>ComponentId</code> identifier, which must be unique within the control system and the Location Service. The <code>prefix</code> must begin with a valid TMT subsystem, which establishes a scope for the component name. The list of valid subsystems is <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-prefix/shared/src/main/scala/csw/prefix/models/Subsystem.scala">here</a>.</p>
+<p>The <code>prefix</code> and <code>componentType</code> are used to create the <code>ComponentId</code> identifier, which must be unique within the control system and the Location Service. The <code>prefix</code> must begin with a valid TMT subsystem, which establishes a scope for the component name. The list of valid subsystems is <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-prefix/shared/src/main/scala/csw/prefix/models/Subsystem.scala">here</a>.</p>
 <p>The <code>locationServiceUsage</code> is used by the Supervisor actor to decide whether to only register a component with the Location Service or to register and track other components. It is also possible to choose not register the component with the Location Service.</p>
 <p>The ComponentInfo file is parsed to a <code>ComponentInfo</code> object and injected in the Supervisor actor. It is then injected in <code>ComponentHandlers</code> while spawning a component and the contents is available for the developer to access.</p><div class="callout note "><div class="callout-title">Using Prefix</div>
 <p><code>ComponentInfo</code> includes the <code>Prefix</code> for the component. Developers should try to use this prefix value rather than defining a new one to reduce errors. </p></div>
 <p>The ComponentInfo file can also contain a list of components and services it wishes to track as dependencies. See <a href="multiple-components.html#tracking-dependencies">Tracking Dependencies</a>.</p>
 <p>More details about <code>ComponentInfo</code> can be found <a href="../framework/describing-components.html">here</a>.</p>
-<p>An additional sample configuration file can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-benchmark/src/main/resources/container.conf">here</a>.</p>
+<p>An additional sample configuration file can be found <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-benchmark/src/main/resources/container.conf">here</a>.</p>
 <h2><a href="#lifecycle" name="lifecycle" class="anchor"><span class="anchor-link"></span></a>Lifecycle</h2>
 <p>The Supervisor of a component manages its lifecycle state, which can be one of the following:</p>
 <ul>
@@ -451,7 +451,7 @@ public void jOnShutdown() {
 </ul>
 <h2><a href="#validation" name="validation" class="anchor"><span class="anchor-link"></span></a>Validation</h2>
 <p>When any command is received by a component using <code>submit</code> or <code>oneway</code>, the Top Level Actor will first call the <code>validateCommand</code> hook of <code>ComponentHandlers</code>. Component developers are expected to perform appropriate validation of a command to determine if it is valid to execute the requested actions and then return a <code>ValidateCommandResponse</code>. The <code>ValidateCommandResponse</code> returned from this handler will be returned to the sender directly by <code>csw-framework</code> if the command fails validation.</p>
-<p>The component developer should return either an <code>Accepted</code> response or an or <code>Invalid</code> response specifying whether the command is valid to be executed or not. CSW defines a set of <code>CommandIssues</code> for use in validation <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-params/shared/src/main/scala/csw/params/commands/CommandIssue.scala">here</a> that should be used within <code>Invalid</code> responses.</p>
+<p>The component developer should return either an <code>Accepted</code> response or an or <code>Invalid</code> response specifying whether the command is valid to be executed or not. CSW defines a set of <code>CommandIssues</code> for use in validation <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-params/shared/src/main/scala/csw/params/commands/CommandIssue.scala">here</a> that should be used within <code>Invalid</code> responses.</p>
 <p>If the handler is being called as part of a <code>submit</code> or <code>oneway</code> call, the command will automatically be passed on to the <code>onSubmit</code> or <code>onOneway</code> handlers (see <a href="create-component.html#command-response">Command Response</a>) only if the validation handler returns a <code>ValidationCommandResponse</code> of <code>Accepted</code>. Otherwise, the <code>Invalid</code> response is returned to the caller immediately.</p>
 <p>Different types of command responses and their significance can be found <a href="command.html#command-based-communication-between-components">here</a>.</p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
@@ -734,7 +734,7 @@ public void jOnShutdown() {
 <h2><a href="#enhanced-tutorial-versions" name="enhanced-tutorial-versions" class="anchor"><span class="anchor-link"></span></a>Enhanced Tutorial Versions</h2>
 <p>There are three supplemental versions of the tutorial Assembly and HCD called: basic, moderate, and full. The basic version is similar to the tutorial example here with possible best practices. Two other versions are included that introduce ways of programming components along with increasing functionality. The following table shows the features of each version. Moderate adds functionality to Basic, and Full adds functionality to Moderate.</p>
 <p>The code for the enhanced tutorials is in the CSW distribution at the following locations:</p>
-<p>Scala versions are <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0-RC4/examples/src/main/scala/example/tutorial/">here</a><br/> Scala test code is <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0-RC4/examples/src/test/scala/example/tutorial/">here</a><br/> Java version of basic is <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0-RC4/examples/src/main/java/example/tutorial/">here</a><br/> Java test code is <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0-RC4/examples/src/test/java/example/tutorial/">here</a></p>
+<p>Scala versions are <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0/examples/src/main/scala/example/tutorial/">here</a><br/> Scala test code is <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0/examples/src/test/scala/example/tutorial/">here</a><br/> Java version of basic is <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0/examples/src/main/java/example/tutorial/">here</a><br/> Java test code is <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0/examples/src/test/java/example/tutorial/">here</a></p>
 <p>At this time there is no Java versions of moderate and full.</p>
 <h3><a href="#basic" name="basic" class="anchor"><span class="anchor-link"></span></a>Basic</h3>
 <h4><a href="#basic-hcd" name="basic-hcd" class="anchor"><span class="anchor-link"></span></a>Basic HCD</h4>
@@ -791,7 +791,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-3.0.0-RC4
+3.0.0
 </span>
 </div>
 </article>

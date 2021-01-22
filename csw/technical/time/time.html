@@ -204,7 +204,7 @@ TMT Common Software (CSW)
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 3.0.0-RC4
+<i class="md-icon" title="Version">label_outline</i> 3.0.0
 </label>
 </li>
 </ul>
@@ -302,7 +302,7 @@ TMT Common Software (CSW)
 <h2><a href="#usage-of-ptp-time" name="usage-of-ptp-time" class="anchor"><span class="anchor-link"></span></a>Usage of PTP time</h2>
 <p>The PTP synchronization assures that the whole TMT system is following an accurate UTC/TAI time with high precision. All the applications running inside TMT should make use of the PTP time to perform time related operations like logging, scheduling etc.</p>
 <h3><a href="#extracting-time" name="extracting-time" class="anchor"><span class="anchor-link"></span></a>Extracting time</h3>
-<p>The CSW provides the time service APIs written in Scala and Java for the component developers. Once the Linux kernel is set with PTP time, these APIs use Java Native Access (JNA) based kernel calls to fetch the time information. The class <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/java/?csw/time/clock/natives/TimeLibrary.java.html" title="csw/time/clock/natives/TimeLibrary.java"><code>TimeLibrary</code></a> is responsible for loading the Linux kernel C libraries and declare the native methods relevant for extracting time information. The clock id determines the clock to fetch time.</p>
+<p>The CSW provides the time service APIs written in Scala and Java for the component developers. Once the Linux kernel is set with PTP time, these APIs use Java Native Access (JNA) based kernel calls to fetch the time information. The class <a href="https://tmtsoftware.github.io/csw/3.0.0/api/java/?csw/time/clock/natives/TimeLibrary.java.html" title="csw/time/clock/natives/TimeLibrary.java"><code>TimeLibrary</code></a> is responsible for loading the Linux kernel C libraries and declare the native methods relevant for extracting time information. The clock id determines the clock to fetch time.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -330,7 +330,7 @@ override def offset: Int = {
 <p>and stakeholder agreement, JNA was fixed to make the low level kernel calls.</p></div>
 <h3><a href="#scheduling" name="scheduling" class="anchor"><span class="anchor-link"></span></a>Scheduling</h3>
 <p>TMT time service provides scheduler for scheduling tasks once or periodically. The schedulers can be used to handle tasks at 1KHz frequency or 1 task every millisecond. However, jitters and JVM garbage collection can degrade the performance of the schedulers at such a high frequency. Internally, the scheduler APIs makes use of ‘<a href="https://doc.akka.io/docs/akka/current/scheduler.html">Akka Scheduler Library</a>’. The results published in <a href="https://id.atlassian.com/login?continue=https%3A%2F%2Ftmt-project.atlassian.net%2Flogin%3FredirectCount%3D1%26dest-url%3D%252Fwiki%252Fspaces%252FDEOPSCSW%252Fpages%252F298680332%252FComparative%252Bstudy%252Bof%252Bscheduler%252Boptions%252Bfor%252B1KHz%252B1ms%252Bscheduling%252Brate%26application%3Dconfluence&application=confluence">here</a> compares some of the options and makes strong recommendation to use the Akka Schedulers. The snippets in the API documentation defines the schedule APIs in the CSW library.</p>
-<p>One of the major challenge in designing the scheduler was to handle the leap second event. The leap second plays an important role in affecting the UTC time. Therefore, a scheduler accepting future UTC time as a start time can behave unpredictably and less accurately. Time service scheduler APIs provide capability to schedule tasks on the absolute TAI time synchronized using the IEEE 1588 standard. This approach eliminates anomaly of a leap second event and provide robustness in the scheduling mechanism. Depending on developer’s choice, scheduled tasks are queued in either UTC or TAI time encapsulated inside <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/time/core/models/TMTTime.html" title="csw/time/core/models/TMTTime"><code>TMTTime</code></a>.</p>
+<p>One of the major challenge in designing the scheduler was to handle the leap second event. The leap second plays an important role in affecting the UTC time. Therefore, a scheduler accepting future UTC time as a start time can behave unpredictably and less accurately. Time service scheduler APIs provide capability to schedule tasks on the absolute TAI time synchronized using the IEEE 1588 standard. This approach eliminates anomaly of a leap second event and provide robustness in the scheduling mechanism. Depending on developer’s choice, scheduled tasks are queued in either UTC or TAI time encapsulated inside <a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/time/core/models/TMTTime.html" title="csw/time/core/models/TMTTime"><code>TMTTime</code></a>.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/technical/time/time.md" title="Edit this page" class="md-source-file md-edit">
@@ -339,7 +339,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-3.0.0-RC4
+3.0.0
 </span>
 </div>
 </article>

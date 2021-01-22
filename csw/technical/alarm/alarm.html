@@ -210,7 +210,7 @@ TMT Common Software (CSW)
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 3.0.0-RC4
+<i class="md-icon" title="Version">label_outline</i> 3.0.0
 </label>
 </li>
 </ul>
@@ -399,15 +399,15 @@ TMT Common Software (CSW)
 <p>When the alarm is auto-acknowledgeable, whenever it&rsquo;s severity changes to Okay, it&rsquo;s Acknowledgement Status becomes <code>acknowledged</code>. If it changes to anything else, Acknowledgement Status remains same.</p>
 <h2><a href="#api-and-implementation-structure" name="api-and-implementation-structure" class="anchor"><span class="anchor-link"></span></a>API and Implementation Structure</h2>
 <p><img src="api-structure.png" alt="api-structure" /></p>
-<p>The alarm functionality divided into two services <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> and <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a></p>
-<p><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> is meant for &ldquo;Components&rdquo; that can only set their current alarm severity and hence for components, Alarm Service only exposes one api i.e. <code>setSeverity</code></p>
-<p><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a> is meant for admin operations. </p>
+<p>The alarm functionality divided into two services <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> and <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a></p>
+<p><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmService.scala">AlarmService</a> is meant for &ldquo;Components&rdquo; that can only set their current alarm severity and hence for components, Alarm Service only exposes one api i.e. <code>setSeverity</code></p>
+<p><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-alarm/csw-alarm-api/src/main/scala/csw/alarm/api/scaladsl/AlarmAdminService.scala">AlarmAdminService</a> is meant for admin operations. </p>
 <p>The Alarm Service implementation is further divided into four internal modules.</p>
-<p><strong>1. <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/SeverityServiceModule.scala">SeverityServiceModule</a></strong></p>
+<p><strong>1. <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/SeverityServiceModule.scala">SeverityServiceModule</a></strong></p>
 <p><code>SeverityServiceModule</code> allows reading, subscribing and modifying severity of alarms and subsystems.</p>
-<p><strong>2. <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/MetadataServiceModule.scala">MetadataServiceModule</a></strong></p>
+<p><strong>2. <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/MetadataServiceModule.scala">MetadataServiceModule</a></strong></p>
 <p><code>MetadataServiceModule</code> allows read-only access to alarm metadata. Initialisation of alarms is also performed using this module.</p>
-<p><strong>3. <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/StatusServiceModule.scala">StatusServiceModule</a></strong></p>
+<p><strong>3. <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/StatusServiceModule.scala">StatusServiceModule</a></strong></p>
 <p><code>StatusServiceModule</code> allows read-write access to alarm status via operations such as getStatus, shelveAlarm, reset, acknowledge, unshelve, etc.</p>
 <p>AlarmStatus is a logical entity which contains:</p>
 <ul>
@@ -417,12 +417,12 @@ TMT Common Software (CSW)
   <li><code>alarmTime</code></li>
   <li><code>initializing</code></li>
 </ul>
-<p><strong>4. <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/HealthServiceModule.scala">HealthServiceModule</a></strong></p>
+<p><strong>4. <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/csw-alarm/csw-alarm-client/src/main/scala/csw/alarm/client/internal/services/HealthServiceModule.scala">HealthServiceModule</a></strong></p>
 <p><code>HealthServiceModule</code> allows reading and subscribing to alarm and subsystem healths.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>These modules are interdependent on each other and use <a href="https://docs.scala-lang.org/tour/self-types.html">self-type</a> feature of scala</p></div>
 <p><img src="class-diagram.png" alt="class-diagram" /></p>
-<p><code>AlarmAdminService</code> is consumed from <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0-RC4/csw-alarm/csw-alarm-cli">alarm cli</a> and Alarm Server. This API is also used by administrative clients such as the future Alarm Server.</p>
-<p>The API doc for Alarm Service can be found <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/alarm/api/scaladsl/AlarmService.html" title="csw/alarm/api/scaladsl/AlarmService"><code>here</code></a> and <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/alarm/api/scaladsl/AlarmAdminService.html" title="csw/alarm/api/scaladsl/AlarmAdminService"><code>here</code></a>.</p>
+<p><code>AlarmAdminService</code> is consumed from <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0/csw-alarm/csw-alarm-cli">alarm cli</a> and Alarm Server. This API is also used by administrative clients such as the future Alarm Server.</p>
+<p>The API doc for Alarm Service can be found <a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/alarm/api/scaladsl/AlarmService.html" title="csw/alarm/api/scaladsl/AlarmService"><code>here</code></a> and <a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/alarm/api/scaladsl/AlarmAdminService.html" title="csw/alarm/api/scaladsl/AlarmAdminService"><code>here</code></a>.</p>
 <p>Detailed documentation about how to use these APIs is available <a href="../../services/alarm.html">here</a>.</p>
 <h3><a href="#setting-severity-execution-workflow" name="setting-severity-execution-workflow" class="anchor"><span class="anchor-link"></span></a>Setting severity execution workflow</h3>
 <p>The following diagram show execution sequence triggered when a component calls <code>setSeverityApi</code></p>
@@ -441,7 +441,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-3.0.0-RC4
+3.0.0
 </span>
 </div>
 </article>

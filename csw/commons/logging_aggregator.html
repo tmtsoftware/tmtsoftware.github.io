@@ -208,7 +208,7 @@ TMT Common Software (CSW)
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 3.0.0-RC4
+<i class="md-icon" title="Version">label_outline</i> 3.0.0
 </label>
 </li>
 </ul>
@@ -251,7 +251,7 @@ TMT Common Software (CSW)
 <p>Logstash collects the JSON logs (e.g. from components) in string format, parses it to a valid JSON object and then feeds it to Elasticsearch. Elasticsearch is responsible for ingesting and indexing the JSON data. If logs are generated in non-JSON format, which will be the case for Redis, syslog, Postgres, and Elasticsearch logs, they will be parsed and indexed using the elastic <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-modules-overview.html">modules</a>. </p>
 <p>After the JSON data is indexed in Elasticearch, Kibana provides powerful visualization tools and dashboards that offer various interactive diagrams to visualize complex queries. </p>
 <p>Filebeat is responsible for watching log files and shipping them to the centralized Logstash component. As shown in the above architecture diagram, all machines in TMT can run Filebeat to watch log files. Filebeat maintains a marker in a registry for the last read position in a file, so that it can resume where it left off should it need to be restarted. Applications can keep emitting logs to the file agnostic to whether Filebeat is running or not.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>All the files required for logging aggregator configuration can be found <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0-RC4/scripts/logging_aggregator">here</a>. How to use each of these files and its significance will be explained further in the document. For rapid use in a development environment, a Docker image has been created. See <a href="logging_aggregator.html#running-elastic-stack-for-developers">below</a> for more information.</p>
+<p>All the files required for logging aggregator configuration can be found <a href="https://github.com/tmtsoftware/csw/tree/v3.0.0/scripts/logging_aggregator">here</a>. How to use each of these files and its significance will be explained further in the document. For rapid use in a development environment, a Docker image has been created. See <a href="logging_aggregator.html#running-elastic-stack-for-developers">below</a> for more information.</p>
 <p>It is assumed that in production, Elasticsearch, Logstash and Kibana will be registered with TMT intranet DNS setup. Hence, all the configuration files for production are provided by referring to the DNS host name. </p>
 <p>It is strongly recommended to run the same version (v6.6.0 or higher) of elastic components so as to avoid any compatibility issues.</p>
 <p>By default, the elastic stack exposes the following ports on which the configurations rely.</p>
@@ -569,11 +569,11 @@ class UTCFormatter(logging.Formatter):
 <h2><a href="#system-logs-on-logstash-and-kibana-machines" name="system-logs-on-logstash-and-kibana-machines" class="anchor"><span class="anchor-link"></span></a>System logs on Logstash and Kibana machines</h2>
 <p>Machines running Logstash and Kibana will require to aggregate system logs from their machines too. Hence, in order to enable system module on their machines follow the below given steps:</p>
 <ul>
-  <li>Run Elasticsearch using <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/scripts/logging_aggregator/prod/elasticsearch/elasticsearch.yml">elasticsearch.yml</a>.  Place <code>elasticsearch.yml</code> in &laquo;Elasticsearch installation folder&raquo;/config/ and execute <code>./bin/elasticsearch</code> (on Mac) or <code>bin/elasticsearch</code> (on Linux).</li>
-  <li>Go to &laquo;Filebeat installation folder&raquo; place <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/scripts/logging_aggregator/prod/logstash/filebeat.yml">Logstash/filebeat.yml</a>  and execute <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/scripts/logging_aggregator/prod/logstash/filebeat-init.sh">Logstash/filebeat-init.sh</a> or  place <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/scripts/logging_aggregator/prod/kibana/filebeat.yml">Kibana/filebeat.yml</a>  and execute <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/scripts/logging_aggregator/prod/kibana/filebeat-init.sh">Kibana/filebeat-init.sh</a>  from Logstash or Kibana machines respectively. This will make Elasticsearch aware of System module.</li>
+  <li>Run Elasticsearch using <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/scripts/logging_aggregator/prod/elasticsearch/elasticsearch.yml">elasticsearch.yml</a>.  Place <code>elasticsearch.yml</code> in &laquo;Elasticsearch installation folder&raquo;/config/ and execute <code>./bin/elasticsearch</code> (on Mac) or <code>bin/elasticsearch</code> (on Linux).</li>
+  <li>Go to &laquo;Filebeat installation folder&raquo; place <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/scripts/logging_aggregator/prod/logstash/filebeat.yml">Logstash/filebeat.yml</a>  and execute <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/scripts/logging_aggregator/prod/logstash/filebeat-init.sh">Logstash/filebeat-init.sh</a> or  place <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/scripts/logging_aggregator/prod/kibana/filebeat.yml">Kibana/filebeat.yml</a>  and execute <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/scripts/logging_aggregator/prod/kibana/filebeat-init.sh">Kibana/filebeat-init.sh</a>  from Logstash or Kibana machines respectively. This will make Elasticsearch aware of System module.</li>
   <li>Run Filebeat from &laquo;Filebeat installation folder&raquo; by executing <code>./filebeat -e</code> (on Mac) or <code>filebeat -e</code> (on Linux).</li>
-  <li>Run LogStash using <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/scripts/logging_aggregator/prod/logstash/logstash.conf">logstash.conf</a>.  Place <code>logstash.conf</code> in &laquo;Logstash installation folder&raquo;/config/ and execute <code>./bin/logstash -f config/logstash.conf</code> (on mac) or  <code>bin/logstash -f config/logstash.conf</code> (on Linux).</li>
-  <li>Run Kibana using <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/scripts/logging_aggregator/prod/kibana/kibana.yml">kibana.yml</a>.  Place <code>kibana.yml</code> in &laquo;Kibana installation folder&raquo;/config/ and execute <code>./bin/kibana</code> (on mac) or <code>bin/kibana</code> (on Linux). This will give GUI over  logs aggregated in Elasticsearch.</li>
+  <li>Run LogStash using <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/scripts/logging_aggregator/prod/logstash/logstash.conf">logstash.conf</a>.  Place <code>logstash.conf</code> in &laquo;Logstash installation folder&raquo;/config/ and execute <code>./bin/logstash -f config/logstash.conf</code> (on mac) or  <code>bin/logstash -f config/logstash.conf</code> (on Linux).</li>
+  <li>Run Kibana using <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/scripts/logging_aggregator/prod/kibana/kibana.yml">kibana.yml</a>.  Place <code>kibana.yml</code> in &laquo;Kibana installation folder&raquo;/config/ and execute <code>./bin/kibana</code> (on mac) or <code>bin/kibana</code> (on Linux). This will give GUI over  logs aggregated in Elasticsearch.</li>
 </ul>
 <h2><a href="#explore-kibana" name="explore-kibana" class="anchor"><span class="anchor-link"></span></a>Explore Kibana</h2>
 <p>Once Kibana is up and running, open <code>http://localhost:5601/</code> in a browser and go to:</p>
@@ -594,7 +594,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-3.0.0-RC4
+3.0.0
 </span>
 </div>
 </article>

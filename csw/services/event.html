@@ -207,7 +207,7 @@ TMT Common Software (CSW)
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 3.0.0-RC4
+<i class="md-icon" title="Version">label_outline</i> 3.0.0
 </label>
 </li>
 </ul>
@@ -250,7 +250,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-event-client&quot; % &quot;3.0.0-RC4&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-event-client&quot; % &quot;3.0.0&quot;
 </code></pre></dd>
 </dl>
 <h2><a href="#accessing-event-service" name="accessing-event-service" class="anchor"><span class="anchor-link"></span></a>Accessing Event Service</h2>
@@ -263,7 +263,7 @@ TMT Common Software (CSW)
 <h2><a href="#usage-of-eventpublisher" name="usage-of-eventpublisher" class="anchor"><span class="anchor-link"></span></a>Usage of EventPublisher</h2>
 <p>Below examples demonstrate the usage of multiple variations of the publish API.</p>
 <h3><a href="#for-single-event" name="for-single-event" class="anchor"><span class="anchor-link"></span></a>For Single Event</h3>
-<p>This is the simplest API to publish a single event. It returns a Future which will complete successfully if the event is published or fail immediately with a <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/event/api/exceptions/PublishFailure.html" title="csw/event/api/exceptions/PublishFailure"><code>PublishFailure</code></a> exception if the component cannot publish the event.</p>
+<p>This is the simplest API to publish a single event. It returns a Future which will complete successfully if the event is published or fail immediately with a <a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/event/api/exceptions/PublishFailure.html" title="csw/event/api/exceptions/PublishFailure"><code>PublishFailure</code></a> exception if the component cannot publish the event.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -309,7 +309,7 @@ private Optional&lt;Event&gt; eventGenerator(Event baseEvent) {
     return Optional.ofNullable(baseEvent);
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>Callbacks like <code>eventGenerator</code> are not thread-safe on the JVM. If you are doing side effects/mutations inside the callback, you should ensure that it is done in a thread-safe way inside an actor. Here is an <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/examples/src/main/scala/example/event/ConcurrencyInCallbacksExample.scala">example</a> of how it can be done.</p></div>
+<p>Callbacks like <code>eventGenerator</code> are not thread-safe on the JVM. If you are doing side effects/mutations inside the callback, you should ensure that it is done in a thread-safe way inside an actor. Here is an <a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/examples/src/main/scala/example/event/ConcurrencyInCallbacksExample.scala">example</a> of how it can be done.</p></div>
 <h3><a href="#with-event-stream" name="with-event-stream" class="anchor"><span class="anchor-link"></span></a>With Event Stream</h3>
 <p>In order to publish a continuous stream of events, this stream-based API can also be used. If an infinite stream is provided, shutdown of the stream needs to be taken care by the users. (Note that streams discussed here are an Akka feature that is supported in event publisher and subscriber APIs. See <a href="https://doc.akka.io/docs/akka/current/stream/index.html?language=scala">Akka stream documentation.</a>)</p>
 <dl>
@@ -336,8 +336,8 @@ return eventService.defaultPublisher().&lt;CompletionStage&lt;Done&gt;&gt;publis
 <p>This API also demonstrates the usage of an onError callback which can be used to handle events that failed while being published. </p>
 <p>You can find complete list of APIs supported by <code>EventPublisher</code> and <code>IEventPublisher</code> with detailed description of each API here: </p>
 <ul>
-  <li><a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/event/api/scaladsl/EventPublisher.html" title="csw/event/api/scaladsl/EventPublisher"><code>EventPublisher</code></a></li>
-  <li><a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/java/?csw/event/api/javadsl/IEventPublisher.html" title="csw/event/api/javadsl/IEventPublisher"><code>IEventPublisher</code></a></li>
+  <li><a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/event/api/scaladsl/EventPublisher.html" title="csw/event/api/scaladsl/EventPublisher"><code>EventPublisher</code></a></li>
+  <li><a href="https://tmtsoftware.github.io/csw/3.0.0/api/java/?csw/event/api/javadsl/IEventPublisher.html" title="csw/event/api/javadsl/IEventPublisher"><code>IEventPublisher</code></a></li>
 </ul>
 <h2><a href="#usage-of-eventsubscriber" name="usage-of-eventsubscriber" class="anchor"><span class="anchor-link"></span></a>Usage of EventSubscriber</h2>
 <p>The EventSubscriber API has several options available that are useful in different situations. Examples below demonstrate the usage of multiple variations available in the subscribe API.</p>
@@ -482,7 +482,7 @@ return subscriber.subscribeCallback(Set.of(filterWheelEventKey), event -&gt; { /
   <li><code>RateAdapterMode</code> which ensures that an event is received exactly at each tick of the specified interval.</li>
   <li><code>RateLimiterMode</code> which ensures that events are received as they are published along with the guarantee that no more than one event is delivered within a given interval.</li>
 </ul>
-<p>Read more about Subscription Mode <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/event/api/scaladsl/SubscriptionMode.html" title="csw/event/api/scaladsl/SubscriptionMode"><code>here</code></a></p>
+<p>Read more about Subscription Mode <a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/event/api/scaladsl/SubscriptionMode.html" title="csw/event/api/scaladsl/SubscriptionMode"><code>here</code></a></p>
 <h3><a href="#pattern-subscription" name="pattern-subscription" class="anchor"><span class="anchor-link"></span></a>Pattern Subscription</h3>
 <p>The following example demonstrates the usage of the pattern subscribe API with a callback. Events with keys that match the specified pattern and belong to the specified subsystem are received by the subscriber. The callback function provided is called on each event received.</p>
 <dl>
@@ -501,7 +501,7 @@ subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event -&gt; { /* do some
 <p>DO NOT include subsystem in the provided pattern. Final pattern generated will be provided pattern prepended with subsystem. For Ex. <code>pSubscribe(Subsytem.WFOS, *)</code> will subscribe to event keys matching pattern : <code>wfos.*</code></p></div><div class="callout warning "><div class="callout-title">Warning</div>
 <p>The pattern-based subscribe API is provided because it is useful in testing, but <em>should not be used in production code</em>. The use of certain patterns and many pattern-based subscriptions can impact the overall-performance of the Event Service.</p></div>
 <h3><a href="#event-subscription" name="event-subscription" class="anchor"><span class="anchor-link"></span></a>Event Subscription</h3>
-<p>On subscription to event keys, you receive an <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/event/api/scaladsl/EventSubscription.html" title="csw/event/api/scaladsl/EventSubscription"><code>EventSubscription</code></a> which provides following APIs:</p>
+<p>On subscription to event keys, you receive an <a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/event/api/scaladsl/EventSubscription.html" title="csw/event/api/scaladsl/EventSubscription"><code>EventSubscription</code></a> which provides following APIs:</p>
 <ul>
   <li>
   <p><code>unsubscribe</code>: Used to unsubscribe by destroying the event stream and releasing the the connection to the Event Server.</p></li>
@@ -510,11 +510,11 @@ subscriber.pSubscribeCallback(subsystem, &quot;*&quot;, event -&gt; { /* do some
 </ul>
 <p>You can find complete list of APIs supported by <code>EventSubscriber</code> and <code>IEventSubscriber</code> with detailed description of each API here: </p>
 <ul>
-  <li><a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/event/api/scaladsl/EventSubscriber.html" title="csw/event/api/scaladsl/EventSubscriber"><code>EventSubscriber</code></a></li>
-  <li><a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/java/?csw/event/api/javadsl/IEventSubscriber.html" title="csw/event/api/javadsl/IEventSubscriber"><code>IEventSubscriber</code></a></li>
+  <li><a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/event/api/scaladsl/EventSubscriber.html" title="csw/event/api/scaladsl/EventSubscriber"><code>EventSubscriber</code></a></li>
+  <li><a href="https://tmtsoftware.github.io/csw/3.0.0/api/java/?csw/event/api/javadsl/IEventSubscriber.html" title="csw/event/api/javadsl/IEventSubscriber"><code>IEventSubscriber</code></a></li>
 </ul>
 <h2><a href="#create-event-service" name="create-event-service" class="anchor"><span class="anchor-link"></span></a>Create Event Service</h2>
-<p>If you are not using csw-framework, you can create the <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/event/api/scaladsl/EventService.html" title="csw/event/api/scaladsl/EventService"><code>EventService</code></a> using an <a href="https://tmtsoftware.github.io/csw/3.0.0-RC4/api/scala/csw/event/client/EventServiceFactory.html" title="csw/event/client/EventServiceFactory"><code>EventServiceFactory</code></a>.</p>
+<p>If you are not using csw-framework, you can create the <a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/event/api/scaladsl/EventService.html" title="csw/event/api/scaladsl/EventService"><code>EventService</code></a> using an <a href="https://tmtsoftware.github.io/csw/3.0.0/api/scala/csw/event/client/EventServiceFactory.html" title="csw/event/client/EventServiceFactory"><code>EventServiceFactory</code></a>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -563,18 +563,18 @@ IEventService eventService2 = new EventServiceFactory(redisStore).jMake(&quot;lo
 <p>See <a href="../technical/event/event.html">Event Service Technical Description</a>.</p>
 <h2><a href="#source-code-for-examples-of-creation" name="source-code-for-examples-of-creation" class="anchor"><span class="anchor-link"></span></a>Source code for examples of creation</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/examples/src/main/scala/example/event/EventServiceCreationExamples.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/examples/src/main/java/example/event/JEventServiceCreationExamples.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/examples/src/main/scala/example/event/EventServiceCreationExamples.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/examples/src/main/java/example/event/JEventServiceCreationExamples.java">Java Example</a></li>
 </ul>
 <h2><a href="#source-code-for-examples-of-publishing" name="source-code-for-examples-of-publishing" class="anchor"><span class="anchor-link"></span></a>Source code for examples of publishing</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/examples/src/main/scala/example/event/EventPublishExamples.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/examples/src/main/java/example/event/JEventPublishExamples.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/examples/src/main/scala/example/event/EventPublishExamples.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/examples/src/main/java/example/event/JEventPublishExamples.java">Java Example</a></li>
 </ul>
 <h2><a href="#source-code-for-examples-of-subscribing" name="source-code-for-examples-of-subscribing" class="anchor"><span class="anchor-link"></span></a>Source code for examples of subscribing</h2>
 <ul>
-  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/examples/src/main/scala/example/event/EventSubscribeExamples.scala">Scala Example</a></li>
-  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0-RC4/examples/src/main/java/example/event/JEventSubscribeExamples.java">Java Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/examples/src/main/scala/example/event/EventSubscribeExamples.scala">Scala Example</a></li>
+  <li><a href="https://github.com/tmtsoftware/csw/blob/v3.0.0/examples/src/main/java/example/event/JEventSubscribeExamples.java">Java Example</a></li>
 </ul>
 </div>
 <div>
@@ -584,7 +584,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-3.0.0-RC4
+3.0.0
 </span>
 </div>
 </article>
