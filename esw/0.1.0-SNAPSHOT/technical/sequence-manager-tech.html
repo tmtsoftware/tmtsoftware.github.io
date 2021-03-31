@@ -127,7 +127,7 @@ TMT Executive Software Documentation
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/sequence-manager-tech.html" class="active page">Sequence Manager Technical Documentation</a></li>
-    <li><a href="../technical/sequencer-tech.html" class="page">Sequencer Technical Documentatation</a></li>
+    <li><a href="../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
     <li><a href="../technical/contracts.html" class="page">Service Contracts</a></li>
@@ -145,6 +145,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/sequence-manager-tech.html#implementation-details" class="header">Implementation Details</a></li>
     <li><a href="../technical/sequence-manager-tech.html#sequence-manager-states" class="header">Sequence Manager States</a></li>
     <li><a href="../technical/sequence-manager-tech.html#running-sequence-manager" class="header">Running Sequence Manager</a></li>
+    <li><a href="../technical/sequence-manager-tech.html#sequence-manager-simulation-mode" class="header">Sequence Manager simulation mode</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -173,6 +174,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/sequence-manager-tech.html#implementation-details" class="header">Implementation Details</a></li>
     <li><a href="../technical/sequence-manager-tech.html#sequence-manager-states" class="header">Sequence Manager States</a></li>
     <li><a href="../technical/sequence-manager-tech.html#running-sequence-manager" class="header">Running Sequence Manager</a></li>
+    <li><a href="../technical/sequence-manager-tech.html#sequence-manager-simulation-mode" class="header">Sequence Manager simulation mode</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -244,7 +246,7 @@ TMT Executive Software Documentation
 <p><img src="../images/sequencemanager/sm1.png" alt="ObservationStart" /></p>
 <h3><a href="#provision-sequence-components" name="provision-sequence-components" class="anchor"><span class="anchor-link"></span></a>Provision Sequence Components</h3>
 <p>This API allows a future UI to provision Sequence Components per Agent. The provision API call requires a simple configuration which specifies the number of Sequence Components needed to be spawned on each particular Agent.</p>
-<p>The following diagram depicts status of TMT ecosystem after provisioning as per a the configuration argument shown on the right side of the figure.</p>
+<p>The following diagram depicts status of TMT ecosystem after provisioning as per the configuration argument shown on the right side of the figure.</p>
 <p><img src="../images/sequencemanager/sm2.png" alt="Provision" /></p><div class="callout note "><div class="callout-title">Note</div>
 <p>Provision API will first shutdown all running Sequence Components if any. After shutting down already running Sequence Components, it spawns new Sequence Components on Agents as per a configuration provided with the provision call.</p></div>
 <p>The following flow chart shows the algorithm for provision flow.</p>
@@ -264,7 +266,7 @@ TMT Executive Software Documentation
 <p>The following flow chart shows the algorithm for configure flow.</p>
 <p><img src="../images/sequencemanager/configure.png" alt="Configure" /></p>
 <h3><a href="#shutdown-of-sequencers" name="shutdown-of-sequencers" class="anchor"><span class="anchor-link"></span></a>Shutdown of Sequencers</h3>
-<p>Once an observation is complete, and the operator determes that it is necessary to configure for a new observing mode, cleanup for the current observation may involve shutting down all Sequencers of that observing mode. Sequence Manager provides shutdown sequencers API variations which allow: </p>
+<p>Once an observation is complete, and the operator determines that it is necessary to configure for a new observing mode, cleanup for the current observation may involve shutting down all Sequencers of that observing mode. Sequence Manager provides shutdown sequencers API variations which allow: </p>
 <ul>
   <li>shutdown of all Sequencers of an observing mode,</li>
   <li>shutdown of all Sequencers belonging to specific subsystem,</li>
@@ -277,7 +279,6 @@ TMT Executive Software Documentation
 <h3><a href="#other-apis" name="other-apis" class="anchor"><span class="anchor-link"></span></a>Other APIs</h3>
 <p>Apart from APIs explained above, Sequence Manager also provides following useful APIs:</p>
 <ul>
-  <li>getRunningObsModes - gives information about all running observing modes</li>
   <li>startSequencer - start a Sequencer for the provided subsystem and observing mode</li>
   <li>restartSequencer - re-start a Sequencer for provided subsystem and observing mode</li>
   <li>shutdownSequenceComponent - shutdown a Sequence Component with provided prefix</li>
@@ -288,8 +289,34 @@ TMT Executive Software Documentation
 <p>Sequence Manager Actor is implemented as a state machine with two states: Idle and Processing. At any point of time, Sequence Manager must be in exactly one of these states.</p>
 <p>The following diagram depicts the state transitions of Sequence Manager:</p>
 <p><img src="../images/sequencemanager/sm-state-transition.png" alt="State Transition Sequence Manager" /></p>
-<p>Implementation of these msgs is asynchronous in nature. So handling any other msgs while previous msg processing is incomplete can result in an inconsistent system. For example, configure Observing_Mode_1 msg is received by Sequence Manager Actor. Let&rsquo;s assume that this requires to start ESW, IRIS and TCS sequencers. Configure flow has checked for resource conflict. No conflict is there so configure goes ahead with processing. During this processing, if any other msg like startSequencer for IRIS subsystem and Observing_Mode_2 is recieved then this will result in inconsistent behaviour. To avoid these cases, certain msgs are accepted only when sequence manager is idle. When any one of idle state msg is received, sequence manager goes into processing state where it accepts only common msgs (read state msgs which will not cause any inconsistency). In processing state, actor waits for processing complete msg. Once processing complete msg is recieved, actor goes back to idle state and ready to process any of idle state msg. Both idle and processing state can handle commom msgs without any state change.</p>
+<p>Implementation of these msgs is asynchronous in nature. So handling any other msgs while previous msg processing is incomplete can result in an inconsistent system. For example, configure Observing_Mode_1 msg is received by Sequence Manager Actor. Let&rsquo;s assume that this requires starting ESW, IRIS and TCS sequencers. Configure flow has checked for resource conflict. No conflict is there so configure goes ahead with processing. During this processing, if any other msg like startSequencer for IRIS subsystem and Observing_Mode_2 is received then this will result in inconsistent behaviour. To avoid these cases, certain msgs are accepted only when sequence manager is idle. When any one of idle state msg is received, sequence manager goes into processing state where it accepts only common msgs (read state msgs which will not cause any inconsistency). In processing state, actor waits for processing complete msg. Once processing complete msg is received, actor goes back to idle state and ready to process any of idle state msg. Both idle and processing state can handle common msgs without any state change.</p>
 <h2><a href="#running-sequence-manager" name="running-sequence-manager" class="anchor"><span class="anchor-link"></span></a>Running Sequence Manager</h2>
+<p>For running Sequence Manager, please refer <a href="apps/sequence-manager-app.html">this</a>.</p>
+<h2><a href="#sequence-manager-simulation-mode" name="sequence-manager-simulation-mode" class="anchor"><span class="anchor-link"></span></a>Sequence Manager simulation mode</h2>
+<p>Simulation mode for SM is mainly for testing the functionality/scenarios of apps interacting with SM.</p>
+<h3><a href="#approach-followed-" name="approach-followed-" class="anchor"><span class="anchor-link"></span></a>Approach followed:</h3>
+<ul>
+  <li>
+  <p>In this approach we will be spawning actual sequence manager, agents, sequence-components and sequencers(simulation mode).</p></li>
+  <li>
+    <p>When the sequence manager is started using the esw-services with the simulation flag, the following things are done.</p>
+    <ol>
+      <li>If a obs-mode config is provided using -o flag, it is used and if not then a default config is used.</li>
+      <li>Three agents are spawned automatically(ESW, TCS, IRIS)</li>
+    </ol>
+  </li>
+  <li>
+    <p>When the sequence-manager is up and running(&ndash;simulation):</p>
+    <ol>
+      <li>suppose <code>Provision</code> command is sent to SM. Now as we are using actual agents, seq-components our  production level logic eg: shutting-down previous seq-comps, agent-allocation for seq-comps, etc. can be tested</li>
+      <li>suppose <code>Configure</code> command is sent to SM. Now as we are using sequencers in simulated mode any obs-mode can be configured(as long as there is an entry for it in the provided obs-mode conf or the default). Also the success as well as all the failure scenarios (resource conflict, configuration missing, etc) can be tested.</li>
+      <li>all the other apis like startSequencer, shutdownAllSeqComps etc will work properly with correct entries made in location service.</li>
+    </ol>
+  </li>
+  <li>
+  <p>Only agents will be started in the same jvm process.Since sequence components are started by agents  using <code>cs launch ...</code>, command they will not be in the same process.</p></li>
+</ul>
+<h3><a href="#running-sequence-manager-in-simulation-mode" name="running-sequence-manager-in-simulation-mode" class="anchor"><span class="anchor-link"></span></a>Running Sequence Manager in simulation mode</h3>
 <p>For running Sequence Manager, please refer <a href="apps/sequence-manager-app.html">this</a>.</p>
 </div>
 <div>
@@ -322,13 +349,13 @@ Technical Design Documents
 </span>
 </div>
 </a>
-<a href="../technical/sequencer-tech.html" title="Sequencer Technical Documentatation" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../technical/sequencer-tech.html" title="Sequencer Technical Documentation" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Sequencer Technical Documentatation
+Sequencer Technical Documentation
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Sequencer Technical Documentatation · TMT Executive Software Documentation</title>
+<title>Sequencer Technical Documentation · TMT Executive Software Documentation</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software Documentation
 </span>
 <span class="md-header-nav__topic">
-Sequencer Technical Documentatation
+Sequencer Technical Documentation
 </span>
 </div>
 </div>
@@ -127,7 +127,7 @@ TMT Executive Software Documentation
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../technical/sequence-manager-tech.html" class="page">Sequence Manager Technical Documentation</a></li>
-    <li><a href="../technical/sequencer-tech.html" class="active page">Sequencer Technical Documentatation</a></li>
+    <li><a href="../technical/sequencer-tech.html" class="active page">Sequencer Technical Documentation</a></li>
     <li><a href="../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
     <li><a href="../technical/contracts.html" class="page">Service Contracts</a></li>
@@ -138,11 +138,12 @@ TMT Executive Software Documentation
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../technical/sequencer-tech.html#sequencer-technical-documentatation" class="header">Sequencer Technical Documentatation</a>
+  <li><a href="../technical/sequencer-tech.html#sequencer-technical-documentation" class="header">Sequencer Technical Documentation</a>
   <ul>
     <li><a href="../technical/sequencer-tech.html#modules" class="header">Modules</a></li>
-    <li><a href="../technical/sequencer-tech.html#sequencer-interfaces" class="header">Sequencer Interfaces</a></li>
     <li><a href="../technical/sequencer-tech.html#implementation-details" class="header">Implementation Details</a></li>
+    <li><a href="../technical/sequencer-tech.html#sequencer-interfaces" class="header">Sequencer Interfaces</a></li>
+    <li><a href="../technical/sequencer-tech.html#interacting-with-sequencer" class="header">Interacting with Sequencer</a></li>
     <li><a href="../technical/sequencer-tech.html#running-sequencer" class="header">Running Sequencer</a></li>
   </ul></li>
 </ul>
@@ -165,11 +166,12 @@ TMT Executive Software Documentation
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../technical/sequencer-tech.html#sequencer-technical-documentatation" class="header">Sequencer Technical Documentatation</a>
+  <li><a href="../technical/sequencer-tech.html#sequencer-technical-documentation" class="header">Sequencer Technical Documentation</a>
   <ul>
     <li><a href="../technical/sequencer-tech.html#modules" class="header">Modules</a></li>
-    <li><a href="../technical/sequencer-tech.html#sequencer-interfaces" class="header">Sequencer Interfaces</a></li>
     <li><a href="../technical/sequencer-tech.html#implementation-details" class="header">Implementation Details</a></li>
+    <li><a href="../technical/sequencer-tech.html#sequencer-interfaces" class="header">Sequencer Interfaces</a></li>
+    <li><a href="../technical/sequencer-tech.html#interacting-with-sequencer" class="header">Interacting with Sequencer</a></li>
     <li><a href="../technical/sequencer-tech.html#running-sequencer" class="header">Running Sequencer</a></li>
   </ul></li>
 </ul>
@@ -181,7 +183,7 @@ TMT Executive Software Documentation
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#sequencer-technical-documentatation" name="sequencer-technical-documentatation" class="anchor"><span class="anchor-link"></span></a>Sequencer Technical Documentatation</h1>
+<h1><a href="#sequencer-technical-documentation" name="sequencer-technical-documentation" class="anchor"><span class="anchor-link"></span></a>Sequencer Technical Documentation</h1>
 <p>Sequencer is OMOA component which has responsibility of executing Sequence of Steps. In an observation, Sequencers will form a hierarchy where with a top-level ESW Sequencer sending Sequences to downstream Sequencers and downstream Sequencers sending commands to Assemblies/HCDs.</p>
 <p>The Sequencer implementation has two main parts:</p>
 <ol>
@@ -204,13 +206,6 @@ TMT Executive Software Documentation
   <li>
   <p>esw-ocs-handler - This handler module is responsible for providing HTTP routes for Sequencer HTTP server. Sequencer provides an HTTP and Akka interface. The HTTP routes are defined and implemented here.</p></li>
 </ul>
-<h2><a href="#sequencer-interfaces" name="sequencer-interfaces" class="anchor"><span class="anchor-link"></span></a>Sequencer Interfaces</h2>
-<p>Sequencer exposes its interface in three ways:</p>
-<ol>
-  <li>Akka interface - Sequencer is registered as an Akka-based component. One can resolve Sequencer and use the Akka client to interact with Sequencer.</li>
-  <li>HTTP direct interface - Each Sequencer also exposes an HTTP-based interface as an embedded Sequencer Server (direct and unprotected usage). This access provides routes that allow user to directly control the Sequencer without any auth protection. UI applications are supposed to use Gateway interface described below to interact with Sequencer as Gateway provided auth protection layer.</li>
-  <li>HTTP Gateway interface - It is also possible to interact with Sequencer using the UI Application Gateway (as public interface). Being public interface, this access requires user to be authenticated and authorized. The Gateway hosts the Sequencer API, which communicates with the Sequencer via the Akka interface. Please refer to the Gateway documentation for <a href="../uisupport/gateway.html">more information</a>.</li>
-</ol>
 <h2><a href="#implementation-details" name="implementation-details" class="anchor"><span class="anchor-link"></span></a>Implementation Details</h2>
 <p>Sequencer framework uses Akka Actor as core implementation (Sequencer Actor). The following figure explains the architecture of the Sequencer framework. Sequencer is registered with Location Service. The future SOSS Planning Tool or ESW.HCMS Script Monitoring Tool will use the Location of the top-level Sequencer returned by Sequence Manager to resolve the top-level Sequencer, and will send the Observation&rsquo;s Sequence to top-level Sequencer. Once the Sequence is started, Engine continuously polls for a next step as soon as the previous step is finished with success. It will execute the step using the appropriate handler written in the Script. If any step in Sequence fails, the Sequence is terminated with Error, and an Error is returned to the caller. The submission of a Sequence to the Sequencer uses CSW Command Service (i.e. submit, submitAndWait, etc.).</p>
 <p>Engine and Sequencer Actor are core parts of Framework. The framework part is the same for every Sequencer, but the Script can vary. The Script defines the behaviour of the Sequencer for each step within a Sequence.</p>
@@ -221,7 +216,7 @@ TMT Executive Software Documentation
   <li>Scripting Support</li>
 </ol>
 <h3><a href="#sequencer-lifecycle" name="sequencer-lifecycle" class="anchor"><span class="anchor-link"></span></a>Sequencer Lifecycle</h3>
-<p>The Sequencer lifecycle is implemented as a fairly complicated finite state machine as shown in the figure below. This Section explains the different states and messges accepted in each respective state of Sequencer. At any given time a Sequencer is in exactly one of these states. The state of the Sequencer is tied to whether or not it has received a Sequence and whether or not the Sequence has started executing. Sequencer supports a set of commands/messages, and on receiving those commands, it takes an action and transitions to other states.</p>
+<p>The Sequencer lifecycle is implemented as a fairly complicated finite state machine as shown in the figure below. This Section explains the different states and messages accepted in each respective state of Sequencer. At any given time a Sequencer is in exactly one of these states. The state of the Sequencer is tied to whether or not it has received a Sequence and whether or not the Sequence has started executing. Sequencer supports a set of commands/messages, and on receiving those commands, it takes an action and transitions to other states.</p>
 <p>Following are the states supported by the Sequencer:</p>
 <ul>
   <li><strong>Idle/Online:</strong> This is the default state of the Sequencer. A Sequencer is idle when it is starts up. It has a Script since it has been loaded/created by the Sequence Component, but there is no Sequence under execution. A Sequencer can come to the idle state from the following situations:
@@ -235,7 +230,7 @@ TMT Executive Software Documentation
 <p>In this state, the Sequencer can only receive a Sequence, <code>goOffline</code>, or <code>shutdown</code>, in which the Sequencer transitions to the <code>Loaded</code>, <code>Offline</code>, and <code>Killed</code> states, respectively.</p>
 <ul>
   <li>
-  <p><strong>Loaded:</strong> A Sequencer is in loaded state when a Sequence is received and ready for execution, but execution of the Sequence hasn&rsquo;t started. A separate <code>start</code> command is expected to start execution of the Sequence. All sequence editor actions (for e.g. add, remove, reset) are accepted in this state. From this state, the Sequencer can go to the <code>InProgress</code> state on receiving a <code>start</code> command, or it could go to the <code>Offline</code> state if <code>goOffline</code> command is sent. On receiving a <code>reset</code> command, which discards all the pending steps, the Sequencer will go to <code>Idle</code> state.</p></li>
+  <p><strong>Loaded:</strong> A Sequencer is in loaded state when a Sequence is received and ready for execution, but execution of the Sequence hasn&rsquo;t started. A separate <code>start</code> command is expected to start execution of the Sequence. All sequence editor actions (for e.g. add, remove, reset) are accepted in this state. From this state, the Sequencer can go to the <code>Running</code> state on receiving a <code>start</code> command, or it could go to the <code>Offline</code> state if <code>goOffline</code> command is sent. On receiving a <code>reset</code> command, which discards all the pending steps, the Sequencer will go to <code>Idle</code> state.</p></li>
   <li>
   <p><strong>InProgress/Running:</strong> The Sequencer is in the <code>Running</code> state only when it is executing a Sequence. All sequence editor actions (for e.g. add, remove, reset) are accepted in this state. From the <code>Running</code> state, the Sequencer can go to <code>Idle</code> state on completion of a Sequence, or it can be <code>shutdown</code>. A Sequencer cannot go <code>Offline</code> from this state; the Sequencer must first to go to the <code>Idle</code> state and then <code>Offline</code>.</p></li>
   <li>
@@ -248,6 +243,246 @@ TMT Executive Software Documentation
 <p>Sequencer Scripts are the most important part of the Sequencer architecture. The scripting environment has following core requirements:</p>
 <p><strong>Domain Specific Language</strong> (DSL) constructs for writing Scripts. For example, <code>par</code> to execute commands in parallel, <code>onSetup</code> like constructs where the script writer will define logic to be executed when <code>Setup</code> steps are processed. Kotlin has been used to create the DSL for writing a Script. Kotlin has excellent language support for writing an embedded DSL. Kotlin also has excellent support for asynchronous processing/tasks that allows a more script-like syntax for the kinds of things ESW Scripts need to do.</p>
 <p><strong>Mutable State within the script</strong> To handle mutable state in thread safe manner, Script is implemented using the Active Object Pattern. Every operation in a Script needs to be asynchronous and non-blocking in nature, and each operation will be scheduled on Single Threaded Execution Context (StrandEC). This ensures that state inside the Script can be accessed/modified at any place inside with the guarantee of thread safety. If there is need to have CPU intensive or blocking operations in Script, patterns supporting these needs to be followed which uses another Execution Context so that Script StrandEC is not blocked. The scripting DSL provides special constructs for background processing.</p>
+<p>Scripting Support is implemented using Kotlin. <code>onSetup</code> and <code>onObserve</code> handlers are provided which will be used by script writers to write behaviour when <code>Setup</code> and <code>Observe</code> commands are received. Specific <code>onSetup</code> handler will be picked based on command name specified in handler. For more details about scripting please refer <a href="../scripts/scripts-index.html">here</a></p>
+<h2><a href="#sequencer-interfaces" name="sequencer-interfaces" class="anchor"><span class="anchor-link"></span></a>Sequencer Interfaces</h2>
+<p>Sequencer exposes its interface in three ways:</p>
+<ol>
+  <li>Akka interface - Sequencer is registered as an Akka-based component. One can resolve Sequencer and use the Akka client to interact with Sequencer.</li>
+  <li>HTTP direct interface - Each Sequencer also exposes an HTTP-based interface as an embedded Sequencer Server (direct and unprotected usage). This access provides routes that allow user to directly control the Sequencer without any auth protection. UI applications are supposed to use Gateway interface described below to interact with Sequencer as Gateway provided auth protection layer.</li>
+  <li>HTTP Gateway interface - It is also possible to interact with Sequencer using the UI Application Gateway (as outside network interface). Being outside network interface, this access requires user to be authenticated and authorized. The Gateway hosts the Sequencer API, which communicates with the Sequencer via the Akka interface. Please refer to the Gateway documentation for <a href="../uisupport/gateway.html">more information</a>.</li>
+</ol>
+<p>Following snippet shows instantiating Akka Interface to interact with Sequencer:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L25-L32" target="_blank" title="Go to snippet source"></a><code class="language-scala">private implicit val actorSystem: ActorSystem[SpawnProtocol.Command] = ActorSystemFactory.remote(SpawnProtocol(), &quot;example&quot;)
+private val sequencerAkkaConnection: AkkaConnection                  = AkkaConnection(ComponentId(Prefix(ESW, &quot;IRIS_DARKNIGHT&quot;), Sequencer))
+private val locationService: LocationService                         = HttpLocationServiceFactory.makeLocalClient(actorSystem)
+
+private val sequencerAkkaLocation: AkkaLocation =
+  Await.result(locationService.resolve(sequencerAkkaConnection, 10.seconds), 10.seconds).get
+
+private val sequencer: SequencerApi = SequencerApiFactory.make(sequencerAkkaLocation)</code></pre></dd>
+</dl>
+<p>Following snippet shows instantiating HTTP direct Interface to interact with Sequencer:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L36-L41" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val sequencerHttpConnection: HttpConnection = HttpConnection(ComponentId(Prefix(ESW, &quot;IRIS_DARKNIGHT&quot;), Sequencer))
+private val sequencerHttpLocation: HttpLocation =
+  Await.result(locationService.resolve(sequencerHttpConnection, 10.seconds), 10.seconds).get
+private val sequencerHttpClient: SequencerApi = SequencerApiFactory.make(sequencerHttpLocation)
+
+sequencerHttpClient.getSequence</code></pre></dd>
+</dl>
+<p>For interacting using HTTP Gateway interface, please refer <a href="gateway-tech.html">here</a></p><div class="callout note "><div class="callout-title">Note</div>
+<p>Sequencer Http direct interface is not supposed to be used from anywhere as it is unprotected and also bind to inside network ip.</p></div>
+<h2><a href="#interacting-with-sequencer" name="interacting-with-sequencer" class="anchor"><span class="anchor-link"></span></a>Interacting with Sequencer</h2>
+<p>One can use any of <a href="#SequencerInterfaces">Sequencer Interface</a> to interact with Sequencer. APIs to interact with Sequencer are broadly categorised as following.</p>
+<ul>
+  <li>Sequencer Command Service - Provided as a part of CSW. Provides way to submit sequence and receive response.</li>
+  <li>Sequence Editor APIs - Provided as a part of ESW. Provided way to edit sequence submitted to Sequencer.</li>
+  <li>Sequencer Lifecycle APIs - Provided as a part of ESW. Provided way to send lifecycle commands to Sequencer.</li>
+  <li>Other APIs - Provided as a part of ESW.</li>
+</ul>
+<h3><a href="#sequencer-command-service" name="sequencer-command-service" class="anchor"><span class="anchor-link"></span></a>Sequencer Command Service</h3>
+<p>Commands can be sent to Sequencer to submit sequence and response is received in return.</p>
+<p><a href="#SequencerInterface">Sequencer Interface</a> exposes APIs on top of <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/sequencer-command-service">Sequencer Command Service</a>. Sequencer Command Service provides way to submit sequence to Sequencer and receive started or final response. Sequencer Command Service is provided as a part of CSW and details about using Sequencer Command Service can be found <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/services/sequencer-command-service">here</a>.</p>
+<h3><a href="#sequence-editor-apis" name="sequence-editor-apis" class="anchor"><span class="anchor-link"></span></a>Sequence Editor APIs</h3>
+<p>Sequence Editor APIs allow actions to edit sequence such as add more steps, delete/replace existing steps, Add/remove breakpoint in sequence. For using Sequence Editor actions, sequencer must be running a sequence. If Sequencer is not running any sequence then, Sequencer will return <a href="./esw.ocs.api.protocol.Unhandled.html">esw.ocs.api.protocol.Unhandled</a> response.</p>
+<ul>
+  <li>add This API allows to add more steps to sequence. Steps will be added in the end of sequence.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L45-L49" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToAdd: List[SequenceCommand] = List(
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
+)
+sequencer.add(stepsToAdd)</code></pre></dd>
+</dl>
+<ul>
+  <li>prepend This API allows to add more steps to sequence. Steps will be added after currently running step of sequence.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L53-L57" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToPrepend: List[SequenceCommand] = List(
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
+)
+sequencer.prepend(stepsToPrepend)</code></pre></dd>
+</dl>
+<ul>
+  <li>getSequence This API allows returns Sequence running in Sequencer if any.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L61" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val stepList: StepList = Await.result(sequencer.getSequence, 1.seconds).get</code></pre></dd>
+</dl>
+<ul>
+  <li>replace This API allows to replace particular step in the sequence with more steps.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L65-L69" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToReplace: List[SequenceCommand] = List(
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
+)
+sequencer.replace(stepList.steps(4).id, stepsToReplace)</code></pre></dd>
+</dl>
+<ul>
+  <li>insertAfter This API allows to insert more steps after particular step in the sequence.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L73-L77" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToInsertAfter: List[SequenceCommand] = List(
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
+)
+sequencer.insertAfter(stepList.steps(4).id, stepsToInsertAfter)</code></pre></dd>
+</dl>
+<ul>
+  <li>delete This API allows to delete particular step in the sequence.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L81-L82" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val stepToDelete: Id = stepList.steps(4).id
+sequencer.delete(stepToDelete)</code></pre></dd>
+</dl>
+<ul>
+  <li>add and remove breakpoint These APIs allows to add and remove breakpoint for particular step in the sequence.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L86-L88" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val breakpointStep: Id = stepList.steps(4).id
+sequencer.addBreakpoint(breakpointStep)
+sequencer.removeBreakpoint(breakpointStep)</code></pre></dd>
+</dl>
+<ul>
+  <li>reset These APIs allows to discard all pending steps in the sequence.</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L92" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.reset()</code></pre></dd>
+</dl>
+<ul>
+  <li>pause and resume sequence These APIs allows to pause and resume sequence. This essentially adds/removes breakpoint at first pending step in sequence</li>
+</ul>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L96-L97" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.pause
+sequencer.resume</code></pre></dd>
+</dl>
+<h3><a href="#sequencer-lifecycle-apis" name="sequencer-lifecycle-apis" class="anchor"><span class="anchor-link"></span></a>Sequencer Lifecycle APIs</h3>
+<p>Sequencer Lifecycle APIs allow to send lifecycle commands to Sequencer such as goOnline, abortSequence etc.</p>
+<p>Certain commands are restricted depending on state of Sequencer. For example, goOnline command is handled only when Sequencer is in Offline state. If goOnline is sent otherwise it will return <a href="./esw.ocs.api.protocol.Unhandled.html">esw.ocs.api.protocol.Unhandled</a> response with error msg. For details refer <a href="sequencer-tech.html#sequencer-lifecycle">Sequencer Lifecycle Section</a></p>
+<ul>
+  <li>isAvailable</li>
+</ul>
+<p>This API allows to check if Sequencer is in Idle state or not. It returns true if Sequencer is in Idle state.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L105" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.isAvailable</code></pre></dd>
+</dl>
+<ul>
+  <li>online/offline</li>
+</ul>
+<p>These APIs allow to send goOnline/goOffline mode commands to Sequencer. <code>isOnline</code> command returns true if Sequencer is online.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L109-L111" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.isOnline
+sequencer.goOnline()
+sequencer.goOffline()</code></pre></dd>
+</dl>
+<ul>
+  <li>abortSequence</li>
+</ul>
+<p>This API allow to abort running sequence. This essentially discards pending steps from sequence and also call <code>onAbortSequence</code> handler written in script.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L115" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.abortSequence()</code></pre></dd>
+</dl>
+<ul>
+  <li>Stop</li>
+</ul>
+<p>This API allow to stop sequence. This essentially discards pending steps from sequence and also call <code>onStop</code> handler written in script.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L119" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.stop()</code></pre></dd>
+</dl>
+<ul>
+  <li>getSequencerState</li>
+</ul>
+<p>Sequencer is implememted as state machine. It accepts/discards msgs based on Sequencer State. This API allow returns current sequencer state.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L123" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.getSequencerState</code></pre></dd>
+</dl>
+<ul>
+  <li>diagnosticMode</li>
+</ul>
+<p>This API allow to send diagnosticMode command to Sequencer. This calls <code>onDiagnosticMode</code> handler written in script</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L127" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.diagnosticMode(UTCTime.now(), &quot;diagnostic-mode&quot;)</code></pre></dd>
+</dl>
+<ul>
+  <li>operationsMode</li>
+</ul>
+<p>This API allow to send operationsMode command to Sequencer. This calls <code>onOperationsMode</code> handler written in script</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L131" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.operationsMode()</code></pre></dd>
+</dl>
+<h3><a href="#other-apis" name="other-apis" class="anchor"><span class="anchor-link"></span></a>Other APIs</h3>
+<ul>
+  <li>loadSequence</li>
+</ul>
+<p>This API allows to load sequence in Sequencer. Loaded Sequence does not start execution unless <code>StartSequence</code> Command is received. One can replace already loaded sequence by firing another <code>loadSequence</code> command.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L135-L139" target="_blank" title="Go to snippet source"></a><code class="language-scala">val sequence: Sequence = Sequence(
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
+  Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
+)
+sequencer.loadSequence(sequence)</code></pre></dd>
+</dl>
+<ul>
+  <li>startSequence</li>
+</ul>
+<p>This API allows to start execution of previously loaded sequence in Sequencer. This return <code>SubmitResponse</code> which is <code>Started</code> in case of success.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L143" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.startSequence()</code></pre></dd>
+</dl>
+<ul>
+  <li>getSequenceComponent</li>
+</ul>
+<p>This API allows to get location of Sequence Component running the Sequencer.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L101-L147" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.getSequenceComponent
+sequencer.getSequenceComponent</code></pre></dd>
+</dl>
 <h2><a href="#running-sequencer" name="running-sequencer" class="anchor"><span class="anchor-link"></span></a>Running Sequencer</h2>
 <p>For running Sequencer Script, please refer <a href="../sequencersandscripts/sequencer-app.html">this</a>.</p>
 </div>

@@ -127,7 +127,7 @@ TMT Executive Software Documentation
   <li><a href="../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../../technical/sequence-manager-tech.html" class="page">Sequence Manager Technical Documentation</a></li>
-    <li><a href="../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentatation</a></li>
+    <li><a href="../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
     <li><a href="../../technical/contracts.html" class="page">Service Contracts</a></li>
@@ -146,6 +146,7 @@ TMT Executive Software Documentation
     <li><a href="../../technical/apps/sequence-manager-app.html#3-install-sequence-manager" class="header">3. Install sequence-manager</a></li>
     <li><a href="../../technical/apps/sequence-manager-app.html#4-run-sequence-manager" class="header">4. Run sequence-manager</a></li>
     <li><a href="../../technical/apps/sequence-manager-app.html#setting-the-log-level" class="header">Setting the Log Level</a></li>
+    <li><a href="../../technical/apps/sequence-manager-app.html#starting-sequence-manager-in-simulation-mode" class="header">Starting Sequence Manager in simulation mode</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -175,6 +176,7 @@ TMT Executive Software Documentation
     <li><a href="../../technical/apps/sequence-manager-app.html#3-install-sequence-manager" class="header">3. Install sequence-manager</a></li>
     <li><a href="../../technical/apps/sequence-manager-app.html#4-run-sequence-manager" class="header">4. Run sequence-manager</a></li>
     <li><a href="../../technical/apps/sequence-manager-app.html#setting-the-log-level" class="header">Setting the Log Level</a></li>
+    <li><a href="../../technical/apps/sequence-manager-app.html#starting-sequence-manager-in-simulation-mode" class="header">Starting Sequence Manager in simulation mode</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -212,7 +214,7 @@ TMT Executive Software Documentation
 <p>Start command supports following arguments:</p>
 <ul>
   <li><code>-o</code> : Config file path which has mapping of sequencers and resources needed for different observing modes</li>
-  <li><code>-l</code> : optional aregument (true if config is to be read locally or false if from remote server) default value is false</li>
+  <li><code>-l</code> : optional argument (true if config is to be read locally or false if from remote server) default value is false</li>
   <li><code>-a</code> : optional argument: agentPrefix on which sequence manager will be spawned, ex: ESW.agent1, IRIS.agent2 etc.  This argument is used when Sequence Manager is spawned using Agent. For starting standalone sequence manager for testing or on local  this argument is not needed.</li>
 </ul>
 <p>This command starts Sequence Manager as well as its HTTP server.</p>
@@ -234,6 +236,28 @@ cd /tmt/apps
 // run sequence manager
 ./sequence-manager -J-Dcsw-logging.component-log-levels.ESW.sequence_manager=TRACE start -o obsmode.conf
 </code></pre>
+<h1><a href="#starting-sequence-manager-in-simulation-mode" name="starting-sequence-manager-in-simulation-mode" class="anchor"><span class="anchor-link"></span></a>Starting Sequence Manager in simulation mode</h1>
+<h2><a href="#prerequisites-for-running-sequence-manager-app-in-simulation-mode" name="prerequisites-for-running-sequence-manager-app-in-simulation-mode" class="anchor"><span class="anchor-link"></span></a>Prerequisites for Running sequence-manager App in simulation mode</h2>
+<h2><a href="#1-install-coursier-and-the-tmt-apps-channel" name="1-install-coursier-and-the-tmt-apps-channel" class="anchor"><span class="anchor-link"></span></a>1. Install <code>coursier</code> and the TMT Apps channel</h2>
+<p>The <code>coursier</code> application must be installed on your machine and the OCS Apps channel must be installed. The instructions for doing this are provided <a href="getting-apps.html">here</a>.</p>
+<h2><a href="#2-start-any-needed-csw-services" name="2-start-any-needed-csw-services" class="anchor"><span class="anchor-link"></span></a>2. Start any Needed CSW services</h2>
+<ul>
+  <li>To run sequence-manager in simulation mode, the <strong>CSW Location Service</strong> must be running.</li>
+</ul>
+<h2><a href="#3-install-esw-services" name="3-install-esw-services" class="anchor"><span class="anchor-link"></span></a>3. Install esw-services</h2>
+<p>The following command creates an executable file named <code>esw-services</code> in the default installation directory.</p>
+<pre class="prettyprint"><code class="language-bash">cs install esw-services:&lt;version | SHA&gt;
+</code></pre>
+<h2><a href="#4-run-sequence-manager-in-simulation-mode" name="4-run-sequence-manager-in-simulation-mode" class="anchor"><span class="anchor-link"></span></a>4. Run sequence-manager in simulation mode</h2>
+<pre class="prettyprint"><code class="language-bash">cs launch esw-services – start -s --simulation
+//  where:
+//    -s : to start SequenceManager
+//    --simulation : in simulation mode
+</code></pre>
+<h2><a href="#5-running-sequence-manager-in-simulation-mode-independent-of-esw-services" name="5-running-sequence-manager-in-simulation-mode-independent-of-esw-services" class="anchor"><span class="anchor-link"></span></a>5. Running sequence-manager in simulation mode independent of esw-services</h2>
+<pre class="prettyprint"><code class="language-bash">cs launch sequence-manager:&lt;version | SHA&gt; -- start --simulation
+</code></pre><div class="callout warning "><div class="callout-title">Warning</div>
+<p>If sequence-manager is started independent of esw-services in the simulation mode then following things are needed to be taken care of: * Agents won&rsquo;t be spawned automatically, they have to be started manually. * A version.conf needs to be created in config-service for the Provision api to work. </p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/technical/apps/sequence-manager-app.md" title="Edit this page" class="md-source-file md-edit">

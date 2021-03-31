@@ -127,7 +127,7 @@ TMT Executive Software Documentation
   <li><a href="../../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../../../technical/sequence-manager-tech.html" class="page">Sequence Manager Technical Documentation</a></li>
-    <li><a href="../../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentatation</a></li>
+    <li><a href="../../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../../../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../../../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
     <li><a href="../../../technical/contracts.html" class="page">Service Contracts</a></li>
@@ -199,7 +199,7 @@ TMT Executive Software Documentation
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/SequencerCommandServiceDslExample.kts#L20-L21" target="_blank" title="Go to snippet source"></a><code class="language-kts">// create a sequencer entity
 val wfos = Sequencer(WFOS, ObsMode(&quot;wfos_darknight&quot;))</code></pre></dd>
 </dl>
-<p>and here is one showing the setting of the default timeout:</p>
+<p>Here is one showing the setting of the default timeout:</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -278,7 +278,7 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
   <li>If the Sequencer is Idle, which means it is not processing any sequence currently</li>
   <li>If the Sequencer is Loaded with a sequence</li>
 </ul>
-<p>If this command is sent in any other state apart from these, an <code>Unhandled</code> response will be sent. If the Sequencer is in idle/loaded state, and it receives the <code>goOffline</code> command, the <a href="../constructs/handlers.html#online-and-offline-handlers">goOffline handlers</a> of the receiving Sequencer will be called. In case the handlers fail, a <code>GoOfflineHookFailed</code> response would be sent, resulting the Sequencer remains in the previous state. Otherwise an <code>Ok</code> message is sent, and the Sequencer goes to offline state.</p>
+<p>If this command is sent in any other state apart from these, an <code>Unhandled</code> response will be sent. If the Sequencer is in idle/loaded state, and it receives the <code>goOffline</code> command, the <a href="../constructs/handlers.html#online-and-offline-handlers">goOffline handlers</a> of the receiving Sequencer will be called. In case the handlers fail, a <code>GoOfflineHookFailed</code> response would be sent, resulting the Sequencer remains in the previous state. Otherwise, an <code>Ok</code> message is sent, and the Sequencer goes to offline state.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
@@ -301,9 +301,9 @@ val queryResponse: SubmitResponse = wfos.query(submitResponse.runId())</code></p
 </dl>
 <h2><a href="#aborting-and-stopping-a-sequence" name="aborting-and-stopping-a-sequence" class="anchor"><span class="anchor-link"></span></a>Aborting and Stopping a Sequence</h2>
 <p>Stopping and aborting are meant to handle early termination of observing sequences in instruments. Aborting indicates that the current observe should stop as soon as possible and save the data if possible. Stop indicates that the current observe should stop at the end of the current step. In both cases, the observation is over and no subsequent steps can be executed.</p>
-<p>Stop and abort commands are accepted only if the Sequencer is in <code>InProgress</code> state, which means it is executing a sequence. If this command is sent in any other state, an <code>Unhandled</code> response is returned. In all other cases, an <code>Ok</code> response is sent.</p>
+<p>Stop and abort commands are accepted only if the Sequencer is in <code>Running</code> state, which means it is executing a sequence. If this command is sent in any other state, an <code>Unhandled</code> response is returned. In all other cases, an <code>Ok</code> response is sent.</p>
 <h3><a href="#aborting-a-sequence" name="aborting-a-sequence" class="anchor"><span class="anchor-link"></span></a>Aborting a Sequence</h3>
-<p>On receiving the abort command in the <code>InProgress</code> state, the Sequencer will execute the <a href="../constructs/handlers.html#abort-sequence-handler">abort sequence handlers</a> and on completion of execution of handlers (whether successful or failed), the Sequencer will discard all the <code>pending</code> steps and return an <code>Ok</code> response. </p>
+<p>On receiving the abort command in the <code>Running</code> state, the Sequencer will execute the <a href="../constructs/handlers.html#abort-sequence-handler">abort sequence handlers</a> and on completion of execution of handlers (whether successful or failed), the Sequencer will discard all the <code>pending</code> steps and return an <code>Ok</code> response. </p>
 <p>Note that, abort of a sequence does not abruptly terminate the in-flight step(s) which are already under execution. It will discard only the pending steps, and the sequence is finished gracefully after the inflight step(s) are finished although the script can take action to end the current step immediately.</p>
 <dl>
   <dt>Kotlin</dt>

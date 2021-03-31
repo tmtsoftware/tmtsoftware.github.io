@@ -127,7 +127,7 @@ TMT Executive Software Documentation
   <li><a href="../../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../../../technical/sequence-manager-tech.html" class="page">Sequence Manager Technical Documentation</a></li>
-    <li><a href="../../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentatation</a></li>
+    <li><a href="../../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../../../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../../../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
     <li><a href="../../../technical/contracts.html" class="page">Service Contracts</a></li>
@@ -190,12 +190,12 @@ TMT Executive Software Documentation
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#script-handlers" name="script-handlers" class="anchor"><span class="anchor-link"></span></a>Script Handlers</h1>
-<p>A Sequencer script processes Sequences by defining &ldquo;handlers&rdquo; in the script. This is done by completing the special handler functions described below. There are handlers that can be created to process the Setup and Observe commands, which make up the Sequence, but there are also handlers for specific reasons including: aborting and stopping a sequence, putting the Sequencer in Online and Offline modes, and putting the Sequencer into a Diagnostic mode and back to Operations mode. There is also a global error handler to catch all uncaught exceptions, and a shutdown handler to perform cleanup befores the Sequencer shut down and exits. Each of these handlers are described below, with a section on <a href="handlers.html#error-handlers">how to handle exceptions</a> after that.</p>
+<p>A Sequencer script processes Sequences by defining &ldquo;handlers&rdquo; in the script. This is done by completing the special handler functions described below. There are handlers that can be created to process the Setup and Observe commands, which make up the Sequence, but there are also handlers for specific reasons including: aborting and stopping a sequence, putting the Sequencer in Online and Offline modes, and putting the Sequencer into a Diagnostic mode and back to Operations mode. There is also a global error handler to catch all uncaught exceptions, and a shutdown handler to perform cleanup before the Sequencer shut down and exits. Each of these handlers are described below, with a section on <a href="handlers.html#error-handlers">how to handle exceptions</a> after that.</p>
 <h2><a href="#command-handlers" name="command-handlers" class="anchor"><span class="anchor-link"></span></a>Command Handlers</h2>
 <h3><a href="#onsetup" name="onsetup" class="anchor"><span class="anchor-link"></span></a>onSetup</h3>
 <p>This handler is used to handle a <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/api/java/csw/params/commands/Setup.html">Setup</a> command sent to this Sequencer. The handler takes two parameters:</p>
 <ol>
-  <li><strong>command name</strong> which is matched against the sequence command sent. If the command name matches, corresponding block provided is executed</li>
+  <li><strong>command name</strong> which is matched against the sequence command sent. If the command name matches, corresponding block provided is executed.</li>
   <li><strong>block</strong> of code which contains logic to act on the Setup command.</li>
 </ol>
 <p>In this <code>onSetup</code> example, commands are sent in parallel to each of the WFOS filter wheels. </p>
@@ -343,7 +343,7 @@ onDiagnosticMode { startTime, hint -&gt;
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/HandlersExample.kts#L107-L137" target="_blank" title="Go to snippet source"></a><code class="language-kts">// Scenario-1 onObserve handler fails
 onObserve(&quot;trigger-filter-wheel&quot;) { command -&gt;
-    val triggerStartEvent = ObserveEvent(&quot;esw.command&quot;, &quot;trigger.start&quot;, command(stringKey(name = &quot;triggerTime&quot;)))
+    val triggerStartEvent = SystemEvent(&quot;esw.command&quot;, &quot;trigger.start&quot;, command(stringKey(name = &quot;triggerTime&quot;)))
     // publishEvent fails with EventServerNotAvailable which fails onObserve handler
     // onGlobalError handler is called
     // Sequence is terminated with failure.
@@ -364,13 +364,13 @@ onDiagnosticMode { startTime, hint -&gt;
     // publishEvent fails with EventServerNotAvailable
     // onDiagnosticMode handler fails
     // onGlobalError is called. Sequence execution continues.
-    publishEvent(ObserveEvent(&quot;esw.diagnostic.mode&quot;, hint))
+    publishEvent(SystemEvent(&quot;esw.diagnostic.mode&quot;, hint))
 }
 
 onGlobalError { error -&gt;
     val errorReason = stringKey(&quot;reason&quot;).set(error.reason)
-    val observationEndEvent = ObserveEvent(&quot;esw.observation.end&quot;, &quot;error&quot;, errorReason)
-    publishEvent(observationEndEvent)
+    val errorEvent = SystemEvent(&quot;esw.observation.end&quot;, &quot;error&quot;, errorReason)
+    publishEvent(errorEvent)
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Error in all handlers <strong>except the Shutdown Handler</strong> will execute the global error handler provided by script. If an error handler is not provided, the framework will log the error cause.</p></div>

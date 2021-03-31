@@ -1,56 +1,8 @@
 {
-  "AgentStatusResponse" : [ {
-    "_type" : "Success",
-    "agentStatus" : [ {
-      "agentId" : {
-        "prefix" : "ESW.agent",
-        "componentType" : "Machine"
-      },
-      "seqCompsStatus" : [ {
-        "seqCompId" : {
-          "prefix" : "ESW.seq_comp",
-          "componentType" : "SequenceComponent"
-        },
-        "sequencerLocation" : [ {
-          "_type" : "AkkaLocation",
-          "connection" : {
-            "prefix" : "ESW.seq_comp",
-            "componentType" : "SequenceComponent",
-            "connectionType" : "akka"
-          },
-          "uri" : "uri",
-          "metadata" : {
-            "key1" : "value"
-          }
-        } ]
-      } ]
-    } ],
-    "seqCompsWithoutAgent" : [ {
-      "seqCompId" : {
-        "prefix" : "ESW.seq_comp",
-        "componentType" : "SequenceComponent"
-      },
-      "sequencerLocation" : [ {
-        "_type" : "AkkaLocation",
-        "connection" : {
-          "prefix" : "ESW.seq_comp",
-          "componentType" : "SequenceComponent",
-          "connectionType" : "akka"
-        },
-        "uri" : "uri",
-        "metadata" : {
-          "key1" : "value"
-        }
-      } ]
-    } ]
+  "ResourceStatus" : [ {
+    "_type" : "InUse"
   }, {
-    "_type" : "LocationServiceError",
-    "msg" : "location service error"
-  }, {
-    "_type" : "Unhandled",
-    "state" : "state",
-    "messageType" : "messageType",
-    "msg" : "Sequence Manager can not accept 'messageType' message in 'state'"
+    "_type" : "Available"
   } ],
   "Subsystem" : [ "AOESW", "APS", "CIS", "CLN", "CRYO", "CSW", "DMS", "DPS", "ESEN", "ESW", "FMCS", "GMS", "IRIS", "LGSF", "M1CS", "MODHIS", "NFIRAOS", "NSCU", "OSS", "PFCS", "PSFR", "REFR", "RTC", "RPG", "SCMS", "SOSS", "TCS", "WFOS", "Container" ],
   "ProvisionResponse" : [ {
@@ -66,13 +18,6 @@
     "state" : "state",
     "messageType" : "messageType",
     "msg" : "Sequence Manager can not accept 'messageType' message in 'state'"
-  } ],
-  "GetRunningObsModesResponse" : [ {
-    "_type" : "Success",
-    "runningObsModes" : [ "DarkNight" ]
-  }, {
-    "_type" : "Failed",
-    "msg" : "failed"
   } ],
   "ProvisionConfig" : [ {
     "config" : [ {
@@ -95,14 +40,14 @@
     }
   }, {
     "_type" : "LoadScriptError",
-    "msg" : "error"
+    "reason" : "error"
   }, {
     "_type" : "SequenceComponentNotAvailable",
     "subsystems" : [ "ESW" ],
     "msg" : "No sequence components found for subsystems : List(ESW)"
   }, {
     "_type" : "LocationServiceError",
-    "msg" : "location service error"
+    "reason" : "location service error"
   }, {
     "_type" : "Unhandled",
     "state" : "state",
@@ -114,12 +59,19 @@
     "_type" : "Success"
   }, {
     "_type" : "LocationServiceError",
-    "msg" : "location service error"
+    "reason" : "location service error"
   }, {
     "_type" : "Unhandled",
     "state" : "state",
     "messageType" : "messageType",
     "msg" : "Sequence Manager can not accept 'messageType' message in 'state'"
+  } ],
+  "ObsModeStatus" : [ {
+    "_type" : "Configurable"
+  }, {
+    "_type" : "Configured"
+  }, {
+    "_type" : "NonConfigurable"
   } ],
   "RestartSequencerResponse" : [ {
     "_type" : "Success",
@@ -129,27 +81,56 @@
     }
   }, {
     "_type" : "LoadScriptError",
-    "msg" : "error"
+    "reason" : "error"
   }, {
     "_type" : "LocationServiceError",
-    "msg" : "location service error"
+    "reason" : "location service error"
   }, {
     "_type" : "Unhandled",
     "state" : "state",
     "messageType" : "messageType",
     "msg" : "Sequence Manager can not accept 'messageType' message in 'state'"
+  } ],
+  "ObsModesDetailsResponse" : [ {
+    "_type" : "Success",
+    "obsModes" : [ {
+      "obsMode" : "DarkNight_1",
+      "status" : {
+        "_type" : "Configured"
+      },
+      "resources" : [ "ESW", "TCS" ],
+      "sequencers" : [ "ESW", "TCS" ]
+    }, {
+      "obsMode" : "DarkNight_2",
+      "status" : {
+        "_type" : "Configurable"
+      },
+      "resources" : [ "ESW", "IRIS" ],
+      "sequencers" : [ "ESW" ]
+    }, {
+      "obsMode" : "DarkNight_3",
+      "status" : {
+        "_type" : "NonConfigurable"
+      },
+      "resources" : [ "ESW", "IRIS", "WFOS" ],
+      "sequencers" : [ "ESW", "TCS" ]
+    } ]
+  }, {
+    "_type" : "LocationServiceError",
+    "reason" : "location service error"
   } ],
   "ShutdownSequenceComponentResponse" : [ {
     "_type" : "Success"
   }, {
     "_type" : "LocationServiceError",
-    "msg" : "location service error"
+    "reason" : "location service error"
   }, {
     "_type" : "Unhandled",
     "state" : "state",
     "messageType" : "messageType",
     "msg" : "Sequence Manager can not accept 'messageType' message in 'state'"
   } ],
+  "Resource" : [ "IRIS", "TCS" ],
   "ConfigureResponse" : [ {
     "_type" : "Success",
     "masterSequencerComponentId" : {
@@ -167,7 +148,7 @@
     "reasons" : [ "reason" ]
   }, {
     "_type" : "LocationServiceError",
-    "msg" : "location service error"
+    "reason" : "location service error"
   }, {
     "_type" : "SequenceComponentNotAvailable",
     "subsystems" : [ "ESW" ],
@@ -177,5 +158,31 @@
     "state" : "state",
     "messageType" : "messageType",
     "msg" : "Sequence Manager can not accept 'messageType' message in 'state'"
+  } ],
+  "ResourcesStatusResponse" : [ {
+    "_type" : "Success",
+    "resourcesStatus" : [ {
+      "resource" : "IRIS",
+      "status" : {
+        "_type" : "Available"
+      }
+    }, {
+      "resource" : "TCS",
+      "status" : {
+        "_type" : "InUse"
+      },
+      "obsMode" : "DarkNight"
+    } ]
+  }, {
+    "_type" : "Failed",
+    "msg" : "error"
+  } ],
+  "ObsModeDetails" : [ {
+    "obsMode" : "DarkNight_1",
+    "status" : {
+      "_type" : "Configured"
+    },
+    "resources" : [ "ESW", "TCS" ],
+    "sequencers" : [ "ESW", "TCS" ]
   } ]
 }

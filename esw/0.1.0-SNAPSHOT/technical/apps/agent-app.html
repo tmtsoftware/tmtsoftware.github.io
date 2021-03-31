@@ -127,7 +127,7 @@ TMT Executive Software Documentation
   <li><a href="../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
     <li><a href="../../technical/sequence-manager-tech.html" class="page">Sequence Manager Technical Documentation</a></li>
-    <li><a href="../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentatation</a></li>
+    <li><a href="../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
     <li><a href="../../technical/contracts.html" class="page">Service Contracts</a></li>
@@ -141,6 +141,7 @@ TMT Executive Software Documentation
   <li><a href="../../technical/apps/agent-app.html#agent-app" class="header">Agent App</a>
   <ul>
     <li><a href="../../technical/apps/agent-app.html#running-agent-app-using-coursier" class="header">Running Agent App using Coursier</a></li>
+    <li><a href="../../technical/apps/agent-app.html#setting-the-default-log-level" class="header">Setting the default log level</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -165,6 +166,7 @@ TMT Executive Software Documentation
   <li><a href="../../technical/apps/agent-app.html#agent-app" class="header">Agent App</a>
   <ul>
     <li><a href="../../technical/apps/agent-app.html#running-agent-app-using-coursier" class="header">Running Agent App using Coursier</a></li>
+    <li><a href="../../technical/apps/agent-app.html#setting-the-default-log-level" class="header">Setting the default log level</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -181,47 +183,44 @@ TMT Executive Software Documentation
 <p>The following steps should be followed to start Agent</p>
 <h3><a href="#1-install-coursier-and-the-tmt-apps-channel" name="1-install-coursier-and-the-tmt-apps-channel" class="anchor"><span class="anchor-link"></span></a>1. Install <code>coursier</code> and the TMT Apps Channel</h3>
 <p>The <code>coursier</code> application must be installed on your machine and the OCS Apps channel must be installed. The instructions for doing this are provided <a href="getting-apps.html">here</a>.</p>
-<pre><code><br/>### 2. Start Any Needed CSW Services
-
-* To run agent, the **CSW Location Service** must be running.
-
-Information on starting CSW services is @extref[here](csw:commons/apps)
-
-### 3. Install agent-app
-
-Following command creates an executable file named agent-app in the default installation directory.
-
+<h3><a href="#2-start-any-needed-csw-services" name="2-start-any-needed-csw-services" class="anchor"><span class="anchor-link"></span></a>2. Start Any Needed CSW Services</h3>
+<ul>
+  <li>To run agent, the <strong>CSW Location Service</strong> must be running.</li>
+</ul>
+<p>Information on starting CSW services is <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/commons/apps">here</a></p>
+<h3><a href="#3-install-agent-app" name="3-install-agent-app" class="anchor"><span class="anchor-link"></span></a>3. Install agent-app</h3>
+<p>Following command creates an executable file named agent-app in the default installation directory.</p>
+<pre class="prettyprint"><code class="language-bash">cs install agent-app:&lt;version | SHA&gt;
 </code></pre>
-<p>cs install agent-app:&lt;version | SHA&gt;</p>
-<pre><code><br/>One can specify installation directory like following:
-
+<p>One can specify installation directory like following:</p>
+<pre class="prettyprint"><code class="language-bash">cs install \
+    --install-dir /tmt/apps \
+    agent-app:&lt;version | SHA&gt;
 </code></pre>
-<p>cs install \  &ndash;install-dir /tmt/apps \  agent-app:&lt;version | SHA&gt;</p>
-<pre><code>Note: If you don&#39;t provide the version or SHA in above command, `agent-app` will be installed with the latest tagged binary of `esw-agent-akka-app`
+<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>agent-app</code> will be installed with the latest tagged binary of <code>esw-agent-akka-app</code></p>
+<h3><a href="#4-run-agent-app" name="4-run-agent-app" class="anchor"><span class="anchor-link"></span></a>4. Run agent-app</h3>
+<p>Once agent-app is installed, one can simply run agent-app by executing start command</p>
+<p>Start command supports following arguments:</p>
+<ul>
+  <li><code>-p</code>: prefix of machine. For example, tcs.primary_machine, ocs.machine1 etc.</li>
+</ul>
+<pre class="prettyprint"><code class="language-bash">//cd to installation directory
+cd /tmt/apps
 
-### 4. Run agent-app
-
-Once agent-app is installed, one can simply run agent-app by executing start command
-
-Start command supports following arguments:
-
-- `-p` : prefix of machine. For exmaple, tcs.primary_machine, ocs.machine1 etc
-
+// run agent app
+./agent-app start -p &quot;tcs.primary_machine&quot;
 </code></pre>
-<p>//cd to installation directory cd /tmt/apps</p>
-<p>// run agent app ./agent-app start -p &ldquo;tcs.primary_machine&rdquo;</p>
-<pre><code><br/>## Setting the default log level
-
-The default log level for any component is specified in the `application.conf` file of the component.
-Use the java -J-D option to override configuration values at runtime.  For log level, the format is:
-
+<h2><a href="#setting-the-default-log-level" name="setting-the-default-log-level" class="anchor"><span class="anchor-link"></span></a>Setting the default log level</h2>
+<p>The default log level for any component is specified in the <code>application.conf</code> file of the component. Use the java -J-D option to override configuration values at runtime. For log level, the format is:</p>
+<pre><code>-J-Dcsw-logging.component-log-levels.&lt;Subsystem&gt;.&lt;ComponentName&gt;=&lt;LEVEL&gt;
 </code></pre>
-<p>-J-Dcsw-logging.component-log-levels.<Subsystem>.<ComponentName>=<LEVEL></p>
-<pre><code><br/>For example, using the example above:
+<p>For example, using the example above:</p>
+<pre class="prettyprint"><code class="language-bash">//cd to installation directory
+cd /tmt/apps
 
+// run sequence manager
+./agent-app -J-Dcsw-logging.component-log-levels.TCS.primary_machine=TRACE start -p &quot;tcs.primary_machine&quot;
 </code></pre>
-<p>//cd to installation directory cd /tmt/apps</p>
-<p>// run sequence manager ./agent-app -J-Dcsw-logging.component-log-levels.TCS.primary_machine=TRACE start -p &ldquo;tcs.primary_machine&rdquo; ```</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/technical/apps/agent-app.md" title="Edit this page" class="md-source-file md-edit">

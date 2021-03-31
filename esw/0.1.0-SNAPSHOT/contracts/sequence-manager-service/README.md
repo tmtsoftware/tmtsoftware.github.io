@@ -9,8 +9,9 @@ This page describes possible ways of accessing sequence manager service via HTTP
 The url - `http://{{host}}:{{port}}/post-endpoint` can be used to access sequence manager service
 
 Following JSON payloads can be "post"ed to the above URL:
-* GetRunningObsModes
+* GetObsModesDetails
 * GetAgentStatus
+* GetResources
 * Configure
 * Provision
 * StartSequencer
@@ -21,6 +22,7 @@ Following JSON payloads can be "post"ed to the above URL:
 * ShutdownAllSequencers
 * ShutdownSequenceComponent
 * ShutdownAllSequenceComponents
+
 
 _Note:_
 
