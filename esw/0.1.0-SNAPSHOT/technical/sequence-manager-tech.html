@@ -123,6 +123,7 @@ TMT Executive Software Documentation
     <li><a href="../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
+    <li><a href="../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -289,7 +290,7 @@ TMT Executive Software Documentation
 <p>Sequence Manager Actor is implemented as a state machine with two states: Idle and Processing. At any point of time, Sequence Manager must be in exactly one of these states.</p>
 <p>The following diagram depicts the state transitions of Sequence Manager:</p>
 <p><img src="../images/sequencemanager/sm-state-transition.png" alt="State Transition Sequence Manager" /></p>
-<p>Implementation of these msgs is asynchronous in nature. So handling any other msgs while previous msg processing is incomplete can result in an inconsistent system. For example, configure Observing_Mode_1 msg is received by Sequence Manager Actor. Let&rsquo;s assume that this requires starting ESW, IRIS and TCS sequencers. Configure flow has checked for resource conflict. No conflict is there so configure goes ahead with processing. During this processing, if any other msg like startSequencer for IRIS subsystem and Observing_Mode_2 is received then this will result in inconsistent behaviour. To avoid these cases, certain msgs are accepted only when sequence manager is idle. When any one of idle state msg is received, sequence manager goes into processing state where it accepts only common msgs (read state msgs which will not cause any inconsistency). In processing state, actor waits for processing complete msg. Once processing complete msg is received, actor goes back to idle state and ready to process any of idle state msg. Both idle and processing state can handle common msgs without any state change.</p>
+<p>Implementation of these msgs is asynchronous in nature. So handling any other msgs while previous msg processing is incomplete can result in an inconsistent system. For example, configure Observing_Mode_1 msg is received by Sequence Manager Actor. Let&rsquo;s assume that this requires starting ESW, IRIS and TCS sequencers. Configure flow has checked for resource conflict. No conflict is there so configure goes ahead with processing. During this processing, if any other msg like startSequencer for IRIS subsystem and Observing_Mode_2 is received then this will result in inconsistent behaviour. To avoid these cases, certain msgs are accepted only when Sequence Manager is idle. When any one of idle state msg is received, Sequence Manager goes into processing state where it accepts only common msgs (read state msgs which will not cause any inconsistency). In processing state, actor waits for processing complete msg. Once processing complete msg is received, actor goes back to idle state and ready to process any of idle state msg. Both idle and processing state can handle common msgs without any state change.</p>
 <h2><a href="#running-sequence-manager" name="running-sequence-manager" class="anchor"><span class="anchor-link"></span></a>Running Sequence Manager</h2>
 <p>For running Sequence Manager, please refer <a href="apps/sequence-manager-app.html">this</a>.</p>
 <h2><a href="#sequence-manager-simulation-mode" name="sequence-manager-simulation-mode" class="anchor"><span class="anchor-link"></span></a>Sequence Manager simulation mode</h2>
@@ -297,9 +298,9 @@ TMT Executive Software Documentation
 <h3><a href="#approach-followed-" name="approach-followed-" class="anchor"><span class="anchor-link"></span></a>Approach followed:</h3>
 <ul>
   <li>
-  <p>In this approach we will be spawning actual sequence manager, agents, sequence-components and sequencers(simulation mode).</p></li>
+  <p>In this approach we will be spawning actual Sequence Manager, agents, sequence-components and sequencers(simulation mode).</p></li>
   <li>
-    <p>When the sequence manager is started using the esw-services with the simulation flag, the following things are done.</p>
+    <p>When the Sequence Manager is started using the esw-services with the simulation flag, the following things are done.</p>
     <ol>
       <li>If a obs-mode config is provided using -o flag, it is used and if not then a default config is used.</li>
       <li>Three agents are spawned automatically(ESW, TCS, IRIS)</li>
