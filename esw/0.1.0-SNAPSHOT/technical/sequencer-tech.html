@@ -211,7 +211,7 @@ TMT Executive Software Documentation
 </ul>
 <h2><a href="#sequence-execution-process" name="sequence-execution-process" class="anchor"><span class="anchor-link"></span></a>Sequence execution process</h2>
 <h4><a href="#starting-a-sequencer" name="starting-a-sequencer" class="anchor"><span class="anchor-link"></span></a>Starting a Sequencer</h4>
-<p><a href="https://github.com/tmtsoftware/esw/blob/master/esw-ocs/esw-ocs-app/src/main/scala/esw/ocs/app/wiring/SequencerWiring.scala">Sequencer wiring</a> creates an execution <a href="https://github.com/tmtsoftware/esw/blob/master/esw-ocs/esw-ocs-impl/src/main/scala/esw/ocs/impl/core/Engine.scala">Engine</a> which is responsible for processing each step. When Engine is initialized, Kotlin Script is loaded into it via reflection. After initialization, Sequencer&rsquo;s Akka and HTTP connection is registered to Location Service. </p>
+<p>When we do load script from a sequence component, it creates a <a href="https://github.com/tmtsoftware/esw/blob/master/esw-ocs/esw-ocs-app/src/main/scala/esw/ocs/app/wiring/SequencerWiring.scala">Sequencer Wiring</a>. Sequencer Wiring passes the Kotlin script class name as string parameter to <a href="https://github.com/tmtsoftware/esw/blob/master/esw-ocs/esw-ocs-impl/src/main/scala/esw/ocs/impl/script/ScriptLoader.scala">Script Loader</a>, which uses Java reflection APIs to dynamically load script class with given name and create its instance. This loaded script is then passed to an execution <a href="https://github.com/tmtsoftware/esw/blob/master/esw-ocs/esw-ocs-impl/src/main/scala/esw/ocs/impl/core/Engine.scala">Engine</a> which is responsible for processing each step. After initialization, Sequencer&rsquo;s Akka and HTTP connection is registered to Location Service.</p>
 <h4><a href="#loading-and-running-a-sequence-in-sequencer" name="loading-and-running-a-sequence-in-sequencer" class="anchor"><span class="anchor-link"></span></a>Loading and Running a sequence in Sequencer</h4>
 <ul>
   <li>During initialization of Sequencer, it is set to IDLE state and initialized with empty data in Sequence Data like empty Step List,etc.</li>
@@ -286,7 +286,7 @@ TMT Executive Software Documentation
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L25-L32" target="_blank" title="Go to snippet source"></a><code class="language-scala">private implicit val actorSystem: ActorSystem[SpawnProtocol.Command] = ActorSystemFactory.remote(SpawnProtocol(), &quot;example&quot;)
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L28-L35" target="_blank" title="Go to snippet source"></a><code class="language-scala">private implicit val actorSystem: ActorSystem[SpawnProtocol.Command] = ActorSystemFactory.remote(SpawnProtocol(), &quot;example&quot;)
 private val sequencerAkkaConnection: AkkaConnection                  = AkkaConnection(ComponentId(Prefix(ESW, &quot;IRIS_DARKNIGHT&quot;), Sequencer))
 private val locationService: LocationService                         = HttpLocationServiceFactory.makeLocalClient(actorSystem)
 
@@ -299,7 +299,7 @@ private val sequencer: SequencerApi = SequencerApiFactory.make(sequencerAkkaLoca
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L36-L41" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val sequencerHttpConnection: HttpConnection = HttpConnection(ComponentId(Prefix(ESW, &quot;IRIS_DARKNIGHT&quot;), Sequencer))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L39-L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val sequencerHttpConnection: HttpConnection = HttpConnection(ComponentId(Prefix(ESW, &quot;IRIS_DARKNIGHT&quot;), Sequencer))
 private val sequencerHttpLocation: HttpLocation =
   Await.result(locationService.resolve(sequencerHttpConnection, 10.seconds), 10.seconds).get
 private val sequencerHttpClient: SequencerApi = SequencerApiFactory.make(sequencerHttpLocation)
@@ -322,95 +322,104 @@ sequencerHttpClient.getSequence</code></pre></dd>
 <h3><a href="#sequence-editor-apis" name="sequence-editor-apis" class="anchor"><span class="anchor-link"></span></a>Sequence Editor APIs</h3>
 <p>Sequence Editor APIs allow actions to edit sequence such as add more steps, delete/replace existing steps, Add/remove breakpoint in sequence. For using Sequence Editor actions, sequencer must be running a sequence. If Sequencer is not running any sequence then, Sequencer will return <code>Unhandled</code> response.</p>
 <ul>
-  <li>add This API allows to add more steps to sequence. Steps will be added in the end of sequence.</li>
+  <li>add</li>
 </ul>
+<p>This API allows to add more steps to sequence. Steps will be added in the end of sequence.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L45-L49" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToAdd: List[SequenceCommand] = List(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L48-L52" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToAdd: List[SequenceCommand] = List(
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
 )
 sequencer.add(stepsToAdd)</code></pre></dd>
 </dl>
 <ul>
-  <li>prepend This API allows to add more steps to sequence. Steps will be added after currently running step of sequence.</li>
+  <li>prepend</li>
 </ul>
+<p>This API allows to add more steps to sequence. Steps will be added after currently running step of sequence.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L53-L57" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToPrepend: List[SequenceCommand] = List(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L56-L60" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToPrepend: List[SequenceCommand] = List(
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
 )
 sequencer.prepend(stepsToPrepend)</code></pre></dd>
 </dl>
 <ul>
-  <li>getSequence This API allows returns Sequence running in Sequencer if any.</li>
+  <li>getSequence</li>
 </ul>
+<p>This API allows returns Sequence running in Sequencer if any.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L61" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val stepList: StepList = Await.result(sequencer.getSequence, 1.seconds).get</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L64" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val stepList: StepList = Await.result(sequencer.getSequence, 1.seconds).get</code></pre></dd>
 </dl>
 <ul>
-  <li>replace This API allows to replace particular step in the sequence with more steps.</li>
+  <li>replace</li>
 </ul>
+<p>This API allows to replace particular step in the sequence with more steps.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L65-L69" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToReplace: List[SequenceCommand] = List(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L68-L72" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToReplace: List[SequenceCommand] = List(
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
 )
 sequencer.replace(stepList.steps(4).id, stepsToReplace)</code></pre></dd>
 </dl>
 <ul>
-  <li>insertAfter This API allows to insert more steps after particular step in the sequence.</li>
+  <li>insertAfter</li>
 </ul>
+<p>This API allows to insert more steps after particular step in the sequence.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L73-L77" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToInsertAfter: List[SequenceCommand] = List(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L76-L80" target="_blank" title="Go to snippet source"></a><code class="language-scala">val stepsToInsertAfter: List[SequenceCommand] = List(
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
 )
 sequencer.insertAfter(stepList.steps(4).id, stepsToInsertAfter)</code></pre></dd>
 </dl>
 <ul>
-  <li>delete This API allows to delete particular step in the sequence.</li>
+  <li>delete</li>
 </ul>
+<p>This API allows to delete particular step in the sequence.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L81-L82" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val stepToDelete: Id = stepList.steps(4).id
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L84-L85" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val stepToDelete: Id = stepList.steps(4).id
 sequencer.delete(stepToDelete)</code></pre></dd>
 </dl>
 <ul>
-  <li>add and remove breakpoint These APIs allows to add and remove breakpoint for particular step in the sequence.</li>
+  <li>add and remove breakpoint</li>
 </ul>
+<p>These APIs allows to add and remove breakpoint for particular step in the sequence.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L86-L88" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val breakpointStep: Id = stepList.steps(4).id
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L89-L91" target="_blank" title="Go to snippet source"></a><code class="language-scala">private val breakpointStep: Id = stepList.steps(4).id
 sequencer.addBreakpoint(breakpointStep)
 sequencer.removeBreakpoint(breakpointStep)</code></pre></dd>
 </dl>
 <ul>
-  <li>reset These APIs allows to discard all pending steps in the sequence.</li>
+  <li>reset</li>
 </ul>
+<p>These APIs allows to discard all pending steps in the sequence.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L92" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.reset()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L95" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.reset()</code></pre></dd>
 </dl>
 <ul>
-  <li>pause and resume sequence These APIs allows to pause and resume sequence. This essentially adds/removes breakpoint at first pending step in sequence</li>
+  <li>pause and resume sequence</li>
 </ul>
+<p>These APIs allows to pause and resume sequence. This essentially adds/removes breakpoint at first pending step in sequence</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L96-L97" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.pause
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L99-L100" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.pause
 sequencer.resume</code></pre></dd>
 </dl>
 <h3><a href="#sequencer-lifecycle-apis" name="sequencer-lifecycle-apis" class="anchor"><span class="anchor-link"></span></a>Sequencer Lifecycle APIs</h3>
@@ -423,7 +432,7 @@ sequencer.resume</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L105" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.isAvailable</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L108" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.isAvailable</code></pre></dd>
 </dl>
 <ul>
   <li>online/offline</li>
@@ -432,7 +441,7 @@ sequencer.resume</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L109-L111" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.isOnline
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L112-L114" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.isOnline
 sequencer.goOnline()
 sequencer.goOffline()</code></pre></dd>
 </dl>
@@ -443,7 +452,7 @@ sequencer.goOffline()</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L115" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.abortSequence()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L118" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.abortSequence()</code></pre></dd>
 </dl>
 <ul>
   <li>Stop</li>
@@ -452,7 +461,7 @@ sequencer.goOffline()</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L119" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.stop()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L122" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.stop()</code></pre></dd>
 </dl>
 <ul>
   <li>getSequencerState</li>
@@ -461,7 +470,7 @@ sequencer.goOffline()</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L123" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.getSequencerState</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L126" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.getSequencerState</code></pre></dd>
 </dl>
 <ul>
   <li>diagnosticMode</li>
@@ -470,7 +479,7 @@ sequencer.goOffline()</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L127" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.diagnosticMode(UTCTime.now(), &quot;diagnostic-mode&quot;)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L130" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.diagnosticMode(UTCTime.now(), &quot;diagnostic-mode&quot;)</code></pre></dd>
 </dl>
 <ul>
   <li>operationsMode</li>
@@ -479,7 +488,17 @@ sequencer.goOffline()</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L131" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.operationsMode()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L134" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.operationsMode()</code></pre></dd>
+</dl>
+<ul>
+  <li>subscribeSequencerState</li>
+</ul>
+<p>This API allows subscribing to state of Sequencer. It returns a Source of <code>SequencerStateResponse</code> which contains current <code>SequencerState</code> and <code>StepList</code>. The <code>Subscription</code> can be used to unsubscribe.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L138-L139" target="_blank" title="Go to snippet source"></a><code class="language-scala">val sequencerStateSource: Source[SequencerStateResponse, Subscription] =
+  sequencer.subscribeSequencerState()</code></pre></dd>
 </dl>
 <h3><a href="#other-apis" name="other-apis" class="anchor"><span class="anchor-link"></span></a>Other APIs</h3>
 <ul>
@@ -489,7 +508,7 @@ sequencer.goOffline()</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L135-L139" target="_blank" title="Go to snippet source"></a><code class="language-scala">val sequence: Sequence = Sequence(
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L143-L147" target="_blank" title="Go to snippet source"></a><code class="language-scala">val sequence: Sequence = Sequence(
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-iris&quot;)),
   Setup(Prefix(ESW, &quot;filter.wheel&quot;), CommandName(&quot;setup-tcs&quot;))
 )
@@ -502,7 +521,7 @@ sequencer.loadSequence(sequence)</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L143" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.startSequence()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L151" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.startSequence()</code></pre></dd>
 </dl>
 <ul>
   <li>getSequenceComponent</li>
@@ -511,7 +530,7 @@ sequencer.loadSequence(sequence)</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L101-L147" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.getSequenceComponent
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/scala/esw/examples/SequencerAPIExample.scala#L104-L155" target="_blank" title="Go to snippet source"></a><code class="language-scala">sequencer.getSequenceComponent
 sequencer.getSequenceComponent</code></pre></dd>
 </dl>
 <h2><a href="#running-sequencer" name="running-sequencer" class="anchor"><span class="anchor-link"></span></a>Running Sequencer</h2>
