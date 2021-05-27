@@ -233,8 +233,14 @@ TMT Executive Software Documentation
     </ul>
   </li>
 </ul>
-<p>Execution of a single Step </p>
-<p>Engine pulls one step at a time, and it is executed using command <a href="../scripts/dsl/constructs/handlers.html">handler</a> in the script. Command handler is selected based upon type and name of command present in Step.</p><div class="callout note "><div class="callout-title">Note</div>
+<h5><a href="#mapping-between-steps-and-script-handlers" name="mapping-between-steps-and-script-handlers" class="anchor"><span class="anchor-link"></span></a>Mapping between steps and script handlers</h5>
+<p>A Kotlin script file contains multiple command names and associated handler blocks with them.</p>
+<pre><code>onSetup(&quot;commandName&quot;) { 
+  ...handler block of command
+}
+</code></pre>
+<p>When a Script is loaded, <a href="https://github.com/tmtsoftware/esw/blob/master/esw-ocs/esw-ocs-dsl/src/main/scala/esw/ocs/dsl/script/ScriptDsl.scala">ScriptDsl</a> stores all command names with respective handler code blocks, you can think of it like a map with command name as key and handler code block as its value.</p>
+<p>The sequence submitted by a client to sequencer contains list of commands that need to be executed. These commands are stored as richer model of steps. When a step is picked for execution by Engine, its corresponding code block is picked from mapping in ScriptDsl and that block is executed.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Engine is a continuous running loop, it pulls next step once current step is finished.</p></div>
 <h4><a href="#completion-of-a-sequence" name="completion-of-a-sequence" class="anchor"><span class="anchor-link"></span></a>Completion of a Sequence</h4>
 <p>Once every step is executed, it is marked as Finished with Success or Failure. If any of step is Failed, Sequence is terminated and Error response is sent to all Subscribers. If all steps are completed with Success, then Success response is sent to all Subscribers.</p>
