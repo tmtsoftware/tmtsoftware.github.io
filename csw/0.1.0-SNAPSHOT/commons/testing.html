@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../assets/images/favicon.png">
 <title>Testing · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,20 +104,6 @@ tmtsoftware/csw
 TMT Common Software (CSW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
@@ -177,6 +147,8 @@ tmtsoftware/csw
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
+    <li><a href="../apps/csinstallation.html" class="page">Coursier Installation</a></li>
+    <li><a href="../apps/cswservices.html" class="page">csw-services</a></li>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
@@ -196,6 +168,7 @@ tmtsoftware/csw
   <li><a href="../migration_guide/migration-guides.html" class="page">Migration Guides</a>
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
+    <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -289,7 +262,7 @@ tmtsoftware/csw
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L26-L33" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create instance of framework testkit
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L28-L35" target="_blank" title="Go to snippet source"></a><code class="language-scala">// create instance of framework testkit
 private val frameworkTestKit = FrameworkTestKit()
 
 // starts Config Server and Event Service
@@ -318,7 +291,7 @@ public static void afterAll() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L41-L48" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>// starting container from container config using testkit
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L43-L50" target="_blank" title="Go to snippet source"></a><code class="language-scala"><br/>// starting container from container config using testkit
 frameworkTestKit.spawnContainer(ConfigFactory.load(&quot;SampleContainer.conf&quot;))
 
 // starting standalone component from config using testkit
@@ -334,6 +307,19 @@ frameworkTestKit.spawnContainer(ConfigFactory.load(&quot;JSampleContainer.conf&q
 // ActorRef&lt;ComponentMessage&gt; componentRef =
 //      frameworkTestKit.spawnStandaloneComponent(ConfigFactory.load(&quot;SampleHcdStandalone.conf&quot;));
 </code></pre></dd>
+</dl>
+<p>Other ways to spawn Assembly and HCD in the standalone mode using Framework testkit.</p>
+<p>Spawning a HCD</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L61" target="_blank" title="Go to snippet source"></a><code class="language-scala">frameworkTestKit.spawnAssembly(Prefix(&quot;TCS.sampleAssembly&quot;), (ctx, cswCtx) =&gt; new SampleHandlers(ctx, cswCtx))</code></pre></dd>
+</dl>
+<p>Spawning an Assembly</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/teskit/TestKitsExampleTest.scala#L69" target="_blank" title="Go to snippet source"></a><code class="language-scala">frameworkTestKit.spawnHCD(Prefix(&quot;TCS.sampleHcd&quot;), (ctx, cswCtx) =&gt; new SampleHcdHandlers(ctx, cswCtx))</code></pre></dd>
 </dl>
 <p>Full source at GitHub</p>
 <ul>
@@ -397,7 +383,7 @@ public class JUnitIntegrationExampleTest extends JUnitSuite {
     }
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>You do not need to externally start any services like the Event Service, Config Service, Location Service etc. via <code>csw-services.sh</code> script. Testkits will start required services as a part of initialization. For the Event and Alarm service, it uses an instance of <code>embedded-redis</code>. </p></div>
+<p>You do not need to externally start any services like the Event Service, Config Service, Location Service etc. via <code>csw-services</code> application. Testkits will start required services as a part of initialization. For the Event and Alarm service, it uses an instance of <code>embedded-redis</code>. </p></div>
 <h2><a href="#unit-tests" name="unit-tests" class="anchor"><span class="anchor-link"></span></a>Unit Tests</h2>
 <p>The goal of unit testing is to break your application into the smallest testable units and test them individually, isolating a specific piece of functionality and ensuring it is working correctly. It is always a good idea to write more unit test cases and relatively fewer component and integration tests. If you want to get an idea of how many tests you should have in different types of testing phases (Unit/Component/Integration), refer to this <a href="https://martinfowler.com/articles/practical-test-pyramid.html">blog</a></p>
 <p>Unit testing simple Scala/Java classes or objects is straightforward. You can mock external dependencies using Mockito. Refer to the <a href="testing.html#mockito">Mockito</a> section for more details. </p>
@@ -413,7 +399,7 @@ public class JUnitIntegrationExampleTest extends JUnitSuite {
 <p>You can also refer to some examples in <a href="https://github.com/tmtsoftware/csw">CSW</a> for writing your own multi-JVM tests. For example: <a href="https://github.com/tmtsoftware/csw/blob/master/integration/src/multi-jvm/scala/csw/framework/command/CommandServiceTest.scala">CommandServiceTest.scala</a> </p>
 <p>In case you want to run your multi-JVM tests across machines, refer to this multi-node testing guide <a href="https://doc.akka.io/docs/akka/current/multi-node-testing.html">here</a>. </p>
 <h2><a href="#mockito" name="mockito" class="anchor"><span class="anchor-link"></span></a>Mockito</h2>
-<p>Mocks are used so that unit tests can be written independent of dependencies.<br/><a href="https://github.com/tmtsoftware/csw">CSW</a> uses <a href="https://site.mockito.org/">Mockito</a> for writing unit tests. ScalaTest comes with the <a href="https://www.scalatest.org/user_guide/testing_with_mock_objects#mockito">MockitoSugar</a> trait which provides some basic syntax sugar for Mockito.</p>
+<p>Mocks are used so that unit tests can be written independent of dependencies.<br/><a href="https://github.com/tmtsoftware/csw">CSW</a> uses <a href="https://site.mockito.org/">Mockito</a> for writing unit tests. ScalaTest comes with the <a href="https://www.scalatest.org/plus/mockito">MockitoSugar</a> trait which provides some basic syntax sugar for Mockito.</p>
 <p>For example: <a href="https://github.com/tmtsoftware/csw/blob/master/csw-framework/src/test/scala/csw/framework/internal/container/ContainerBehaviorTest.scala">ContainerBehaviorTest.scala</a></p>
 </div>
 <div>

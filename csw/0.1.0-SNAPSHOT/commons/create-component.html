@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../assets/images/favicon.png">
 <title>Creating a Component · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,20 +104,6 @@ tmtsoftware/csw
 TMT Common Software (CSW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="active page">Creating a Component</a></li>
@@ -177,6 +147,8 @@ tmtsoftware/csw
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
+    <li><a href="../apps/csinstallation.html" class="page">Coursier Installation</a></li>
+    <li><a href="../apps/cswservices.html" class="page">csw-services</a></li>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
@@ -196,6 +168,7 @@ tmtsoftware/csw
   <li><a href="../migration_guide/migration-guides.html" class="page">Migration Guides</a>
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
+    <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -446,7 +419,7 @@ override def onShutdown(): Unit = {
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L87-L103" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
 
 @Override
-public void jInitialize() {
+public void initialize() {
     log.info(&quot;In HCD initialize&quot;);
     maybePublishingGenerator = Optional.of(publishCounter());
 }
@@ -457,7 +430,7 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 }
 
 @Override
-public void jOnShutdown() {
+public void onShutdown() {
     log.info(&quot;HCD is shutting down&quot;);
 }</code></pre></dd>
 </dl>
@@ -710,7 +683,7 @@ override def onShutdown(): Unit = {
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/org/tmt/csw/samplehcd/JSampleHcdHandlers.java#L87-L103" target="_blank" title="Go to snippet source"></a><code class="language-java">private Optional&lt;Cancellable&gt; maybePublishingGenerator = Optional.empty();
 
 @Override
-public void jInitialize() {
+public void initialize() {
     log.info(&quot;In HCD initialize&quot;);
     maybePublishingGenerator = Optional.of(publishCounter());
 }
@@ -721,23 +694,17 @@ public void onLocationTrackingEvent(TrackingEvent trackingEvent) {
 }
 
 @Override
-public void jOnShutdown() {
+public void onShutdown() {
     log.info(&quot;HCD is shutting down&quot;);
 }</code></pre></dd>
 </dl>
 <h2><a href="#starting-csw-services" name="starting-csw-services" class="anchor"><span class="anchor-link"></span></a>Starting CSW Services</h2>
-<p>Before we run our application, we must first start the Location Service and the Event Service. A script has been provided to simplify the starting and stopping of CSW services, and is included in the application bundle that comes with each release. The application bundle is called </p>
-<p>csw-apps-0.1.0-SNAPSHOT.zip </p>
-<p>and the script is named <code>csw-services.sh</code>. The script has been modified for CSW 2.0 to automatically pull in the correct dependencies it needs.</p>
-<p>To simplify usage, the script is now included as part of the giter8 template. Therefore, if you are using the template, you do not need to download the CSW apps bundle.</p>
-<p>The <code>csw-services.sh</code> script has two basic commands: <code>start</code> and <code>stop</code>. The start command can start specific services using passed in flags, or all services without any. Services are started on default ports but those ports can be overridden using command line arguments. It is important to pass in a network interface name that is appropriate for your system. These can be obtained using <code>ifconfig</code> on Linux and Mac computers. <code>en0</code> typically, works for most machines. This can alternatively be set using the environment variable <code>INTERFACE_NAME</code>. Setting the interface name at the command with this script also sets this environment variable.</p><div class="callout note "><div class="callout-title">Environment Variables used by CSW</div>
+<p>Before we run our application, we must first start the Location Service and the Event Service. <code>csw-services</code> application has been provided to simplify the starting and stopping of CSW services. Refer <a href="../apps/cswservices.html">here</a> to install <code>csw-services</code> and understand commands for starting the required services.</p><div class="callout note "><div class="callout-title">Environment Variables used by CSW</div>
 <p>There are several environment variables that are used by the CSW framework and services. The environment variables used by CSW services are specified <a href="../deployment/env-vars.html">here</a>. </p></div>
-<p>To get information on the arguments for the tool, use <code>csw-services.sh --help</code> or <code>csw-services.sh start --help</code>.</p>
 <h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Developing an HCD</em></h4>
-<p>Let&rsquo;s go ahead and start our CSW Services using the script. Go into the <code>scripts</code> directory in your project and enter the command</p>
-<pre><code>./csw-services.sh start -i &lt;iname&gt;
+<p>Let&rsquo;s go ahead and start our CSW Services using the <code>csw-services</code> application.</p>
+<pre><code>csw-services start
 </code></pre>
-<p>where <code>&lt;iname&gt;</code> is your interface name (e.g. <code>en0</code>).</p>
 <h2><a href="#building-and-running-component-in-standalone-mode" name="building-and-running-component-in-standalone-mode" class="anchor"><span class="anchor-link"></span></a>Building and Running component in standalone mode</h2>
 <p>Once the component is ready, it is started using the <code>ContainerCmd</code> object in a standalone mode. The details for starting the <code>ContainerCmd</code> in a standalone mode can be found <a href="../framework/deploying-components.html">here</a>.</p>
 <p>There are various ways to build and run the project. A simple way during development is to to use sbt to run it. The sbt command <code>runMain</code> can be used to specify an application with a main method and run it with arguments specified at the command line. When this command is executed, sbt will take care of any downloading of dependencies, compiling, or building necessary to run your application. </p>

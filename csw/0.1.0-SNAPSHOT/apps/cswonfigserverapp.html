@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../assets/images/favicon.png">
 <title>csw-config-server · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,20 +104,6 @@ tmtsoftware/csw
 TMT Common Software (CSW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
@@ -177,6 +147,8 @@ tmtsoftware/csw
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
+    <li><a href="../apps/csinstallation.html" class="page">Coursier Installation</a></li>
+    <li><a href="../apps/cswservices.html" class="page">csw-services</a></li>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="active page">csw-config-server</a></li>
@@ -196,6 +168,7 @@ tmtsoftware/csw
   <li><a href="../migration_guide/migration-guides.html" class="page">Migration Guides</a>
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
+    <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -219,6 +192,7 @@ tmtsoftware/csw
   <li><a href="../apps/cswonfigserverapp.html#csw-config-server" class="header">csw-config-server</a>
   <ul>
     <li><a href="../apps/cswonfigserverapp.html#prerequisites" class="header">Prerequisites</a></li>
+    <li><a href="../apps/cswonfigserverapp.html#install-config-server-app" class="header">Install config-server app</a></li>
     <li><a href="../apps/cswonfigserverapp.html#command-line-parameter-options" class="header">Command line parameter options</a></li>
     <li><a href="../apps/cswonfigserverapp.html#examples" class="header">Examples</a></li>
   </ul></li>
@@ -245,6 +219,7 @@ tmtsoftware/csw
   <li><a href="../apps/cswonfigserverapp.html#csw-config-server" class="header">csw-config-server</a>
   <ul>
     <li><a href="../apps/cswonfigserverapp.html#prerequisites" class="header">Prerequisites</a></li>
+    <li><a href="../apps/cswonfigserverapp.html#install-config-server-app" class="header">Install config-server app</a></li>
     <li><a href="../apps/cswonfigserverapp.html#command-line-parameter-options" class="header">Command line parameter options</a></li>
     <li><a href="../apps/cswonfigserverapp.html#examples" class="header">Examples</a></li>
   </ul></li>
@@ -260,7 +235,16 @@ tmtsoftware/csw
 <h1><a href="#csw-config-server" name="csw-config-server" class="anchor"><span class="anchor-link"></span></a>csw-config-server</h1>
 <p>A HTTP server application that hosts the Configuration Service.</p>
 <h2><a href="#prerequisites" name="prerequisites" class="anchor"><span class="anchor-link"></span></a>Prerequisites</h2>
-<p>The HTTP server hosting the Configuration Service needs to be part of the csw-cluster so that it can be consumed by other components. A required check before starting the Configuration Service is to ensure the csw-cluster is setup and the Location Server are available. Kindly refer to <a href="cswlocationserver.html">CSW Location Server</a> for more information about the Location Server setup.</p>
+<ul>
+  <li>Location Service should be running</li>
+  <li>CSW AAS should be running</li>
+</ul><div class="callout note "><div class="callout-title">Note</div>
+<p>This page assumes that you have already installed and setup <a href="csinstallation.html">coursier</a></p></div>
+<h2><a href="#install-config-server-app" name="install-config-server-app" class="anchor"><span class="anchor-link"></span></a>Install config-server app</h2>
+<p>Following command creates an executable file named lconfig-server in the default installation directory.</p>
+<pre class="prettyprint"><code class="language-bash">cs install config-server:&lt;version | SHA&gt;
+</code></pre>
+<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>config-server</code> will be installed with the latest tagged binary of <code>csw-config-server</code></p>
 <h2><a href="#command-line-parameter-options" name="command-line-parameter-options" class="anchor"><span class="anchor-link"></span></a>Command line parameter options</h2>
 <ul>
   <li><strong><code>--initRepo</code></strong> is an optional parameter. When supplied, the server will try to initialize a repository if it does not exist.</li>
@@ -272,22 +256,22 @@ tmtsoftware/csw
 <ol>
   <li>
   <p>
-  <pre><code>csw-config-server --initRepo
-</code></pre>Start an HTTP server on default port 4000. Initialize the repository if it does not exist and register it with the Location Service</p></li>
+  <p>Start an HTTP server on default port 4000. Initialize the repository if it does not exist and register it with the Location Service.</p>
+  <pre class="prettyprint"><code class="language-bash">config-server --initRepo
+</code></pre></p></li>
   <li>
-  <pre><code>csw-config-server --initRepo --port 4001
-</code></pre>
-  <p>Start an HTTP server on port 4001. Initialize the repository if it does not exist and register it with the Location Service </p></li>
+  <p>Start an HTTP server on port 4001. Initialize the repository if it does not exist and register it with the Location Service. </p>
+  <pre class="prettyprint"><code class="language-bash">config-server --initRepo --port 4001
+</code></pre></li>
   <li>
-  <pre><code>csw-config-server --help
-</code></pre>
-  <p>Prints help message</p></li>
+  <p>Prints help message</p>
+  <pre class="prettyprint"><code class="language-bash">config-server --help
+</code></pre></li>
   <li>
-  <pre><code>csw-config-server --version
-</code></pre>
-  <p>Prints application version</p></li>
-</ol><div class="callout note "><div class="callout-title">Note</div>
-<p>Before running <code>csw-config-server</code>, make sure that <code>csw-location-server</code> is running on local machine at <code>localhost:7654</code>. As config server uses a local HTTP Location client which expects the Location Server to be running locally.</p></div>
+  <p>Prints application version</p>
+  <pre class="prettyprint"><code class="language-bash">config-server --version
+</code></pre></li>
+</ol>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/apps/cswonfigserverapp.md" title="Edit this page" class="md-source-file md-edit">

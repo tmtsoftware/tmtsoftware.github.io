@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../assets/images/favicon.png">
 <title>Creating an Assembly or Hcd Component · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,20 +104,6 @@ tmtsoftware/csw
 TMT Common Software (CSW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
@@ -177,6 +147,8 @@ tmtsoftware/csw
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
+    <li><a href="../apps/csinstallation.html" class="page">Coursier Installation</a></li>
+    <li><a href="../apps/cswservices.html" class="page">csw-services</a></li>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
@@ -196,6 +168,7 @@ tmtsoftware/csw
   <li><a href="../migration_guide/migration-guides.html" class="page">Migration Guides</a>
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
+    <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -231,7 +204,13 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#creating-an-assembly-or-hcd-component" name="creating-an-assembly-or-hcd-component" class="anchor"><span class="anchor-link"></span></a>Creating an Assembly or Hcd Component</h1>
-<p>An Assembly or HCD is implemented by extending the <code>ComponentHandlers</code> abstract class. These handlers are executed by an Akka Actor (Top Level Actor or TLA) defined in the framework which handles the lifecycle and supervision of each component.</p>
+<p>To create a component(Assembly or HCD), <code>ComponentHandlers</code> are needed. These handlers are executed by an Akka Actor (Top Level Actor or TLA) defined in the framework which handles the lifecycle and supervision of each component.</p>
+<p>There are two ways to create <code>ComponentHandlers</code>:</p>
+<ol>
+  <li>By extending <code>ComponentHandlers</code>(<code>JComponentHandlers</code> for Java) abstract class and implement each handler.</li>
+  <li>By extending <code>DefaultComponentHandlers</code>(<code>JDefaultComponentHandlers</code> for Java) class and only override handlers those handlers which are needed to change.</li>
+</ol>
+<p>Examples for case 1:</p>
 <dl>
   <dt>Assembly/Scala</dt>
   <dd>
@@ -306,6 +285,41 @@ tmtsoftware/csw
         this.locationService = cswCtx.locationService();
         this.eventService = cswCtx.eventService();
         log = cswCtx.loggerFactory().getLogger(this.getClass());
+    }</code></pre></dd>
+</dl>
+<p>Examples for case 2:</p>
+<dl>
+  <dt>Assembly/Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/assembly/TCSAssemblyCompHandlers.scala#L15-L16" target="_blank" title="Go to snippet source"></a><code class="language-scala">class TCSAssemblyCompHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext)
+    extends DefaultComponentHandlers(ctx, cswCtx) {</code></pre></dd>
+  <dt>Assembly/Java</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/assembly/JTCSAssemblyCompHandlers.java#L18-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JTCSAssemblyCompHandlers extends JDefaultComponentHandlers {
+
+    private final CommandResponseManager commandResponseManager;
+    private final TimeServiceScheduler timeServiceScheduler;
+
+    public JTCSAssemblyCompHandlers(ActorContext&lt;TopLevelActorMessage&gt; ctx, JCswContext cswCtx) {
+        super(ctx, cswCtx);
+        this.commandResponseManager = cswCtx.commandResponseManager();
+        this.timeServiceScheduler = cswCtx.timeServiceScheduler();
+    }</code></pre></dd>
+  <dt>Hcd/Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/scala/example/framework/components/hcd/TCSHcdCompHandlers.scala#L15-L16" target="_blank" title="Go to snippet source"></a><code class="language-scala">class TCSHcdCompHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext)
+    extends DefaultComponentHandlers(ctx, cswCtx) {</code></pre></dd>
+  <dt>Hcd/Java</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/framework/components/hcd/JTCSHcdCompHandlers.java#L18-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JTCSHcdCompHandlers extends JDefaultComponentHandlers {
+
+    private final CommandResponseManager commandResponseManager;
+    private final TimeServiceScheduler timeServiceScheduler;
+
+    public JTCSHcdCompHandlers(ActorContext&lt;TopLevelActorMessage&gt; ctx, JCswContext cswCtx) {
+        super(ctx, cswCtx);
+        this.commandResponseManager = cswCtx.commandResponseManager();
+        this.timeServiceScheduler = cswCtx.timeServiceScheduler();
     }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p><strong>Converting a typed actor system to an untyped actor system</strong> </p>

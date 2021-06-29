@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../../assets/images/favicon.png">
 <title>Location Server</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -79,22 +79,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -115,20 +99,6 @@ tmtsoftware/csw
 Location Server
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
 <ul>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -234,7 +204,7 @@ tmtsoftware/csw
       <li>
       <p>On receiving track request, location server internally subscribes to the <code>replicator</code> using <code>Service</code> key as explained in previous section and generates stream of <code>TrackingEvent</code></p></li>
       <li>
-      <p>Server then maps this stream of <code>TrackingEvent</code> to <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationWebsocketHandler.scala">Websocket</a></p></li>
+      <p>Server then maps this stream of <code>TrackingEvent</code> to <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationStreamRequestHandler.scala">Websocket</a></p></li>
       <li>
       <p>Server also keeps sending <code>ServerSentEvent.heartbeat</code> every <code>2 seconds</code> to keep connection alive</p></li>
     </ol>
@@ -275,15 +245,15 @@ tmtsoftware/csw
   <li>
   <p>By default when you start <code>Location Server</code>, it will start in <code>local-only</code> mode with AAS <code>Disabled</code> and bind to <code>127.0.0.1</code>.</p></li>
   <li>
-  <p>Use <code>--publicNetwork</code> command line option when <a href="../../apps/cswlocationserver.html">starting location server</a> to start <code>Location Server</code> in <code>public mode</code> with AAS <code>enabled</code> and bind to <a href="../../deployment/network-topology.html">public IP</a></p></li>
+  <p>Use <code>--outsideNetwork</code> command line option when <a href="../../apps/cswlocationserver.html">starting location server</a> to start <code>Location Server</code> in <code>public mode</code> with AAS <code>enabled</code> and bind to <a href="../../deployment/network-topology.html">public IP</a></p></li>
 </ul>
 <h2><a href="#internals" name="internals" class="anchor"><span class="anchor-link"></span></a>Internals</h2>
 <p>The <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/Main.scala">Main</a> class delegates the job of creating the cluster actor and HTTP server instance to the <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/internal/ServerWiring.scala">ServerWiring</a> class.</p>
 <p>The default TCP ports for the actor and HTTP servers are specified in <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/resources/application.conf">application.conf</a>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>Due to the way random port numbers are used for CSW components, firewalls should be disabled for these systems, which are assumed to be in an internal network that is protected from outside access.</p></div>
 <p>In order to determine the correct <a href="../../deployment/network-topology.html">private IP</a> address to use for the local host, it is necessary to set the <em>INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs).The <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> class uses that information, along with other settings when starting the cluster actor. It also needs to know the <em>cluster seeds</em>, a comma separated list of <em>host:port</em> values for at least one other actor in the cluster. This information is needed in order to join the Location Service cluster.</p>
-<p>In order to determine the correct <a href="../../deployment/network-topology.html">public IP</a> address to use for the local host, it is necessary to set the <em>PUBLIC_INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs). This variable or property is read by <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> when location service is started. During registration call, a service can choose which network type it wants to register itself with and location service will register that service to appropriate network. </p>
-<p>The Location Service HTTP server is implemented by the <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationHttpHandler.scala">LocationHttpHandler</a> class, <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationWebsocketHandler.scala">LocationWebsocketHandler</a> and talks to the cluster actor on the client&rsquo;s behalf.</p>
+<p>In order to determine the correct <a href="../../deployment/network-topology.html">public IP</a> address to use for the local host, it is necessary to set the <em>AAS_INTERFACE_NAME</em> environment variable or property to the name of the network interface to use (There could be multiple NICs). This variable or property is read by <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/commons/ClusterSettings.scala">ClusterSettings</a> when location service is started. During registration call, a service can choose which network type it wants to register itself with and location service will register that service to appropriate network. </p>
+<p>The Location Service HTTP server is implemented by the <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationRequestHandler.scala">LocationRequestHandler</a> class, <a href="https://github.com/tmtsoftware/csw/blob/master/csw-location/csw-location-server/src/main/scala/csw/location/server/http/LocationStreamRequestHandler.scala">LocationWebsocketHandler</a> and talks to the cluster actor on the client&rsquo;s behalf.</p>
 <h2><a href="#java-api" name="java-api" class="anchor"><span class="anchor-link"></span></a>Java API</h2>
 <p>Since the location <em>server</em> is only accessed internally, there is no extra Java API for it. The location service <em>client</em> and <em>API</em> code does provide Java APIs (see below).</p>
 <h2><a href="#tests" name="tests" class="anchor"><span class="anchor-link"></span></a>Tests</h2>

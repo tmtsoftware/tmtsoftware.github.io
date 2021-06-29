@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../assets/images/favicon.png">
 <title>Database Service · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,20 +104,6 @@ tmtsoftware/csw
 TMT Common Software (CSW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
@@ -177,6 +147,8 @@ tmtsoftware/csw
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
+    <li><a href="../apps/csinstallation.html" class="page">Coursier Installation</a></li>
+    <li><a href="../apps/cswservices.html" class="page">csw-services</a></li>
     <li><a href="../apps/cswlocationserver.html" class="page">csw-location-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
@@ -196,6 +168,7 @@ tmtsoftware/csw
   <li><a href="../migration_guide/migration-guides.html" class="page">Migration Guides</a>
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
+    <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -265,7 +238,29 @@ tmtsoftware/csw
 <p>The Database Service is included in TMT Common Software for use by components that need the features of a relational database. The CSW Database Service provides a TMT-standard relational database and connection library. Databases created by the Database Service will be stored reliably at the site during operations.</p>
 <p>The Database Service provides an API to manage database connections and access data in the TMT Software System. The service provides <code>PostgreSQL</code> as the underlying database server. It uses the <code>Jooq</code> library underneath to manage database access, connection pooling, etc.</p><div class="callout note "><div class="callout-title">Note</div>
 <p><code>Jooq</code> is a Java library that provides a higher level API for accessing data i.e. DDL support, DML support, fetch, batch execution, prepared statements, safety against sql injection, connection pooling, etc. To know more about Jooq and its features, please refer to this <a href="https://www.jooq.org/learn/">link</a>.</p></div>
-<p>The Database Service requires <code>PostgreSQL</code> server to be running on a machine. To start the PostgreSQL server for development and testing purposes, refer to <a href="../commons/apps.html#starting-apps-for-development">Starting Apps for Development</a>.</p>
+<p>The Database Service requires <code>PostgreSQL</code> server to be running on a machine. To start the PostgreSQL server for development and testing purposes, refer to <a href="../apps/cswservices.html">Starting Apps for Development</a>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>Postgres is started by csw-services and should not be running before that. If it is, you might get this error message:</p>
+<pre><code>cannot create children while terminating or terminated
+Failed to start Database Service!
+</code></pre>
+<p>Particularly on Linux systems, make sure that Postgres is not started at boot time, for example with this command:</p>
+<pre><code>systemctl status postgresql
+systemctl disable postgresql
+</code></pre>
+<p>Also, the Postgres data directory, pointed to by the required PGDATA environment variable, should belong to the user running csw-services (or at least have read/write access). The Linux system version of this directory will normally belong to the Postgres user and so should not be used for the database service. It is recommended to create a data directory especially for use with the Database Service. (Versions installed on MacOS with <code>brew</code> run under the user&rsquo;s name, so it is not a problem there.)</p>
+<p>The Database Service requires a Postgres version of 8.2 or greater (Currently version 13.x). The data directory (pointed to by the PGDATA environment variable) needs to match the Postgres version and can be initialized with the command: </p>
+<pre><code>initdb $PGDATA -E utf8
+</code></pre>
+<p>A user can be created by running <code>psql postgres -h localhost</code> and enterring:</p>
+<pre><code>CREATE USER &lt;username&gt;;
+ALTER USER &lt;username&gt; WITH PASSWORD &#39;&lt;mypassword&gt;&#39;;
+</code></pre>
+<p>On Linux systems it may be necessary to edit the <code>pg_hba.conf</code> temp file used by the Database Service to allow logging in without a password long enough to create a user and assign a password. Assuming the Database Service is running (after running <code>csw-services start</code>), edit <code>/tmp/pg_hba.conf*.tmp</code> and replace <code>password</code> with <code>trust</code>. Then get the process id of the postgres process and send it the HUP signal:</p>
+<pre><code>ps auwx | grep postgres
+kill -HUP &lt;postgresPid&gt;
+</code></pre>
+<p>After that you should be able to use the above psql command to login and create a user.</p>
+<p>On MacOS, when Postgres is installed with <code>brew</code>, a Postgres user with your user name is automatically created.</p></div>
 <p>Once the PostgreSQL database is up and running, the Database Service can be used to connect and access data. It is assumed that there will be more than one user type registered with PostgreSQL i.e. for read access, for write access, for admin access, etc.</p>
 <!-- introduction to the service -->
 <h2><a href="#dependencies" name="dependencies" class="anchor"><span class="anchor-link"></span></a>Dependencies</h2>
@@ -300,7 +295,7 @@ dbFactory
 </dl>
 <p>The underlying database server is registered with the Location Service. <code>makeDsl</code>/<code>jMakeDsl</code> uses <code>locationService</code> to locate the PostgreSQL server running and connect to it. It connects to the database by the provided <code>dbName</code>. It picks the database username and password for read access profile from TMT-standard environment variables called <code>DB_READ_USERNAME</code> for username and <code>DB_READ_PASSWORD</code> for password, hence it is expected that developers will set these environment variables prior to using <code>DatabaseServiceFactory</code>. PostgreSQL should also be initialized with a read-only user and password that agrees with the values in the environment variables. This approach is used to keep from putting database login information in the source code. </p><div class="callout note "><div class="callout-title">Note</div>
 <p>See the <a href="https://www.postgresql.org/docs/8.0/sql-createuser.html">PostgreSQL docs</a> or <a href="https://www.a2hosting.com/kb/developer-corner/postgresql/managing-postgresql-databases-and-users-from-the-command-line">this site</a> for help with creating users, passwords, and roles in PostgreSQL.</p>
-<p>The <a href="https://www.postgresql.org/docs/current/app-psql.html">psql interactive CLI client</a> is provided with PostgreSQL. It can be used to connect to PostgreSQL and create users (as well as many other maintenance commands). If the Database Service is started with csw-services.sh, the database server is started on port <em>5432</em>.</p>
+<p>The <a href="https://www.postgresql.org/docs/current/app-psql.html">psql interactive CLI client</a> is provided with PostgreSQL. It can be used to connect to PostgreSQL and create users (as well as many other maintenance commands). If the Database Service is started with <a href="../apps/cswservices.html">csw-services</a>, the database server is started on port <em>5432</em>.</p>
 <p>Eventually, all TMT user logins will all have these environment variables set with the agreed upon read-only user and password. </p></div>
 <p><code>makeDsl</code>/<code>jMakeDsl</code> returns a <code>Jooq</code> type <code>DSLContext</code>. DSLContext provides the mechanism to access the data stored in PostgreSQL using the selected JDBC driver underneath. The usage of DSLContext in component development will be explained in later sections. </p><div class="callout note "><div class="callout-title">Hint</div>
 <ul>
@@ -439,7 +434,7 @@ val selectResultF: Future[List[Films]] = selectQuery.fetchAsyncScala[Films]
 selectResultF.foreach(names =&gt; s&quot;Fetched names of films $names&quot;)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L104-L114" target="_blank" title="Go to snippet source"></a><code class="language-java">// domain model
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L104-L116" target="_blank" title="Go to snippet source"></a><code class="language-java">// domain model
 class Films {
     private Integer id;  // variable name (id) and type (Integer) should be same as column&#39;s name and type in database
     private String name; // variable name (name) and type (String) should be same as column&#39;s name and type in database
@@ -449,7 +444,9 @@ class Films {
 // fetch data from table and map it to Films class
 ResultQuery&lt;Record&gt; selectQuery = dsl.resultQuery(&quot;SELECT id, name FROM films WHERE id = ?&quot;, 1);
 CompletableFuture&lt;List&lt;Films&gt;&gt; selectResultF = JooqHelper.fetchAsync(selectQuery, Films.class);
-selectResultF.thenAccept(names -&gt; System.out.println(&quot;Fetched names of films &quot; + names));</code></pre></dd>
+selectResultF.thenAccept(names -&gt; System.out.println(&quot;Fetched names of films &quot; + names));
+// Alternatively, you can block and wait for the future result to complete:
+// System.out.println(&quot;Fetched names of films &quot; + selectResultF.get());</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Make sure that variable name and type of Films class is same as column&rsquo;s name and type in database. This is necessary for successful mapping of table fields to domain model class.</p></div>
 <h4><a href="#stored-function" name="stored-function" class="anchor"><span class="anchor-link"></span></a>Stored Function</h4>
@@ -472,7 +469,7 @@ val functionResultF: Future[Integer] = functionQuery.executeAsyncScala()
 functionResultF.foreach(result =&gt; println(s&quot;Function inc created with $result&quot;))</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L118-L125" target="_blank" title="Go to snippet source"></a><code class="language-java">Query functionQuery = dsl.query(&quot;CREATE FUNCTION inc(val integer) RETURNS integer AS $$\n&quot; +
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/main/java/example/database/JAssemblyComponentHandlers.java#L120-L127" target="_blank" title="Go to snippet source"></a><code class="language-java">Query functionQuery = dsl.query(&quot;CREATE FUNCTION inc(val integer) RETURNS integer AS $$\n&quot; +
         &quot;BEGIN\n&quot; +
         &quot;RETURN val + 1;\n&quot; +
         &quot;END; $$\n&quot; +

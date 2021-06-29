@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="docs">
-<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -19,7 +19,7 @@
 
 
 <meta name="description" content="docs">
-<link rel="shortcut icon" href="../assets/tmt_favicon.ico">
+<link rel="shortcut icon" href="../assets/images/favicon.png">
 <title>csw-location-server · TMT Common Software (CSW)</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
@@ -84,22 +84,6 @@ Type to start searching
 </div>
 
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<div class="md-header-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
-</div>
 </div>
 </nav>
 </header>
@@ -120,20 +104,6 @@ tmtsoftware/csw
 TMT Common Software (CSW)
 </a>
 </label>
-<div class="md-nav__source">
-<a href="https://github.com/tmtsoftware/csw"
-title="Go to repository"
-class="md-source"
-data-md-source="github">
-<div class="md-source__icon">
-<i class="fa fa-github"></i>
-</div>
-<div class="md-source__repository">
-tmtsoftware/csw
-</div>
-</a>
-
-</div>
 <ul>
   <li><a href="../commons/getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../commons/create-component.html" class="page">Creating a Component</a></li>
@@ -177,6 +147,8 @@ tmtsoftware/csw
   </ul></li>
   <li><a href="../commons/apps.html" class="page">Applications</a>
   <ul>
+    <li><a href="../apps/csinstallation.html" class="page">Coursier Installation</a></li>
+    <li><a href="../apps/cswservices.html" class="page">csw-services</a></li>
     <li><a href="../apps/cswlocationserver.html" class="active page">csw-location-server</a></li>
     <li><a href="../apps/cswlocationagent.html" class="page">csw-location-agent</a></li>
     <li><a href="../apps/cswonfigserverapp.html" class="page">csw-config-server</a></li>
@@ -196,6 +168,7 @@ tmtsoftware/csw
   <li><a href="../migration_guide/migration-guides.html" class="page">Migration Guides</a>
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
+    <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -218,7 +191,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../apps/cswlocationserver.html#csw-location-server" class="header">csw-location-server</a>
   <ul>
-    <li><a href="../apps/cswlocationserver.html#prerequisite" class="header">Prerequisite</a></li>
+    <li><a href="../apps/cswlocationserver.html#install-location-server-app" class="header">Install location-server app</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -242,7 +215,7 @@ tmtsoftware/csw
 <ul>
   <li><a href="../apps/cswlocationserver.html#csw-location-server" class="header">csw-location-server</a>
   <ul>
-    <li><a href="../apps/cswlocationserver.html#prerequisite" class="header">Prerequisite</a></li>
+    <li><a href="../apps/cswlocationserver.html#install-location-server-app" class="header">Install location-server app</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -254,18 +227,24 @@ tmtsoftware/csw
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#csw-location-server" name="csw-location-server" class="anchor"><span class="anchor-link"></span></a>csw-location-server</h1>
-<p>Note: Normally you will not need to start this application manually. The csw-services.sh script does this for you. </p>
-<p>This application will start a HTTP CSW Location Server on port 7654 which is required for all Location Service consumers who uses HTTP Location client. All components (HCD&rsquo;s, Assemblies, Services etc.) use a local HTTP Location client which expects the Location Server running at localhost:7654. In a production environment, it is required that all machines running components should have the HTTP Location Server running locally.</p>
-<h2><a href="#prerequisite" name="prerequisite" class="anchor"><span class="anchor-link"></span></a>Prerequisite</h2>
-<p>The CSW Location Server application can be installed as binaries or constructed from source. To download the application, go to the <a href="https://github.com/tmtsoftware/csw/releases">CSW Release page</a> and follow instructions.</p>
-<p>To install from source, the command <code>sbt csw-location-server/universal:publishLocal</code> will publish necessary artifacts to run the csw-location-server application. The target of the above command is a zip file titled &ldquo;csw-location-server.zip&rdquo; and its path will be printed on console. </p>
-<p>Note: An alternative method is to run <code>sbt publishLocal stage</code>, which installs all the dependencies locally and also installs all the csw applications  in <code>target/universal/stage/bin</code>.</p>
-<p>Unzip either the downloaded or constructed zip file and switch current working directory to the extracted folder. Choose appropriate instructions from below based on requirement (i.e. single machine or multiple machines).</p>
+<p>Note: Normally you will not need to start this application manually. The <code>csw-services</code> application does this for you, refer <a href="cswservices.html">here</a>. </p>
+<p>This application will start a HTTP CSW Location Service on port 7654 which is required for all Location Service consumers who uses HTTP Location client. All components (HCD&rsquo;s, Assemblies, Services etc.) use a local HTTP Location client which expects the Location Service running at localhost:7654. In a production environment, it is required that all machines running components should have the HTTP Location Service running locally.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>This page assumes that you have already installed and setup <a href="csinstallation.html">coursier</a></p></div>
+<h2><a href="#install-location-server-app" name="install-location-server-app" class="anchor"><span class="anchor-link"></span></a>Install location-server app</h2>
+<p>Following command creates an executable file named location-server in the default installation directory.</p>
+<pre class="prettyprint"><code class="language-bash">cs install location-server:&lt;version | SHA&gt;
+</code></pre>
+<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>location-server</code> will be installed with the latest tagged binary of <code>csw-location-server</code></p>
+<p>Choose appropriate instructions from below based on requirement (i.e. single machine or multiple machines).</p>
 <h3><a href="#starting-location-server-on-a-single-machine" name="starting-location-server-on-a-single-machine" class="anchor"><span class="anchor-link"></span></a>Starting Location Server on a single machine</h3>
 <p>The steps below describe how to run the Location Server on a single machine. This can be a requirement for testing or demo purposes.</p>
 <p><strong>Preparation</strong>: Find out the IP address and dedicated port for running the Location Server. Assume that IP is 192.168.1.21 and port is 3552.</p>
 <p><strong>Provisioning</strong>: Make sure you set all necessary <a href="../deployment/env-vars.html">environment variables</a>. </p>
-<p><strong>Running</strong>: Switch to the application directory and run this command - <code>./bin/csw-location-server --clusterPort=3552</code></p>
+<p><strong>Running</strong>: </p>
+<p>This command starts the location server</p>
+<pre class="prettyprint"><code class="language-bash">// run location server
+location-server --clusterPort=3552
+</code></pre>
 <h3><a href="#starting-location-server-on-multiple-machines" name="starting-location-server-on-multiple-machines" class="anchor"><span class="anchor-link"></span></a>Starting Location Server on multiple machines</h3>
 <p>In production environment, you will need a capability to access resources of HTTP interface of Location Server from <a href="../deployment/network-topology.html">public network</a> and provide Authentication and Authorization for some critical HTTP resource endpoints. E.g. ability to register/unregister components(which has to undergo maintenance), from a system operator machine present in <a href="../deployment/network-topology.html">public network</a></p>
 <p><strong>Preparation</strong>: Identify machines to run Location Server and form Akka cluster and whose IP and port are known. Let&rsquo;s assume they are 3 for now and IP addresses are machine1 192.168.1.21, machine2 192.168.1.22 and machine3 192.168.1.23. Also, they will have dedicated port 3552 to run the Location Server akka interface. </p>
@@ -273,14 +252,17 @@ tmtsoftware/csw
 <p><code>AAS</code> means Authentication and Authorization Service</p>
 <ol>
   <li>
-  <p>
-  <p>Switch to application directory and run this command on all machines where you want Location Server in <code>local-only</code> mode and AAS <code>disabled</code>.</p>
-  <pre><code>./bin/csw-location-server --clusterPort=3552 
-</code></pre></p></li>
+    <p>Run this command on all machines where you want Location Server in <code>local-only</code> mode and AAS <code>disabled</code>.</p>
+    <pre class="prettyprint"><code class="language-bash">// run location server
+location-server --clusterPort=3552 
+</code></pre>
+  </li>
   <li>
-  <p>Switch to application directory and run this command on all machines where you want Location Server in <code>public mode</code> and AAS <code>enabled</code>.</p>
-  <pre><code>./bin/csw-location-server --clusterPort=3552 --publicNetwork
-</code></pre></li>
+    <p>Run this command on all machines where you want Location Server in <code>public mode</code> and AAS <code>enabled</code>.</p>
+    <pre class="prettyprint"><code class="language-bash">// run location server
+location-server --clusterPort=3552 --outsideNetwork
+</code></pre>
+  </li>
   <li>
   <p>Once the Akka cluster formation is done, start <a href="../services/aas.html">AAS</a> on one of the node where Location Server is running in <code>local-only</code> mode, so that it can register itself to this Location Server without the need of authentication and authorization. </p></li>
   <li>
@@ -291,10 +273,12 @@ tmtsoftware/csw
 <p>Note : Resolution of AAS is made <code>lazy</code> by intention in location server. It will only be resolved <code>by need</code> when first request on protected resource comes to <code>public mode</code> location-server. This helps to resolve cyclic dependency during startup of <code>public mode</code> location-server and AAS(keycloak) registration.</p>
 <h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>Help</h3>
 <p>Use the following command to get help on the options available with this app.</p>
-<p><code>./bin/csw-location-server --help</code></p>
+<pre class="prettyprint"><code class="language-bash">   location-server --help
+</code></pre>
 <h3><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a>Version</h3>
 <p>Use the following command to get version information for this app.</p>
-<p><code>./bin/csw-location-server --version</code></p>
+<pre class="prettyprint"><code class="language-bash">   location-server --version
+</code></pre>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/csw/tree/master/docs/src/main/apps/cswlocationserver.md" title="Edit this page" class="md-source-file md-edit">
@@ -313,7 +297,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../commons/apps.html" title="Applications" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../apps/cswservices.html" title="csw-services" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -322,7 +306,7 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Applications
+csw-services
 </span>
 </div>
 </a>
