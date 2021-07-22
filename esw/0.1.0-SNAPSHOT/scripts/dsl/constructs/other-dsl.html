@@ -109,7 +109,7 @@ TMT Executive Software Documentation
   <li><a href="../../../sequencersandscripts/seq-index.html" class="page">Sequencers and Sequence Components</a>
   <ul>
     <li><a href="../../../sequencersandscripts/sequencer.html" class="page">Sequencers in the Executive Software</a></li>
-    <li><a href="../../../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using ocs-app</a></li>
+    <li><a href="../../../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using esw-ocs-app</a></li>
   </ul></li>
   <li><a href="../../../scripts/scripts-index.html" class="page">Sequencer Scripts</a>
   <ul>
@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../../../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../../../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../../../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../../../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -189,19 +188,19 @@ TMT Executive Software Documentation
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/OtherDslExample.kts#L17-L30" target="_blank" title="Go to snippet source"></a><code class="language-kts">val prefix = &quot;OCS.IRIS_darkMode&quot;
-val hcd1 = Hcd(IRIS, &quot;filter.wheel1&quot;, 10.minutes)
-val hcd2 = Hcd(IRIS, &quot;filter.wheel2&quot;, 10.minutes)
-val hcd3 = Hcd(IRIS, &quot;filter.wheel3&quot;, 10.minutes)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/OtherDslExample.kts#L15-L28" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val prefix = &quot;OCS.IRIS_darkMode&quot;
+val hcd1 = Hcd(IRIS, &quot;filter.wheel1&quot;, Duration.minutes(10))
+val hcd2 = Hcd(IRIS, &quot;filter.wheel2&quot;, Duration.minutes(10))
+val hcd3 = Hcd(IRIS, &quot;filter.wheel3&quot;, Duration.minutes(10))
 
 onSetup(&quot;setup-iris-hcds&quot;) {
     // send 3 setup commands to 3 HCD&#39;s in parallel
     val responses: List&lt;SubmitResponse&gt; =
-            par(
-                    { hcd1.submitAndWait(Setup(prefix, &quot;move-10&quot;)) },
-                    { hcd2.submitAndWait(Setup(prefix, &quot;move-10&quot;)) },
-                    { hcd3.submitAndWait(Setup(prefix, &quot;move-10&quot;)) }
-            )
+        par(
+            { hcd1.submitAndWait(Setup(prefix, &quot;move-10&quot;)) },
+            { hcd2.submitAndWait(Setup(prefix, &quot;move-10&quot;)) },
+            { hcd3.submitAndWait(Setup(prefix, &quot;move-10&quot;)) }
+        )
 }</code></pre></dd>
 </dl>
 <h2><a href="#isonline" name="isonline" class="anchor"><span class="anchor-link"></span></a>isOnline</h2>
@@ -209,8 +208,8 @@ onSetup(&quot;setup-iris-hcds&quot;) {
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/OtherDslExample.kts#L34-L42" target="_blank" title="Go to snippet source"></a><code class="language-kts">onDiagnosticMode { _, _ -&gt;
-    loopAsync(100.milliseconds) {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/OtherDslExample.kts#L32-L40" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onDiagnosticMode { _, _ -&gt;
+    loopAsync(Duration.milliseconds(100)) {
         if (isOnline)
             publishEvent(SystemEvent(&quot;TCS.filter.wheel&quot;, &quot;online-diag-data&quot;))
         else
@@ -224,7 +223,7 @@ onSetup(&quot;setup-iris-hcds&quot;) {
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/OtherDslExample.kts#L46" target="_blank" title="Go to snippet source"></a><code class="language-kts">val downstreamCommand: Setup = Setup(prefix, &quot;move&quot;)</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/OtherDslExample.kts#L44" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val downstreamCommand: Setup = Setup(prefix, &quot;move&quot;)</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>

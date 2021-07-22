@@ -109,7 +109,7 @@ TMT Executive Software Documentation
   <li><a href="../sequencersandscripts/seq-index.html" class="page">Sequencers and Sequence Components</a>
   <ul>
     <li><a href="../sequencersandscripts/sequencer.html" class="page">Sequencers in the Executive Software</a></li>
-    <li><a href="../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using ocs-app</a></li>
+    <li><a href="../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using esw-ocs-app</a></li>
   </ul></li>
   <li><a href="../scripts/scripts-index.html" class="page">Sequencer Scripts</a>
   <ul>
@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -197,7 +196,7 @@ TMT Executive Software Documentation
 </ul>
 <p>The following sections provide details on the Sequence Manager.</p>
 <h2><a href="#introduction-to-sequence-manager" name="introduction-to-sequence-manager" class="anchor"><span class="anchor-link"></span></a>Introduction to Sequence Manager</h2>
-<p>Sequence Manager is an ESW component that takes care of provisioning Sequence Components needed for an observation and the configuration of Sequencer scripts as per observing mode. It has capabilities to start, re-start, shutdown Sequencer/s, shutdown Sequence Components as well as to know status of TMT components such as which script is loaded on which Sequence Component or which Sequence Component/s are running on which agent/host. Sequence Manager is implemented using Akka actors. Sequence Manager provides two communication interfaces that are registered with Location Service.</p>
+<p>Sequence Manager is an ESW component that takes care of provisioning Sequence Components needed for an observation, and the configuration of Sequencer scripts as per observing mode. It has capabilities to start, re-start, shutdown Sequencer/s, shutdown Sequence Components as well as to know status of TMT components such as which script is loaded on which Sequence Component or which Sequence Component/s are running on which agent/host. Sequence Manager is implemented using Akka actors. Sequence Manager provides two communication interfaces that are registered with Location Service.</p>
 <ol>
   <li>Akka-based interface</li>
   <li>HTTP interface</li>
@@ -254,7 +253,7 @@ TMT Executive Software Documentation
 <p><img src="../images/sequencemanager/provision.png" alt="Configure" /></p><div class="callout note "><div class="callout-title">Note</div>
 <p>Normally, the system is provisioned once at the beginning of observing, and the Sequence Components are then used for all Sequencers needed in the course of a night. The system can be easily re-provisioned if there is a failure or other issue to minimize downtime.</p></div>
 <h3><a href="#configuring-sequencers-for-an-observing-mode" name="configuring-sequencers-for-an-observing-mode" class="anchor"><span class="anchor-link"></span></a>Configuring Sequencers for an Observing Mode</h3>
-<p>Once the system is provisioned, Sequence Manager can take the configure step. Configure is used for starting Sequencers needed for an observing mode. It also checks for any resource conflicts with ongoing observations. It is allowed that TMT run more than one concurrent observation as long as they do not conflict. The configure API ensures this is the case. If there is a conflict, the configure call will fail.</p>
+<p>Once the system is provisioned, Sequence Manager can take the configure step. Configure is used for starting Sequencers needed for an observing mode. It also checks for any resource conflicts with ongoing observations. It is allowed that TMT run more than one concurrent observation as long as they do not conflict. Configure API ensures this is the case. If there is a conflict, configure call will fail.</p>
 <p>A configuration file mapping observing mode to required Sequencers (called obsModeConfig) is provided to Sequence Manager when it starts. Configure API, checks for required Sequencers and resources in the obsModeConfig file. This config file contains mapping of observing mode to required Sequencers and resources. When configure for a particular observing mode command is received by Sequence Manager, it checks the following:</p>
 <ol>
   <li>Existence of a mapping for required observing mode exists in configuration file</li>
@@ -307,7 +306,7 @@ TMT Executive Software Documentation
     </ol>
   </li>
   <li>
-    <p>When the sequence-manager is up and running(&ndash;simulation):</p>
+    <p>When the Sequence Manager is up and running(&ndash;simulation):</p>
     <ol>
       <li>suppose <code>Provision</code> command is sent to SM. Now as we are using actual agents, seq-components our  production level logic eg: shutting-down previous seq-comps, agent-allocation for seq-comps, etc. can be tested</li>
       <li>suppose <code>Configure</code> command is sent to SM. Now as we are using sequencers in simulated mode any obs-mode can be configured(as long as there is an entry for it in the provided obs-mode conf or the default). Also the success as well as all the failure scenarios (resource conflict, configuration missing, etc) can be tested.</li>

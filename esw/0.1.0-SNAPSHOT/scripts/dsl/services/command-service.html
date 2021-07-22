@@ -109,7 +109,7 @@ TMT Executive Software Documentation
   <li><a href="../../../sequencersandscripts/seq-index.html" class="page">Sequencers and Sequence Components</a>
   <ul>
     <li><a href="../../../sequencersandscripts/sequencer.html" class="page">Sequencers in the Executive Software</a></li>
-    <li><a href="../../../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using ocs-app</a></li>
+    <li><a href="../../../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using esw-ocs-app</a></li>
   </ul></li>
   <li><a href="../../../scripts/scripts-index.html" class="page">Sequencer Scripts</a>
   <ul>
@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../../../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../../../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../../../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../../../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -202,12 +201,12 @@ TMT Executive Software Documentation
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L16-L18" target="_blank" title="Go to snippet source"></a><code class="language-kts">val galilAssembly = Assembly(WFOS, &quot;FilterWheel&quot;)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L16-L18" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val galilAssembly = Assembly(WFOS, &quot;FilterWheel&quot;)
 
-val galilAssembly2 = Assembly(WFOS, &quot;FilterWheel&quot;, defaultTimeout = 20.seconds)</code></pre></dd>
+val galilAssembly2 = Assembly(WFOS, &quot;FilterWheel&quot;, defaultTimeout = Duration.seconds(20))</code></pre></dd>
 </dl>
 <h2><a href="#hcd" name="hcd" class="anchor"><span class="anchor-link"></span></a>HCD</h2>
-<p>The HCD DSL method creates a Command Service DSL entity for an HCD with the provided <code>Prefix</code> that can be used to send commands from a script, such as sending Setups or Observes or lifecycle methods e.g. goOnline, goOffline, lock HCD etc. This DSL method provides a default timeout which will be used for commands like submitAndWait, queryFinal etc., but also allows adding an HCD-specific default timeout. The built-in timeout is 10.seconds. Commands requiring a timeout also allow command-specific timeouts.</p>
+<p>The HCD DSL method creates a Command Service DSL entity for an HCD with the provided <code>Prefix</code> that can be used to send commands from a script, such as sending Setups or Observes or lifecycle methods e.g. goOnline, goOffline, lock HCD etc. This DSL method provides a default timeout which will be used for commands like submitAndWait, queryFinal etc., but also allows adding an HCD-specific default timeout. The built-in timeout is 10 seconds. Commands requiring a timeout also allow command-specific timeouts.</p>
 <p>HCD takes the following parameters:</p>
 <ul>
   <li><code>prefix</code>: - Prefix of HCD as defined in the HCD&rsquo;s model file</li>
@@ -216,9 +215,9 @@ val galilAssembly2 = Assembly(WFOS, &quot;FilterWheel&quot;, defaultTimeout = 20
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L22-L24" target="_blank" title="Go to snippet source"></a><code class="language-kts">val filterWheelHcd = Hcd(WFOS, &quot;GalilHcd1&quot;)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L22-L24" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val filterWheelHcd = Hcd(WFOS, &quot;GalilHcd1&quot;)
 
-val filterWheelHcd2 = Hcd(WFOS, &quot;GalilHcd1&quot;, defaultTimeout = 20.seconds)</code></pre></dd>
+val filterWheelHcd2 = Hcd(WFOS, &quot;GalilHcd1&quot;, defaultTimeout = Duration.seconds(20))</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Resolving a Component with Location Service</div>
 <p>Since all the components in the TMT architecture are dynamic in nature, which implies they can be shutdown and spawned dynamically on some other location, the Assembly/HCD is resolved each time the Command Service DSL is used. It is possible to create an Assembly or HCD entity for a non-existent component, but a command to the component will fail because the component is resolved when the command is sent. </p></div>
 <h2><a href="#command-service-dsl" name="command-service-dsl" class="anchor"><span class="anchor-link"></span></a>Command Service DSL</h2>
@@ -231,7 +230,7 @@ val filterWheelHcd2 = Hcd(WFOS, &quot;GalilHcd1&quot;, defaultTimeout = 20.secon
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L48-L61" target="_blank" title="Go to snippet source"></a><code class="language-kts">val parameters = intKey(&quot;target&quot;).set(100)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L48-L61" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val parameters = intKey(&quot;target&quot;).set(100)
 val galilCommand = Setup(&quot;ESW.IRIS_darkNight&quot;, &quot;moveWheel&quot;, command.obsId).add(parameters)
 val startedResponse = galilAssembly.submit(galilCommand)</code></pre></dd>
 </dl>
@@ -242,7 +241,7 @@ val startedResponse = galilAssembly.submit(galilCommand)</code></pre></dd>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L75-L116" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;submit-error-handling&quot;) { command -&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L75-L116" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onSetup(&quot;submit-error-handling&quot;) { command -&gt;
 
     /* =========== Scenario-1 (default) ============
      * if submit returns negative response (which is considered as error by default)
@@ -289,7 +288,7 @@ val startedResponse = galilAssembly.submit(galilCommand)</code></pre></dd>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L120-L146" target="_blank" title="Go to snippet source"></a><code class="language-kts">onSetup(&quot;submit-error-handling-resume&quot;) { command -&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L120-L146" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onSetup(&quot;submit-error-handling-resume&quot;) { command -&gt;
     /* =========== Scenario-2 (resumeOnError = true) ============
      * if submit returns negative response
      * then current execution flow will continue because resumeOnError = true
@@ -322,9 +321,9 @@ val startedResponse = galilAssembly.submit(galilCommand)</code></pre></dd>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L48-L51" target="_blank" title="Go to snippet source"></a><code class="language-kts">val parameters = intKey(&quot;target&quot;).set(100)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L48-L51" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val parameters = intKey(&quot;target&quot;).set(100)
 val galilCommand = Setup(&quot;ESW.IRIS_darkNight&quot;, &quot;moveWheel&quot;, command.obsId).add(parameters)
-galilAssembly.submitAndWait(galilCommand, timeout = 20.seconds)</code></pre></dd>
+galilAssembly.submitAndWait(galilCommand, timeout = Duration.seconds(20))</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Do I Need a Result Variable?</div>
 <p>Note that this example does not save the <code>submitAndWait</code> result. If a <code>submitAndWait</code> does not return a result, and since the <code>submitAndWait</code> returns only after the actions are completed, and errors are handled elsewhere, there is not much reason to bother with the result. If it is the case where the command returns a result in the <code>Completed</code>, save the returned <code>Completed</code> value and retrieve the result.</p></div>
 <h3><a href="#query" name="query" class="anchor"><span class="anchor-link"></span></a>Query</h3>
@@ -332,7 +331,7 @@ galilAssembly.submitAndWait(galilCommand, timeout = 20.seconds)</code></pre></dd
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L55-L56" target="_blank" title="Go to snippet source"></a><code class="language-kts">val response = galilAssembly.submit(command)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L55-L56" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val response = galilAssembly.submit(command)
 val queryResponse = galilAssembly.query(response.runId())</code></pre></dd>
 </dl>
 <h3><a href="#queryfinal" name="queryfinal" class="anchor"><span class="anchor-link"></span></a>QueryFinal</h3>
@@ -340,7 +339,7 @@ val queryResponse = galilAssembly.query(response.runId())</code></pre></dd>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L61-L63" target="_blank" title="Go to snippet source"></a><code class="language-kts">val startedResponse = galilAssembly.submit(galilCommand)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L61-L63" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val startedResponse = galilAssembly.submit(galilCommand)
 val finalResponse = galilAssembly.queryFinal(startedResponse.runId())</code></pre></dd>
 </dl>
 <h3><a href="#subscribecurrentstate" name="subscribecurrentstate" class="anchor"><span class="anchor-link"></span></a>SubscribeCurrentState</h3>
@@ -348,7 +347,7 @@ val finalResponse = galilAssembly.queryFinal(startedResponse.runId())</code></pr
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L67-L70" target="_blank" title="Go to snippet source"></a><code class="language-kts">galilAssembly.subscribeCurrentState(StateName(&quot;stateName1&quot;)) { currentState -&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L67-L70" target="_blank" title="Go to snippet source">source</a><code class="language-kts">galilAssembly.subscribeCurrentState(StateName(&quot;stateName1&quot;)) { currentState -&gt;
     // do something with currentState matching provided state name
     println(&quot;current state : $currentState&quot;)
 }</code></pre></dd>
@@ -360,7 +359,7 @@ val finalResponse = galilAssembly.queryFinal(startedResponse.runId())</code></pr
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L164-L169" target="_blank" title="Go to snippet source"></a><code class="language-kts">onGoOffline {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L164-L169" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onGoOffline {
     // do some actions to go offline
 
     galilAssembly.goOffline()
@@ -372,7 +371,7 @@ val finalResponse = galilAssembly.queryFinal(startedResponse.runId())</code></pr
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L173-L176" target="_blank" title="Go to snippet source"></a><code class="language-kts">onGoOnline {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L173-L176" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onGoOnline {
     // do some actions to go online
     galilAssembly.goOnline()
 }</code></pre></dd>
@@ -384,7 +383,7 @@ val finalResponse = galilAssembly.queryFinal(startedResponse.runId())</code></pr
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L150-L153" target="_blank" title="Go to snippet source"></a><code class="language-kts">onDiagnosticMode { startTime, hint -&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L150-L153" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onDiagnosticMode { startTime, hint -&gt;
     // do some actions to go to diagnostic mode based on hint
     galilAssembly.diagnosticMode(startTime, hint)
 }</code></pre></dd>
@@ -394,7 +393,7 @@ val finalResponse = galilAssembly.queryFinal(startedResponse.runId())</code></pr
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L157-L160" target="_blank" title="Go to snippet source"></a><code class="language-kts">onOperationsMode {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L157-L160" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onOperationsMode {
     // do some actions to go to operations mode
     galilAssembly.operationsMode()
 }</code></pre></dd>
@@ -406,8 +405,8 @@ val finalResponse = galilAssembly.queryFinal(startedResponse.runId())</code></pr
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L29-L39" target="_blank" title="Go to snippet source"></a><code class="language-kts">galilAssembly.lock(
-        leaseDuration = 20.seconds,
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L29-L39" target="_blank" title="Go to snippet source">source</a><code class="language-kts">galilAssembly.lock(
+        leaseDuration = Duration.seconds(20),
         onLockAboutToExpire = {
             // do something when lock is about to expire
             publishEvent(SystemEvent(&quot;ESW.test&quot;, &quot;TCS.lock.about.to.expire&quot;))
@@ -423,7 +422,7 @@ val finalResponse = galilAssembly.queryFinal(startedResponse.runId())</code></pr
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L43" target="_blank" title="Go to snippet source"></a><code class="language-kts">galilAssembly.unlock()</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/CommandServiceDslExample.kts#L43" target="_blank" title="Go to snippet source">source</a><code class="language-kts">galilAssembly.unlock()</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>

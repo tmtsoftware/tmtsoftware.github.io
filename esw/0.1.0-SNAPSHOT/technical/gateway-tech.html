@@ -109,7 +109,7 @@ TMT Executive Software Documentation
   <li><a href="../sequencersandscripts/seq-index.html" class="page">Sequencers and Sequence Components</a>
   <ul>
     <li><a href="../sequencersandscripts/sequencer.html" class="page">Sequencers in the Executive Software</a></li>
-    <li><a href="../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using ocs-app</a></li>
+    <li><a href="../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using esw-ocs-app</a></li>
   </ul></li>
   <li><a href="../scripts/scripts-index.html" class="page">Sequencer Scripts</a>
   <ul>
@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -145,6 +144,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/gateway-tech.html#api-call-flow" class="header">API call flow</a></li>
     <li><a href="../technical/gateway-tech.html#modules" class="header">Modules</a></li>
     <li><a href="../technical/gateway-tech.html#running-gateway-server" class="header">Running Gateway Server</a></li>
+    <li><a href="../technical/gateway-tech.html#metrics" class="header">Metrics</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -172,6 +172,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/gateway-tech.html#api-call-flow" class="header">API call flow</a></li>
     <li><a href="../technical/gateway-tech.html#modules" class="header">Modules</a></li>
     <li><a href="../technical/gateway-tech.html#running-gateway-server" class="header">Running Gateway Server</a></li>
+    <li><a href="../technical/gateway-tech.html#metrics" class="header">Metrics</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -185,7 +186,7 @@ TMT Executive Software Documentation
 <h1><a href="#gateway-technical-documentation" name="gateway-technical-documentation" class="anchor"><span class="anchor-link"></span></a>Gateway Technical Documentation</h1>
 <p>Gateway gives access to all CSW and ESW services (available to user) and components from browser-based user interfaces. Gateway also enforces auth on command and sequencer APIs to protect from unauthorised access.</p>
 <p><img src="../images/gateway/gateway.svg" alt="ESW Gateway" /></p>
-<h1><a href="#implementation" name="implementation" class="anchor"><span class="anchor-link"></span></a>Implementation</h1>
+<h2><a href="#implementation" name="implementation" class="anchor"><span class="anchor-link"></span></a>Implementation</h2>
 <p>Gateway service is an HTTP service which relies on <code>msocket</code> framework. Internally it delegates to the various services(of both ESW or CSW) needed as per the request.</p>
 <p>It provides access to following:</p>
 <ul>
@@ -196,13 +197,17 @@ TMT Executive Software Documentation
   <li>Admin APIs (ESW)</li>
   <li>Logging APIS (ESW)</li>
 </ul>
-<p>Some services are not part of the gateway. This is mainly because of 2 reasons: 1. The services can be accessed via its own HTTP interface. Example, Config Service. 2. The services are not user facing. Example, Sequence Manager Service.</p>
+<p>Some services are not part of the gateway. This is mainly because of 2 reasons:</p>
+<ol>
+  <li>The services can be accessed via its own HTTP interface. Example, Config Service.</li>
+  <li>The services are not user facing. Example, Sequence Manager Service.</li>
+</ol>
 <p>The security directives created in the app for command and sequencer services are passed on to the routes in order to enable auth for command and sequencer services.</p>
-<h1><a href="#api-call-flow" name="api-call-flow" class="anchor"><span class="anchor-link"></span></a>API call flow</h1>
-<p>Let&rsquo;s take example of <code>GetSequence</code> command coming from browser to sequencer service via a gateway:</p>
+<h2><a href="#api-call-flow" name="api-call-flow" class="anchor"><span class="anchor-link"></span></a>API call flow</h2>
+<p>Let&rsquo;s take an example of <code>AbortSequence</code> command coming from browser to sequencer service via a gateway:</p>
 <ol>
   <li>Since sequencer APIs are protected using auth, the UI app gets a valid token from <code>AAS</code> that will enable access to sequencer API in gateway.</li>
-  <li>The UI app will create a <code>getSequence</code> request using the auth token and send it to gateway.</li>
+  <li>The UI app will create a <code>abortSequence</code> request using the auth token and send it to gateway.</li>
   <li>Gateway validates the request auth token and the role of UI app against the <code>command role config</code>.</li>
   <li>If the validation is successful, gateway delegates the request to sequencer service.</li>
   <li>Sequencer service executes the request and return the stepList as response.</li>
@@ -210,7 +215,7 @@ TMT Executive Software Documentation
 </ol>
 <p>Below diagram depicts the flow mapped by above points:</p>
 <p><img src="../images/gateway/api-flow.svg" alt="API call flow" /></p>
-<h1><a href="#modules" name="modules" class="anchor"><span class="anchor-link"></span></a>Modules</h1>
+<h2><a href="#modules" name="modules" class="anchor"><span class="anchor-link"></span></a>Modules</h2>
 <h3><a href="#esw-gateway-api" name="esw-gateway-api" class="anchor"><span class="anchor-link"></span></a>esw-gateway-api</h3>
 <p>All the request models, clients, and APIs exposed in gateway service resides within this module. This also contains the codecs for the models.</p>
 <p>It is a cross-compiled project which has following parts:</p>
@@ -224,8 +229,34 @@ TMT Executive Software Documentation
 <h3><a href="#esw-gateway-server" name="esw-gateway-server" class="anchor"><span class="anchor-link"></span></a>esw-gateway-server</h3>
 <p>This module contains the main application which when run starts the gateway server. This includes server wiring, post and websocket handlers and cli app.</p>
 <p>This module depends on <code>esw-http-core</code> for starting up an HTTP service.</p>
-<h1><a href="#running-gateway-server" name="running-gateway-server" class="anchor"><span class="anchor-link"></span></a>Running Gateway Server</h1>
+<h2><a href="#running-gateway-server" name="running-gateway-server" class="anchor"><span class="anchor-link"></span></a>Running Gateway Server</h2>
 <p>For running Gateway server, please refer <a href="../uisupport/gateway-app.html">this</a>.</p>
+<h2><a href="#metrics" name="metrics" class="anchor"><span class="anchor-link"></span></a>Metrics</h2>
+<p>Gateway has support for capturing metrics. The metrics can be enabled by providing <code>--metrics</code> or <code>-m</code> flag while starting gateway-server application.</p>
+<p>Gateway metrics are powered by <a href="https://prometheus.io/">prometheus</a>. We use prometheus java <a href="https://github.com/prometheus/client_java">client</a> to capture http and websocket based metrics. Gateway exposes <code>/metrics</code> endpoint where snapshot of metrics can be fetched. Prometheus server then polls the metrics endpoint and stores the metrics in a time series database which then can be used for visualization using tools like grafana.</p>
+<p>Gateway metrics are categorized into two major sections that are <strong>HTTP Metrics</strong> and <strong>Websocket Metrics</strong>.</p>
+<h3><a href="#http-metrics" name="http-metrics" class="anchor"><span class="anchor-link"></span></a>HTTP Metrics</h3>
+<p>HTTP metrics section includes following different types of metrics:</p>
+<ol>
+  <li>Total HTTP requests processed by gateway. This includes all the commands, events, log etc. messages processed by gateway since the beginning.</li>
+  <li>HTTP requests flowing via gateway per second. These are categorized by command type, for example, <code>ComponentCommand</code>, <code>SequencerCommand</code>, <code>GetEvent</code>, <code>PublishEvent</code> etc. This metric help us to understand trend of requests processed per second.</li>
+  <li>Commands passing through gateway per second. These commands can be <code>Submit</code>, <code>Validate</code>, <code>Oneway</code> etc.</li>
+</ol>
+<h3><a href="#websocket-metrics" name="websocket-metrics" class="anchor"><span class="anchor-link"></span></a>Websocket Metrics</h3>
+<p>Websocket metrics section includes following different types of metrics:</p>
+<ol>
+  <li>Active Websocket connections. This number indicates all the currently connected websocket clients to gateway. As soon as websocket connection gets disconnected, this number decreases.</li>
+  <li>Active event service pattern subscribers. (CommandType = <code>SubscribeWithPattern</code>)</li>
+  <li>Active event service subscribers. (CommandType = <code>SubscribeEvent</code>)</li>
+  <li>Active websocket request per second. This indicates trend of websocket connections over period of time.</li>
+  <li>Events rate per client/sec. This indicates rate at which events are flowing via websocket connection. Here client indicates unique application name and hostname combination, for example, <code>{app_name: eng-ui, hostname: 192.168.1.3}</code></li>
+  <li>Active websocket connections per client. This indicates number of active websocket connections per unique application name and hostname combination.</li>
+  <li>Active event subscriptions per client. This indicates number of active event subscribers per unique application name and hostname combination.</li>
+  <li>Active event pattern subscriptions per client. This indicates number of active event subscribers per unique application name and hostname combination.</li>
+</ol>
+<p>See the screenshots below from the integration of gateway metrics with Prometheus/Grafana.</p>
+<p><img src="../images/gateway/http_metrics.png" alt="HTTP Metrics" /> <img src="../images/gateway/ws_metrics1.png" alt="Websocket Metrics 1" /> <img src="../images/gateway/ws_metrics2.png" alt="Websocket Metrics 2" /> <img src="../images/gateway/ws_metrics3.png" alt="Websocket Metrics 3" /></p><div class="callout note "><div class="callout-title">Note</div>
+<p>Above screenshots are taken by following instruction provided <a href="https://github.com/tmtsoftware/esw/blob/master/scripts/metrics/README.md">here</a>.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/technical/gateway-tech.md" title="Edit this page" class="md-source-file md-edit">

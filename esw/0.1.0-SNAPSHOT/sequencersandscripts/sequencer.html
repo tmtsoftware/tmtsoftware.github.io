@@ -109,7 +109,7 @@ TMT Executive Software Documentation
   <li><a href="../sequencersandscripts/seq-index.html" class="page">Sequencers and Sequence Components</a>
   <ul>
     <li><a href="../sequencersandscripts/sequencer.html" class="active page">Sequencers in the Executive Software</a></li>
-    <li><a href="../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using ocs-app</a></li>
+    <li><a href="../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using esw-ocs-app</a></li>
   </ul></li>
   <li><a href="../scripts/scripts-index.html" class="page">Sequencer Scripts</a>
   <ul>
@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -185,7 +184,7 @@ TMT Executive Software Documentation
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#sequencers-in-the-executive-software" name="sequencers-in-the-executive-software" class="anchor"><span class="anchor-link"></span></a>Sequencers in the Executive Software</h1>
-<p>Sequencers are part of the ESW Observatory Control System or OCS. The job of OCS is to receive the description of the science observation from the planning tools and <em>execute the observation</em>. It does this using Sequencers and a few other ideas defined here.</p>
+<p>Sequencers are part of the ESW Observatory Control System or OCS. The job of OCS is to receive the description of the science observation from the planning tools and <em>execute the observation</em>. It does this using Sequencers, and a few other ideas defined here.</p>
 <p>This first section provides an overview of the critical OCS architectural ideas. Subsequent sections go into more depth. </p>
 <h2><a href="#what-is-a-sequence-component-sequencer-script-and-sequence-" name="what-is-a-sequence-component-sequencer-script-and-sequence-" class="anchor"><span class="anchor-link"></span></a>What is a Sequence Component, Sequencer, Script, and Sequence?</h2>
 <p>ESW.OCS provides the <strong>Sequence Component</strong>, which is one of the OMOA architecture components (along with HCD, Assembly, Container, and Application). The Sequence Component is configured by loading a &ldquo;<strong>script</strong>&rdquo; that is written in the &ldquo;<strong>script language</strong>&rdquo;. A different script can be written and loaded into a Sequence Component depending on the observing mode in use. When combined with a specific script, the Sequence Component becomes a <strong>Sequencer</strong> (i.e., Sequence Component + Script = Sequencer). The Sequence Component provides the framework and a consistent environment for a Sequencer. Scripts are stored in a dedicated script repository in the TMT Github called <a href="https://github.com/tmtsoftware/sequencer-scripts">sequencer-scripts</a>. <em>All scripts for all subsystems reside in the script repository</em>.</p>
@@ -196,7 +195,7 @@ TMT Executive Software Documentation
 <p>A Sequencer is created with a Script that may be specific to an observing or maintenance mode. Once the Sequencer is created with the specific Script it is able to execute Sequences for that mode. The specific Sequence Commands that may appear in a Sequence as input to a specific Sequencer/Script is the API for the Sequencer mode as defined in the ICD for the Sequencer/Script.</p>
 <p>Each Sequence Command in a Sequence is handled by the Script&ndash;usually one step at a time. The Script examines each input Sequence Command and takes whatever actions are needed to match the demands specified in the command. The Script actions taken may include involved activities that include sending commands to subsystem Assemblies and receiving events. The commands and events used by the executing Script are the commands defined by the Assemblies in their ICDs. The Sequence Command may trigger a mode or state machine that operates after the Sequence Command completes.</p>
 <p>The Sequencers needed for an observing mode form a hierarchy. The OMOA allows any arrangement of Sequencers for an observing mode, but the construction agreement is that there will be one or more Sequencers for each of the major subsystems with Scripts written by each subsystem team. For a typical AO-dependent observation such as with IRIS and NFIRAOS the Sequencers would include: OCS (master sequencer), AOESW, TCS, and an instrument such as IRIS.</p>
-<p>The following figure shows all of the key discussion points of the previous paragraphs. This figure shows a simplified construction Sequencer hierarchy with OCS Master Sequencer, TCS Sequencer, and an Instrument Sequencer arranged in a hierarchy. Each Sequencer has a loaded Script. The Master Sequencer has received a Sequence and in processing that Sequence. It has sent Sequences to the TCS and INS Sequencers.</p>
+<p>The following figure shows all the key discussion points of the previous paragraphs. This figure shows a simplified construction Sequencer hierarchy with OCS Master Sequencer, TCS Sequencer, and an Instrument Sequencer arranged in a hierarchy. Each Sequencer has a loaded Script. The Master Sequencer has received a Sequence and in processing that Sequence. It has sent Sequences to the TCS and INS Sequencers.</p>
 <p><img src="../images/ocs/OCS-MultiLevel.png" alt="MultiLevel" /></p>
 <p>Note that in this hierarchical arrangement, a Sequencer can send commands to Assemblies using CSW Command Service or, as with the OCS Master Sequencer, it can construct and send a Sequence within the Script. The point of this figure is to show that the OCS Master Sequencer may receive a long Sequence that it will process and will typically submit smaller Sequences of one or two Sequence Commands to sub-Sequencers and wait for completion before processing additional steps.</p>
 <h2><a href="#sequencer-is-an-omoa-component" name="sequencer-is-an-omoa-component" class="anchor"><span class="anchor-link"></span></a>Sequencer is an OMOA Component</h2>
@@ -220,7 +219,7 @@ TMT Executive Software Documentation
 </code></pre>
 <p>The <code>&lt;system&gt;</code> indicates the system to which the observing mode applies to. This is typically the instrument subsystem used for the observations, but could be any subsystem or other tag (such as ENG) that identifies the observing mode. If a subsystem is used, it should be capitalized to conform with other subsystem uses. The <code>&lt;modeName&gt;</code> portion will generally also be part of the instrument configuration set in the observation planning tool. There are no restrictions on this name, but shorter is better. Any name can be used for testing. </p>
 <h2><a href="#registering-sequencers-in-location-service" name="registering-sequencers-in-location-service" class="anchor"><span class="anchor-link"></span></a>Registering Sequencers in Location Service</h2>
-<p>A Sequencer is a Sequence Component that has a script loaded. A Sequencer converts a Sequence Component, but the Sequence Component stays around. A Sequencer must be started specifying the subsystem for the Sequencer and the observing mode (as described above). </p>
+<p>A Sequencer is a Sequence Component that has a script loaded. A Sequencer converts a Sequence Component, but the Sequence Component stays around. A Sequencer must be started specifying the subsystem for the Sequencer, and the observing mode (as described above). </p>
 <p>Like Sequence Components, Sequencers register themselves in the Location Service based on arguments used when they are started. The following table shows scenarios that may happen when the Sequence Manager starts Sequencers for an observing mode.</p>
 <!-- Comment: span tag in Registered Location is to fix broken link error.
 Use of @ sign makes it appear like an email, hence validateSite fails without span tag.
@@ -252,7 +251,7 @@ Use of @ sign makes it appear like an email, hence validateSite fails without sp
     </tr>
   </tbody>
 </table>
-<p>As shown above, the observing mode is the instrument name and an instrument-specific label related to observing mode features. Each instrument includes its scripts inside its specific package. The subsystem and observing mode are used to lookup the correct script in the script repository. Once the Sequencer script is loaded in a Sequence Component, the Sequencer API exposes a <code>GetSequenceComponent</code> command which returns the Location of the Sequence Component allowing the Sequence Manager or other client to determine which Sequence Component is executing the observing mode script for a specific packageId.</p>
+<p>As shown above, the observing mode is the instrument name, and an instrument-specific label related to observing mode features. Each instrument includes its scripts inside its specific package. The subsystem and observing mode are used to look up the correct script in the script repository. Once the Sequencer script is loaded in a Sequence Component, the Sequencer API exposes a <code>GetSequenceComponent</code> command which returns the Location of the Sequence Component allowing the Sequence Manager or other client to determine which Sequence Component is executing the observing mode script for a specific packageId.</p>
 <p>The figure below shows the Sequence Component ESW_77 loading the IRIS instrument script for the IRIS_ifsonly observing mode.</p>
 <p><img src="../images/ocs/OCS-SeqCompSeqNaming.png" alt="SequenceCompNaming" /></p>
 <p>Once loaded, a client can ask the Sequence Component what Sequencer it is running using the <code>GetStatus</code> message. A client can ask what Sequence Component a Sequencer is running on using the <code>GetSequenceComponent</code> message. Both commands return a Location Service <code>Location</code>. The naming convention allows the following:</p>
@@ -295,13 +294,13 @@ Sequencers and Sequence Components
 </span>
 </div>
 </a>
-<a href="../sequencersandscripts/sequencer-app.html" title="Running a Sequencer Using ocs-app" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../sequencersandscripts/sequencer-app.html" title="Running a Sequencer Using esw-ocs-app" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Running a Sequencer Using ocs-app
+Running a Sequencer Using esw-ocs-app
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">

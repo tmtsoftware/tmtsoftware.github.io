@@ -109,7 +109,7 @@ TMT Executive Software Documentation
   <li><a href="../sequencersandscripts/seq-index.html" class="page">Sequencers and Sequence Components</a>
   <ul>
     <li><a href="../sequencersandscripts/sequencer.html" class="page">Sequencers in the Executive Software</a></li>
-    <li><a href="../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using ocs-app</a></li>
+    <li><a href="../sequencersandscripts/sequencer-app.html" class="page">Running a Sequencer Using esw-ocs-app</a></li>
   </ul></li>
   <li><a href="../scripts/scripts-index.html" class="page">Sequencer Scripts</a>
   <ul>
@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -185,7 +184,7 @@ TMT Executive Software Documentation
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#user-interfaces-in-esw-and-tmt" name="user-interfaces-in-esw-and-tmt" class="anchor"><span class="anchor-link"></span></a>User Interfaces in ESW and TMT</h1>
-<p>This section is an overview of the user interface approach for TMT. TMT has an OAD requirement for graphical user interfaces as the standard style for user interfaces. The CSW technical choice for graphical user interfaces is the web platform consisting of the web browser as the host for the user interface and web technologies based on JavaScript along with HTTP, and CSS, etc. Most UI innovation and development at this time is based on these technologies and there is no apparent change in sight, so this decision continues to makes sense. One other big advantage of the browser-based UI is that it can provide an easy solution for remote access in many situations. The entire reason for web technologies is to provide remote access to systems and services.</p>
+<p>This section is an overview of the user interface approach for TMT. TMT has an OAD requirement for graphical user interfaces as the standard style for user interfaces. The CSW technical choice for graphical user interfaces is the web platform consisting of the web browser as the host for the user interface and web technologies based on JavaScript along with HTTP, and CSS, etc. Most UI innovation and development at this time is based on these technologies and there is no apparent change in sight, so this decision continues to make sense. One other big advantage of the browser-based UI is that it can provide an easy solution for remote access in many situations. The entire reason for web technologies is to provide remote access to systems and services.</p>
 <h2><a href="#esw-uistd-and-esw-hcms" name="esw-uistd-and-esw-hcms" class="anchor"><span class="anchor-link"></span></a>ESW.UISTD and ESW.HCMS</h2>
 <p>TMT user interfaces can be grouped into two categories: observing user interfaces and engineering user interfaces. High-level Control and Monitoring (HCMS) is the ESW subsystem that provides the observing user interfaces to be used by staff and visitors to control the telescope and other systems, monitor their status and behavior, and to perform observations that generate science data. Engineering user interfaces are the responsibility of the subsystem teams, but these user interfaces also use the technology choices and support provided by ESW.</p>
 <p>ESW’s User Interface Standards (UISTD) subsystem provides the architectural solution for this technical problem. UISTD also provides glue code for the JavaScript-based environment that is used by UI builders to access CSW services along with examples. UISTD provides style and layout guidelines and standards (look-and-feel) with examples that demonstrate the guidelines. UISTD also provides UI components that demonstrate common usage of CSW glue code (TBD as needed). This document describes the UI architecture.</p>
@@ -209,17 +208,17 @@ TMT Executive Software Documentation
 <p><img src="../images/gateway/GatewayFrontend.png" alt="ESW Gateway" /></p>
 <p>The key is the UI Application Gateway (UIAG) provided as part of UISTD/ESW Phase 1 shown in green in the figure. The UIAG is a JVM-based application that acts as an HTTP server. The UIAG has several functions:</p>
 <ul>
-  <li>It registers itself with the Location Service so the UI can also use the Location Service to find the UIAG’s connection information using the Location Service HTTP API.</li>
+  <li>It registers itself with the Location Service, so the UI can also use the Location Service to find the UIAG’s connection information using the Location Service HTTP API.</li>
   <li>It may serve web pages if needed for the presentation of the UI, although splitting presentation pages to another web server is also an option. (This feature is not currently implemented).</li>
   <li>It provides site security by requiring credentials from all users and authentication with the CSW Authentication and Authorization Service. It supports the OSW AAS authentication approach (<a href="gateway.html">see here</a>)</li>
   <li>It contains TMT-standardized API endpoints that allow interactions with CSW Services needed for user interfaces including Command Service and Event Service.</li>
 </ul>
 <p>The UIAG is available in the release of ESW. There is a template project that can be used to create a Front-end UI application. See the dedicated documentation section <a href="frontend-template.html">here</a> and the <a href="https://github.com/tmtsoftware/esw-ui-template.g8" title="esw-ui-template repo" target="_blank" rel="noopener noreferrer">esw-ui-template repo</a> for more information.</p>
 <h2><a href="#back-end-ui-applications" name="back-end-ui-applications" class="anchor"><span class="anchor-link"></span></a>Back-end UI Applications</h2>
-<p>The Back-end UI is an application that may need to do more than use CSW services. It may have specialized backend commands that are better-suited to the server-side than the browser-based UI. This may be computationally intensive functions or the use of CSW Database Service with specialized queries as examples.</p>
-<p>The Back-end UI uses it&rsquo;s own back-end HTTP-based service to implement application-specific routes. The sophisticated UI that needs a back-end server may only use its back-end server, but more likely it will be a hybrid and also use the UI Application Gateway for access to CSW commands and events since duplicating this support is costly and error-prone. The following figure shows the components of a hybrid Back-end UI application.</p>
+<p>The Back-end UI is an application that may need to do more than use CSW services. It may have specialized backend commands that are better-suited to the server-side than the browser-based UI. This may be computationally intensive functions, or the use of CSW Database Service with specialized queries as examples.</p>
+<p>The Back-end UI uses its own back-end HTTP-based service to implement application-specific routes. The sophisticated UI that needs a back-end server may only use its back-end server, but more likely it will be a hybrid and also use the UI Application Gateway for access to CSW commands and events since duplicating this support is costly and error-prone. The following figure shows the components of a hybrid Back-end UI application.</p>
 <p><img src="../images/gateway/BackendExample.png" alt="ESW Gateway" /></p>
-<p>There are challenges to creating a back-end server. The server must be secure and implement the same AAS model as the gateway. The back-end service must register itself with Location Service. To make this easier, there is also a back-end service template. See the dedicated documentation section <a href="backend-template.html">here</a> and the <a href="https://github.com/tmtsoftware/esw-backend-template.g8" title="esw-backend-template repo" target="_blank" rel="noopener noreferrer">esw-backend-template repo</a> for more information.</p>
+<p>There are challenges to creating a back-end server. The server must be secure and implement the same AAS model as the gateway. The back-end service must register itself with Location Service. To make this easier, there is also a back-end service template. See the dedicated documentation section <a href="backend-template.html">here</a> and the <a href="https://github.com/tmtsoftware/esw-web-app-template.g8" title="esw-web-app-template repo" target="_blank" rel="noopener noreferrer">esw-web-app-template repo</a> for more information.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/uisupport/UIOverview.md" title="Edit this page" class="md-source-file md-edit">
