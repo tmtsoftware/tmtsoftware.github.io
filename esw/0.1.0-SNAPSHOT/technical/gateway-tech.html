@@ -184,33 +184,33 @@ TMT Executive Software Documentation
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#gateway-technical-documentation" name="gateway-technical-documentation" class="anchor"><span class="anchor-link"></span></a>Gateway Technical Documentation</h1>
-<p>Gateway gives access to all CSW and ESW services (available to user) and components from browser-based user interfaces. Gateway also enforces auth on command and sequencer APIs to protect from unauthorised access.</p>
+<p>The User Interface Gateway gives access to all CSW and ESW services (available to user) and components from browser-based user interfaces. The Gateway also enforces authorization on Command Service APIs to components and Sequencer APIs to protect from unauthorized access.</p>
 <p><img src="../images/gateway/gateway.svg" alt="ESW Gateway" /></p>
 <h2><a href="#implementation" name="implementation" class="anchor"><span class="anchor-link"></span></a>Implementation</h2>
-<p>Gateway service is an HTTP service which relies on <code>msocket</code> framework. Internally it delegates to the various services(of both ESW or CSW) needed as per the request.</p>
+<p>The Gateway is an HTTP service which relies on <code>msocket</code> framework. Internally it delegates to the various services(of both ESW or CSW) needed as per the request.</p>
 <p>It provides access to following:</p>
 <ul>
   <li>Command Service APIs (CSW)</li>
   <li>Alarm APIs (CSW)</li>
   <li>Event APIs (CSW)</li>
-  <li>Sequencer Service APIs (ESW)</li>
+  <li>Sequencer APIs (ESW)</li>
   <li>Admin APIs (ESW)</li>
   <li>Logging APIS (ESW)</li>
 </ul>
-<p>Some services are not part of the gateway. This is mainly because of 2 reasons:</p>
+<p>Some services are not part of the Gateway. This is mainly because of 2 reasons:</p>
 <ol>
-  <li>The services can be accessed via its own HTTP interface. Example, Config Service.</li>
-  <li>The services are not user facing. Example, Sequence Manager Service.</li>
+  <li>The service can be accessed via its own HTTP interface. Example, Config Service.</li>
+  <li>The service is not user facing. Example, the Sequence Manager Service.</li>
 </ol>
-<p>The security directives created in the app for command and sequencer services are passed on to the routes in order to enable auth for command and sequencer services.</p>
+<p>The Command and Sequencer Command Services provide configurable protection to restrict certain commands to certain users. This is done by applying security directives on the Command Service routes that check for proper authorization.</p>
 <h2><a href="#api-call-flow" name="api-call-flow" class="anchor"><span class="anchor-link"></span></a>API call flow</h2>
-<p>Let&rsquo;s take an example of <code>AbortSequence</code> command coming from browser to sequencer service via a gateway:</p>
+<p>Let&rsquo;s take an example of <code>AbortSequence</code> command coming from a browser to a Sequencer via the Gateway:</p>
 <ol>
-  <li>Since sequencer APIs are protected using auth, the UI app gets a valid token from <code>AAS</code> that will enable access to sequencer API in gateway.</li>
-  <li>The UI app will create a <code>abortSequence</code> request using the auth token and send it to gateway.</li>
-  <li>Gateway validates the request auth token and the role of UI app against the <code>command role config</code>.</li>
-  <li>If the validation is successful, gateway delegates the request to sequencer service.</li>
-  <li>Sequencer service executes the request and return the stepList as response.</li>
+  <li>Since Sequencer APIs are protected using authorization, the UI app gets a valid token from <code>AAS</code> that will enable access to Sequencer API in the Gateway.</li>
+  <li>The UI app will create an <code>abortSequence</code> request using the authorization token and send it to the Gateway.</li>
+  <li>The Gateway validates the request authorization token and the role of UI app against the <code>command role config</code>.</li>
+  <li>If the validation is successful, the Gateway delegates the request to the Sequencer Command Service.</li>
+  <li>The Sequencer executes the request and returns the <code>stepList</code> as a response.</li>
   <li>This response is given back to the UI app that made the request.</li>
 </ol>
 <p>Below diagram depicts the flow mapped by above points:</p>
@@ -232,31 +232,32 @@ TMT Executive Software Documentation
 <h2><a href="#running-gateway-server" name="running-gateway-server" class="anchor"><span class="anchor-link"></span></a>Running Gateway Server</h2>
 <p>For running Gateway server, please refer <a href="../uisupport/gateway-app.html">this</a>.</p>
 <h2><a href="#metrics" name="metrics" class="anchor"><span class="anchor-link"></span></a>Metrics</h2>
-<p>Gateway has support for capturing metrics. The metrics can be enabled by providing <code>--metrics</code> or <code>-m</code> flag while starting gateway-server application.</p>
-<p>Gateway metrics are powered by <a href="https://prometheus.io/">prometheus</a>. We use prometheus java <a href="https://github.com/prometheus/client_java">client</a> to capture http and websocket based metrics. Gateway exposes <code>/metrics</code> endpoint where snapshot of metrics can be fetched. Prometheus server then polls the metrics endpoint and stores the metrics in a time series database which then can be used for visualization using tools like grafana.</p>
-<p>Gateway metrics are categorized into two major sections that are <strong>HTTP Metrics</strong> and <strong>Websocket Metrics</strong>.</p>
+<p>The Gateway has support for capturing metrics. The metrics can be enabled by providing <code>--metrics</code> or <code>-m</code> flag while starting the <code>gateway-server</code> application.</p>
+<p>Gateway metrics are powered by <a href="https://prometheus.io/">Prometheus</a>. We use a Prometheus Java <a href="https://github.com/prometheus/client_java">client</a> to capture HTTP and websocket-based metrics. The Gateway exposes a <code>/metrics</code> endpoint where a snapshot of metrics can be fetched. The Prometheus server then polls the metrics endpoint and stores the metrics in a time series database which then can be used for visualization using tools like <a href="https://grafana.com/">Grafana</a>.</p>
+<p>Gateway metrics are categorized into two major sections: <strong>HTTP Metrics</strong> and <strong>Websocket Metrics</strong>.</p>
 <h3><a href="#http-metrics" name="http-metrics" class="anchor"><span class="anchor-link"></span></a>HTTP Metrics</h3>
-<p>HTTP metrics section includes following different types of metrics:</p>
+<p>The HTTP metrics section includes following different types of metrics:</p>
 <ol>
-  <li>Total HTTP requests processed by gateway. This includes all the commands, events, log etc. messages processed by gateway since the beginning.</li>
-  <li>HTTP requests flowing via gateway per second. These are categorized by command type, for example, <code>ComponentCommand</code>, <code>SequencerCommand</code>, <code>GetEvent</code>, <code>PublishEvent</code> etc. This metric help us to understand trend of requests processed per second.</li>
-  <li>Commands passing through gateway per second. These commands can be <code>Submit</code>, <code>Validate</code>, <code>Oneway</code> etc.</li>
+  <li>Total HTTP requests processed by the Gateway. This includes all the commands, events, log etc. messages processed by the Gateway since it was started.</li>
+  <li>HTTP requests flowing via the Gateway per second. These are categorized by command type, for example, <code>ComponentCommand</code>, <code>SequencerCommand</code>, <code>GetEvent</code>, <code>PublishEvent</code> etc. This metric helps us to understand the trend of requests processed per second.</li>
+  <li>Commands passing through the Gateway per second. These commands can be <code>Submit</code>, <code>Validate</code>, <code>Oneway</code> etc.</li>
 </ol>
 <h3><a href="#websocket-metrics" name="websocket-metrics" class="anchor"><span class="anchor-link"></span></a>Websocket Metrics</h3>
-<p>Websocket metrics section includes following different types of metrics:</p>
+<p>The Websocket metrics section includes the following different types of metrics:</p>
 <ol>
-  <li>Active Websocket connections. This number indicates all the currently connected websocket clients to gateway. As soon as websocket connection gets disconnected, this number decreases.</li>
-  <li>Active event service pattern subscribers. (CommandType = <code>SubscribeWithPattern</code>)</li>
-  <li>Active event service subscribers. (CommandType = <code>SubscribeEvent</code>)</li>
-  <li>Active websocket request per second. This indicates trend of websocket connections over period of time.</li>
-  <li>Events rate per client/sec. This indicates rate at which events are flowing via websocket connection. Here client indicates unique application name and username combination, for example, <code>{app_name: eng-ui, username: Jena}</code></li>
-  <li>Active websocket connections per client. This indicates number of active websocket connections per unique application name and username combination.</li>
-  <li>Active event subscriptions per client. This indicates number of active event subscribers per unique application name and username combination.</li>
-  <li>Active event pattern subscriptions per client. This indicates number of active event subscribers per unique application name and username combination.</li>
+  <li>Active WebSocket connections. This number indicates all the currently connected websocket clients to the Gateway. As soon as a WebSocket connection gets disconnected, this number decreases.</li>
+  <li>Active Event Service pattern subscribers. (CommandType = <code>SubscribeWithPattern</code>)</li>
+  <li>Active Event Service subscribers. (CommandType = <code>SubscribeEvent</code>)</li>
+  <li>Active WebSocket requests per second. This indicates the trend of WebSocket connections over a period of time.</li>
+  <li>Event rate per client per second. This indicates the rate at which events are flowing via a WebSocket connection. Here, a client indicates a unique application name and username combination, for example, <code>{app_name: eng-ui, username: Jena}</code></li>
+  <li>Active WebSocket connections per client. This indicates the number of active WebSocket connections per unique application name and username combination.</li>
+  <li>Active event subscriptions per client. This indicates the number of active event subscribers per unique application name and username combination.</li>
+  <li>Active event pattern subscriptions per client. This indicates the number of active event subscribers per unique application name and username combination.</li>
 </ol>
-<p>See the screenshots below from the integration of gateway metrics with Prometheus/Grafana.</p>
-<p><img src="../images/gateway/http_metrics.png" alt="HTTP Metrics" /> <img src="../images/gateway/ws_metrics1.png" alt="Websocket Metrics 1" /> <img src="../images/gateway/ws_metrics2.png" alt="Websocket Metrics 2" /> <img src="../images/gateway/ws_metrics3.png" alt="Websocket Metrics 3" /></p><div class="callout note "><div class="callout-title">Note</div>
-<p>Above screenshots are taken by following instruction provided <a href="https://github.com/tmtsoftware/esw/blob/master/scripts/metrics/README.md">here</a>.</p></div>
+<p>The following screenshots show some example Gateway metrics using Grafana.</p>
+<p><img src="../images/gateway/http_metrics.png" alt="HTTP Metrics" /> <img src="../images/gateway/ws_metrics1.png" alt="Websocket Metrics 1" /> <img src="../images/gateway/ws_metrics2.png" alt="Websocket Metrics 2" /> <img src="../images/gateway/ws_metrics3.png" alt="Websocket Metrics 3" /></p>
+<p>In the above screenshots, last two plots are labelled with <code>App Name (Username)</code> format, for example, <strong>event-dashboard (Alex)</strong>, <strong>event-dashboard (Bob)</strong>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>The screenshots above were taken by following the instructions provided <a href="https://github.com/tmtsoftware/esw/blob/master/scripts/metrics/README.md">here</a>.</p></div>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw/tree/master/docs/src/main/technical/gateway-tech.md" title="Edit this page" class="md-source-file md-edit">
