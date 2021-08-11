@@ -169,6 +169,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
     <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
+    <li><a href="../migration_guide/migration_guide_3.0.0_to_4.0.0/migration-guide-3.0.0-to-4.0.0.html" class="page">Migration Guide from 3.0.0 to 4.0.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -192,7 +193,7 @@ TMT Common Software (CSW)
   <li><a href="../apps/cswalarmcli.html#csw-alarm-cli" class="header">csw-alarm-cli</a>
   <ul>
     <li><a href="../apps/cswalarmcli.html#prerequisite" class="header">Prerequisite</a></li>
-    <li><a href="../apps/cswalarmcli.html#install-alarm-cli-app" class="header">Install alarm-cli app</a></li>
+    <li><a href="../apps/cswalarmcli.html#install-csw-alarm-cli-app" class="header">Install csw-alarm-cli app</a></li>
     <li><a href="../apps/cswalarmcli.html#supported-commands" class="header">Supported Commands</a></li>
     <li><a href="../apps/cswalarmcli.html#admin-api" class="header">Admin API</a></li>
     <li><a href="../apps/cswalarmcli.html#init" class="header">init</a></li>
@@ -231,7 +232,7 @@ TMT Common Software (CSW)
   <li><a href="../apps/cswalarmcli.html#csw-alarm-cli" class="header">csw-alarm-cli</a>
   <ul>
     <li><a href="../apps/cswalarmcli.html#prerequisite" class="header">Prerequisite</a></li>
-    <li><a href="../apps/cswalarmcli.html#install-alarm-cli-app" class="header">Install alarm-cli app</a></li>
+    <li><a href="../apps/cswalarmcli.html#install-csw-alarm-cli-app" class="header">Install csw-alarm-cli app</a></li>
     <li><a href="../apps/cswalarmcli.html#supported-commands" class="header">Supported Commands</a></li>
     <li><a href="../apps/cswalarmcli.html#admin-api" class="header">Admin API</a></li>
     <li><a href="../apps/cswalarmcli.html#init" class="header">init</a></li>
@@ -264,11 +265,11 @@ TMT Common Software (CSW)
   <li>Alarm Service should be running</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
 <p>This page assumes that you have already installed and setup <a href="csinstallation.html">coursier</a></p></div>
-<h2><a href="#install-alarm-cli-app" name="install-alarm-cli-app" class="anchor"><span class="anchor-link"></span></a>Install alarm-cli app</h2>
-<p>Following command creates an executable file named alarm-cli in the default installation directory.</p>
-<pre class="prettyprint"><code class="language-bash">cs install alarm-cli:&lt;version | SHA&gt;
+<h2><a href="#install-csw-alarm-cli-app" name="install-csw-alarm-cli-app" class="anchor"><span class="anchor-link"></span></a>Install csw-alarm-cli app</h2>
+<p>Following command creates an executable file named csw-alarm-cli in the default installation directory.</p>
+<pre class="prettyprint"><code class="language-bash">cs install csw-alarm-cli:&lt;version | SHA&gt;
 </code></pre>
-<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>alarm-cli</code> will be installed with the latest tagged binary of <code>csw-alarm-cli</code></p>
+<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>csw-alarm-cli</code> will be installed with the latest tagged binary of <code>csw-alarm-cli</code></p>
 <h2><a href="#supported-commands" name="supported-commands" class="anchor"><span class="anchor-link"></span></a>Supported Commands</h2>
 <ul>
   <li>init</li>
@@ -294,7 +295,7 @@ TMT Common Software (CSW)
 </ul>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>The command below clears the alarm store and loads alarm data to the alarm store from <code>/path/allAlarms.conf</code>, which is the path of a local file.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli init /path/allAlarms.conf --local --reset
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli init /path/allAlarms.conf --local --reset
 </code></pre>
 <h2><a href="#list" name="list" class="anchor"><span class="anchor-link"></span></a>list</h2>
 <p>Gets the data of alarms from the alarm store. If none of the optional parameters are given, then by default, data of all alarms will be displayed.</p>
@@ -310,11 +311,11 @@ TMT Common Software (CSW)
   <li>
   <p>
   <p>Displays metadata, status and severity of alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-  <pre class="prettyprint"><code class="language-bash">alarm-cli list --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+  <pre class="prettyprint"><code class="language-bash">csw-alarm-cli list --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre></p></li>
   <li>
   <p>Displays metadata and status of all alarms which belong to the <code>nfiraos</code> subsystem.</p>
-  <pre class="prettyprint"><code class="language-bash">alarm-cli list --subsystem nfiraos --metadata --status
+  <pre class="prettyprint"><code class="language-bash">csw-alarm-cli list --subsystem nfiraos --metadata --status
 </code></pre></li>
 </ol>
 <h3><a href="#operations-specific-to-an-alarm" name="operations-specific-to-an-alarm" class="anchor"><span class="anchor-link"></span></a>Operations specific to an alarm</h3>
@@ -328,43 +329,43 @@ TMT Common Software (CSW)
 <p>Sets the acknowledgement status of the alarm to <code>Acknowledged</code></p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>Acknowledge the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli acknowledge --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli acknowledge --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
 <h2><a href="#unacknowledge" name="unacknowledge" class="anchor"><span class="anchor-link"></span></a>unacknowledge</h2>
 <p>Sets the acknowledgement status of the alarm to <code>Unacknowledged</code></p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>Unacknowledge the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli unacknowledge --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli unacknowledge --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
 <h2><a href="#activate" name="activate" class="anchor"><span class="anchor-link"></span></a>activate</h2>
 <p>Sets the activation status of the alarm to <code>Active</code></p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>Sets activation status to <code>Active</code> of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli activate --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli activate --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
 <h2><a href="#deactivate" name="deactivate" class="anchor"><span class="anchor-link"></span></a>deactivate</h2>
 <p>Sets the activation status of the alarm to <code>Inactive</code></p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>Sets activation status to <code>Inactive</code> of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli inactivate --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli inactivate --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
 <h2><a href="#shelve" name="shelve" class="anchor"><span class="anchor-link"></span></a>shelve</h2>
 <p>Sets the shelve status of the alarm to <code>Shelved</code></p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>Shelves the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli shelve --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli shelve --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
 <h2><a href="#unshelve" name="unshelve" class="anchor"><span class="anchor-link"></span></a>unshelve</h2>
 <p>Sets the shelve status of the alarm to <code>Unshelved</code></p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>Unshelves the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli unshelve --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli unshelve --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
 <h2><a href="#reset" name="reset" class="anchor"><span class="anchor-link"></span></a>reset</h2>
 <p>Resets the alarm status. This will set the acknowledgement Status to <code>Acknowledged</code> and the latched severity to the current severity of the alarm.</p>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>Resets the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli reset --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli reset --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre>
 <h2><a href="#severity" name="severity" class="anchor"><span class="anchor-link"></span></a>severity</h2>
 <p>Severity command contains 3 sub-commands.</p>
@@ -381,11 +382,11 @@ TMT Common Software (CSW)
   <li>
   <p>
   <p>Displays the severity of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-  <pre class="prettyprint"><code class="language-bash">alarm-cli severity get --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+  <pre class="prettyprint"><code class="language-bash">csw-alarm-cli severity get --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre></p></li>
   <li>
   <p>Displays the aggregated severity of the component with name <code>trombone</code> of subsystem <code>nfiraos</code>.</p>
-  <pre class="prettyprint"><code class="language-bash">alarm-cli severity get --subsystem nfiraos --component trombone
+  <pre class="prettyprint"><code class="language-bash">csw-alarm-cli severity get --subsystem nfiraos --component trombone
 </code></pre></li>
 </ol>
 <h3><a href="#set" name="set" class="anchor"><span class="anchor-link"></span></a>set</h3>
@@ -402,11 +403,11 @@ TMT Common Software (CSW)
   <li>
   <p>
   <p>Sets <code>Major</code> as the severity of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-  <pre class="prettyprint"><code class="language-bash">alarm-cli severity set major --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+  <pre class="prettyprint"><code class="language-bash">csw-alarm-cli severity set major --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre></p></li>
   <li>
   <p>Refresh <code>Major</code> as the severity of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code> every 3 seconds.</p>
-  <pre class="prettyprint"><code class="language-bash">alarm-cli severity set major --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm --refresh
+  <pre class="prettyprint"><code class="language-bash">csw-alarm-cli severity set major --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm --refresh
 </code></pre></li>
 </ol>
 <h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
@@ -419,7 +420,7 @@ TMT Common Software (CSW)
 </ul>
 <h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
 <p>Subscribes to the aggregated severity of a component with name <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli severity subscribe --subsystem nfiraos --component trombone
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli severity subscribe --subsystem nfiraos --component trombone
 </code></pre>
 <h2><a href="#health" name="health" class="anchor"><span class="anchor-link"></span></a>health</h2>
 <p>Health command contains two sub-commands.</p>
@@ -436,11 +437,11 @@ TMT Common Software (CSW)
   <li>
   <p>
   <p>Displays the health of the alarm with name <code>tromboneAxisLowLimitAlarm</code> of component <code>trombone</code> and subsystem <code>nfiraos</code>.</p>
-  <pre class="prettyprint"><code class="language-bash">alarm-cli health get --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
+  <pre class="prettyprint"><code class="language-bash">csw-alarm-cli health get --subsystem nfiraos --component trombone --name tromboneAxisLowLimitAlarm
 </code></pre></p></li>
   <li>
     <p>Displays the aggregated health of the subsystem with name <code>nfiraos</code>. ```bash //cd to installation directory cd /tmt/apps</p>
-    <p>./alarm-cli health get &ndash;subsystem nfiraos ```</p>
+    <p>./csw-alarm-cli health get &ndash;subsystem nfiraos ```</p>
   </li>
 </ol>
 <h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
@@ -453,14 +454,14 @@ TMT Common Software (CSW)
 </ul>
 <h4><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h4>
 <p>Subscribes to the aggregated health of the subsystem with name <code>nfiraos</code>.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli health subscribe --subsystem nfiraos --component trombone
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli health subscribe --subsystem nfiraos --component trombone
 </code></pre>
 <h2><a href="#about-this-application" name="about-this-application" class="anchor"><span class="anchor-link"></span></a>About this application</h2>
 <p>Prints the help message.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli --help
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli --help
 </code></pre>
 <p>Prints the version of the application.</p>
-<pre class="prettyprint"><code class="language-bash">alarm-cli --version
+<pre class="prettyprint"><code class="language-bash">csw-alarm-cli --version
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
 <p>All the above examples require that <code>csw-location-server</code> is running on local machine at <code>localhost:7654</code>. If <code>csw-location-server</code> is running on remote machine having Ip address <code>172.1.1.2</code>, then you need to pass an additional <code>--locationHost 172.1.1.2</code> command line argument. Example: <code>csw-alarm-cli list --locationHost 172.1.1.2</code></p></div>
 </div>

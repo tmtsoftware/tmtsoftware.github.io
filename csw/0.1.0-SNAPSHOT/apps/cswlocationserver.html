@@ -169,6 +169,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
     <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
+    <li><a href="../migration_guide/migration_guide_3.0.0_to_4.0.0/migration-guide-3.0.0-to-4.0.0.html" class="page">Migration Guide from 3.0.0 to 4.0.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -191,7 +192,7 @@ TMT Common Software (CSW)
 <ul>
   <li><a href="../apps/cswlocationserver.html#csw-location-server" class="header">csw-location-server</a>
   <ul>
-    <li><a href="../apps/cswlocationserver.html#install-location-server-app" class="header">Install location-server app</a></li>
+    <li><a href="../apps/cswlocationserver.html#install-csw-location-server-app" class="header">Install csw-location-server app</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -215,7 +216,7 @@ TMT Common Software (CSW)
 <ul>
   <li><a href="../apps/cswlocationserver.html#csw-location-server" class="header">csw-location-server</a>
   <ul>
-    <li><a href="../apps/cswlocationserver.html#install-location-server-app" class="header">Install location-server app</a></li>
+    <li><a href="../apps/cswlocationserver.html#install-csw-location-server-app" class="header">Install csw-location-server app</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -230,11 +231,11 @@ TMT Common Software (CSW)
 <p>Note: Normally you will not need to start this application manually. The <code>csw-services</code> application does this for you, refer <a href="cswservices.html">here</a>. </p>
 <p>This application will start a HTTP CSW Location Service on port 7654 which is required for all Location Service consumers who uses HTTP Location client. All components (HCD&rsquo;s, Assemblies, Services etc.) use a local HTTP Location client which expects the Location Service running at localhost:7654. In a production environment, it is required that all machines running components should have the HTTP Location Service running locally.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>This page assumes that you have already installed and setup <a href="csinstallation.html">coursier</a></p></div>
-<h2><a href="#install-location-server-app" name="install-location-server-app" class="anchor"><span class="anchor-link"></span></a>Install location-server app</h2>
-<p>Following command creates an executable file named location-server in the default installation directory.</p>
-<pre class="prettyprint"><code class="language-bash">cs install location-server:&lt;version | SHA&gt;
+<h2><a href="#install-csw-location-server-app" name="install-csw-location-server-app" class="anchor"><span class="anchor-link"></span></a>Install csw-location-server app</h2>
+<p>Following command creates an executable file named csw-location-server in the default installation directory.</p>
+<pre class="prettyprint"><code class="language-bash">cs install csw-location-server:&lt;version | SHA&gt;
 </code></pre>
-<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>location-server</code> will be installed with the latest tagged binary of <code>csw-location-server</code></p>
+<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>csw-location-server</code> will be installed with the latest tagged binary of <code>csw-location-server</code></p>
 <p>Choose appropriate instructions from below based on requirement (i.e. single machine or multiple machines).</p>
 <h3><a href="#starting-location-server-on-a-single-machine" name="starting-location-server-on-a-single-machine" class="anchor"><span class="anchor-link"></span></a>Starting Location Server on a single machine</h3>
 <p>The steps below describe how to run the Location Server on a single machine. This can be a requirement for testing or demo purposes.</p>
@@ -243,7 +244,7 @@ TMT Common Software (CSW)
 <p><strong>Running</strong>: </p>
 <p>This command starts the location server</p>
 <pre class="prettyprint"><code class="language-bash">// run location server
-location-server --clusterPort=3552
+csw-location-server --clusterPort=3552
 </code></pre>
 <h3><a href="#starting-location-server-on-multiple-machines" name="starting-location-server-on-multiple-machines" class="anchor"><span class="anchor-link"></span></a>Starting Location Server on multiple machines</h3>
 <p>In production environment, you will need a capability to access resources of HTTP interface of Location Server from <a href="../deployment/network-topology.html">public network</a> and provide Authentication and Authorization for some critical HTTP resource endpoints. E.g. ability to register/unregister components(which has to undergo maintenance), from a system operator machine present in <a href="../deployment/network-topology.html">public network</a></p>
@@ -254,13 +255,13 @@ location-server --clusterPort=3552
   <li>
     <p>Run this command on all machines where you want Location Server in <code>local-only</code> mode and AAS <code>disabled</code>.</p>
     <pre class="prettyprint"><code class="language-bash">// run location server
-location-server --clusterPort=3552 
+csw-location-server --clusterPort=3552 
 </code></pre>
   </li>
   <li>
     <p>Run this command on all machines where you want Location Server in <code>public mode</code> and AAS <code>enabled</code>.</p>
     <pre class="prettyprint"><code class="language-bash">// run location server
-location-server --clusterPort=3552 --outsideNetwork
+csw-location-server --clusterPort=3552 --outsideNetwork
 </code></pre>
   </li>
   <li>
@@ -273,11 +274,11 @@ location-server --clusterPort=3552 --outsideNetwork
 <p>Note : Resolution of AAS is made <code>lazy</code> by intention in location server. It will only be resolved <code>by need</code> when first request on protected resource comes to <code>public mode</code> location-server. This helps to resolve cyclic dependency during startup of <code>public mode</code> location-server and AAS(keycloak) registration.</p>
 <h3><a href="#help" name="help" class="anchor"><span class="anchor-link"></span></a>Help</h3>
 <p>Use the following command to get help on the options available with this app.</p>
-<pre class="prettyprint"><code class="language-bash">   location-server --help
+<pre class="prettyprint"><code class="language-bash">   csw-location-server --help
 </code></pre>
 <h3><a href="#version" name="version" class="anchor"><span class="anchor-link"></span></a>Version</h3>
 <p>Use the following command to get version information for this app.</p>
-<pre class="prettyprint"><code class="language-bash">   location-server --version
+<pre class="prettyprint"><code class="language-bash">   csw-location-server --version
 </code></pre>
 </div>
 <div>

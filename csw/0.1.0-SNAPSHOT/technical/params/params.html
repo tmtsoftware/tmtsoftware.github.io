@@ -169,6 +169,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="../../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
     <li><a href="../../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
+    <li><a href="../../migration_guide/migration_guide_3.0.0_to_4.0.0/migration-guide-3.0.0-to-4.0.0.html" class="page">Migration Guide from 3.0.0 to 4.0.0</a></li>
   </ul></li>
   <li><a href="../../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../../technical/technical.html" class="page">Technical Design Documents</a>
@@ -239,25 +240,28 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L255-L280" target="_blank" title="Go to snippet source"></a><code class="language-scala">//Key
-val raDecKey = RaDecKey.make(&quot;raDecKey&quot;)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/EventsTest.scala#L203-L233" target="_blank" title="Go to snippet source">source</a><code class="language-scala">//Key
+val solarSystemKey = KeyType.SolarSystemCoordKey.make(&quot;planets&quot;)
 
 //values
-val raDec1 = RaDec(10.20, 40.20)
-val raDec2 = RaDec(11.20, 50.20)
+val planet1 = SolarSystemCoord(Tag(&quot;planet&quot;), Jupiter)
+val planet2 = SolarSystemCoord(Tag(&quot;planet&quot;), Venus)
 
 //parameters
-val param = raDecKey.set(raDec1, raDec2).withUnits(arcmin)
+val param = solarSystemKey.set(planet1, planet2)
 
-val prefix = Prefix(&quot;tcs.pk&quot;)
-val name   = EventName(&quot;targetCoords&quot;)
+val name = EventName(&quot;targetCoords&quot;)
 //events
-val observeEvent: ObserveEvent = ObserveEvent(prefix, name).add(param)
-val systemEvent1: SystemEvent  = SystemEvent(prefix, name).add(param)
-val systemEvent2: SystemEvent  = SystemEvent(prefix, name).add(param)
+val obsId                         = ObsId(&quot;1234A-001-0123&quot;)
+val prefix                        = Prefix(&quot;tcs.pk&quot;)
+val wfsObserveEvent: ObserveEvent = WFSDetectorEvent.publishSuccess(prefix)
+val irObserveEvent: ObserveEvent  = IRDetectorEvent.observeStart(prefix, obsId)
+val opdObserveEvent: ObserveEvent = OpticalDetectorEvent.observeStart(prefix, obsId)
+val systemEvent1: SystemEvent = SystemEvent(prefix, name).add(param)
+val systemEvent2: SystemEvent = SystemEvent(prefix, name).add(param)
 
 //convert events to cbor bytestring
-val byteArray2 = EventCbor.encode(observeEvent)
+val byteArray2 = EventCbor.encode(wfsObserveEvent)
 val byteArray3 = EventCbor.encode(systemEvent1)
 val byteArray4 = EventCbor.encode(systemEvent2)
 
@@ -267,27 +271,26 @@ val pbSystemEvent1: SystemEvent  = EventCbor.decode(byteArray3)
 val pbSystemEvent2: SystemEvent  = EventCbor.decode(byteArray4)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L253-L283" target="_blank" title="Go to snippet source"></a><code class="language-java"><br/>//prefixes
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JEventsTest.java#L208-L237" target="_blank" title="Go to snippet source">source</a><code class="language-java">//prefixes
 Prefix prefix1 = Prefix.apply(JSubsystem.TCS, &quot;pk&quot;);
 EventName name1 = new EventName(&quot;targetCoords&quot;);
 Prefix prefix2 = Prefix.apply(JSubsystem.TCS, &quot;cm&quot;);
 EventName name2 = new EventName(&quot;guiderCoords&quot;);
 
 //Key
-Key&lt;RaDec&gt; raDecKey = JKeyType.RaDecKey().make(&quot;raDecKey&quot;, JUnits.NoUnits);
+Key&lt;Coords.SolarSystemCoord&gt; planets = JKeyType.SolarSystemCoordKey().make(&quot;planets&quot;, JUnits.NoUnits);
 
 //values
-RaDec raDec1 = new RaDec(10.20, 40.20);
-RaDec raDec2 = new RaDec(11.20, 50.20);
+Coords.SolarSystemCoord planet1 = new Coords.SolarSystemCoord(new Coords.Tag(&quot;solar1&quot;), JCoords.Jupiter());
+Coords.SolarSystemCoord planet2 =  new Coords.SolarSystemCoord(new Coords.Tag(&quot;solar2&quot;), JCoords.Venus());
 
 //parameters
-Parameter&lt;RaDec&gt; param = raDecKey.set(raDec1, raDec2).withUnits(JUnits.arcmin);
-
+Parameter&lt;Coords.SolarSystemCoord&gt; param = planets.set(planet1, planet2);
 //events
-ObserveEvent observeEvent = new ObserveEvent(prefix1, name1).add(param);
+
+ObserveEvent observeEvent = IRDetectorEvent.observeStart(prefix1, ObsId.apply(&quot;1234A-123-124&quot;));
 SystemEvent systemEvent1 = new SystemEvent(prefix1, name1).add(param);
 SystemEvent systemEvent2 = new SystemEvent(prefix2, name2).add(param);
-
 //convert events to cbor bytestring
 byte[] byteArray2 = EventCbor$.MODULE$.encode(observeEvent);
 byte[] byteArray3 = EventCbor$.MODULE$.encode(systemEvent1);

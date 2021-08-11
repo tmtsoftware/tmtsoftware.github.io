@@ -169,6 +169,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
     <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
+    <li><a href="../migration_guide/migration_guide_3.0.0_to_4.0.0/migration-guide-3.0.0-to-4.0.0.html" class="page">Migration Guide from 3.0.0 to 4.0.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -231,18 +232,18 @@ TMT Common Software (CSW)
 <h2><a href="#csw-test-kit" name="csw-test-kit" class="anchor"><span class="anchor-link"></span></a>CSW Test Kit</h2>
 <p>CSW provides a set of tools for use by developers called the CSW Test Kit. This allows the developer to start CSW services within the testing environment, so that they can be accessed by the components and/or applications being tested, as well as the testing fixtures themselves. It also provides simple methods to start components or a set of components within a container, as well as an ActorContext to be used if other Actors are needed to be created in the tests.</p>
 <p>More information about testing with CSW and the CSW Test Kit can be found <a href="testing.html">here</a>.</p>
-<h4><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Writing unit tests for our components</em></h4>
+<h3><a href="#" name="" class="anchor"><span class="anchor-link"></span></a><em>Tutorial: Writing unit tests for our components</em></h3>
 <p>In this part of the tutorial, we will write a few unit tests for our components. These tests are in no way meant to be comprehensive, but hopefully, they show enough to get you started.</p>
 <p>The giter8 template provides the required directory structure, and skeletons for tests of the HCD and Assembly in both Java and Scala. It also provides some Component Configuration (ComponentInfo) files for running each of the HCD and Assembly in standalone mode for both languages. They are there for convenience, but may not be required depending your deployment and testing strategy. We will be using them in our tutorial.</p>
 <p>We will first look at the tests for the Assembly. As described on the <a href="testing.html">Testing Manual page</a>, the Scala version overrides the CSW-provided superclass <code>csw.testkit.scaladsl.ScalaTestFrameworkTestKit</code> to get access to the services it needs. By passing in the needed services in the constructor, those services are started in the superclass&rsquo;s <code>beforeAll</code> method. In the Java version, we must create an instance of <code>csw.testkit.javadsl.FrameworkTestKitJunitResource</code> to get access to and start our services, with the services we want to start passed into the constructor of this object.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L20-L21" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with AnyFunSuiteLike {
-  import frameworkTestKit.frameworkWiring._</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L20-L21" target="_blank" title="Go to snippet source">source</a><code class="language-scala">class SampleTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with AnyFunSuiteLike {
+  import frameworkTestKit._</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L24-L27" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JSampleTest extends JUnitSuite {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L24-L27" target="_blank" title="Go to snippet source">source</a><code class="language-java">public class JSampleTest extends JUnitSuite {
     @ClassRule
     public static final FrameworkTestKitJunitResource testKit =
             new FrameworkTestKitJunitResource(Arrays.asList(JCSWService.AlarmServer, JCSWService.EventServer));</code></pre></dd>
@@ -252,13 +253,13 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L25-L28" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def beforeAll(): Unit = {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L25-L28" target="_blank" title="Go to snippet source">source</a><code class="language-scala">override def beforeAll(): Unit = {
   super.beforeAll()
   spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;SampleStandalone.conf&quot;))
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L31-L34" target="_blank" title="Go to snippet source"></a><code class="language-java">@BeforeClass
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L31-L34" target="_blank" title="Go to snippet source">source</a><code class="language-java">@BeforeClass
 public static void setup() {
     testKit.spawnStandalone(com.typesafe.config.ConfigFactory.load(&quot;JSampleStandalone.conf&quot;));
 }</code></pre></dd>
@@ -268,7 +269,7 @@ public static void setup() {
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L32-L38" target="_blank" title="Go to snippet source"></a><code class="language-scala">import scala.concurrent.duration._
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L32-L38" target="_blank" title="Go to snippet source">source</a><code class="language-scala">import scala.concurrent.duration._
 test(&quot;Assembly should be locatable using Location Service&quot;) {
   val connection   = AkkaConnection(ComponentId(Prefix(CSW, &quot;sample&quot;), ComponentType.Assembly))
   val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
@@ -277,7 +278,7 @@ test(&quot;Assembly should be locatable using Location Service&quot;) {
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L38-L45" target="_blank" title="Go to snippet source"></a><code class="language-java">@Test
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/sample/JSampleTest.java#L38-L45" target="_blank" title="Go to snippet source">source</a><code class="language-java">@Test
 public void testAssemblyShouldBeLocatableUsingLocationService() throws ExecutionException, InterruptedException {
     AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.CSW, &quot;sample&quot;), JComponentType.Assembly));
     ILocationService locationService = testKit.jLocationService();
@@ -293,8 +294,8 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/samplehcd/SampleHcdTest.scala#L25-L39" target="_blank" title="Go to snippet source"></a><code class="language-scala">class SampleHcdTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with AnyFunSuiteLike with BeforeAndAfterEach {
-  import frameworkTestKit.frameworkWiring._
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/samplehcd/SampleHcdTest.scala#L25-L39" target="_blank" title="Go to snippet source">source</a><code class="language-scala">class SampleHcdTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) with AnyFunSuiteLike with BeforeAndAfterEach {
+  import frameworkTestKit._
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -310,7 +311,7 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
   }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/samplehcd/JSampleHcdTest.java#L44-L63" target="_blank" title="Go to snippet source"></a><code class="language-java">public class JSampleHcdTest extends JUnitSuite {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/samplehcd/JSampleHcdTest.java#L46-L65" target="_blank" title="Go to snippet source">source</a><code class="language-java">public class JSampleHcdTest extends JUnitSuite {
 
     @ClassRule
     public static final FrameworkTestKitJunitResource testKit =
@@ -335,12 +336,11 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L45-L78" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should be able to subscribe to HCD events&quot;) {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/samplehcd/SampleHcdTest.scala#L43-L84" target="_blank" title="Go to snippet source">source</a><code class="language-scala">test(&quot;should be able to subscribe to HCD events&quot;) {
   val counterEventKey = EventKey(Prefix(&quot;CSW.samplehcd&quot;), EventName(&quot;HcdCounter&quot;))
   val hcdCounterKey   = KeyType.IntKey.make(&quot;counter&quot;)
 
-  val eventService = eventServiceFactory.make(locationService)(actorSystem)
-  val subscriber   = eventService.defaultSubscriber
+  val subscriber = eventService.defaultSubscriber
 
   // wait for a bit to ensure HCD has started and published an event
   Thread.sleep(2000)
@@ -350,6 +350,15 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 
   // Sleep for 5 seconds, to allow HCD to publish events
   Thread.sleep(5000)
+
+  // FIXME flaky: REASON -
+  //  Total sleep = 7 seconds (2 + 5), subscriber listens for all the events between 2-7 seconds
+  //  1)  If HCD publish starts at 1st second
+  //      then events published at 1, 3, 5, 7, 9 etc. seconds
+  //      In this case, subscriber will receive events at 2(initial), 3, 5, 7, i.e. total 4 events
+  //  2)  If HCD publish starts at 1.5th seconds
+  //      then events published at 1.5, 3.5, 5.5, 7.5, 9.5 etc. seconds
+  //      In this case, subscriber will receive events at 2(initial), 3.5, 5.5, i.e. total 3 events
 
   // Event publishing period is 2 seconds.
   // Expecting 3 events: first event on subscription
@@ -371,26 +380,39 @@ public void testAssemblyShouldBeLocatableUsingLocationService() throws Execution
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L68-L109" target="_blank" title="Go to snippet source"></a><code class="language-java">@Test
-public void testShouldBeAbleToSubscribeToHCDEvents() throws InterruptedException {
-    EventKey counterEventKey = new EventKey(Prefix.apply(JSubsystem.CSW, &quot;samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
-    Key&lt;Integer&gt; hcdCounterKey = JKeyType.IntKey().make(&quot;counter&quot;);
-
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/samplehcd/JSampleHcdTest.java#L69-L123" target="_blank" title="Go to snippet source">source</a><code class="language-java">@Test
+public void testShouldBeAbleToSubscribeToHCDEvents() throws InterruptedException, ExecutionException {
+    EventKey counterEventKey = new EventKey(Prefix.apply(&quot;csw.samplehcd&quot;), new EventName(&quot;HcdCounter&quot;));
+    Key&lt;Integer&gt; hcdCounterKey = JKeyType.IntKey().make(&quot;counter&quot;, JUnits.NoUnits);
     IEventService eventService = testKit.jEventService();
     IEventSubscriber subscriber = eventService.defaultSubscriber();
 
     // wait for a bit to ensure HCD has started and published an event
-    Thread.sleep(5000);
+    Thread.sleep(3000);
 
     ArrayList&lt;Event&gt; subscriptionEventList = new ArrayList&lt;&gt;();
-    subscriber.subscribeCallback(Set.of(counterEventKey), subscriptionEventList::add);
+    IEventSubscription subscription = subscriber.subscribeCallback(Set.of(counterEventKey), event -&gt; {
+        // discard invalid event
+        if (!event.isInvalid()) {
+            subscriptionEventList.add(event);
+        }
+    });
+    subscription.ready().get();
 
-    // Sleep for 4 seconds, to allow HCD to publish events
-    Thread.sleep(4000);
+    // Sleep for 5 seconds, to allow HCD to publish events
+    Thread.sleep(5000);
+
+    // FIXME flaky: REASON -
+    //  Total sleep = 7 seconds (2 + 5), subscriber listens for all the events between 2-7 seconds
+    //  1)  If HCD publish starts at 1st second
+    //      then events published at 1, 3, 5, 7, 9 etc. seconds
+    //      In this case, subscriber will receive events at 2(initial), 3, 5, 7, i.e. total 4 events
+    //  2)  If HCD publish starts at 1.5th seconds
+    //      then events published at 1.5, 3.5, 5.5, 7.5, 9.5 etc. seconds
+    //      In this case, subscriber will receive events at 2(initial), 3.5, 5.5, i.e. total 3 events
 
     // Event publishing period is 2 seconds.
-    // Expecting 3 events: first event on subscription
-    // and two more events 2 and 4 seconds later.
+    // Expecting 3 events
     Assert.assertEquals(3, subscriptionEventList.size());
 
     // extract counter values to a List for comparison
@@ -418,20 +440,17 @@ public void testShouldBeAbleToSubscribeToHCDEvents() throws InterruptedException
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L82-L104" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val typedActorSystem: ActorSystem[_] = actorSystem
-test(&quot;basic: should be able to send sleep command to HCD&quot;) {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/samplehcd/SampleHcdTest.scala#L88-L107" target="_blank" title="Go to snippet source">source</a><code class="language-scala">implicit val typedActorSystem: ActorSystem[_] = actorSystem
+test(&quot;should be able to send sleep command to HCD&quot;) {
   import scala.concurrent.duration._
   implicit val sleepCommandTimeout: Timeout = Timeout(10000.millis)
 
   // Construct Setup command
-  val testPrefix: Prefix = Prefix(&quot;CSW.test&quot;)
+  val sleepTimeKey: Key[Long]         = KeyType.LongKey.make(&quot;SleepTime&quot;)
+  val sleepTimeParam: Parameter[Long] = sleepTimeKey.set(5000).withUnits(Units.millisecond)
+  val setupCommand                    = Setup(Prefix(&quot;csw.move&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2020A-001-123&quot;))).add(sleepTimeParam)
 
-  // Helper to get units set
-  def setSleepTime(setup: Setup, milli: Long): Setup = setup.add(sleepTimeKey.set(milli).withUnits(Units.millisecond))
-
-  val setupCommand = setSleepTime(Setup(testPrefix, hcdSleep, Some(ObsId(&quot;2020A-001-123&quot;))), 5000)
-
-  val connection = AkkaConnection(ComponentId(Prefix(Subsystem.CSW, &quot;samplehcd&quot;), ComponentType.HCD))
+  val connection = AkkaConnection(ComponentId(Prefix(CSW, &quot;samplehcd&quot;), ComponentType.HCD))
 
   val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
@@ -439,30 +458,31 @@ test(&quot;basic: should be able to send sleep command to HCD&quot;) {
   // submit command and handle response
   val responseF = hcd.submitAndWait(setupCommand)
 
-  Await.result(responseF, 10000.millis) shouldBe a[CommandResponse.Completed]
+  Await.result(responseF, 10000.millis) shouldBe a[Completed]
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L113-L134" target="_blank" title="Go to snippet source"></a><code class="language-java">private ActorSystem&lt;SpawnProtocol.Command&gt; typedActorSystem = testKit.actorSystem();
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/samplehcd/JSampleHcdTest.java#L127-L149" target="_blank" title="Go to snippet source">source</a><code class="language-java">private final ActorSystem&lt;SpawnProtocol.Command&gt; typedActorSystem = testKit.actorSystem();
 
 // DEOPSCSW-39: examples of Location Service
 @Test
 public void testShouldBeAbleToSendSleepCommandToHCD() throws ExecutionException, InterruptedException, TimeoutException {
 
     // Construct Setup command
-    Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L).withUnits(JUnits.millisecond);
+    Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;, JUnits.millisecond);
+    Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(1000L);
 
-    Setup setupCommand = new Setup(Prefix.apply(JSubsystem.CSW, &quot;move&quot;), hcdSleep, Optional.of(ObsId.apply(&quot;2020A-001-123&quot;))).add(sleepTimeParam);
+    Setup setupCommand = new Setup(Prefix.apply(JSubsystem.CSW, &quot;move&quot;), new CommandName((&quot;sleep&quot;)), Optional.of(ObsId.apply(&quot;2020A-001-123&quot;))).add(sleepTimeParam);
 
-    Timeout commandResponseTimeout = new Timeout(10, TimeUnit.SECONDS);
+    Timeout commandResponseTimeout = new Timeout(5, TimeUnit.SECONDS);
 
     AkkaConnection connection = new AkkaConnection(new ComponentId(Prefix.apply(JSubsystem.CSW, &quot;samplehcd&quot;), JComponentType.HCD));
     ILocationService locationService = testKit.jLocationService();
-    AkkaLocation location = locationService.resolve(connection, Duration.ofSeconds(10)).get().orElseThrow();
+    AkkaLocation location = locationService.resolve(connection, Duration.ofSeconds(5)).get().orElseThrow();
 
     ICommandService hcd = CommandServiceFactory.jMake(location, typedActorSystem);
 
-    CommandResponse.SubmitResponse result = hcd.submitAndWait(setupCommand, commandResponseTimeout).get(10, TimeUnit.SECONDS);
+    CommandResponse.SubmitResponse result = hcd.submitAndWait(setupCommand, commandResponseTimeout).get(5, TimeUnit.SECONDS);
     Assert.assertTrue(result instanceof CommandResponse.Completed);
 }</code></pre></dd>
 </dl>
@@ -470,19 +490,16 @@ public void testShouldBeAbleToSendSleepCommandToHCD() throws ExecutionException,
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/tutorial/basic/BasicSampleHcdTest.scala#L108-L131" target="_blank" title="Go to snippet source"></a><code class="language-scala">test(&quot;should get timeout exception if submit timeout is too small&quot;) {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/samplehcd/SampleHcdTest.scala#L111-L131" target="_blank" title="Go to snippet source">source</a><code class="language-scala">test(&quot;should get timeout exception if submit timeout is too small&quot;) {
   import scala.concurrent.duration._
   implicit val sleepCommandTimeout: Timeout = Timeout(1000.millis)
 
   // Construct Setup command
-  val testPrefix: Prefix    = Prefix(&quot;CSW.test&quot;)
-  val hcdSleep: CommandName = CommandName(&quot;hcdSleep&quot;)
-  // Helper to get units set
-  def setSleepTime(milli: Long): Parameter[Long] = sleepTimeKey.set(milli).withUnits(Units.millisecond)
+  val sleepTimeKey: Key[Long]         = KeyType.LongKey.make(&quot;SleepTime&quot;)
+  val sleepTimeParam: Parameter[Long] = sleepTimeKey.set(5000).withUnits(Units.millisecond)
+  val setupCommand                    = Setup(Prefix(&quot;csw.move&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2020A-001-123&quot;))).add(sleepTimeParam)
 
-  val setupCommand = Setup(testPrefix, hcdSleep, Some(ObsId(&quot;2020A-001-123&quot;))).add(setSleepTime(5000))
-
-  val connection = AkkaConnection(ComponentId(Prefix(Subsystem.CSW, &quot;samplehcd&quot;), ComponentType.HCD))
+  val connection = AkkaConnection(ComponentId(Prefix(CSW, &quot;samplehcd&quot;), ComponentType.HCD))
 
   val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
@@ -491,22 +508,19 @@ public void testShouldBeAbleToSendSleepCommandToHCD() throws ExecutionException,
   // submit command and handle response
   intercept[java.util.concurrent.TimeoutException] {
     val responseF = hcd.submitAndWait(setupCommand)
-    Await.result(responseF, 10000.millis) shouldBe a[CommandResponse.Completed]
+    Await.result(responseF, 10000.millis) shouldBe a[Completed]
   }
 }</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/tutorial/basic/JSampleHcdTest.java#L138-L160" target="_blank" title="Go to snippet source"></a><code class="language-java">@Rule
-public ExpectedException thrown = ExpectedException.none();
-
-@Test
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/org/tmt/csw/samplehcd/JSampleHcdTest.java#L153-L172" target="_blank" title="Go to snippet source">source</a><code class="language-java"><br/>@Test
 public void testShouldGetExecutionExceptionIfSubmitTimeoutIsTooSmall() throws ExecutionException, InterruptedException {
 
     // Construct Setup command
-    Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;);
-    Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L).withUnits(JUnits.millisecond);
+    Key&lt;Long&gt; sleepTimeKey = JKeyType.LongKey().make(&quot;SleepTime&quot;, JUnits.millisecond);
+    Parameter&lt;Long&gt; sleepTimeParam = sleepTimeKey.set(5000L);
 
-    Setup setupCommand = new Setup(Prefix.apply(JSubsystem.CSW, &quot;move&quot;), hcdSleep, Optional.of(ObsId.apply(&quot;2020A-001-123&quot;))).add(sleepTimeParam);
+    Setup setupCommand = new Setup(Prefix.apply(JSubsystem.CSW, &quot;move&quot;), new CommandName(&quot;sleep&quot;), Optional.of(ObsId.apply(&quot;2020A-001-123&quot;))).add(sleepTimeParam);
 
     Timeout commandResponseTimeout = new Timeout(1, TimeUnit.SECONDS);
 
@@ -516,28 +530,27 @@ public void testShouldGetExecutionExceptionIfSubmitTimeoutIsTooSmall() throws Ex
 
     ICommandService hcd = CommandServiceFactory.jMake(location, typedActorSystem);
 
-    thrown.expect(ExecutionException.class);
-    hcd.submitAndWait(setupCommand, commandResponseTimeout).get();
+    Assert.assertThrows(ExecutionException.class, () -&gt; hcd.submitAndWait(setupCommand, commandResponseTimeout).get());
 }</code></pre></dd>
 </dl>
-<h3><a href="#other-ways-to-spawn-assembly-and-hcd-in-the-standalone-mode-using-csw-test-kit-" name="other-ways-to-spawn-assembly-and-hcd-in-the-standalone-mode-using-csw-test-kit-" class="anchor"><span class="anchor-link"></span></a>Other ways to spawn Assembly and HCD in the standalone mode using CSW Test Kit.</h3>
+<h3><a href="#other-ways-to-spawn-assembly-and-hcd-in-the-standalone-mode-using-csw-test-kit" name="other-ways-to-spawn-assembly-and-hcd-in-the-standalone-mode-using-csw-test-kit" class="anchor"><span class="anchor-link"></span></a>Other ways to spawn Assembly and HCD in the standalone mode using CSW Test Kit</h3>
 <p>Spawning a HCD</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/samplehcd/SampleHcdTest.scala#L128" target="_blank" title="Go to snippet source"></a><code class="language-scala">spawnHCD(Prefix(&quot;TCS.sampleHcd&quot;), (ctx, cswCtx) =&gt; new SampleHcdHandlers(ctx, cswCtx))</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/samplehcd/SampleHcdTest.scala#L136" target="_blank" title="Go to snippet source">source</a><code class="language-scala">spawnHCD(Prefix(&quot;TCS.sampleHcd&quot;), (ctx, cswCtx) =&gt; new SampleHcdHandlers(ctx, cswCtx))</code></pre></dd>
 </dl>
 <p>Spawning an Assembly</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">spawnAssembly(Prefix(&quot;TCS.sampleAssembly&quot;), (ctx, cswCtx) =&gt; new SampleHandlers(ctx, cswCtx))</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L44" target="_blank" title="Go to snippet source">source</a><code class="language-scala">spawnAssembly(Prefix(&quot;TCS.sampleAssembly&quot;), (ctx, cswCtx) =&gt; new SampleHandlers(ctx, cswCtx))</code></pre></dd>
 </dl>
 <h3><a href="#spawning-a-component-using-defaultcomponenthandlers" name="spawning-a-component-using-defaultcomponenthandlers" class="anchor"><span class="anchor-link"></span></a>Spawning a Component using DefaultComponentHandlers</h3>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L55-L70" target="_blank" title="Go to snippet source"></a><code class="language-scala">spawnAssembly(
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/org/tmt/csw/sample/SampleTest.scala#L55-L70" target="_blank" title="Go to snippet source">source</a><code class="language-scala">spawnAssembly(
   Prefix(&quot;TCS.defaultAssembly&quot;),
   (ctx, cswCtx) =&gt;
     new DefaultComponentHandlers(ctx, cswCtx) {

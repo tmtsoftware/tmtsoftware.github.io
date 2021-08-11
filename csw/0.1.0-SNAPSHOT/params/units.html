@@ -169,6 +169,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
     <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
+    <li><a href="../migration_guide/migration_guide_3.0.0_to_4.0.0/migration-guide-3.0.0-to-4.0.0.html" class="page">Migration Guide from 3.0.0 to 4.0.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -196,6 +197,7 @@ TMT Common Software (CSW)
     <li><a href="../params/units.html#cgs-units" class="header">CGS Units</a></li>
     <li><a href="../params/units.html#astrophysical-units" class="header">Astrophysical Units</a></li>
     <li><a href="../params/units.html#imperial-units" class="header">Imperial Units</a></li>
+    <li><a href="../params/units.html#datetime-units" class="header">Datetime units</a></li>
     <li><a href="../params/units.html#others-engineering" class="header">Others - Engineering</a></li>
     <li><a href="../params/units.html#usage-examples" class="header">Usage Examples</a></li>
     <li><a href="../params/units.html#source-code-for-examples" class="header">Source Code for Examples</a></li>
@@ -227,6 +229,7 @@ TMT Common Software (CSW)
     <li><a href="../params/units.html#cgs-units" class="header">CGS Units</a></li>
     <li><a href="../params/units.html#astrophysical-units" class="header">Astrophysical Units</a></li>
     <li><a href="../params/units.html#imperial-units" class="header">Imperial Units</a></li>
+    <li><a href="../params/units.html#datetime-units" class="header">Datetime units</a></li>
     <li><a href="../params/units.html#others-engineering" class="header">Others - Engineering</a></li>
     <li><a href="../params/units.html#usage-examples" class="header">Usage Examples</a></li>
     <li><a href="../params/units.html#source-code-for-examples" class="header">Source Code for Examples</a></li>
@@ -249,7 +252,7 @@ TMT Common Software (CSW)
 </ul></div><div class="callout note "><div class="callout-title">Note</div>
 <p>The set of supported Units will be modified as more required Units are discovered.</p></div>
 <h2><a href="#default-units-for-keys" name="default-units-for-keys" class="anchor"><span class="anchor-link"></span></a>Default Units for Keys</h2>
-<p>The default unit for <code>UTCTimeKey</code> and <code>TAITimeKey</code> (in Scala and Java both) is <code>second</code>. For all the remaining keys, default unit is NoUnits. </p>
+<p>The default unit for <code>UTCTimeKey</code> and <code>TAITimeKey</code> (in Scala and Java both) is <code>utc</code> &amp; <code>tai</code> respectively. For all the remaining keys, default unit is NoUnits. </p>
 <h2><a href="#si-units" name="si-units" class="anchor"><span class="anchor-link"></span></a>SI Units</h2>
 <table>
   <thead>
@@ -528,6 +531,28 @@ TMT Common Software (CSW)
     </tr>
   </tbody>
 </table>
+<h2><a href="#datetime-units" name="datetime-units" class="anchor"><span class="anchor-link"></span></a>Datetime units</h2>
+<table>
+  <thead>
+    <tr>
+      <th align="center">Name </th>
+      <th align="center">Abbreviation </th>
+      <th align="left">Description </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">tai </td>
+      <td align="center">tai </td>
+      <td align="left">TAI Time unit </td>
+    </tr>
+    <tr>
+      <td align="center">utc </td>
+      <td align="center">utc </td>
+      <td align="left">UTC Time unit </td>
+    </tr>
+  </tbody>
+</table>
 <h2><a href="#others-engineering" name="others-engineering" class="anchor"><span class="anchor-link"></span></a>Others - Engineering</h2>
 <table>
   <thead>
@@ -564,7 +589,7 @@ TMT Common Software (CSW)
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L277-L304" target="_blank" title="Go to snippet source"></a><code class="language-scala">//declare keyname
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L247-L275" target="_blank" title="Go to snippet source">source</a><code class="language-scala">//declare keyname
 val s1: String = &quot;encoder&quot;
 
 //making 3 keys
@@ -577,8 +602,9 @@ val bParam: Parameter[Boolean] = k1.set(true)
 val bDefaultUnitSet: Boolean   = bParam.units === Units.NoUnits //true
 
 //default unit for UTCTimeKey
-val tParam: Parameter[UTCTime] = KeyType.UTCTimeKey.make(&quot;now&quot;).set(UTCTime.now())
-val defaultTimeUnit: Units     = tParam.units //is second
+val utcParam: Parameter[UTCTime] = KeyType.UTCTimeKey.make(&quot;now&quot;).set(UTCTime.now())
+//default unit for TAITimeKey
+val taiParam: Parameter[TAITime] = KeyType.TAITimeKey.make(&quot;now&quot;).set(TAITime.now())
 
 //storing multiple values
 val paramOfShorts: Parameter[Short] = k2.set(1, 2, 3, 4)
@@ -594,7 +620,7 @@ val paramWithUnits2: Parameter[String] = k3.setAll(weekDays) withUnits Units.day
 val paramWithUnits3: Parameter[Short] = paramOfShorts.withUnits(Units.meter)</code></pre></dd>
   <dt>Java</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L329-L364" target="_blank" title="Go to snippet source"></a><code class="language-java">//declare keyname
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L295-L336" target="_blank" title="Go to snippet source">source</a><code class="language-java">//declare keyname
 String s1 = &quot;encoder&quot;;
 
 //making 3 keys
@@ -606,12 +632,18 @@ Key&lt;String&gt; k3 = JKeyType.StringKey().make(s1, JUnits.NoUnits);
 Parameter&lt;Boolean&gt; bParam = k1.set(true);
 boolean bDefaultUnitSet = bParam.units() == JUnits.NoUnits; //true
 
-//default unit for UTCTimeKey/TAITimeKey
-Parameter&lt;UTCTime&gt; tParam = JKeyType
+//default unit for UTCTimeKey
+Parameter&lt;UTCTime&gt; utcParam = JKeyType
         .UTCTimeKey()
         .make(&quot;now&quot;)
         .set(UTCTime.now());
-Units defaultTimeUnit = tParam.units(); //is second
+
+//default unit for TAITimeKey
+Parameter&lt;TAITime&gt; taiParam = JKeyType
+        .TAITimeKey()
+        .make(&quot;now&quot;)
+        .set(TAITime.now());
+
 
 //storing multiple values
 Parameter&lt;Short&gt; paramOfShorts = k2.set(

@@ -169,6 +169,7 @@ TMT Common Software (CSW)
   <ul>
     <li><a href="../migration_guide/migration_guide_1.0.0_to_2.0.0/migration-guide-1.0.0-to-2.0.0.html" class="page">Migration Guide from 1.0.0 to 2.0.0</a></li>
     <li><a href="../migration_guide/migration_guide_2.0_to_3.0/migration-guide-2.0-to-3.0.html" class="page">Migration Guide from 2.0 to 3.0</a></li>
+    <li><a href="../migration_guide/migration_guide_3.0.0_to_4.0.0/migration-guide-3.0.0-to-4.0.0.html" class="page">Migration Guide from 3.0.0 to 4.0.0</a></li>
   </ul></li>
   <li><a href="../commons/contract.html" class="page">CSW Service contract</a></li>
   <li><a href="../technical/technical.html" class="page">Technical Design Documents</a>
@@ -192,7 +193,7 @@ TMT Common Software (CSW)
   <li><a href="../apps/cswlocationagent.html#csw-location-agent" class="header">csw-location-agent</a>
   <ul>
     <li><a href="../apps/cswlocationagent.html#prerequisite" class="header">Prerequisite</a></li>
-    <li><a href="../apps/cswlocationagent.html#install-location-agent-app" class="header">Install location-agent app</a></li>
+    <li><a href="../apps/cswlocationagent.html#install-csw-location-agent-app" class="header">Install csw-location-agent app</a></li>
     <li><a href="../apps/cswlocationagent.html#command-line-parameter-options" class="header">Command line parameter options</a></li>
   </ul></li>
 </ul>
@@ -218,7 +219,7 @@ TMT Common Software (CSW)
   <li><a href="../apps/cswlocationagent.html#csw-location-agent" class="header">csw-location-agent</a>
   <ul>
     <li><a href="../apps/cswlocationagent.html#prerequisite" class="header">Prerequisite</a></li>
-    <li><a href="../apps/cswlocationagent.html#install-location-agent-app" class="header">Install location-agent app</a></li>
+    <li><a href="../apps/cswlocationagent.html#install-csw-location-agent-app" class="header">Install csw-location-agent app</a></li>
     <li><a href="../apps/cswlocationagent.html#command-line-parameter-options" class="header">Command line parameter options</a></li>
   </ul></li>
 </ul>
@@ -237,11 +238,11 @@ TMT Common Software (CSW)
   <li>Location Service should be running</li>
 </ul><div class="callout note "><div class="callout-title">Note</div>
 <p>This page assumes that you have already installed and setup <a href="csinstallation.html">coursier</a></p></div>
-<h2><a href="#install-location-agent-app" name="install-location-agent-app" class="anchor"><span class="anchor-link"></span></a>Install location-agent app</h2>
-<p>Following command creates an executable file named location-agent in the default installation directory.</p>
-<pre class="prettyprint"><code class="language-bash">cs install location-agent:&lt;version | SHA&gt;
+<h2><a href="#install-csw-location-agent-app" name="install-csw-location-agent-app" class="anchor"><span class="anchor-link"></span></a>Install csw-location-agent app</h2>
+<p>Following command creates an executable file named csw-location-agent in the default installation directory.</p>
+<pre class="prettyprint"><code class="language-bash">cs install csw-location-agent:&lt;version | SHA&gt;
 </code></pre>
-<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>location-agent</code> will be installed with the latest tagged binary of <code>csw-location-agent</code></p>
+<p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>csw-location-agent</code> will be installed with the latest tagged binary of <code>csw-location-agent</code></p>
 <h2><a href="#command-line-parameter-options" name="command-line-parameter-options" class="anchor"><span class="anchor-link"></span></a>Command line parameter options</h2>
 <ul>
   <li><strong><code>--prefix</code></strong> Required: The prefix (or prefixes, separated by comma) used to register the application (also root name in config file).</li>
@@ -260,32 +261,32 @@ TMT Common Software (CSW)
   <li>
   <p>
   <p>Application will start a Redis server on port 6379 (the default Redis port) and will register a TcpConnection for it with the Location Service</p>
-  <pre class="prettyprint"><code class="language-bash">location-agent --prefix &quot;csw.redis&quot; --command &quot;redis-server /usr/local/etc/redis.conf&quot; --port 6379
+  <pre class="prettyprint"><code class="language-bash">csw-location-agent --prefix &quot;csw.redis&quot; --command &quot;redis-server /usr/local/etc/redis.conf&quot; --port 6379
 </code></pre></p></li>
   <li>
   <p>Application will sleep for 30 seconds. It will be registered as a service named <code>CSW.foo</code> on a random port with the Location Service. After the sleep is over in 30 seconds, it will unregister the <code>CSW.foo</code> service.</p>
-  <pre class="prettyprint"><code class="language-bash">location-agent --prefix &quot;CSW.foo&quot; --command &quot;sleep 30&quot;
+  <pre class="prettyprint"><code class="language-bash">csw-location-agent --prefix &quot;CSW.foo&quot; --command &quot;sleep 30&quot;
 </code></pre></li>
   <li>
     <p>Application will start a simple HTTP service on port 8080. This will register <code>CSW.myHttpServiceAsTcp</code> as a TCP service with the Location Service.</p>
-    <pre class="prettyprint"><code class="language-bash">location-agent --prefix &quot;CSW.myHttpServiceAsTcp&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080
+    <pre class="prettyprint"><code class="language-bash">csw-location-agent --prefix &quot;CSW.myHttpServiceAsTcp&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080
 </code></pre>
   </li>
   <li>
   <p>Application will start a simple HTTP service on port 8080. This will register <code>CSW.myHttpServiceAsHttp</code> as a HTTP service with the provided path with the Location Service. It will register its private network ip with the Location Service. </p>
-  <pre class="prettyprint"><code class="language-bash">location-agent --prefix &quot;CSW.myHttpServiceAsHttp&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080 --http &quot;path&quot;
+  <pre class="prettyprint"><code class="language-bash">csw-location-agent --prefix &quot;CSW.myHttpServiceAsHttp&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080 --http &quot;path&quot;
 </code></pre></li>
   <li>
   <p>Application will start a simple HTTP service on port 8080. This will register <code>CSW.myHttpServiceAsHttp</code> as a HTTP service with the provided path with the Location Service. It will register its public network ip with the Location Service.</p>
-  <pre class="prettyprint"><code class="language-bash">location-agent --prefix &quot;CSW.myHttpServiceAsHttp&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080 --http &quot;path&quot; --outsideNetwork
+  <pre class="prettyprint"><code class="language-bash">csw-location-agent --prefix &quot;CSW.myHttpServiceAsHttp&quot; --command &quot;python -m SimpleHTTPServer 8080&quot; --port 8080 --http &quot;path&quot; --outsideNetwork
 </code></pre></li>
   <li>
   <p>Prints help message.</p>
-  <pre class="prettyprint"><code class="language-bash">location-agent --help
+  <pre class="prettyprint"><code class="language-bash">csw-location-agent --help
 </code></pre></li>
   <li>
   <p>Prints application version.</p>
-  <pre class="prettyprint"><code class="language-bash">location-agent --version
+  <pre class="prettyprint"><code class="language-bash">csw-location-agent --version
 </code></pre></li>
 </ol>
 </div>
