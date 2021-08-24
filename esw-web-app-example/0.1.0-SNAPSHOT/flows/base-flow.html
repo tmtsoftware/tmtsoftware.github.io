@@ -115,12 +115,10 @@ Web Application Tutorial
 <ul>
   <li><a href="../flows/base-flow.html#creating-a-web-application" class="header">Creating a Web Application</a>
   <ul>
-    <li><a href="../flows/base-flow.html#overview" class="header">Overview</a></li>
     <li><a href="../flows/base-flow.html#generate-application" class="header">Generate application</a></li>
-    <li><a href="../flows/base-flow.html#compile-frontend" class="header">Compile frontend</a></li>
-    <li><a href="../flows/base-flow.html#compile-backend" class="header">Compile backend</a></li>
-    <li><a href="../flows/base-flow.html#add-routes-to-backend" class="header">Add routes to backend</a></li>
-    <li><a href="../flows/base-flow.html#consume-routes-in-frontend" class="header">Consume routes in frontend</a></li>
+    <li><a href="../flows/base-flow.html#open-in-development-environment" class="header">Open in development environment</a></li>
+    <li><a href="../flows/base-flow.html#develop-backend" class="header">Develop Backend</a></li>
+    <li><a href="../flows/base-flow.html#create-the-frontend" class="header">Create the frontend</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -144,12 +142,10 @@ Web Application Tutorial
 <ul>
   <li><a href="../flows/base-flow.html#creating-a-web-application" class="header">Creating a Web Application</a>
   <ul>
-    <li><a href="../flows/base-flow.html#overview" class="header">Overview</a></li>
     <li><a href="../flows/base-flow.html#generate-application" class="header">Generate application</a></li>
-    <li><a href="../flows/base-flow.html#compile-frontend" class="header">Compile frontend</a></li>
-    <li><a href="../flows/base-flow.html#compile-backend" class="header">Compile backend</a></li>
-    <li><a href="../flows/base-flow.html#add-routes-to-backend" class="header">Add routes to backend</a></li>
-    <li><a href="../flows/base-flow.html#consume-routes-in-frontend" class="header">Consume routes in frontend</a></li>
+    <li><a href="../flows/base-flow.html#open-in-development-environment" class="header">Open in development environment</a></li>
+    <li><a href="../flows/base-flow.html#develop-backend" class="header">Develop Backend</a></li>
+    <li><a href="../flows/base-flow.html#create-the-frontend" class="header">Create the frontend</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -161,51 +157,45 @@ Web Application Tutorial
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#creating-a-web-application" name="creating-a-web-application" class="anchor"><span class="anchor-link"></span></a>Creating a Web Application</h1>
-<h2><a href="#overview" name="overview" class="anchor"><span class="anchor-link"></span></a>Overview</h2>
-<p>This template contains steps to create an example application using the template. It has below flows, Basic Flow is mandatory and others are extensions after doing basic flow.</p>
-<ul>
-  <li>Basic flow - Creating a Web Application</li>
-  <li>Adding Authentication</li>
-  <li>Adding Persistence</li>
-  <li>Adding Documentation</li>
-</ul>
-<p>Basic flow will show you how to add a routes to backend application and consume them in your frontend.</p>
-<p>At any point in time if you want to see code with complete file, you can refer final <a href="https://github.com/tmtsoftware/esw-web-app-example">example app</a> and compare your changes.</p>
-<hr/>
-<p>Basic flow starts here.</p>
+<p>This flow demonstrates how to use the template to create our project, how to add simple routes, UI components, and how to build and test it. </p>
+<p>In this tutorial, we will first generate the application from the template, and build it to ensure tools are in place. Then, we will delete the default implementation and replace it our own implementation of a coordinate formatter. To do this, we will delete much of the template code and rewrite our own classes custom to our implementation.</p>
 <h2><a href="#generate-application" name="generate-application" class="anchor"><span class="anchor-link"></span></a>Generate application</h2>
-<p>First we need to generate a scaffolding application using our gitter8 template</p>
+<p>First we need to generate a scaffolding application using our giter8 template:</p>
 <pre class="prettyprint"><code class="language-bash">g8 tmtsoftware/esw-web-app-template.g8 --name=sample
 </code></pre>
-<p>It will generate a sample folder with two sub-folders, <code>frontend</code> and <code>backend</code></p>
-<h2><a href="#compile-frontend" name="compile-frontend" class="anchor"><span class="anchor-link"></span></a>Compile frontend</h2>
-<p>This is where your frontend application is present, it uses Typescript, React and node. Make sure node is installed in your machine. Let&rsquo;s compile our generated application.</p>
+<p>It will generate a sample folder with two sub-folders, <code>frontend</code> and <code>backend</code>. For a sanity check, let&rsquo;s go ahead and build the front and back ends created by the template. This will also help ensure you have the necessary tools installed.</p>
+<p>You are welcome to try out the generated sample project, which is basically a &ldquo;Hello World&rdquo; application, by following the instructions in the READMEs in each sub-folder. </p>
+<h3><a href="#compile-the-frontend" name="compile-the-frontend" class="anchor"><span class="anchor-link"></span></a>Compile the frontend</h3>
+<p>The <code>frontend</code> sub-folder is where your frontend application is located. It uses Typescript, React and node. Make sure node is installed in your machine. Let&rsquo;s compile our generated application.</p>
 <pre class="prettyprint"><code class="language-bash">cd sample/frontend
 npm install
 npm run build
 </code></pre>
-<h2><a href="#compile-backend" name="compile-backend" class="anchor"><span class="anchor-link"></span></a>Compile backend</h2>
-<p>This is where your backend application is present, it uses Scala ecosystem. Make sure <a href="https://tmtsoftware.github.io/csw/apps/csinstallation.html">coursier</a>, openjdk 11 and latest sbt version is installed in your machine. Let&rsquo;s compile our generated application.</p>
+<h3><a href="#compile-the-backend" name="compile-the-backend" class="anchor"><span class="anchor-link"></span></a>Compile the backend</h3>
+<p>The <code>backend</code> sub-folder is where your backend application is located. It uses the Scala ecosystem, which uses <a href="https://www.scala-sbt.org/">sbt</a> as its build tool. Make sure <a href="https://tmtsoftware.github.io/csw/apps/csinstallation.html">coursier</a>, OpenJDK 11 and the latest version of sbt version are installed in your machine. Let&rsquo;s compile our generated application.</p>
 <pre class="prettyprint"><code class="language-bash">cd sample/backend
 sbt
 sbt:backend&gt; compile
 </code></pre>
-<h2><a href="#add-routes-to-backend" name="add-routes-to-backend" class="anchor"><span class="anchor-link"></span></a>Add routes to backend</h2>
-<p>Open backend folder in you editor(e.g. Intellij) e.g.</p>
-<pre class="prettyprint"><code class="language-bash">cd sample/backend
-idea .
-</code></pre>
+<h2><a href="#open-in-development-environment" name="open-in-development-environment" class="anchor"><span class="anchor-link"></span></a>Open in development environment</h2>
+<p>At this point, you may want to open the project in an Integrated Development Environment, such as Intellij, if you are using one. </p>
+<p>In Intellij, you do this by clicking on File-&gt;New Project from Existing Sources&hellip; and then browsing to the root directory, <code>sample</code>. It should have a build.sbt file in it. Create an sbt project, and then accept the defaults, making sure the JDK is set to your installation of OpenJDK 11.</p>
+<h2><a href="#develop-backend" name="develop-backend" class="anchor"><span class="anchor-link"></span></a>Develop Backend</h2>
+<p>We will start with the backend HTTP service first. We will start by deleting the existing application and then creating our custom code. Our backend will be written in Scala, so all Java code will be removed.</p>
 <h3><a href="#cleanup-existing-sample" name="cleanup-existing-sample" class="anchor"><span class="anchor-link"></span></a>Cleanup existing sample</h3>
-<p>Generated code contains a sample application, we will delete its code and add ours where appropriate.</p>
+<p>To remove the generated code from the sample application, go to the <code>backend</code> folder and:</p>
 <ul>
-  <li>Delete folder <code>src/main/java</code> ,<code>src/test</code></li>
-  <li>Delete Existing files from <code>core/models</code> package in <code>src</code></li>
-  <li>Delete existing files from <code>service</code> package in <code>src</code></li>
-  <li>Delete file <code>SampleImpl.scala</code> from <code>impl</code> package in <code>src</code></li>
-  <li>Delete file <code>JSampleImplWrapper.scala</code> from <code>http</code> package in <code>src</code></li>
+  <li>Delete the folders <code>src/main/java</code> ,<code>src/test</code></li>
+</ul>
+<p>Browse to <code>src/main/scala/org/tmt/sample</code> and </p>
+<ul>
+  <li>Delete the existing files from <code>core/models</code></li>
+  <li>Delete the existing files from <code>service</code></li>
+  <li>Delete the file <code>SampleImpl.scala</code> from <code>impl</code></li>
+  <li>Delete the file <code>JSampleImplWrapper.scala</code> from <code>http</code></li>
 </ul>
 <h3><a href="#add-our-models-classes" name="add-our-models-classes" class="anchor"><span class="anchor-link"></span></a>Add our Models classes</h3>
-<p>These model classes will be used to serialized and deserialized request and response.</p>
+<p>We will now create the models used by our application. The first model is our request, in which we will take a RA/Dec pair as decimals. The other model is the response, which returns the pair as formatted Strings. It also includes a UUID String for the request. These model classes will be used to serialize and deserialize requests and responses.</p>
 <ul>
   <li>Go to <code>core/models</code> in <code>src</code></li>
   <li>Add <code>RaDecRequest.scala</code> model class</li>
@@ -213,100 +203,100 @@ idea .
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/core/models/RaDecRequest.scala#L4" target="_blank" title="Go to snippet source"></a><code class="language-scala">case class RaDecRequest(raInDecimals: Double, decInDecimals: Double)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/core/models/RaDecRequest.scala#L2-L4" target="_blank" title="Go to snippet source"></a><code class="language-scala">package org.tmt.sample.core.models
+
+case class RaDecRequest(raInDecimals: Double, decInDecimals: Double)</code></pre></dd>
 </dl>
-<p>Add <code>RaDecResponse.scala</code> model class</p>
+<p>Add the <code>RaDecResponse.scala</code> model class</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/core/models/RaDecResponse.scala#L4" target="_blank" title="Go to snippet source"></a><code class="language-scala">case class RaDecResponse(id: String, formattedRa: String, formattedDec: String)</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/core/models/RaDecResponse.scala#L2-L4" target="_blank" title="Go to snippet source"></a><code class="language-scala">package org.tmt.sample.core.models
+
+case class RaDecResponse(id: String, formattedRa: String, formattedDec: String)</code></pre></dd>
 </dl>
 <h3><a href="#add-our-implementation" name="add-our-implementation" class="anchor"><span class="anchor-link"></span></a>Add our implementation</h3>
+<p>Now we will create our backend logic. First, we create the service API as a Scala trait. Our service will have two methods. The first method will take the RA/Dec request, format it, and then return the response. Our server will also maintain a list of all requests, so the method will also store this pair as formatted strings.</p>
+<p>The second method returns this stored list of all processed RA/Dec pairs.</p>
 <ul>
   <li>Go to <code>service</code> in <code>src</code></li>
-  <li>Add a scala trait in <code>RaDecService.scala</code> file and add our <code>raDecToString</code> contract, using our request and response model</li>
+  <li>Create a <code>RaDecService.scala</code> file and add our <code>raDecToString</code> contract to our API, <code>RaDecService</code>, using our request and response models</li>
+  <li>Add the <code>getRaDecValues</code> contract in the service <code>RaDecService.scala</code></li>
 </ul>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/service/RaDecService.scala#L8-L17" target="_blank" title="Go to snippet source"></a><code class="language-scala">trait RaDecService {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/service/RaDecService.scala#L2-L11" target="_blank" title="Go to snippet source"></a><code class="language-scala">package org.tmt.sample.service
+
+import org.tmt.sample.core.models.{RaDecRequest, RaDecResponse}
+
+import scala.concurrent.Future
+
+trait RaDecService {
   def raDecToString(raDecRequest: RaDecRequest): Future[RaDecResponse]
+  def getRaDecValues: Future[List[RaDecResponse]]
 }</code></pre></dd>
 </dl>
-<p>Add <code>getRaDecValues</code> contract in service <code>RaDecService.scala</code></p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/service/RaDecService.scala#L13" target="_blank" title="Go to snippet source"></a><code class="language-scala">def getRaDecValues: Future[List[RaDecResponse]]</code></pre></dd>
-</dl>
+<p>Now we will create the implementation class of this service. We use the <code>Angle</code> class from CSW to create the sexagesimal strings.</p>
 <ul>
-  <li>Go to <code>impl</code> package in <code>src</code></li>
+  <li>Go to the <code>impl</code> package in <code>src</code></li>
   <li>Add <code>RaDecImpl.scala</code></li>
   <li>Extend <code>RaDecService.scala</code> to implement <code>raDecToString</code></li>
+  <li>Implement <code>getRaDecValues</code> contract in <code>RaDecImpl.scala</code></li>
 </ul>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/RaDecImpl.scala#L12-L29" target="_blank" title="Go to snippet source"></a><code class="language-scala">class RaDecImpl extends RaDecService {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/RaDecImpl.scala#L2-L24" target="_blank" title="Go to snippet source"></a><code class="language-scala">package org.tmt.sample.impl
+
+import csw.params.core.models.Angle
+import org.tmt.sample.core.models.{RaDecRequest, RaDecResponse}
+import org.tmt.sample.service.RaDecService
+
+import java.util.UUID
+import scala.collection.mutable
+import scala.concurrent.Future
+
+class RaDecImpl extends RaDecService {
 
   private val raDecValues = mutable.ListBuffer[RaDecResponse]()
 
   override def raDecToString(raDecRequest: RaDecRequest): Future[RaDecResponse] = {
-    val formattedRa   = Angle.raToString(raDecRequest.raInDecimals)
-    val formattedDec  = Angle.deToString(raDecRequest.decInDecimals)
+    val formattedRa   = Angle.raToString(Math.toRadians(raDecRequest.raInDecimals*15))
+    val formattedDec  = Angle.deToString(Math.toRadians(raDecRequest.decInDecimals))
     val raDecResponse = RaDecResponse(UUID.randomUUID().toString, formattedRa, formattedDec)
     raDecValues.append(raDecResponse)
     Future.successful(raDecResponse)
   }
+  override def getRaDecValues: Future[List[RaDecResponse]] = Future.successful(raDecValues.toList)
 }</code></pre></dd>
 </dl>
-<p>Implement <code>getRaDecValues</code> contract in <code>RaDecImpl.scala</code></p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/RaDecImpl.scala#L26" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def getRaDecValues: Future[List[RaDecResponse]] = Future.successful(raDecValues.toList)</code></pre></dd>
-</dl>
-<p>Lets now try to compile our code</p>
+<p>Now, lets try to compile our code</p>
 <pre class="prettyprint"><code class="language-bash">sbt:backend&gt; compile
 </code></pre>
+<p>You will notice it will give some compilation errors here. To fix these:</p>
 <ul>
-  <li>It will give compilation errors hence, delete references to earlier deleted classes from <code>SampleWiring.scala</code></li>
+  <li>Delete references to the classes we deleted earlier from <code>src/main/org/tmt/sample/impl/SampleWiring.scala</code></li>
   <li>Add a placeholder for route</li>
 </ul>
 <pre class="prettyprint"><code class="language-scala">override lazy val routes: Route = ???
 </code></pre>
 <ul>
-  <li>Go to <code>SampleRoute.scala</code></li>
+  <li>Go to <code>src/main/org/tmt/sample/http/SampleRoute.scala</code></li>
+  <li>Delete references to the previously deleted classes from the Scala files</li>
   <li>Delete existing route</li>
   <li>Add a placeholder for route</li>
 </ul>
 <pre class="prettyprint"><code class="language-scala">val route: Route = ???
 </code></pre>
-<p>Delete references to earlier deleted classes from scala files <code>SampleRoute</code>, <code>HttpCodecs</code></p>
-<p>Try compiling code again, this time it should compile</p>
+<p>Delete references to the previously deleted classes from the Scala files in <code>src/main/org/tmt/sample/http/HttpCodecs</code></p>
+<p>Be sure to delete references to deleted classes from import statements as well.</p>
+<p>Try compiling code again, this time it should compile successfully.</p>
 <pre class="prettyprint"><code class="language-bash">sbt:backend&gt; compile
 </code></pre>
-<h3><a href="#add-route-for-our-implementation" name="add-route-for-our-implementation" class="anchor"><span class="anchor-link"></span></a>Add Route for our implementation</h3>
-<ul>
-  <li>Go to <code>SampleWiring.scala</code></li>
-  <li>Add <code>raDecImpl</code> reference</li>
-</ul>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/SampleWiring.scala#L11" target="_blank" title="Go to snippet source"></a><code class="language-scala">lazy val raDecImpl = new RaDecImpl()</code></pre></dd>
-</dl>
-<p>Add Route in placeholder</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/SampleWiring.scala#L15-L16" target="_blank" title="Go to snippet source"></a><code class="language-scala">import actorRuntime.ec
-override lazy val routes: Route = new SampleRoute(raDecImpl, securityDirectives).route</code></pre></dd>
-</dl>
-<ul>
-  <li>Go to <code>SampleRoute.scala</code></li>
-  <li>Add dependency of <code>raDecService</code> to <code>SampleRoute</code></li>
-</ul>
+<h3><a href="#add-a-route-for-our-implementation" name="add-a-route-for-our-implementation" class="anchor"><span class="anchor-link"></span></a>Add a Route for our implementation</h3>
+<p>Next, we will provide the routing that links our HTTP request methods on endpoints to backend server processing created in our implementation class <code>RaDecImpl</code>. </p>
+<p>First, we need to inject a reference to an implementation of our service API to the routes, so that the appropriate method will be called for the matching endpoint and request method. Change the constructor of the route to take such an instance, and add an import for <code>RaDecService</code>:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -314,44 +304,69 @@ override lazy val routes: Route = new SampleRoute(raDecImpl, securityDirectives)
     ec: ExecutionContext
 ) extends HttpCodecs {</code></pre></dd>
 </dl>
-<p>Add route along with an implicit execution context which is provided by ServerWiring.</p>
-<p>We are using akka routing dsl to compose our http routes. visit <a href="https://doc.akka.io/docs/akka-http/current/routing-dsl/overview.html">here</a> to learn more about routing dsl.</p>
+<p>Next, we will add our routes. We will have a single endpoint <code>raDecValues</code> that supports two methods: POST and GET. The POST method will cause our backend service method <code>raDecToString</code> to be called, and GET will call <code>getRaDecValues</code>. We are using the Akka routing DSL to compose our HTTP routes. Visit <a href="https://doc.akka.io/docs/akka-http/current/routing-dsl/overview.html">here</a> to learn more about the routing DSL.</p>
+<p>Be sure to add an import for our model <code>RaDecRequest</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/http/SampleRoute.scala#L20-L29" target="_blank" title="Go to snippet source"></a><code class="language-scala">path(&quot;raDecValues&quot;) {
-  post {
-    entity(as[RaDecRequest]) { raDecRequest =&gt;
-      complete(raDecService.raDecToString(raDecRequest))
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/http/SampleRoute.scala#L19-L43" target="_blank" title="Go to snippet source"></a><code class="language-scala">val route: Route = {
+  path(&quot;raDecValues&quot;) {
+    post {
+      entity(as[RaDecRequest]) { raDecRequest =&gt;
+        complete(raDecService.raDecToString(raDecRequest))
+      }
+    } ~
+    get {
+      complete(raDecService.getRaDecValues)
     }
   } ~
-  get {
-    complete(raDecService.getRaDecValues)
-  }
-} ~</code></pre></dd>
+}</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>The tilda (~) at the end, is used as a path concatenator in akka dsl. You can safely remove it for now. However, in the following section of this tutorial we are going to add new routes to this file, at that point you would want to add it again to concat multiple routes.</p></div>
-<p>After we add the route, it will show some compilation errors, to fix that we need to add the codec to serialize/deserialize our request/response</p>
-<h3><a href="#add-codecs" name="add-codecs" class="anchor"><span class="anchor-link"></span></a>Add Codecs</h3>
-<p>We are using <a href="https://sirthias.github.io/borer/">borer</a> to serialize/deserialize. It has support for two formats Json and Cbor(binary format)</p>
-<p>Add codecs in <code>HttpCodecs.scala</code></p>
+<p>The tilda (~) at the end, is used as a path concatenator in the Akka DSL. You can safely remove it for now. However, in the following section of this tutorial we are going to add new routes to this file. At that point, you would want to add it again to concatenate multiple routes.</p></div>
+<p>Next, let&rsquo;s connect our routes to our service implementation in the wiring.</p>
+<ul>
+  <li>Go to <code>SampleWiring.scala</code></li>
+  <li>Add a <code>raDecImpl</code> reference</li>
+</ul>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/http/HttpCodecs.scala#L13-L14" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit lazy val raDecResponseCodec: Codec[RaDecResponse] = MapBasedCodecs.deriveCodec
-implicit lazy val raDecRequestCodec: Codec[RaDecRequest]   = MapBasedCodecs.deriveCodec</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/SampleWiring.scala#L11" target="_blank" title="Go to snippet source"></a><code class="language-scala">lazy val raDecImpl = new RaDecImpl()</code></pre></dd>
 </dl>
-<p>SampleRoute should compile now successfully and ready to use.</p>
+<p>Replace the route placeholder with our route, injecting our service API implementation, and add an import for <code>SampleRoute</code>.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/SampleWiring.scala#L15-L16" target="_blank" title="Go to snippet source"></a><code class="language-scala">import actorRuntime.ec
+override lazy val routes: Route = new SampleRoute(raDecImpl, securityDirectives).route</code></pre></dd>
+</dl>
+<p>After we add the route, it will show some compilation errors, to fix that we need to add the codec to serialize/deserialize our request/response</p>
+<h3><a href="#add-codecs" name="add-codecs" class="anchor"><span class="anchor-link"></span></a>Add Codecs</h3>
+<p>We are using <a href="https://sirthias.github.io/borer/">borer</a> to serialize/deserialize. It has support for two formats: Json and Cbor(binary format)</p>
+<p>Add the codecs in <code>HttpCodecs.scala</code>, along with imports for our models.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/http/HttpCodecs.scala#L13-L14" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit lazy val raDecResponseCodec: Codec[RaDecResponse] = deriveCodec
+implicit lazy val raDecRequestCodec: Codec[RaDecRequest]   = deriveCodec</code></pre></dd>
+</dl>
+<p><code>SampleRoute</code> should now compile successfully and is ready to use.</p>
 <h3><a href="#manually-test-our-application" name="manually-test-our-application" class="anchor"><span class="anchor-link"></span></a>Manually test our application</h3>
-<p>Start location service with authentication service (we will use auth in next section of tutorial)</p>
+<p>Start the Location Service with the Authorization and Authentication Service (we will use auth in the next section of the tutorial)</p>
 <pre class="prettyprint"><code class="language-bash">cs install csw-services:v4.0.0-M1
 csw-services start -k 
 </code></pre>
+<p>Set <code>INTERFACE_NAME</code> and <code>AAS_INTERFACE_NAME</code> environment variables with Network interface of your machine, these are needed during startup of the application, so that it is able to connect to location service and register its ip address.</p>
+<ul>
+  <li>During development in your local machine, these can point to same Network interface</li>
+  <li>During production deployment, these should point to respective Network interface</li>
+</ul>
+<p>For more details, refer CSW <a href="https://tmtsoftware.github.io/csw/deployment/env-vars.html">environment variables</a> and <a href="https://tmtsoftware.github.io/csw/deployment/network-topology.html">network topology</a></p>
 <p>Try running our backend application</p>
 <pre class="prettyprint"><code class="language-bash">sbt:backend&gt; run start
 </code></pre>
-<p>If application is successfully started it, will show log with <code>server_ip</code> and <code>app_port</code> registered to location service.</p>
-<p>Update <code>apptest.http</code> and test your <code>raDecValues</code> POST route</p>
+<p>If application is successfully started it, will show a log with the <code>server_ip</code> and <code>app_port</code> registered to the Location Service.</p>
+<p>Update <code>apptest.http</code> with the code below, replacing the <code>&lt;server_ip&gt;:&lt;app_port&gt;</code> with the ones for your server as displayed in the log messages. Then run the request to test your <code>raDecValues</code> POST route:</p>
 <pre class="prettyprint"><code class="language-bash">#### Request to test raDecValues endpoint
 POST http://&lt;server_ip&gt;:&lt;app_port&gt;/raDecValues
 Content-Type: application/json
@@ -362,18 +377,18 @@ Content-Type: application/json
 }
 
 </code></pre>
-<p>Successful response contains the formattedRa and formattedDec value with a unique id.</p>
+<p>Successful response contains the <code>formattedRa</code> and <code>formattedDec</code> values with a unique id.</p>
 <pre class="prettyprint"><code class="language-bash">{
   &quot;id&quot;: &quot;80ab3f42-a4cf-4249-b9a0-2b209aab48e8&quot;,
   &quot;formattedRa&quot;: &quot;8h 8m 9.602487087684134s&quot;,
   &quot;formattedDec&quot;: &quot;124°54&#39;17.277618670114634\&quot;&quot;
 }
 </code></pre>
-<p>Add this to your <code>apptest.http</code> and test your <code>raDecValues</code> GET route</p>
+<p>Add this to your <code>apptest.http</code>, again replacing the server IP and port number, and test your <code>raDecValues</code> GET route</p>
 <pre class="prettyprint"><code class="language-http">####
 GET http://&lt;server_ip&gt;:&lt;app_port&gt;/raDecValues
 </code></pre>
-<p>Successful response contains list of with formattedRa value.</p>
+<p>A successful response contains a list with the previous formatted RA/DEC entry.</p>
 <pre class="prettyprint"><code class="language-bash">[
   {
     &quot;id&quot;: &quot;d6a16719-72bf-4928-8bf3-abb125186f49&quot;,
@@ -382,19 +397,22 @@ GET http://&lt;server_ip&gt;:&lt;app_port&gt;/raDecValues
   }
 ]
 </code></pre>
-<h2><a href="#consume-routes-in-frontend" name="consume-routes-in-frontend" class="anchor"><span class="anchor-link"></span></a>Consume routes in frontend</h2>
-<p>In this section, we will be consuming data with using our React components. We will show how to create a client side route to add/render custom components within the application.</p>
-<p>First lets cleanup unwanted code</p>
+<p>Change the numbers in the POST test and run it again. Then, run the GET test again, and you will see both entries displayed in the list.</p>
+<h2><a href="#create-the-frontend" name="create-the-frontend" class="anchor"><span class="anchor-link"></span></a>Create the frontend</h2>
+<p>In this section, we will be constructing a browser-based UI using React components in Typescript. We will create components that allow the user to specify an RA/Dec pair, and then a Submit button that will send the data to our backend. The response will then be rendered in UI components. We will also provide components to get and display the list of stored coordinates. This section of the tutorial will show how to add and render custom components within the application that act as clients to consume our backend routes.</p>
+<p>First, let&rsquo;s cleanup unwanted code:</p>
 <ul>
-  <li>Go to <code>components/pages</code> folder in <code>src</code>, delete all component files under this directory</li>
-  <li>Delete folder <code>components/form</code></li>
-  <li>Go to <code>pages</code> folder in <code>test</code>, delete all test files under this directory</li>
-  <li>Remove the contents of <code>api.ts</code> file</li>
+  <li>Go to the <code>components/pages</code> folder in <code>src</code> and delete all component files under this directory</li>
+  <li>Delete the folder <code>components/form</code></li>
+  <li>Go to the <code>utils</code> folder and remove the contents of the <code>api.ts</code> file</li>
+  <li>Go to the <code>pages</code> folder in <code>test</code> and delete all test files under this directory</li>
 </ul>
 <h3><a href="#add-models" name="add-models" class="anchor"><span class="anchor-link"></span></a>Add models</h3>
+<p>Now, we need to add Typescript models for the data we will send to and receive from our backend.</p>
 <ul>
-  <li>Go to <code>Models.ts</code></li>
-  <li>Delete existing model interfaces Add our request and response models</li>
+  <li>Go to <code>Models.ts</code> in <code>src/models</code></li>
+  <li>Delete existing model interfaces</li>
+  <li>Add our request and response models</li>
 </ul>
 <dl>
   <dt>Typescript</dt>
@@ -411,12 +429,12 @@ export interface RaDecResponse {
 }</code></pre></dd>
 </dl>
 <h3><a href="#add-fetch" name="add-fetch" class="anchor"><span class="anchor-link"></span></a>Add Fetch</h3>
-<p>Implement the following methods to consume data from our POST and GET routes in <code>api.ts</code> file.</p>
+<p>Implement the the following methods to consume data from our POST and GET routes in the <code>api.ts</code> file. These methods will be called by our React components and perform HTTP requests to the backend. The <code>post</code> and <code>get</code> methods are defined in <code>Http.ts</code> and handle the formatting of the request method and arguments into a proper HTTP request, as well as formatting the response.</p>
 <p>For POST Route</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/utils/api.ts#L5-L14" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const postRaDecValues = async (
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/utils/api.ts#L7-L16" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const postRaDecValues = async (
   baseUrl: string,
   raDecRequest: RaDecRequest
 ): Promise&lt;RaDecResponse | undefined&gt; =&gt;
@@ -431,20 +449,35 @@ export interface RaDecResponse {
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/utils/api.ts#L35-L38" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const getRaDecValues = async (
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/utils/api.ts#L37-L40" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const getRaDecValues = async (
   baseUrl: string
 ): Promise&lt;RaDecResponse[] | undefined&gt; =&gt;
   (await get&lt;RaDecResponse[]&gt;(baseUrl + &#39;raDecValues&#39;)).parsedBody</code></pre></dd>
 </dl>
-<h3><a href="#add-our-react-component" name="add-our-react-component" class="anchor"><span class="anchor-link"></span></a>Add our React component</h3>
+<p>You will need the following imports: </p>
+<dl>
+  <dt>Typscript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/utils/api.ts#L2-L3" target="_blank" title="Go to snippet source"></a><code class="language-ts">import type { RaDecRequest, RaDecResponse } from &#39;../models/Models&#39;
+import { get, post } from &#39;./Http&#39;</code></pre></dd>
+</dl>
+<h3><a href="#create-a-react-component" name="create-a-react-component" class="anchor"><span class="anchor-link"></span></a>Create a React component</h3>
+<p>The first component we will create is the form for entering a coordinate and submitting it to the backend server. We are using the <a href="https://ant.design/">Ant Design</a> UI Component library for our components, so here we use an Ant.d Form.</p>
 <ul>
-  <li>In <code>pages</code> folder, create <code>RaDecInput.tsx</code></li>
-  <li>Add a simple input form to the <code>RaDecInput</code> react component</li>
+  <li>In the <code>pages</code> folder, create <code>RaDecInput.tsx</code></li>
+  <li>Add a simple input form to the <code>RaDecInput</code> React component</li>
 </ul>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecInput.tsx#L10-L57" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDecInput = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecInput.tsx#L11-L66" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDecInput = ({
+  reload,
+  setReload
+}: {
+  reload: boolean
+  setReload: (s: boolean) =&gt; void
+}): JSX.Element =&gt; {
+  const locationService = useLocationService()
   return (
     &lt;Form
       onFinish={onFinish}
@@ -467,18 +500,19 @@ export interface RaDecResponse {
   )
 }</code></pre></dd>
 </dl>
-<p>You would require locationService instance for getting backend url. This instance is available via context named <code>LocationServiceProvider</code>. Add the following as first line inside the <code>RaDecInput</code> component.</p>
+<p>It will be necessary to add the appropriate imports.</p>
+<p>Note the first line after the constructor stores a reference to the Location Service in the component.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecInput.tsx#L10-L12" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDecInput = (): JSX.Element =&gt; {
-  const locationService = useLocationService()</code></pre></dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecInput.tsx#L19" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const locationService = useLocationService()</code></pre></dd>
 </dl>
-<p>Add <code>onFinish</code> handler and use <code>postRaDecValues</code> method in our component</p>
+<p>This instance is required to get the URL of the backend service. It is part of a React <a href="https://reactjs.org/docs/context.html">context</a> named <code>LocationServiceProvider</code>, defined in the <code>contexts</code> folder. This is made available to our component when we put the components together in <code>App.tsx</code>. </p>
+<p>Finally, let&rsquo;s add an <code>onFinish</code> handler to specify the behavior when the submit button is pressed. It will and use the <code>postRaDecValues</code> method in our component. Insert this code above the <code>return</code> statement defined above.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecInput.tsx#L16-L34" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const onFinish = async (values: RaDecRequest) =&gt; {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecInput.tsx#L24-L43" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const onFinish = async (values: RaDecRequest) =&gt; {
   const backendUrl = await getBackendUrl(locationService)
   const valueInDecimal = {
     raInDecimals: Number(values.raInDecimals),
@@ -486,6 +520,7 @@ export interface RaDecResponse {
   }
   if (backendUrl) {
     const response = await postRaDecValues(backendUrl, valueInDecimal)
+    setReload(!reload)
     if (response?.formattedRa &amp;&amp; response?.formattedDec) {
       console.log(response.formattedRa)
       console.log(response.formattedDec)
@@ -498,13 +533,23 @@ export interface RaDecResponse {
   }
 }</code></pre></dd>
 </dl>
-<ul>
-  <li>In <code>pages</code> folder ,Add new component <code>RaDecTable.tsx</code> to display ra values table</li>
-</ul>
+<p>Be sure to add the necessary imports. It should look something like this:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L33-L63" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDecTable = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecInput.tsx#L2-L7" target="_blank" title="Go to snippet source"></a><code class="language-tsx">import { Button, Form, Input } from &#39;antd&#39;
+import React from &#39;react&#39;
+import { useLocationService } from &#39;../../contexts/LocationServiceContext&#39;
+import type { RaDecRequest } from &#39;../../models/Models&#39;
+import { postRaDecValues } from &#39;../../utils/api&#39;
+import { getBackendUrl } from &#39;../../utils/resolveBackend&#39;</code></pre></dd>
+</dl>
+<h3><a href="#create-table-component" name="create-table-component" class="anchor"><span class="anchor-link"></span></a>Create table component</h3>
+<p>In the <code>pages</code> folder, add a new component <code>RaDecTable.tsx</code> to display the RA/Dec values table. Again, we are using an Ant.d component, <code>Table</code>:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L35-L65" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDecTable = ({ reload }: { reload: boolean }): JSX.Element =&gt; {
   return (
     &lt;Table
       rowKey={(record) =&gt; record.id}
@@ -516,11 +561,12 @@ export interface RaDecResponse {
   )
 }</code></pre></dd>
 </dl>
-<p>Add columns for the table in this component</p>
+<p>The table will display a list of <code>RaDecResponse</code>s obtained from the backend server, described below.<br/>In this table, the key for rows will come from the <code>id</code> field of the response model. </p>
+<p>The columns will be defined in a constant outside of this class. Insert the following code above the <code>RaDecTable</code> declaration:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L11-L28" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const HeaderTitle = ({ title }: { title: string }): JSX.Element =&gt; (
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L13-L30" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const HeaderTitle = ({ title }: { title: string }): JSX.Element =&gt; (
   &lt;Typography.Title level={5} style={{ marginBottom: 0 }}&gt;
     {title}
   &lt;/Typography.Title&gt;
@@ -539,11 +585,11 @@ const columns: ColumnsType&lt;RaDecResponse&gt; = [
   }
 ]</code></pre></dd>
 </dl>
-<p>Use our <code>getRaDecValues</code> method in this component</p>
+<p>The data for the table will come from an <code>raDecValues</code> constant that gets populated using a React <a href="https://reactjs.org/docs/hooks-effect.html">Hook</a>. The <code>useEffect</code> hook is called whenever the component is rendered. In our hook, we call the method <code>getRaDecValues</code> which does the GET request to the backend, whose URL is obtained using the Location Service, obtained from the context.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L33-L63" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDecTable = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L35-L65" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDecTable = ({ reload }: { reload: boolean }): JSX.Element =&gt; {
   const locationService = useLocationService()
   const [raDecValues, setRaValues] = useState&lt;RaDecResponse[]&gt;()
 
@@ -552,7 +598,7 @@ const columns: ColumnsType&lt;RaDecResponse&gt; = [
       const backendUrl = await getBackendUrl(locationService)
       if (backendUrl) {
         const raDecValues = await getRaDecValues(backendUrl)
-        console.error(&#39;raDecValues&#39;, raDecValues)
+        console.log(&#39;raDecValues&#39;, raDecValues)
         setRaValues(raDecValues)
       } else {
         errorMessage(&#39;Failed to fetch ra values&#39;)
@@ -560,7 +606,7 @@ const columns: ColumnsType&lt;RaDecResponse&gt; = [
     }
 
     fetchRaValues()
-  }, [])
+  }, [reload, locationService])
 
   return (
     &lt;Table
@@ -573,34 +619,47 @@ const columns: ColumnsType&lt;RaDecResponse&gt; = [
   )
 }</code></pre></dd>
 </dl>
-<ul>
-  <li>In <code>pages</code> folder ,Add new component <code>RaDec.tsx</code> to compose above created components and display in a page</li>
-</ul>
+<p>Imports for this file will look something like this:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDec.tsx#L6-L13" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDec = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L2-L9" target="_blank" title="Go to snippet source"></a><code class="language-tsx">import { Table, Typography } from &#39;antd&#39;
+import type { ColumnsType } from &#39;antd/lib/table&#39;
+import React, { useEffect, useState } from &#39;react&#39;
+import { useLocationService } from &#39;../../contexts/LocationServiceContext&#39;
+import type { RaDecResponse } from &#39;../../models/Models&#39;
+import { getRaDecValues } from &#39;../../utils/api&#39;
+import { errorMessage } from &#39;../../utils/message&#39;
+import { getBackendUrl } from &#39;../../utils/resolveBackend&#39;</code></pre></dd>
+</dl>
+<h3><a href="#putting-out-components-together" name="putting-out-components-together" class="anchor"><span class="anchor-link"></span></a>Putting out components together</h3>
+<p>In the <code>pages</code> folder, add a new component <code>RaDec.tsx</code> to compose the components created above and display in a page</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDec.tsx#L6-L14" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export const RaDec = (): JSX.Element =&gt; {
+  const [reload, setReload] = useState&lt;boolean&gt;(false)
   return (
     &lt;&gt;
-      &lt;RaDecInput /&gt;
-      &lt;RaDecTable /&gt;
+      &lt;RaDecInput reload={reload} setReload={setReload} /&gt;
+      &lt;RaDecTable reload={reload} /&gt;
     &lt;/&gt;
   )
 }</code></pre></dd>
 </dl>
 <p>Next, we need to show our newly created <code>RaDec</code> component.</p>
-<p>Update <code>Routes.tsx</code> file and delete references to deleted files and their routes, map our new created <code>RaDec</code> component to <code>/</code> path.</p>
+<p>Update the <code>Routes.tsx</code> file and delete references to deleted files and their routes, and map our newly created <code>RaDec</code> component to the <code>/</code> path.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/routes/Routes.tsx#L12" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;Route exact path=&#39;/&#39; component={RaDec} /&gt;</code></pre></dd>
 </dl>
-<p>Now, we need a link to let user navigate to <code>Ra</code> form from different parts of application.</p>
-<p>Update <code>MenuBar.tsx</code> and delete existing <code>Menu</code> and its <code>Menu.Item</code>. Add our menu item.</p>
+<p>Now, we need a link to let the user navigate to the RA/Dec form from different parts of the application.</p>
+<p>Update <code>MenuBar.tsx</code> and delete the existing <code>Menu</code> and its <code>Menu.Item</code>. Add our menu item.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L18-L31" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;Menu mode=&#39;horizontal&#39;&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L18-L32" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;Menu mode=&#39;horizontal&#39;&gt;
   &lt;Menu.Item key=&#39;raDec&#39;&gt;
     &lt;Link to=&#39;/&#39;&gt;RaDec&lt;/Link&gt;
   &lt;/Menu.Item&gt;
@@ -609,11 +668,11 @@ const columns: ColumnsType&lt;RaDecResponse&gt; = [
 <p>Now, we have linked all pieces of our frontend application.</p>
 <pre class="prettyprint"><code class="language-bash">$:frontend&gt; npm start
 </code></pre>
-<p>It will launch application in Browser with an input form.</p>
+<p>It will launch application in your default browser with an input form.</p>
 <ul>
-  <li>Add a value like &lsquo;2.13&rsquo; and &lsquo;2.18&rsquo; and click submit.</li>
-  <li>Refresh page</li>
-  <li>You will see formatted ra and dec value in table below the input form.</li>
+  <li>Add a value like &lsquo;2.13&rsquo; and &lsquo;2.18&rsquo; and click Submit.</li>
+  <li>Refresh the page</li>
+  <li>You will see the formatted RA and Dec values in the table below the input form.</li>
 </ul>
 <p>To build the application for its production deployment</p>
 <pre class="prettyprint"><code class="language-bash">$:frontend&gt; npm run build

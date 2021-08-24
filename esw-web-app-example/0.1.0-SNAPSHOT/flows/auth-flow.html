@@ -117,6 +117,7 @@ Web Application Tutorial
   <ul>
     <li><a href="../flows/auth-flow.html#add-protected-route-in-backend" class="header">Add protected route in backend</a></li>
     <li><a href="../flows/auth-flow.html#consume-protected-route-in-frontend" class="header">Consume protected route in frontend</a></li>
+    <li><a href="../flows/auth-flow.html#try-it-out" class="header">Try it out</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -142,6 +143,7 @@ Web Application Tutorial
   <ul>
     <li><a href="../flows/auth-flow.html#add-protected-route-in-backend" class="header">Add protected route in backend</a></li>
     <li><a href="../flows/auth-flow.html#consume-protected-route-in-frontend" class="header">Consume protected route in frontend</a></li>
+    <li><a href="../flows/auth-flow.html#try-it-out" class="header">Try it out</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -154,8 +156,10 @@ Web Application Tutorial
 <div class="md-content__searchable">
 <h1><a href="#adding-authentication" name="adding-authentication" class="anchor"><span class="anchor-link"></span></a>Adding Authentication</h1>
 <h2><a href="#add-protected-route-in-backend" name="add-protected-route-in-backend" class="anchor"><span class="anchor-link"></span></a>Add protected route in backend</h2>
+<p>To demonstrate authorization, we will need to create a &ldquo;protected&rdquo; route, that is, an endpoint that requires a valid authorization token to access.</p>
 <h3><a href="#add-new-route-with-protection" name="add-new-route-with-protection" class="anchor"><span class="anchor-link"></span></a>Add new route with protection</h3>
-<p>We will add a new route in <code>SampleRoute.scala</code> which is protected, to access this route, request should contain a token containing role <code>esw-user</code>. We have set up some <a href="https://tmtsoftware.github.io/csw/apps/cswservices.html#predefined-users-">sample users</a> when we start <code>csw-services</code> with Authentication.</p>
+<p>We will add a new route to our server which is protected. To access this route, the request should contain a token containing the role <code>esw-user</code>. We have set up some <a href="https://tmtsoftware.github.io/csw/apps/cswservices.html#predefined-users-">sample users</a> when we start <code>csw-services</code> with the Authentication and Authorization Service enabled, and we will use one of these users for our tutorial.</p>
+<p>Add the following route below to <code>SampleRoute.scala</code>. Note it requires the user to have the <code>esw-user</code> role to access the endpoint. If you deleted the tilde (~) at the end of your route in the last tutorial, be sure to put it back, and then append the following:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -170,12 +174,13 @@ Web Application Tutorial
 }</code></pre></dd>
 </dl>
 <h2><a href="#consume-protected-route-in-frontend" name="consume-protected-route-in-frontend" class="anchor"><span class="anchor-link"></span></a>Consume protected route in frontend</h2>
+<p>Now, we will create a component in our frontend UI that uses our protected route.</p>
 <h3><a href="#add-secured-fetch" name="add-secured-fetch" class="anchor"><span class="anchor-link"></span></a>Add secured Fetch</h3>
-<p>Add the following method in <code>api.ts</code> which sends request to <code>/securedRaValues</code> backend route.</p>
+<p>Add the following method in <code>api.ts</code>, which sends a request to our <code>/securedRaValues</code> backend route.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/utils/api.ts#L18-L31" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const securedPostRaDecValues = async (
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/utils/api.ts#L20-L33" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const securedPostRaDecValues = async (
   baseUrl: string,
   raDecRequest: RaDecRequest,
   token: string
@@ -190,11 +195,9 @@ Web Application Tutorial
     )
   ).parsedBody</code></pre></dd>
 </dl>
-<h3><a href="#add-our-react-component-to-consume-secured-fetch" name="add-our-react-component-to-consume-secured-fetch" class="anchor"><span class="anchor-link"></span></a>Add our React component to consume secured fetch</h3>
-<ul>
-  <li>In <code>pages</code> folder, create a file named <code>SecuredRaDecInput.tsx</code></li>
-  <li>Add the following form to the <code>SecuredRaDecInput</code> react component</li>
-</ul>
+<p>Note that this method requires a token, which is then passed to the server with the request.</p>
+<h3><a href="#create-a-react-component-to-consume-our-secured-route" name="create-a-react-component-to-consume-our-secured-route" class="anchor"><span class="anchor-link"></span></a>Create a React component to consume our secured route</h3>
+<p>In the <code>pages</code> folder, create a file named <code>SecuredRaDecInput.tsx</code>. Then create a <code>SecuredRaDecInput</code> React component with the following form.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -206,10 +209,10 @@ Web Application Tutorial
       wrapperCol={{
         span: 1
       }}&gt;
-      &lt;Form.Item label=&#39;RaInDecimals&#39; name=&#39;raInDecimals&#39;&gt;
+      &lt;Form.Item label=&#39;RaInDecimals (secured)&#39; name=&#39;raInDecimals&#39;&gt;
         &lt;Input role=&#39;RaInDecimals&#39; style={{ marginLeft: &#39;0.5rem&#39; }} /&gt;
       &lt;/Form.Item&gt;
-      &lt;Form.Item label=&#39;DecInDecimals&#39; name=&#39;decInDecimals&#39;&gt;
+      &lt;Form.Item label=&#39;DecInDecimals (secured)&#39; name=&#39;decInDecimals&#39;&gt;
         &lt;Input role=&#39;DecInDecimals&#39; /&gt;
       &lt;/Form.Item&gt;
       &lt;Form.Item&gt;
@@ -222,7 +225,8 @@ Web Application Tutorial
 }</code></pre></dd>
 </dl>
 <h3><a href="#use-secured-fetch-in-our-component" name="use-secured-fetch-in-our-component" class="anchor"><span class="anchor-link"></span></a>Use secured fetch in our component</h3>
-<p>You would require locationService instance for getting backend url. This instance is available via context named <code>LocationServiceProvider</code>. Also, we need auth hook to get token. Add the following as first lines inside the <code>SecuredRa</code> component.</p>
+<p>Again, a reference to the Location Service is obtained via a context named <code>LocationServiceProvider</code>. Since this component requires authorization, we use another context to get a reference to the authorization system.</p>
+<p>Add the following as first lines inside the <code>SecuredRaDecInput</code> component.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -230,7 +234,8 @@ Web Application Tutorial
   const locationService = useLocationService()
   const { auth } = useAuth()</code></pre></dd>
 </dl>
-<p>Add <code>onFinish</code> handler</p>
+<p>The <code>useAuth</code> method is a hook provided in <code>hooks/useAuth.tsx</code> which accesses the context. Like <code>LocationServiceProvider</code>, this context, <code>AuthContextProvider</code> is made available to the component during construction in <code>App.tsx</code>.</p>
+<p>Now, add an <code>onFinish</code> handler above the return statement, similar to our non-secured component. Note this time we will obtain the token from the authorization context and pass that to our API method.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -264,27 +269,30 @@ Web Application Tutorial
   }
 }</code></pre></dd>
 </dl>
-<p>Add protected route in <code>Routes.tsx</code></p>
+<p>Add the necessary imports.</p>
+<h3><a href="#connect-our-new-component" name="connect-our-new-component" class="anchor"><span class="anchor-link"></span></a>Connect our new component</h3>
+<p>Next, we will add the protected route in <code>Routes.tsx</code> within the <code>&lt;Switch&gt;</code> block.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/routes/Routes.tsx#L15" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;ProtectedRoute path=&#39;/securedRaDec&#39; component={SecuredRaDecInput} /&gt;</code></pre></dd>
 </dl>
-<p>Add action for our new route in <code>MenuBar.tsx</code> below previously added RaDec <code>Menu.Item</code></p>
+<p>Add an action for our new route in <code>MenuBar.tsx</code> below previously added RaDec <code>Menu.Item</code></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L18-L26" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;Menu mode=&#39;horizontal&#39;&gt;
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L18-L32" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;Menu mode=&#39;horizontal&#39;&gt;
   &lt;Menu.Item key=&#39;raDec&#39;&gt;
     &lt;Link to=&#39;/&#39;&gt;RaDec&lt;/Link&gt;
   &lt;/Menu.Item&gt;
   &lt;Menu.Item key=&#39;securedRaDec&#39;&gt;
     &lt;Link to=&#39;/securedRaDec&#39;&gt;SecuredRaDec&lt;/Link&gt;
-  &lt;/Menu.Item&gt;</code></pre></dd>
+  &lt;/Menu.Item&gt;
+&lt;/Menu&gt;</code></pre></dd>
 </dl>
 <h3><a href="#add-login-logout-functionality" name="add-login-logout-functionality" class="anchor"><span class="anchor-link"></span></a>Add Login &amp; Logout functionality</h3>
-<p>Make use of generated <code>Login</code> and <code>Logout</code> components .</p>
-<p>Add menu items actions for <code>logging in</code> and <code>logging out</code> in <code>MenuBar.tsx</code> below previously added SecuredRaDec <code>Menu.Item</code></p>
+<p>To provide login and logout capabilities, we will make use of the generated <code>Login</code> and <code>Logout</code> components.</p>
+<p>Add menu item actions for logging in and logging out in <code>MenuBar.tsx</code> below the previously added SecuredRaDec <code>Menu.Item</code> The menu item will change depending on whether the user is logged in or not.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -293,7 +301,7 @@ Web Application Tutorial
 &lt;/Menu.Item&gt;
 {isAuthenticated ? &lt;Logout logout={logout} /&gt; : &lt;Login login={login} /&gt;}</code></pre></dd>
 </dl>
-<p>Use Auth Hook to get handle on auth store.</p>
+<p>Note the authorization hook is used again here to get a handle to the authorization store.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -301,6 +309,8 @@ Web Application Tutorial
   const { auth, login, logout } = useAuth()
   const isAuthenticated = auth?.isAuthenticated() ?? false</code></pre></dd>
 </dl>
+<h2><a href="#try-it-out" name="try-it-out" class="anchor"><span class="anchor-link"></span></a>Try it out</h2>
+<p>Compile the backend and restart it. Then run the UI as before and try it out. Clicking on the <code>SecuredRaDec</code> menu item will take you to the login page. Be sure to login with the<code>esw-user1</code> user with the password <code>esw-user1</code>. Once logged in, you will be able to use this form. The behavior is the same as the non-secured version, but it gives you the idea of how pages and routes can be protected. You will have to switch to the <code>RaDec</code> tab to see your inputs.</p>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/docs/src/main/flows/auth-flow.md" title="Edit this page" class="md-source-file md-edit">

@@ -115,8 +115,8 @@ Web Application Tutorial
 <ul>
   <li><a href="../flows/db-flow.html#adding-database-persistence" class="header">Adding Database Persistence</a>
   <ul>
-    <li><a href="../flows/db-flow.html#database-setup" class="header">Database setup</a></li>
     <li><a href="../flows/db-flow.html#update-backend-implementation" class="header">Update backend Implementation</a></li>
+    <li><a href="../flows/db-flow.html#run-the-new-application" class="header">Run the new application</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -140,8 +140,8 @@ Web Application Tutorial
 <ul>
   <li><a href="../flows/db-flow.html#adding-database-persistence" class="header">Adding Database Persistence</a>
   <ul>
-    <li><a href="../flows/db-flow.html#database-setup" class="header">Database setup</a></li>
     <li><a href="../flows/db-flow.html#update-backend-implementation" class="header">Update backend Implementation</a></li>
+    <li><a href="../flows/db-flow.html#run-the-new-application" class="header">Run the new application</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -153,48 +153,16 @@ Web Application Tutorial
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#adding-database-persistence" name="adding-database-persistence" class="anchor"><span class="anchor-link"></span></a>Adding Database Persistence</h1>
-<p>We will be using <code>postgres</code> to persist our data. We will be using Jooq dsl to write our queries, which is packaged inside CSW Database service.</p>
-<h2><a href="#database-setup" name="database-setup" class="anchor"><span class="anchor-link"></span></a>Database setup</h2>
-<p>Follow the installation guide to download &amp; install postgres on your machine, if not already installed. <a href="https://www.postgresql.org/download/">Link</a></p>
-<p>The CSW Database Service needs to be running before starting the App. Follow below instructions to run database service along with location service and authentication service:</p>
-<pre class="prettyprint"><code class="language-bash">cs install csw-services:v4.0.0-M1
-csw-services start -k -d
-</code></pre>
-<p>Login to your postgres with your default user and create a new user, this db user will be used to operate on our application.</p>
-<pre class="prettyprint"><code class="language-bash">psql -d postgres
-postgres =&gt; CREATE USER postgres with password &#39;postgres&#39;;
-postgres =&gt; /q;
-psql -d postgres -U postgres
-</code></pre>
-<p>This application performs fetch and insert queries on the <code>RAVALUES</code> table in the database, thus it needs to be present. Following command can be used to create a table</p>
-<pre class="prettyprint"><code class="language-sql">postgres = &gt;
-CREATE TABLE RADECVALUES(
-id TEXT             PRIMARY KEY     NOT NULL,
-formattedRa TEXT                    NOT NULL,
-formattedDec TEXT                    NOT NULL
-);
-</code></pre>
-<p>In the application, we depend on environment variables to pick up your username and password for the database, thus DB_USERNAME and DB_PASSWORD need to be set. To set environment variables, use the command</p>
-<pre class="prettyprint"><code class="language-bash">export DB_USERNAME=&lt;VALUE&gt; DB_PASSWORD=&lt;VALUE&gt;
-</code></pre>
-<p>In the application, the <code>database name</code>, <code>username</code>, <code>password</code> is picked up from the <code>application.conf</code> Update <code>application.conf</code> , add these entries.</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/resources/application.conf#L8-L15" target="_blank" title="Go to snippet source"></a><code class="language-conf">http-server {
-  dbName: postgres
-  dbUsernameHolder: DB_USERNAME
-  dbPasswordHolder: DB_PASSWORD
-}</code></pre></dd>
-</dl>
+<p>In this section of the tutorial, we will add a database to our application to store the RA/Dec coordinates entered in the UI instead of the local list variable in the backend. We will be using <code>postgres</code> to persist our data. We will be using the Jooq DSL to write our queries, which is packaged in the CSW Database Service.</p>
+<p>First, we will update our backend server to use the database, then we will set up the database itself, and then we will run the application.</p>
 <h2><a href="#update-backend-implementation" name="update-backend-implementation" class="anchor"><span class="anchor-link"></span></a>Update backend Implementation</h2>
-<p>Add csw-database dependency in <code>Libs.scala</code></p>
+<p>First, we have to make the CSW Database Service accessible in our project.<br/>Add a <code>csw-database</code> dependency in <code>project/Libs.scala</code></p>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/project/Libs.scala#L6" target="_blank" title="Go to snippet source"></a><code class="language-scala">val `csw-database` = &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-database&quot; % &quot;3.0.1&quot;</code></pre></dd>
 </dl>
-<p>Use csw-database dependency in <code>build.sbt</code> and reload project in your IDE.</p>
+<p>Use the <code>csw-database</code> dependency in your <code>build.sbt</code> file and reload the project in your IDE (in IntelliJ, this can be done from the sbt tab, typically on the right side of the IDE).</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -203,18 +171,19 @@ formattedDec TEXT                    NOT NULL
   Libs.`csw-database`, // &lt;---
   Libs.`embedded-keycloak` % Test,</code></pre></dd>
 </dl>
-<p>Go to <code>impl</code> package, Add repository class <code>RaDecRepository.scala</code> using dsl context provided by CSW Database</p>
+<h3><a href="#create-a-database-access-class" name="create-a-database-access-class" class="anchor"><span class="anchor-link"></span></a>Create a Database access class</h3>
+<p>Now we can implement our database access code. Go to the <code>impl</code> package and add a repository class <code>RaDecRepository.scala</code> using the DSL context provided by JOOQ as part of the CSW Database Service. This will be constructed and injected later in our wiring.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L10-L32" target="_blank" title="Go to snippet source"></a><code class="language-scala">class RaDecRepository(dsl: DSLContext)(implicit ec: ExecutionContext) {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L13-L35" target="_blank" title="Go to snippet source"></a><code class="language-scala">class RaDecRepository(dsl: DSLContext)(implicit ec: ExecutionContext) {
 }</code></pre></dd>
 </dl>
-<p>Add method to insert data to db</p>
+<p>Add a method to this class to insert data into the DB. The <code>query</code> method of the <code>DSLContext</code> is used to construct an SQL <code>INSERT</code> statement to insert our formatted RA/Dec strings along with a UUID. The CSW Database Service provides an asynchronous execute method, which returns a negative value on error. Since the insert is done asynchronously, this method returns a <code>Future</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L14-L23" target="_blank" title="Go to snippet source"></a><code class="language-scala">def insertRaDec(formattedRa: String, formattedDec: String): Future[String] = {
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L17-L26" target="_blank" title="Go to snippet source"></a><code class="language-scala">def insertRaDec(formattedRa: String, formattedDec: String): Future[String] = {
   val id = UUID.randomUUID().toString
   dsl
     .query(s&quot;INSERT INTO RaDecValues (id,formattedRa,formattedDec) values (?,?,?)&quot;, id, formattedRa, formattedDec)
@@ -225,20 +194,32 @@ formattedDec TEXT                    NOT NULL
     }
 }</code></pre></dd>
 </dl>
-<p>Add method to get data from db</p>
+<p>We will similarly add a method to get data from the DB:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L27-L28" target="_blank" title="Go to snippet source"></a><code class="language-scala">def getRaDecValues: Future[scala.List[RaDecResponse]] =
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L30-L31" target="_blank" title="Go to snippet source"></a><code class="language-scala">def getRaDecValues: Future[scala.List[RaDecResponse]] =
   dsl.resultQuery(&quot;SELECT * from RaDecValues&quot;).fetchAsyncScala[RaDecResponse]</code></pre></dd>
 </dl>
-<p>Add repository dependency and implicit execution context in <code>RaDecImpl.scala</code></p>
+<p>Add the necessary imports. It should look something like this:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L4-L9" target="_blank" title="Go to snippet source"></a><code class="language-scala">import csw.database.scaladsl.JooqExtentions.{RichQuery, RichResultQuery}
+import org.jooq.DSLContext
+import org.tmt.sample.core.models.RaDecResponse
+
+import java.util.UUID
+import scala.concurrent.{ExecutionContext, Future}</code></pre></dd>
+</dl>
+<h3><a href="#update-backend-service-implementation" name="update-backend-service-implementation" class="anchor"><span class="anchor-link"></span></a>Update backend service implementation</h3>
+<p>Update <code>RaDecImpl.scala</code> to inject the repository dependency. We will also need an implicit execution context curried into this class since our <code>RaDecRepository</code> class requires one.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L10" target="_blank" title="Go to snippet source"></a><code class="language-scala">class RaDecImpl(raDecRepository: RaDecRepository)(implicit ec: ExecutionContext) extends RaDecService {</code></pre></dd>
 </dl>
-<p>Update <code>raDecToString</code> implementation to use insert query method in <code>RaDecImpl.scala</code></p>
+<p>Update the <code>raDecToString</code> implementation in <code>RaDecImpl.scala</code> to use the insert query method instead the locally stored list.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -248,15 +229,17 @@ formattedDec TEXT                    NOT NULL
   raDecRepository.insertRaDec(formattedRa, formattedDec).map(id =&gt; RaDecResponse(id, formattedRa, formattedDec))
 }</code></pre></dd>
 </dl>
-<p>Update <code>getRaDecValues</code> implementation to use get values query method in <code>RaDecImpl.scala</code></p>
+<p>Update the <code>getRaDecValues</code> implementation in <code>RaDecImpl.scala</code> to use the get values query method.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
   <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L22-L23" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def getRaDecValues: Future[scala.List[RaDecResponse]] =
   raDecRepository.getRaDecValues</code></pre></dd>
 </dl>
-<p>Update <code>SampleWiring.scala</code></p>
-<p>Add db setup in <code>SampleWiring.scala</code></p>
+<p>References to the locally stored list can now be deleted.</p>
+<h3><a href="#update-wiring" name="update-wiring" class="anchor"><span class="anchor-link"></span></a>Update wiring</h3>
+<p>Now we need to put everything together by updating the wiring.</p>
+<p>First, create the DB setup in <code>SampleWiring.scala</code></p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -270,7 +253,7 @@ private lazy val dslContext: DSLContext =
     10.seconds
   )</code></pre></dd>
 </dl>
-<p>Add repository reference and Update implementation reference</p>
+<p>Here you can see the database name, username, and password are obtained from the application configuration. These value are used to create the JOOQ <code>DSLContext</code> passed into our repository class. Let&rsquo;s instantiate the repository, passing in our DSL context, and then update the implementation reference to receive the repository.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
@@ -278,8 +261,51 @@ private lazy val dslContext: DSLContext =
 lazy val repository = new RaDecRepository(dslContext)
 lazy val raDecImpl  = new RaDecImpl(repository)</code></pre></dd>
 </dl>
-<p>Run backend application, test your application using <code>apptest.http</code> and verify data is saved in your postgres table.</p>
-<pre class="prettyprint"><code class="language-sbt">sbt:backend&gt; run start
+<p>We now need to update our application configuration file with the database configuration. Edit <code>application.conf</code> in the <code>src/main/resources</code> folder.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/resources/application.conf#L8-L13" target="_blank" title="Go to snippet source"></a><code class="language-conf">http-server {
+  prefix: &quot;ESW.sample&quot;
+  dbName: postgres
+  dbUsernameHolder: DB_USERNAME
+  dbPasswordHolder: DB_PASSWORD
+}</code></pre></dd>
+</dl>
+<p>The database username and password are obtained from the environment variables <code>DB_USERNAME</code> and <code>DB_PASSWORD</code> respectively. We will set these variables later before we run our backend.</p>
+<h2><a href="#run-the-new-application" name="run-the-new-application" class="anchor"><span class="anchor-link"></span></a>Run the new application</h2>
+<p>A PostgreSQL database is used in our application. It must first be installed and then initially configured to work with our application.</p>
+<h3><a href="#database-setup" name="database-setup" class="anchor"><span class="anchor-link"></span></a>Database setup</h3>
+<p>Follow the installation guide to download and install PostgreSQL on your machine, if not already installed. <a href="https://www.postgresql.org/download/">Link</a></p>
+<p>At this point, we will re-run <code>csw-services</code> with the CSW Database Service enabled. This will run an PostgreSQL instance that we can then configure.</p>
+<p>The following instructions show how to run the Database Service along with the Location Service and the Authentication and Authorization Service:</p><div class="callout note "><div class="callout-title">Note</div>
+<p>For running the Database Service using <code>csw-services</code>, the PGDATA environment variable must be set to the Postgres data directory where Postgres is installed e.g. for mac: “/usr/local/var/postgres”.</p></div>
+<pre class="prettyprint"><code class="language-bash">cs install csw-services:v4.0.0-M1
+csw-services start -k -d
+</code></pre>
+<p>Login to postgres with your default user and create a new user to be used with our application. The example code below sets up a user &ldquo;postgres&rdquo; with a password &ldquo;postgres&rdquo;, but you can use different credentials if you prefer.</p>
+<pre class="prettyprint"><code class="language-bash">psql -d postgres
+postgres =&gt; CREATE USER postgres with password &#39;postgres&#39;;
+postgres =&gt; \q
+psql -d postgres -U postgres
+</code></pre>
+<p>For this application, we will create an <code>RADECVALUES</code> table in the database that the application can use to perform fetch and insert queries. The following commands can be used to create a table</p>
+<pre class="prettyprint"><code class="language-bash">postgres =&gt;
+CREATE TABLE RADECVALUES(
+id TEXT             PRIMARY KEY     NOT NULL,
+formattedRa TEXT                    NOT NULL,
+formattedDec TEXT                    NOT NULL
+);
+</code></pre>
+<p>As mentioned above, we depend on environment variables to pick up your username and password for the database, thus DB_USERNAME and DB_PASSWORD need to be set to the credentials you provided above.</p>
+<p>To set environment variables, use the command</p>
+<pre class="prettyprint"><code class="language-bash">export DB_USERNAME=&lt;VALUE&gt; DB_PASSWORD=&lt;VALUE&gt;
+</code></pre>
+<p>Now, we are ready to run the backend application:</p>
+<pre class="prettyprint"><code class="language-bash">sbt:backend&gt; run start
+</code></pre>
+<p>Test your application either with the UI or by using <code>apptest.http</code> as described in previous tutorials, and verify the data is saved in your postgres table. This can be done in <code>psql</code> using the <code>TABLE</code> command:</p>
+<pre class="prettyprint"><code class="language-bash">postgres =&gt; TABLE RADECVALUES
 </code></pre>
 </div>
 <div>
