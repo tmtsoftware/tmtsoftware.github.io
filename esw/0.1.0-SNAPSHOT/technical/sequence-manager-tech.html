@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -131,9 +130,10 @@ TMT Executive Software Documentation
     <li><a href="../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
-    <li><a href="../technical/contracts.html" class="page">Service Contracts</a></li>
     <li><a href="../technical/agent-service-tech.html" class="page">Agent Service and Agent Technical Documentation</a></li>
-    <li><a href="../technical/apps/apps-index.html" class="page">Applications</a></li>
+    <li><a href="../technical/apps/apps-index.html" class="page">Technical Applications</a></li>
+    <li><a href="../technical/esw-application-parts.html" class="page">ESW Application Architecture</a></li>
+    <li><a href="../technical/contracts.html" class="page">Service Contracts</a></li>
   </ul></li>
   <li><a href="../tutorials/web-app-tutorial.html" class="page">Web Application Tutorial</a></li>
 </ul>
@@ -147,7 +147,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/sequence-manager-tech.html#implementation-details" class="header">Implementation Details</a></li>
     <li><a href="../technical/sequence-manager-tech.html#sequence-manager-states" class="header">Sequence Manager States</a></li>
     <li><a href="../technical/sequence-manager-tech.html#running-sequence-manager" class="header">Running Sequence Manager</a></li>
-    <li><a href="../technical/sequence-manager-tech.html#sequence-manager-simulation-mode" class="header">Sequence Manager simulation mode</a></li>
+    <li><a href="../technical/sequence-manager-tech.html#sequence-manager-simulation-mode" class="header">Sequence Manager Simulation Mode</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -176,7 +176,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/sequence-manager-tech.html#implementation-details" class="header">Implementation Details</a></li>
     <li><a href="../technical/sequence-manager-tech.html#sequence-manager-states" class="header">Sequence Manager States</a></li>
     <li><a href="../technical/sequence-manager-tech.html#running-sequence-manager" class="header">Running Sequence Manager</a></li>
-    <li><a href="../technical/sequence-manager-tech.html#sequence-manager-simulation-mode" class="header">Sequence Manager simulation mode</a></li>
+    <li><a href="../technical/sequence-manager-tech.html#sequence-manager-simulation-mode" class="header">Sequence Manager Simulation Mode</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -294,29 +294,29 @@ TMT Executive Software Documentation
 <p>Implementation of these msgs is asynchronous in nature. So handling any other msgs while previous msg processing is incomplete can result in an inconsistent system. For example, configure Observing_Mode_1 msg is received by Sequence Manager Actor. Let&rsquo;s assume that this requires starting ESW, IRIS and TCS sequencers. Configure flow has checked for resource conflict. No conflict is there so configure goes ahead with processing. During this processing, if any other msg like startSequencer for IRIS subsystem and Observing_Mode_2 is received then this will result in inconsistent behaviour. To avoid these cases, certain msgs are accepted only when Sequence Manager is idle. When any one of idle state msg is received, Sequence Manager goes into processing state where it accepts only common msgs (read state msgs which will not cause any inconsistency). In processing state, actor waits for processing complete msg. Once processing complete msg is received, actor goes back to idle state and ready to process any of idle state msg. Both idle and processing state can handle common msgs without any state change.</p>
 <h2><a href="#running-sequence-manager" name="running-sequence-manager" class="anchor"><span class="anchor-link"></span></a>Running Sequence Manager</h2>
 <p>For running Sequence Manager, please refer <a href="apps/sequence-manager-app.html">this</a>.</p>
-<h2><a href="#sequence-manager-simulation-mode" name="sequence-manager-simulation-mode" class="anchor"><span class="anchor-link"></span></a>Sequence Manager simulation mode</h2>
-<p>Simulation mode for SM is mainly for testing the functionality/scenarios of apps interacting with SM.</p>
+<h2><a href="#sequence-manager-simulation-mode" name="sequence-manager-simulation-mode" class="anchor"><span class="anchor-link"></span></a>Sequence Manager Simulation Mode</h2>
+<p>Simulation mode for SM is mainly for testing the functionality/scenarios of apps interacting with SM. This functionality meets the requirements for SM simulation.</p>
 <h3><a href="#approach-followed-" name="approach-followed-" class="anchor"><span class="anchor-link"></span></a>Approach followed:</h3>
 <ul>
   <li>
-  <p>In this approach we will be spawning actual Sequence Manager, agents, sequence-components and sequencers(simulation mode).</p></li>
+  <p>In this approach we will be spawning actual Sequence Manager, agents, Sequence Components and Sequencers(in simulation mode).</p></li>
   <li>
     <p>When the Sequence Manager is started using the esw-services with the simulation flag, the following things are done.</p>
     <ol>
-      <li>If a obs-mode config is provided using -o flag, it is used and if not then a default config is used.</li>
-      <li>Three agents are spawned automatically(ESW, TCS, IRIS)</li>
+      <li>If a obs-mode config file is provided using -o flag, it is used and if not then a default obs-mode config is used.</li>
+      <li>Three agents are spawned automatically for subsystems ESW, TCS, and IRIS.</li>
     </ol>
   </li>
   <li>
     <p>When the Sequence Manager is up and running(&ndash;simulation):</p>
     <ol>
-      <li>suppose <code>Provision</code> command is sent to SM. Now as we are using actual agents, seq-components our  production level logic eg: shutting-down previous seq-comps, agent-allocation for seq-comps, etc. can be tested</li>
-      <li>suppose <code>Configure</code> command is sent to SM. Now as we are using sequencers in simulated mode any obs-mode can be configured(as long as there is an entry for it in the provided obs-mode conf or the default). Also the success as well as all the failure scenarios (resource conflict, configuration missing, etc) can be tested.</li>
-      <li>all the other apis like startSequencer, shutdownAllSeqComps etc will work properly with correct entries made in location service.</li>
+      <li>Suppose the <code>Provision</code> command is sent to SM. Now as we are using actual agents and Sequence Components, our  production level logic can be tested (eg: shutting-down previous seq-comps, agent-allocation for seq-comps, etc).</li>
+      <li>Suppose the <code>Configure</code> command is sent to SM. Now as we are using Sequencers in simulated mode any obs-mode can be configured (as long as there is an entry for it in the provided obs-mode conf or the default). Also the success as well as all the failure scenarios (resource conflict, configuration missing, etc) can be tested.</li>
+      <li>All the other APIs like startSequencer, shutdownAllSeqComps etc. will work properly with correct entries made in CSW Location Service.</li>
     </ol>
   </li>
   <li>
-  <p>Only agents will be started in the same jvm process.Since sequence components are started by agents  using <code>cs launch ...</code>, command they will not be in the same process.</p></li>
+  <p>Only agents will be started in the same JVM process. Since Sequence Components are started by agents  using <code>cs launch ...</code>, command they will not be in the same process.</p></li>
 </ul>
 <h3><a href="#running-sequence-manager-in-simulation-mode" name="running-sequence-manager-in-simulation-mode" class="anchor"><span class="anchor-link"></span></a>Running Sequence Manager in simulation mode</h3>
 <p>For running Sequence Manager, please refer <a href="apps/sequence-manager-app.html">this</a>.</p>

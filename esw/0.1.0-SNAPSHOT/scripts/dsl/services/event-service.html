@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../../../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../../../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../../../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../../../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -131,9 +130,10 @@ TMT Executive Software Documentation
     <li><a href="../../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../../../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../../../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
-    <li><a href="../../../technical/contracts.html" class="page">Service Contracts</a></li>
     <li><a href="../../../technical/agent-service-tech.html" class="page">Agent Service and Agent Technical Documentation</a></li>
-    <li><a href="../../../technical/apps/apps-index.html" class="page">Applications</a></li>
+    <li><a href="../../../technical/apps/apps-index.html" class="page">Technical Applications</a></li>
+    <li><a href="../../../technical/esw-application-parts.html" class="page">ESW Application Architecture</a></li>
+    <li><a href="../../../technical/contracts.html" class="page">Service Contracts</a></li>
   </ul></li>
   <li><a href="../../../tutorials/web-app-tutorial.html" class="page">Web Application Tutorial</a></li>
 </ul>
@@ -194,30 +194,31 @@ TMT Executive Software Documentation
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L23-L26" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val parameters = intKey(&quot;stepNumber&quot;).set(1)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L22-L25" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val parameters = intKey(&quot;stepNumber&quot;).set(1)
+
 val systemEvent: SystemEvent = SystemEvent(&quot;ESW.IRIS_darkNight&quot;, &quot;stepInfo&quot;, parameters)</code></pre></dd>
 </dl>
 <h3><a href="#observeevent" name="observeevent" class="anchor"><span class="anchor-link"></span></a>ObserveEvent</h3>
-<p>Helper DSL to create an <code>ObserveEvent</code> using factory provided to create various sequencer observe events.</p>
+<p>Helper DSL to create an <code>ObserveEvent</code> using factory provided to create various sequencer observe events. <code>sequencerObserveEvent</code> object is available in the script scope.</p>
+<p>Refer <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/params/events.html#sequencers">here</a> to get the list of other Sequencer Events.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L23-L31" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val parameters = intKey(&quot;stepNumber&quot;).set(1)
-val observeEvent: ObserveEvent = sequencerObserveEvent.observationStart(ObsId(&quot;2020A-001-123&quot;))</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L30" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val observeEvent: ObserveEvent = observationStart(ObsId(&quot;2020A-001-123&quot;))</code></pre></dd>
 </dl>
 <h2><a href="#publishevent" name="publishevent" class="anchor"><span class="anchor-link"></span></a>publishEvent</h2>
 <p>DSL to publish the given <code>Event</code>.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L26-L35" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val systemEvent: SystemEvent = SystemEvent(&quot;ESW.IRIS_darkNight&quot;, &quot;stepInfo&quot;, parameters)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L25-L34" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val systemEvent: SystemEvent = SystemEvent(&quot;ESW.IRIS_darkNight&quot;, &quot;stepInfo&quot;, parameters)
 publishEvent(systemEvent)</code></pre></dd>
 </dl>
 <p>This DSL can also publish events periodically when provided with the optional <code>duration</code> and an <code>event generator</code> function. In the below example, an Event with temperature Key will get published every 10 seconds, with current temperature value given by <em>getTemperature</em> method.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L59-L62" target="_blank" title="Go to snippet source">source</a><code class="language-kts">publishEvent(Duration.seconds(10)) {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L58-L61" target="_blank" title="Go to snippet source">source</a><code class="language-kts">publishEvent(Duration.seconds(10)) {
     val temperatureKey = intKey(&quot;temperature&quot;).set(getTemperature())
     SystemEvent(&quot;ESW.IRIS_darkNight&quot;, &quot;temperature&quot;, temperatureKey)
 }</code></pre></dd>
@@ -227,7 +228,7 @@ publishEvent(systemEvent)</code></pre></dd>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L40-L46" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val tempEventKey = &quot;IRIS.env.temperature.temp&quot;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L39-L45" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val tempEventKey = &quot;IRIS.env.temperature.temp&quot;
 val stateEventKey = &quot;IRIS.env.temperature.state&quot;
 onEvent(tempEventKey, stateEventKey) { event -&gt;
     // logic to execute on every event
@@ -238,7 +239,7 @@ onEvent(tempEventKey, stateEventKey) { event -&gt;
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L50-L53" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onEvent(tempEventKey, stateEventKey, duration = Duration.seconds(2)) { event -&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L49-L52" target="_blank" title="Go to snippet source">source</a><code class="language-kts">onEvent(tempEventKey, stateEventKey, duration = Duration.seconds(2)) { event -&gt;
     // logic to execute on every event
     println(event.eventKey())
 }</code></pre></dd>
@@ -248,7 +249,7 @@ onEvent(tempEventKey, stateEventKey) { event -&gt;
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L40-L68" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val tempEventKey = &quot;IRIS.env.temperature.temp&quot;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts#L39-L67" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val tempEventKey = &quot;IRIS.env.temperature.temp&quot;
 val stateEventKey = &quot;IRIS.env.temperature.state&quot;
 val event = getEvent(tempEventKey) // for single event key
 
@@ -257,6 +258,7 @@ val events: Set&lt;Event&gt; = getEvent(tempEventKey, stateEventKey) // for sing
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source code for examples</h2>
 <ul>
   <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/EventServiceDslExample.kts">Event Service Examples</a></li>
+  <li><a href="https://github.com/tmtsoftware/esw/blob/master/examples/src/main/kotlin/esw/ocs/scripts/examples/testData/ObserveEventExampleScript.kts">Observe Event Example</a></li>
 </ul>
 </div>
 <div>

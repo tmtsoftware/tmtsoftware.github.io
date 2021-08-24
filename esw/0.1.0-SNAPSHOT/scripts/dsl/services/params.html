@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../../../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../../../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../../../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../../../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -131,9 +130,10 @@ TMT Executive Software Documentation
     <li><a href="../../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../../../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../../../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
-    <li><a href="../../../technical/contracts.html" class="page">Service Contracts</a></li>
     <li><a href="../../../technical/agent-service-tech.html" class="page">Agent Service and Agent Technical Documentation</a></li>
-    <li><a href="../../../technical/apps/apps-index.html" class="page">Applications</a></li>
+    <li><a href="../../../technical/apps/apps-index.html" class="page">Technical Applications</a></li>
+    <li><a href="../../../technical/esw-application-parts.html" class="page">ESW Application Architecture</a></li>
+    <li><a href="../../../technical/contracts.html" class="page">Service Contracts</a></li>
   </ul></li>
   <li><a href="../../../tutorials/web-app-tutorial.html" class="page">Web Application Tutorial</a></li>
 </ul>
@@ -296,10 +296,6 @@ TMT Executive Software Documentation
       <td align="center">choiceKey </td>
     </tr>
     <tr>
-      <td align="center">Struct </td>
-      <td align="center">structKey </td>
-    </tr>
-    <tr>
       <td align="center">EqCoord </td>
       <td align="center">eqCoordKey </td>
     </tr>
@@ -325,11 +321,11 @@ TMT Executive Software Documentation
     </tr>
   </tbody>
 </table>
-<p>The example below shows usages of the DSL for different types of keys. Some other DSL helpers like <code>struct</code>, <code>choicesOf</code>, <code>arrayData</code>, <code>matrixData</code>, etc. have also been provided for ease of access. Usage of this helper DSLs is also shown in the example below.</p>
+<p>The example below shows usages of the DSL for different types of keys. Some other DSL helpers like <code>choicesOf</code>, <code>arrayData</code>, <code>matrixData</code>, etc. have also been provided for ease of access. Usage of this helper DSLs is also shown in the example below.</p>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L27-L62" target="_blank" title="Go to snippet source">source</a><code class="language-kts">// Primitive keys
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L26-L52" target="_blank" title="Go to snippet source">source</a><code class="language-kts">// Primitive keys
 val encoderKey: Key&lt;Int&gt; = intKey(&quot;encoder&quot;)
 val flagKey: Key&lt;Boolean&gt; = booleanKey(&quot;flag&quot;)
 val eventTimeKey: Key&lt;UTCTime&gt; = utcTimeKey(&quot;event-time&quot;)
@@ -354,15 +350,6 @@ val matrixParameter: Parameter&lt;MatrixData&lt;Int&gt;&gt; = matrixKey.set(data
 val choiceKey: Key&lt;Choice&gt; = choiceKey(&quot;choice&quot;, choicesOf(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;))
 val choiceParam: Parameter&lt;Choice&gt; = choiceKey.set(Choice(&quot;A&quot;), Choice(&quot;C&quot;))
 
-// Struct
-val intParam: Parameter&lt;Int&gt; = encoderKey.set(1, 2, 3)
-val paramSet: Set&lt;Parameter&lt;*&gt;&gt; = setOf(intParam, choiceParam)
-val complexKey: Key&lt;Struct&gt; = structKey(&quot;complexKey&quot;)
-val struct1: Struct = struct(paramSet)
-val struct2: Struct = struct(command.params)
-val struct3: Struct = struct(intParam, arrayParam)
-val structParam: Parameter&lt;Struct&gt; = complexKey.set(struct1, struct2, struct3)
-
 // with units
 val temperatureInKelvinKey: Key&lt;Int&gt; = intKey(&quot;encoder&quot;, JUnits.kelvin)</code></pre></dd>
 </dl>
@@ -371,7 +358,7 @@ val temperatureInKelvinKey: Key&lt;Int&gt; = intKey(&quot;encoder&quot;, JUnits.
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L70-L93" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val temperatureKey: Key&lt;Int&gt; = intKey(&quot;temperature&quot;)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L60-L83" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val temperatureKey: Key&lt;Int&gt; = intKey(&quot;temperature&quot;)
 val temperatureParam: Parameter&lt;Int&gt; = temperatureKey.set(1, 2, 3)
 
 // with values as Array
@@ -401,7 +388,7 @@ val commandForDownstream: Setup = Setup(&quot;ESW.IRIS_darkNight&quot;, &quot;mo
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L97-L99" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val params: Params = setupCommand.params
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L87-L89" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val params: Params = setupCommand.params
 val maybeParam: Parameter&lt;Int&gt;? = params.kFind(temperatureParam)
 val maybeParam2: Parameter&lt;Int&gt;? = setupCommand.kFind(temperatureParam)</code></pre></dd>
 </dl>
@@ -410,7 +397,7 @@ val maybeParam2: Parameter&lt;Int&gt;? = setupCommand.kFind(temperatureParam)</c
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L103-L109" target="_blank" title="Go to snippet source">source</a><code class="language-kts">// extracting a param from Params instance
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L93-L99" target="_blank" title="Go to snippet source">source</a><code class="language-kts">// extracting a param from Params instance
 val temperatureParameter: Parameter&lt;Int&gt;? = setupCommand.params.kGet(temperatureKey)
 val temperatureParameter2: Parameter&lt;Int&gt; = (setupCommand.params)(temperatureKey) // alternative
 
@@ -423,7 +410,7 @@ val temperatureParameter4: Parameter&lt;Int&gt; = setupCommand(temperatureKey) /
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L114-L116" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val keyName = &quot;temperature&quot;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L104-L106" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val keyName = &quot;temperature&quot;
 val keyType: KeyType&lt;Int&gt; = JKeyType.IntKey()
 val param: Parameter&lt;Int&gt;? = setupCommand.params.kGet(keyName, keyType)</code></pre></dd>
 </dl>
@@ -432,7 +419,7 @@ val param: Parameter&lt;Int&gt;? = setupCommand.params.kGet(keyName, keyType)</c
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L70-L130" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val temperatureKey: Key&lt;Int&gt; = intKey(&quot;temperature&quot;)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L60-L120" target="_blank" title="Go to snippet source">source</a><code class="language-kts">val temperatureKey: Key&lt;Int&gt; = intKey(&quot;temperature&quot;)
 val temperatureParam: Parameter&lt;Int&gt; = temperatureKey.set(1, 2, 3)
 
 // extracting values from parameter
@@ -451,7 +438,7 @@ val temperatureValue2: Int = temperatureParam(1) //alternative</code></pre></dd>
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L134-L144" target="_blank" title="Go to snippet source">source</a><code class="language-kts">// remove param from params by key
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L124-L134" target="_blank" title="Go to snippet source">source</a><code class="language-kts">// remove param from params by key
 val updatedParams: Params = setupCommand.params.remove(temperatureKey)
 
 // remove param from params
@@ -467,7 +454,7 @@ val updatedCommand2: Setup = setupCommand.remove(temperatureParameter)</code></p
 <dl>
   <dt>Kotlin</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L148-L152" target="_blank" title="Go to snippet source">source</a><code class="language-kts">// check if parameter with specified key exists in Params
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/examples/src/main/kotlin/esw/ocs/scripts/examples/paradox/ParamsExample.kts#L138-L142" target="_blank" title="Go to snippet source">source</a><code class="language-kts">// check if parameter with specified key exists in Params
 val temperatureKeyExists: Boolean = setupCommand.params.exists(temperatureKey)
 
 // check if parameter with specified key exists directly from command

@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../../assets/images/favicon.png">
-<title>Agent App · TMT Executive Software Documentation</title>
+<title>The Agent Application · TMT Executive Software Documentation</title>
 <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../../lib/prettify/prettify.css">
@@ -56,7 +56,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 TMT Executive Software Documentation
 </span>
 <span class="md-header-nav__topic">
-Agent App
+The Agent Application
 </span>
 </div>
 </div>
@@ -123,7 +123,6 @@ TMT Executive Software Documentation
     <li><a href="../../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -131,19 +130,23 @@ TMT Executive Software Documentation
     <li><a href="../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
-    <li><a href="../../technical/contracts.html" class="page">Service Contracts</a></li>
     <li><a href="../../technical/agent-service-tech.html" class="page">Agent Service and Agent Technical Documentation</a></li>
-    <li><a href="../../technical/apps/apps-index.html" class="page">Applications</a></li>
+    <li><a href="../../technical/apps/apps-index.html" class="page">Technical Applications</a></li>
+    <li><a href="../../technical/esw-application-parts.html" class="page">ESW Application Architecture</a></li>
+    <li><a href="../../technical/contracts.html" class="page">Service Contracts</a></li>
   </ul></li>
   <li><a href="../../tutorials/web-app-tutorial.html" class="page">Web Application Tutorial</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../technical/apps/agent-app.html#agent-app" class="header">Agent App</a>
+  <li><a href="../../technical/apps/agent-app.html#the-agent-application" class="header">The Agent Application</a>
   <ul>
     <li><a href="../../technical/apps/agent-app.html#running-agent-app-using-coursier" class="header">Running Agent App using Coursier</a></li>
-    <li><a href="../../technical/apps/agent-app.html#setting-the-default-log-level" class="header">Setting the default log level</a></li>
+    <li><a href="../../technical/apps/agent-app.html#1-install-coursier-and-the-tmt-apps-channel" class="header">1. Install <code>coursier</code> and the TMT Apps Channel</a></li>
+    <li><a href="../../technical/apps/agent-app.html#2-start-any-needed-csw-services" class="header">2. Start Any Needed CSW Services</a></li>
+    <li><a href="../../technical/apps/agent-app.html#3-install-esw-agent-akka-app" class="header">3. Install esw-agent-akka-app</a></li>
+    <li><a href="../../technical/apps/agent-app.html#4-run-esw-agent-akka-app" class="header">4. Run esw-agent-akka-app</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -165,10 +168,13 @@ TMT Executive Software Documentation
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../../technical/apps/agent-app.html#agent-app" class="header">Agent App</a>
+  <li><a href="../../technical/apps/agent-app.html#the-agent-application" class="header">The Agent Application</a>
   <ul>
     <li><a href="../../technical/apps/agent-app.html#running-agent-app-using-coursier" class="header">Running Agent App using Coursier</a></li>
-    <li><a href="../../technical/apps/agent-app.html#setting-the-default-log-level" class="header">Setting the default log level</a></li>
+    <li><a href="../../technical/apps/agent-app.html#1-install-coursier-and-the-tmt-apps-channel" class="header">1. Install <code>coursier</code> and the TMT Apps Channel</a></li>
+    <li><a href="../../technical/apps/agent-app.html#2-start-any-needed-csw-services" class="header">2. Start Any Needed CSW Services</a></li>
+    <li><a href="../../technical/apps/agent-app.html#3-install-esw-agent-akka-app" class="header">3. Install esw-agent-akka-app</a></li>
+    <li><a href="../../technical/apps/agent-app.html#4-run-esw-agent-akka-app" class="header">4. Run esw-agent-akka-app</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -179,18 +185,18 @@ TMT Executive Software Documentation
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#agent-app" name="agent-app" class="anchor"><span class="anchor-link"></span></a>Agent App</h1>
-<p>This application will start the Agent actor.</p>
+<h1><a href="#the-agent-application" name="the-agent-application" class="anchor"><span class="anchor-link"></span></a>The Agent Application</h1>
+<p>This application will start the Agent Actor. The Agent application can launch or spawn applications including: Sequence Manager, Sequence Component, and CSW containers. Once the Agent Application is started on a machine, it registers itself with CSW Location Service and is available for spawning applications through its remote API, which is used primarily by the Agent Service documented <a href="agent-service-app.html">here</a>.</p>
 <h2><a href="#running-agent-app-using-coursier" name="running-agent-app-using-coursier" class="anchor"><span class="anchor-link"></span></a>Running Agent App using Coursier</h2>
 <p>The following steps should be followed to start Agent</p>
-<h3><a href="#1-install-coursier-and-the-tmt-apps-channel" name="1-install-coursier-and-the-tmt-apps-channel" class="anchor"><span class="anchor-link"></span></a>1. Install <code>coursier</code> and the TMT Apps Channel</h3>
+<h2><a href="#1-install-coursier-and-the-tmt-apps-channel" name="1-install-coursier-and-the-tmt-apps-channel" class="anchor"><span class="anchor-link"></span></a>1. Install <code>coursier</code> and the TMT Apps Channel</h2>
 <p>The <code>coursier</code> application must be installed on your machine, and the OCS Apps channel must be installed. The instructions for doing this are provided <a href="getting-apps.html">here</a>.</p>
-<h3><a href="#2-start-any-needed-csw-services" name="2-start-any-needed-csw-services" class="anchor"><span class="anchor-link"></span></a>2. Start Any Needed CSW Services</h3>
+<h2><a href="#2-start-any-needed-csw-services" name="2-start-any-needed-csw-services" class="anchor"><span class="anchor-link"></span></a>2. Start Any Needed CSW Services</h2>
 <ul>
   <li>To run agent, the <strong>CSW Location Service</strong> must be running.</li>
 </ul>
 <p>Information on starting CSW services is <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/commons/apps">here</a></p>
-<h3><a href="#3-install-esw-agent-akka-app" name="3-install-esw-agent-akka-app" class="anchor"><span class="anchor-link"></span></a>3. Install esw-agent-akka-app</h3>
+<h2><a href="#3-install-esw-agent-akka-app" name="3-install-esw-agent-akka-app" class="anchor"><span class="anchor-link"></span></a>3. Install esw-agent-akka-app</h2>
 <p>Following command creates an executable file named esw-agent-akka-app in the default installation directory.</p>
 <pre class="prettyprint"><code class="language-bash">cs install esw-agent-akka-app:&lt;version | SHA&gt;
 </code></pre>
@@ -200,7 +206,7 @@ TMT Executive Software Documentation
     esw-agent-akka-app:&lt;version | SHA&gt;
 </code></pre>
 <p>Note: If you don&rsquo;t provide the version or SHA in above command, <code>esw-agent-akka-app</code> will be installed with the latest tagged binary of <code>esw-agent-akka-app</code></p>
-<h3><a href="#4-run-esw-agent-akka-app" name="4-run-esw-agent-akka-app" class="anchor"><span class="anchor-link"></span></a>4. Run esw-agent-akka-app</h3>
+<h2><a href="#4-run-esw-agent-akka-app" name="4-run-esw-agent-akka-app" class="anchor"><span class="anchor-link"></span></a>4. Run esw-agent-akka-app</h2>
 <p>Once esw-agent-akka-app is installed, one can simply run esw-agent-akka-app by executing start command</p>
 <p>Start command supports following arguments:</p>
 <ul>
@@ -212,7 +218,7 @@ cd /tmt/apps
 // run agent app
 ./esw-agent-akka-app start -p &quot;tcs.primary_machine&quot;
 </code></pre>
-<h2><a href="#setting-the-default-log-level" name="setting-the-default-log-level" class="anchor"><span class="anchor-link"></span></a>Setting the default log level</h2>
+<h3><a href="#setting-the-default-log-level" name="setting-the-default-log-level" class="anchor"><span class="anchor-link"></span></a>Setting the Default Log Level</h3>
 <p>The default log level for any component is specified in the <code>application.conf</code> file of the component. Use the java -J-D option to override configuration values at runtime. For log level, the format is:</p>
 <pre><code>-J-Dcsw-logging.component-log-levels.&lt;Subsystem&gt;.&lt;ComponentName&gt;=&lt;LEVEL&gt;
 </code></pre>
@@ -241,7 +247,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../../technical/apps/agent-service-app.html" title="Agent Service App" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../../technical/apps/agent-service-app.html" title="The Agent Service Application" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -250,17 +256,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Agent Service App
+The Agent Service Application
 </span>
 </div>
 </a>
-<a href="../../tutorials/web-app-tutorial.html" title="Web Application Tutorial" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../../uisupport/gateway-app.html" title="Running the UI Gateway App" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Web Application Tutorial
+Running the UI Gateway App
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
