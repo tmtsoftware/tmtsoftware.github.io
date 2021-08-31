@@ -190,8 +190,50 @@ OCS-ENG-UI - OCS Engineering User Interface
 <p>Note also that the normal behavior of this view is that the selected Step automatically tracks the executing Step. As the Sequence executes, the selected Step also moves, so it always shows the executing Step&rsquo;s parameters and values. If you select a different step, the automatic behavior is stopped until the executing Step is re-selected. Once the executing Step is re-selected, the automatic behavior restarts.</p>
 <p><img src="images/StepExamples1.png" alt="StepExamples" /></p>
 <h3><a href="#loading-a-sequence" name="loading-a-sequence" class="anchor"><span class="anchor-link"></span></a>Loading a Sequence</h3>
-<p>In most cases, the Sequence is sent by another application (such as future SOSS tools or esw-shell) or submitted by another Sequencer as when the ESW Sequencer sends a Sequence to the IRIS or TCS Sequencer. But sometimes it is helpful to load a Sequence directly into a Sequencer for testing.</p>
-<p><strong>Rajalakshmi, please insert an example of a correctly formated JSON Sequence HERE and add some text</strong></p>
+<p>In most cases, the Sequence is sent by another application (such as future SOSS tools or esw-shell) or submitted by another Sequencer as when the ESW Sequencer sends a Sequence to the IRIS or TCS Sequencer. But sometimes it is helpful to load a Sequence directly into a Sequencer for testing.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>A sample Sequence.json file with some sequence of commands is shown below. While writing sequence please specify parameters like _type , source, commandName, maybeObsId, paramSet.</p></div>
+<pre class="prettyprint"><code class="language-bash">[
+  {
+    &quot;_type&quot;: &quot;Setup&quot;,
+    &quot;source&quot;: &quot;ESW.darknight&quot;,
+    &quot;commandName&quot;: &quot;setup-iris&quot;,
+    &quot;maybeObsId&quot;: &quot;2020A-001-123&quot;,
+    &quot;paramSet&quot;: [
+      {
+        &quot;StringKey&quot;: {
+          &quot;keyName&quot;: &quot;StringKey&quot;,
+          &quot;values&quot;: [
+            &quot;Str1&quot;,
+            &quot;Str2&quot;
+          ],
+          &quot;units&quot;: &quot;NoUnits&quot;
+        }
+      }
+    ]
+  },
+  {
+    &quot;_type&quot;: &quot;Setup&quot;,
+    &quot;source&quot;: &quot;ESW.darknight&quot;,
+    &quot;commandName&quot;: &quot;setup-tcs&quot;,
+    &quot;maybeObsId&quot;: &quot;2020A-001-123&quot;,
+    &quot;paramSet&quot;: [
+      {
+        &quot;IntKey&quot;: {
+          &quot;keyName&quot;: &quot;IntKey&quot;,
+          &quot;values&quot;: [
+            70,
+            80
+          ],
+          &quot;units&quot;: &quot;NoUnits&quot;
+        }
+      }
+    ]
+  }
+]
+
+
+
+</code></pre>
 <p>To load a Sequence from a file, click on the Load Sequence button which will open up a dialog box to select a Sequence in JSON format (.json) from the local disk.</p>
 <p><img src="images/ManageSequencer-LoadingSequencefromlocal.png" alt="LoadingSequence" /></p>
 <p>Once the Sequence is loaded, the Status message below &lsquo;Sequence Steps&rsquo; changes to &lsquo;Loaded&rsquo; and the Go Offline button is enabled.</p>
@@ -221,20 +263,48 @@ OCS-ENG-UI - OCS Engineering User Interface
 <p>Once the breakpoint is inserted on the Step, the Sequence will pause at that Step. Note that breakpoints can only be set on Steps that are not yet executed (i.e. yellow)!</p>
 <p><img src="images/ManageSequencer-InsertedBreakpoint.png" alt="Breakpoint Inserted" /></p>
 <p>Sequence pauses at the step where breakpoint was inserted.</p>
-<p><img src="images/SequencePausedAtInsertedBreakpoint.png" alt="Breakpoint Inserted" /></p>
 <p>To remove a previously inserted breakpoint, go to the Step where breakpoint was inserted and click on the vertical ellipsis <strong>&#8942;</strong> and select &lsquo;Remove Breakpoint&rsquo; .</p>
-<p>If the Sequence is paused, once the breakpoint is removed, the Sequence will resume execution. If the Sequence has not yet reached the breakpoint, it is just removed.</p>
 <p><img src="images/ManageSequencer-RemoveBreakpoint.png" alt="Remove Breakpoint" /></p>
+<p>If the Sequence is paused, once the breakpoint is removed, the Sequence will resume execution. If the Sequence has not yet reached the breakpoint, it is just removed.</p>
+<p><img src="images/ManageSequencer-RemovedBreakpoint.png" alt="Removed Breakpoint" /></p>
 <h3><a href="#step-through" name="step-through" class="anchor"><span class="anchor-link"></span></a>Step-Through</h3>
 <p>Step-Through is a convenience for setting and removing breakpoints. Sometimes, it is desirable to execute a Sequence one step at a time. Sometimes this is called single-stepping. Step-Through is a way to execute a Sequence one step at a time.</p>
-<p>**Rajalasksmi &ndash; add text and image here.</p>
+<p>Click on Step-Through button to execute one step at a time.</p>
+<p><img src="images/ManageSequence-StepThrough.png" alt="Step Through " /></p>
+<p>After clicking on Step-Through Button, you can see the &lsquo;observe-command3&rsquo; step is executed while &lsquo;setup-iris&rsquo; has a breakpoint. Hence only one step is executed at one time.</p>
+<p><img src="images/ManageSequence-PostStepThrough.png" alt="Post Step Through " /></p>
 <h2><a href="#sequence-editing" name="sequence-editing" class="anchor"><span class="anchor-link"></span></a>Sequence Editing</h2>
 <p>Several Sequence editing functions are available from a Sequencer&rsquo;s Manage Sequence Page. Of course, a Sequence must be loaded for editing to be possible.</p>
 <h3><a href="#adding-steps" name="adding-steps" class="anchor"><span class="anchor-link"></span></a>Adding Steps</h3>
 <p>Once a Sequence is loaded, Steps can be added from a file. This is not too frequently used, but may sometimes be useful. Select the vertical ellipsis <strong>&#8942;</strong> at the Step after which more Steps are to be added.</p>
 <p><img src="images/ManageSequencer-AddSteps.png" alt="Add Step" /></p>
-<p>Once <code>Add Step</code> is clicked, it opens a file selection dialog box to select a file of Steps as a JSON formatted file (.json). After the file is read, the Steps are added to the Sequence as shown below. This can only be done in areas of a Sequence that are not yet executed.</p>
-<p><img src="images/ManageSequencer-AddedSteps.png" alt="Add Step" /></p>
+<p>To add steps create a .json file. Sample step is shown below and can be saved as AddSteps.json.</p>
+<pre class="prettyprint"><code class="language-bash"><br/>[
+  {
+    &quot;_type&quot;: &quot;Setup&quot;,
+    &quot;source&quot;: &quot;ESW.darknight&quot;,
+    &quot;commandName&quot;: &quot;setup-iris&quot;,
+    &quot;maybeObsId&quot;: &quot;2020A-001-123&quot;,
+    &quot;paramSet&quot;: [
+      {
+        &quot;StringKey&quot;: {
+          &quot;keyName&quot;: &quot;StringKey&quot;,
+          &quot;values&quot;: [
+            &quot;Str3&quot;,
+            &quot;Str4&quot;
+          ],
+          &quot;units&quot;: &quot;NoUnits&quot;
+        }
+      }
+    ]
+  }
+]
+
+</code></pre>
+<p>Once <code>Add Step</code> is clicked, it opens a file selection dialog box to select a file of Steps as a JSON formatted file (.json).</p>
+<p><img src="images/ManageSequencer_AddStepDialogBox.png" alt="Add Step" /></p>
+<p>After the file is read, the Steps are added to the Sequence as shown below. This can only be done in areas of a Sequence that are not yet executed.</p>
+<p><img src="images/ManageSequencer-AddedStep.png" alt="Add Step" /></p>
 <h3><a href="#duplicate-steps" name="duplicate-steps" class="anchor"><span class="anchor-link"></span></a>Duplicate Steps</h3>
 <p>It is possible to select Steps and duplicate them, adding them to the end of the Sequence.</p>
 <p>Click on the vertical ellipsis <strong>&#8942;</strong> at a Step to duplicate and then click on &lsquo;Duplicate&rsquo; in the Step menu. Select the checkboxes of the Steps to be duplicated. Multiple Steps can also be selecte. Select the Steps and click the Duplicate button at the bottom.</p>
