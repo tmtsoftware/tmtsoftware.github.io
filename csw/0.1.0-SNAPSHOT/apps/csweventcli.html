@@ -177,6 +177,7 @@ TMT Common Software (CSW)
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
     <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
+    <li><a href="../technical/units/adding-unit.html" class="page">Adding a new unit</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
     <li><a href="../technical/logging/logging.html" class="page">Logging Service</a></li>
@@ -262,20 +263,20 @@ TMT Common Software (CSW)
 <ul>
   <li><code>-e</code>, <code>--events</code> : comma separated list of events to inspect</li>
 </ul>
-<h4><a href="#example" name="example" class="anchor"><span class="anchor-link"></span></a>Example</h4>
+<h4><a href="#example-of-inspect-api" name="example-of-inspect-api" class="anchor"><span class="anchor-link"></span></a>Example of inspect api</h4>
 <pre class="prettyprint"><code class="language-bash">csw-event-cli inspect -e wfos.prog.cloudcover,wfos.prog.filter
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
 <p><code>inspect</code> command does not display parameter values. To view values, use <code>get</code> command instead.</p></div>
 <h3><a href="#get" name="get" class="anchor"><span class="anchor-link"></span></a>get</h3>
-<p>Takes a comma separated list of events with nested key paths and displays event information including values either in one-line or JSON format.</p>
+<p>Takes a comma separated list of events with keys and displays event information including values either in one-line or JSON format.</p>
 <ul>
-  <li><code>-e</code>, <code>--events</code> comma separated list of events in the form of <code>&lt;event1:key1&gt;,&lt;event2:key2:key3&gt;</code>, use <code>:</code> to separate multiple keys for same event. Ex. <code>-e a.b.c:struct1/ra,x.y.z:struct2/dec:epoch</code></li>
+  <li><code>-e</code>, <code>--events</code> comma separated list of events in the form of <code>&lt;event1:key1&gt;,&lt;event2:key2:key3&gt;</code>, use <code>:</code> to separate multiple keys for same event. Ex. <code>-e a.b.c:ra,x.y.z:dec:epoch</code></li>
   <li><code>-o</code>, <code>--out</code> output format, default is one-line</li>
   <li><code>-t</code>, <code>--timestamp</code> display timestamp</li>
   <li><code>--id</code> display event id</li>
   <li><code>-u</code>, <code>--units</code> display units</li>
 </ul>
-<h4><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h4>
+<h4><a href="#examples-of-get-api" name="examples-of-get-api" class="anchor"><span class="anchor-link"></span></a>Examples of get api</h4>
 <ol>
   <li>
     <p>Displays all keys information in one-line form for event <code>wfos.prog.cloudcover</code></p>
@@ -283,8 +284,8 @@ TMT Common Software (CSW)
 </code></pre>
   </li>
   <li>
-    <p>Displays information of only <code>struct1/ra</code> and <code>epoch</code> keys as well as <code>timestamp</code>, <code>event id</code> and <code>units</code> of provided keys in one-line form for event <code>wfos.prog.cloudcover</code></p>
-    <pre class="prettyprint"><code class="language-bash">csw-event-cli get -e wfos.prog.cloudcover:struct1/ra:epoch -t --id -u
+    <p>Displays information of only <code>ra</code> and <code>epoch</code> keys as well as <code>timestamp</code>, <code>event id</code> and <code>units</code> of provided keys in one-line form for event <code>wfos.prog.cloudcover</code></p>
+    <pre class="prettyprint"><code class="language-bash">csw-event-cli get -e wfos.prog.cloudcover:ra:epoch -t --id -u
 </code></pre>
   </li>
   <li>
@@ -311,7 +312,7 @@ csw-event-cli get -e wfos.prog.cloudcover:epoch -o json
 </ul><div class="callout note "><div class="callout-title">Note</div>
 <p>If <code>--data</code> &amp; <code>--params</code> are provided together, then the Event is generated from both <code>--data</code> file &amp; <code>--params</code> option. <code>--params</code> takes a precedence and overrides params from the Event data file if it is already present in the file.</p>
 <p>Option <code>-p</code> should be used with <code>-i</code>, otherwise <code>-p</code> is ignored. </p></div>
-<h4><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h4>
+<h4><a href="#examples-of-publish-api" name="examples-of-publish-api" class="anchor"><span class="anchor-link"></span></a>Examples of publish api</h4>
 <ol>
   <li>
     <p>Creates event from provided JSON file and publishes it with key <code>wfos.prog.cloudcover</code> to the Event Server.</p>
@@ -330,16 +331,16 @@ csw-event-cli get -e wfos.prog.cloudcover:epoch -o json
   </li>
 </ol>
 <h3><a href="#subscribe" name="subscribe" class="anchor"><span class="anchor-link"></span></a>subscribe</h3>
-<p>Takes a comma separated list of Events with nested key paths and displays continuous stream of Event information as soon as it receives the Event. </p>
+<p>Takes a comma separated list of Events with keys and displays continuous stream of Event information as soon as it receives the Event. </p>
 <ul>
-  <li><code>-e</code>, <code>--events</code> comma separated list of Events in the form of <code>&lt;event1:key1&gt;,&lt;event2:key2:key3&gt;</code>, use <code>:</code> to separate multiple keys for the same Event. Ex. <code>-e a.b.c:struct1/ra,x.y.z:struct2/dec:epoch</code></li>
+  <li><code>-e</code>, <code>--events</code> comma separated list of Events in the form of <code>&lt;event1:key1&gt;,&lt;event2:key2:key3&gt;</code>, use <code>:</code> to separate multiple keys for the same Event. Ex. <code>-e a.b.c:ra,x.y.z:dec:epoch</code></li>
   <li><code>-i</code>, <code>--interval</code> interval in milliseconds which to receive an Event</li>
   <li><code>-o</code>, <code>--out</code> output format, default is one-line</li>
   <li><code>-t</code>, <code>--timestamp</code> display timestamp</li>
   <li><code>--id</code> display event id</li>
   <li><code>-u</code>, <code>--units</code> display units</li>
 </ul>
-<h4><a href="#examples" name="examples" class="anchor"><span class="anchor-link"></span></a>Examples</h4>
+<h4><a href="#examples-of-subscribe-api" name="examples-of-subscribe-api" class="anchor"><span class="anchor-link"></span></a>Examples of subscribe api</h4>
 <ol>
   <li>
     <p>Subscribes to Event key <code>wfos.prog.cloudcover</code> and displays all key information as soon as there is an Event published for key <code>wfos.prog.cloudcover</code> with the one-line format.</p>
@@ -347,8 +348,8 @@ csw-event-cli get -e wfos.prog.cloudcover:epoch -o json
 </code></pre>
   </li>
   <li>
-    <p>Subscribes to the Event key <code>wfos.prog.cloudcover</code> and displays information of only the <code>struct1/ra</code> and <code>epoch</code> keys along with <code>timestamp</code>, <code>event id</code> and <code>units</code> of tge provided keys in one-line format as soon as there is an Event published for the key <code>wfos.prog.cloudcover</code>.</p>
-    <pre class="prettyprint"><code class="language-bash">csw-event-cli subscribe -e wfos.prog.cloudcover:struct1/ra:epoch -t --id -u
+    <p>Subscribes to the Event key <code>wfos.prog.cloudcover</code> and displays information of only the <code>ra</code> and <code>epoch</code> keys along with <code>timestamp</code>, <code>event id</code> and <code>units</code> of tge provided keys in one-line format as soon as there is an Event published for the key <code>wfos.prog.cloudcover</code>.</p>
+    <pre class="prettyprint"><code class="language-bash">csw-event-cli subscribe -e wfos.prog.cloudcover:ra:epoch -t --id -u
 </code></pre>
   </li>
   <li>

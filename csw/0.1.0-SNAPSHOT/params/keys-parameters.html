@@ -177,6 +177,7 @@ TMT Common Software (CSW)
     <li><a href="../technical/framework/framework.html" class="page">Framework</a></li>
     <li><a href="../technical/command/command.html" class="page">Command</a></li>
     <li><a href="../technical/params/params.html" class="page">Params</a></li>
+    <li><a href="../technical/units/adding-unit.html" class="page">Adding a new unit</a></li>
     <li><a href="../technical/location/location.html" class="page">Location Service</a></li>
     <li><a href="../technical/configuration/configuration.html" class="page">Configuration Service</a></li>
     <li><a href="../technical/logging/logging.html" class="page">Logging Service</a></li>
@@ -582,11 +583,6 @@ List&lt;MatrixData&lt;Byte&gt;&gt; matrixData2 = p2.jValues();
       <td align="center">KeyType.ChoiceKey </td>
       <td align="center">JKeyType.ChoiceKey </td>
     </tr>
-    <tr>
-      <td align="center">Struct </td>
-      <td align="center">KeyType.StructKey </td>
-      <td align="center">JKeyType.StructKey </td>
-    </tr>
   </tbody>
 </table>
 <h2><a href="#coordinate-types" name="coordinate-types" class="anchor"><span class="anchor-link"></span></a>Coordinate Types</h2>
@@ -694,6 +690,8 @@ assert (posParam.jValues().get(2).equals(minorPlanetCoord));
 assert (posParam.jValues().get(3).equals(cometCoord));
 assert (posParam.jValues().get(4).equals(altAzCoord));</code></pre></dd>
 </dl>
+<h3><a href="#struct" name="struct" class="anchor"><span class="anchor-link"></span></a>Struct</h3>
+<p>Struct got removed in 4.0.0 version.</p>
 <h3><a href="#choice" name="choice" class="anchor"><span class="anchor-link"></span></a>Choice</h3>
 <p>A key for a choice item similar to an enumeration.</p>
 <dl>
@@ -753,103 +751,6 @@ boolean bDefaultUnit = JUnits.NoUnits == p2.units();
 //retrieving values
 Choice head = p1.head();
 List&lt;Choice&gt; values = p2.jValues();</code></pre></dd>
-</dl>
-<h3><a href="#struct" name="struct" class="anchor"><span class="anchor-link"></span></a>Struct</h3>
-<p>Structs can be used to create a hierarchy of parameters. The following snippet also demonstrates some of the utility functions available for manipulating parameter sets:</p>
-<dl>
-  <dt>Scala</dt>
-  <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/scala/example/params/KeysAndParametersTest.scala#L188-L230" target="_blank" title="Go to snippet source">source</a><code class="language-scala">//keys
-val skey: Key[Struct] = StructKey.make(&quot;myStruct&quot;)
-
-val ra    = KeyType.StringKey.make(&quot;ra&quot;)
-val dec   = KeyType.StringKey.make(&quot;dec&quot;)
-val epoch = KeyType.DoubleKey.make(&quot;epoch&quot;)
-
-//initialize struct
-val struct1: Struct = Struct().madd(ra.set(&quot;12:13:14.1&quot;), dec.set(&quot;32:33:34.4&quot;), epoch.set(1950.0))
-val struct2: Struct = Struct().madd(dec.set(&quot;32:33:34.4&quot;), ra.set(&quot;12:13:14.1&quot;), epoch.set(1970.0))
-
-//make parameters
-val p1: Parameter[Struct] = skey.set(struct1)
-val p2: Parameter[Struct] = skey.set(struct1, struct2)
-
-//add units
-val paramWithLightYear = p1.withUnits(Units.lightyear)
-
-//default unit is NoUnits
-assert(p2.units === Units.NoUnits)
-
-//retrieving values
-val head: Struct          = p1.head
-val values: Array[Struct] = p2.values
-
-//get individual keys
-val firstKey: Option[Parameter[String]]  = struct1.get(KeyType.StringKey.make(&quot;ra&quot;))
-val secondKey: Option[Parameter[String]] = struct1.get(&quot;dec&quot;, KeyType.StringKey)
-val thirdKey: Option[Parameter[Double]]  = struct1.get(&quot;epoch&quot;, KeyType.DoubleKey)
-
-//access parameter using &#39;parameter&#39; or &#39;apply&#39; method
-assert(struct1.parameter(ra) === struct1(ra))
-
-//remove a parameter and verify it doesn&#39;t exist
-val mutated1: Struct = struct1.remove(ra) //using key
-val mutated2         = struct1.remove(firstKey.get)
-assert(mutated1.exists(ra) === false)
-assert(mutated2.exists(ra) === false)
-
-//find out missing keys
-val missingKeySet: Set[String] = mutated1.missingKeys(ra, dec, epoch, KeyType.FloatKey.make(&quot;missingKey&quot;))
-assert(missingKeySet === Set(&quot;ra&quot;, &quot;missingKey&quot;))
-</code></pre></dd>
-  <dt>Java</dt>
-  <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/csw/tree/master/examples/src/test/java/example/params/JKeysAndParametersTest.java#L233-L278" target="_blank" title="Go to snippet source">source</a><code class="language-java">//keys
-Key&lt;Struct&gt; skey = JKeyType.StructKey().make(&quot;myStruct&quot;, JUnits.NoUnits);
-
-Key&lt;String&gt; ra = JKeyType.StringKey().make(&quot;ra&quot;, JUnits.NoUnits);
-Key&lt;String&gt; dec = JKeyType.StringKey().make(&quot;dec&quot;, JUnits.NoUnits);
-Key&lt;Double&gt; epoch = JKeyType.DoubleKey().make(&quot;epoch&quot;, JUnits.year);
-
-//initialize struct
-Struct struct1 = new Struct().madd(
-        ra.set(&quot;12:13:14.1&quot;),
-        dec.set(&quot;32:33:34.4&quot;),
-        epoch.set(1950.0));
-Struct struct2 = new Struct().madd(
-        dec.set(&quot;32:33:34.4&quot;),
-        ra.set(&quot;12:13:14.1&quot;),
-        epoch.set(1970.0));
-
-//make parameters
-Parameter&lt;Struct&gt; p1 = skey.set(struct1);
-Parameter&lt;Struct&gt; p2 = skey.set(struct1, struct2);
-
-//add units
-Parameter&lt;Struct&gt; paramWithLightYear = p1.withUnits(JUnits.lightyear);
-
-//default unit is NoUnits()
-boolean bDefaultUnit = JUnits.NoUnits == p1.units();
-
-//retrieving values
-Struct head = p1.head();
-List&lt;Struct&gt; structs = p2.jValues();
-
-//get individual keys
-Optional&lt;Parameter&lt;String&gt;&gt; firstKey = struct1.jGet(JKeyType.StringKey().make(&quot;ra&quot;, JUnits.NoUnits));
-Optional&lt;Parameter&lt;String&gt;&gt; secondKey = struct1.jGet(&quot;dec&quot;, JKeyType.StringKey());
-Optional&lt;Parameter&lt;Double&gt;&gt; thirdKey = struct1.jGet(&quot;epoch&quot;, JKeyType.DoubleKey());
-
-//access parameter using &#39;parameter&#39; and &#39;apply&#39; method
-boolean bSuccess = struct1.parameter(ra) == struct1.apply(ra);
-
-//remove a parameter and verify it doesn&#39;t exist
-Struct mutated1 = struct1.remove(ra); //using key
-Struct mutated2 = struct1.remove(firstKey.orElseThrow());
-
-//find out missing keys
-Set&lt;String&gt; missingKeySet = mutated1.jMissingKeys(ra, dec, epoch, JKeyType.StringKey().make(&quot;someRandomKey&quot;, JUnits.NoUnits));
-Set&lt;String&gt; expectedMissingKeys = Set.of(&quot;ra&quot;, &quot;someRandomKey&quot;);</code></pre></dd>
 </dl>
 <h2><a href="#source-code-for-examples" name="source-code-for-examples" class="anchor"><span class="anchor-link"></span></a>Source Code for Examples</h2>
 <ul>
