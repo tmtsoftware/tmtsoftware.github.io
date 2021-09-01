@@ -124,7 +124,6 @@ TMT Executive Software Documentation
     <li><a href="../uisupport/frontend-template.html" class="page">Creating and Using the Frontend UI Template</a></li>
     <li><a href="../uisupport/backend-template.html" class="page">Creating and Using the UI Backend Template</a></li>
     <li><a href="../uisupport/gateway.html" class="page">User Interface Gateway</a></li>
-    <li><a href="../uisupport/gateway-app.html" class="page">Running the UI Gateway App</a></li>
   </ul></li>
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -136,6 +135,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/apps/apps-index.html" class="page">Technical Applications</a></li>
     <li><a href="../technical/esw-application-parts.html" class="page">ESW Application Architecture</a></li>
     <li><a href="../technical/contracts.html" class="page">Service Contracts</a></li>
+    <li><a href="../technical/testing-philosophy.html" class="page">OSW Testing Philosophy</a></li>
   </ul></li>
   <li><a href="../tutorials/web-app-tutorial.html" class="page">Web Application Tutorial</a></li>
 </ul>
@@ -219,10 +219,37 @@ TMT Executive Software Documentation
 </code></pre>
 <h2><a href="#usage-of-command-service-to-interact-with-hcds-assemblies-and-sequencers" name="usage-of-command-service-to-interact-with-hcds-assemblies-and-sequencers" class="anchor"><span class="anchor-link"></span></a>Usage of Command Service to interact with HCDs, Assemblies and Sequencers</h2>
 <h3><a href="#spawning-simulated-hcd-assembly" name="spawning-simulated-hcd-assembly" class="anchor"><span class="anchor-link"></span></a>Spawning simulated HCD/Assembly</h3>
-<p><code>esw-shell</code> can be used to spawn simulated HCD/Assembly which uses the handlers specified in <a href="https://github.com/tmtsoftware/esw/blob/master/esw-shell/src/main/scala/esw/shell/component/SimulatedComponentHandlers.scala">Simulated Component Handlers</a></p>
+<h4><a href="#using-agent" name="using-agent" class="anchor"><span class="anchor-link"></span></a>Using Agent</h4>
+<p><code>esw-shell</code> can be used to spawn simulated HCD/Assembly which uses the handlers specified in <code>esw-shell/src/main/scala/esw/shell/component/SimulatedComponentHandlers.scala</code></p>
 <p>Below example commands will spawn a simulated HCD/Assembly on <code>ESW.machine1</code> agent. It is assumed that <code>ESW.machine1</code> is already running.</p>
 <pre class="prettyprint"><code class="language-bash">spawnSimulatedHCD(&quot;ESW.testHCD&quot;, &quot;ESW.machine1&quot;) // &quot;ESW.testHCD&quot; is the HCD prefix
 spawnSimulatedAssembly(&quot;ESW.testAssembly&quot;, &quot;ESW.machine1&quot;) // &quot;ESW.testAssembly&quot; is the assembly prefix
+</code></pre>
+<h4><a href="#using-predefined-component-handlers" name="using-predefined-component-handlers" class="anchor"><span class="anchor-link"></span></a>Using predefined component handlers</h4>
+<p><code>esw-shell</code> can be used to spawn simulated HCD/Assembly which uses the handlers specified in <code>esw-shell/src/main/scala/esw/shell/component/SimulatedComponentHandlers.scala</code></p>
+<p>Below example commands will spawn a simulated HCD/Assembly without having the need of running</p>
+<pre class="prettyprint"><code class="language-bash">spawnSimulatedHCD(&quot;ESW.testHCD1&quot;) // &quot;ESW.testHCD1&quot; is the HCD prefix
+spawnSimulatedAssembly(&quot;ESW.testAssembly&quot;) // &quot;ESW.testAssembly&quot; is the assembly prefix
+</code></pre>
+<h4><a href="#using-custom-component-handlers" name="using-custom-component-handlers" class="anchor"><span class="anchor-link"></span></a>Using custom component handlers</h4>
+<p><code>esw-shell</code> can be used to spawn real HCD/Assembly which uses the custom component handlers passed by the user.</p>
+<p>Below example commands will spawn a real Assembly by the provided component handlers which will be used by component actor.</p>
+<pre class="prettyprint"><code class="language-bash">val componentHandlers = (ctx, cswCtx) =&gt;
+      new DefaultComponentHandlers(ctx, cswCtx) {
+        override def onSubmit(runId: Id, controlCommand: ControlCommand): CommandResponse.SubmitResponse = {
+          controlCommand.commandName.name match {
+            case &quot;sleep&quot; =&gt;
+              // do something on receiving move command
+              cswCtx.timeServiceScheduler.scheduleOnce(UTCTime(UTCTime.now().value.plusSeconds(5))) {
+                cswCtx.commandResponseManager.updateCommand(CommandResponse.Completed(runId))
+              }
+              CommandResponse.Started(runId)
+            case _ =&gt; CommandResponse.Completed(runId)
+          }
+        }
+      }
+spawnAssemblyWithHandler(&quot;ESW.testHCD&quot;, componentHandlers) // &quot;ESW.testHCD&quot; is the HCD prefix
+spawnHCDWithHandler(&quot;ESW.testAssembly&quot;, componentHandlers) // &quot;ESW.testAssembly&quot; is the assembly prefix
 </code></pre>
 <h3><a href="#finding-the-required-component" name="finding-the-required-component" class="anchor"><span class="anchor-link"></span></a>Finding the required component</h3>
 <p>Get handle to the command service for a particular HCD/Assembly/Sequencer using following commands within esw-shell repl</p>
