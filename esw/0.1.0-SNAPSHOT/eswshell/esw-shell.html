@@ -136,6 +136,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/esw-application-parts.html" class="page">ESW Application Architecture</a></li>
     <li><a href="../technical/contracts.html" class="page">Service Contracts</a></li>
     <li><a href="../technical/testing-philosophy.html" class="page">OSW Testing Philosophy</a></li>
+    <li><a href="../technical/esw-services.html" class="page">esw-services</a></li>
   </ul></li>
   <li><a href="../tutorials/web-app-tutorial.html" class="page">Web Application Tutorial</a></li>
 </ul>
@@ -148,8 +149,11 @@ TMT Executive Software Documentation
     <li><a href="../eswshell/esw-shell.html#prerequisites-for-running-components" class="header">Prerequisites for running Components</a></li>
     <li><a href="../eswshell/esw-shell.html#running-the-esw-shell-using-sbt" class="header">Running the esw-shell using sbt</a></li>
     <li><a href="../eswshell/esw-shell.html#running-esw-shell-using-coursier" class="header">Running esw-shell using Coursier</a></li>
+    <li><a href="../eswshell/esw-shell.html#exiting-esw-shell" class="header">Exiting esw-shell</a></li>
+    <li><a href="../eswshell/esw-shell.html#imports-available-in-esw-shell" class="header">Imports available in esw-shell</a></li>
     <li><a href="../eswshell/esw-shell.html#usage-of-command-service-to-interact-with-hcds-assemblies-and-sequencers" class="header">Usage of Command Service to interact with HCDs, Assemblies and Sequencers</a></li>
     <li><a href="../eswshell/esw-shell.html#interacting-with-sequence-manager" class="header">Interacting with Sequence Manager</a></li>
+    <li><a href="../eswshell/esw-shell.html#interacting-with-sequence-component" class="header">Interacting with Sequence Component</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -177,8 +181,11 @@ TMT Executive Software Documentation
     <li><a href="../eswshell/esw-shell.html#prerequisites-for-running-components" class="header">Prerequisites for running Components</a></li>
     <li><a href="../eswshell/esw-shell.html#running-the-esw-shell-using-sbt" class="header">Running the esw-shell using sbt</a></li>
     <li><a href="../eswshell/esw-shell.html#running-esw-shell-using-coursier" class="header">Running esw-shell using Coursier</a></li>
+    <li><a href="../eswshell/esw-shell.html#exiting-esw-shell" class="header">Exiting esw-shell</a></li>
+    <li><a href="../eswshell/esw-shell.html#imports-available-in-esw-shell" class="header">Imports available in esw-shell</a></li>
     <li><a href="../eswshell/esw-shell.html#usage-of-command-service-to-interact-with-hcds-assemblies-and-sequencers" class="header">Usage of Command Service to interact with HCDs, Assemblies and Sequencers</a></li>
     <li><a href="../eswshell/esw-shell.html#interacting-with-sequence-manager" class="header">Interacting with Sequence Manager</a></li>
+    <li><a href="../eswshell/esw-shell.html#interacting-with-sequence-component" class="header">Interacting with Sequence Component</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -190,7 +197,7 @@ TMT Executive Software Documentation
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#esw-shell" name="esw-shell" class="anchor"><span class="anchor-link"></span></a>ESW Shell</h1>
-<p>This project contains an interactive shell and allows its users to gain access to all the major CSW and ESW services via CLI which then can be used to communicate with a HCD (Hardware Control Daemon) and an Assembly using TMT Common Software (<a href="https://github.com/tmtsoftware/csw">CSW</a>) APIs and with a Sequencer using TMT Executive Software (<a href="https://github.com/tmtsoftware/esw">ESW</a>).</p>
+<p>This project contains an interactive REPL shell powered by <a href="https://ammonite.io/#Ammonite-REPL">Ammonite</a> and allows its users to gain access to all the major CSW and ESW services via CLI which then can be used to communicate with a HCD (Hardware Control Daemon) and an Assembly using TMT Common Software (<a href="https://github.com/tmtsoftware/csw">CSW</a>) APIs and with a Sequencer using TMT Executive Software (<a href="https://github.com/tmtsoftware/esw">ESW</a>).</p>
 <h2><a href="#build-instructions" name="build-instructions" class="anchor"><span class="anchor-link"></span></a>Build Instructions</h2>
 <p>The build is based on sbt and depends on libraries generated from the <a href="https://github.com/tmtsoftware/csw">csw</a> and <a href="https://github.com/tmtsoftware/esw">esw</a> project.</p>
 <h2><a href="#prerequisites-for-running-components" name="prerequisites-for-running-components" class="anchor"><span class="anchor-link"></span></a>Prerequisites for running Components</h2>
@@ -217,19 +224,68 @@ TMT Executive Software Documentation
 </ul>
 <pre class="prettyprint"><code class="language-bash">cs launch esw-shell:&lt;version | SHA&gt;
 </code></pre>
+<h2><a href="#exiting-esw-shell" name="exiting-esw-shell" class="anchor"><span class="anchor-link"></span></a>Exiting esw-shell</h2>
+<p>At any point in time, if you want to exit the shell, type <code>exit</code> and press enter.</p>
+<h2><a href="#imports-available-in-esw-shell" name="imports-available-in-esw-shell" class="anchor"><span class="anchor-link"></span></a>Imports available in esw-shell</h2>
+<p>These imports are available in shell, user does not need to import again</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw/tree/master/esw-shell/src/main/scala/esw/shell/Main.scala#L13-L49" target="_blank" title="Go to snippet source">source</a><code class="language-scala">|import java.nio.file.Path
+|import java.nio.file.Paths
+|import akka.util.Timeout
+|import akka.Done
+|import scala.concurrent.duration.{Duration, DurationDouble}
+|import scala.concurrent.{Await, Future}
+|import csw.alarm.models.AlarmSeverity
+|import csw.alarm.models.Key.AlarmKey
+|import csw.params.core.generics.KeyType._
+|import csw.params.core.generics._
+|import csw.params.events._
+|import csw.params.commands._
+|import csw.params.commands.CommandResponse._
+|import csw.params.core.models._
+|import csw.logging.models.Level._
+|import csw.prefix.models.Subsystem._
+|import csw.prefix.models.Prefix
+|import csw.time.core.models._
+|import csw.params.core.states._
+|import csw.location.api.models._
+|import csw.location.api.models.ComponentType._
+|import csw.location.api.models.ConnectionType._
+|import csw.location.api.models.Connection._
+|import csw.logging.models.LogMetadata
+|import csw.command.api.{DemandMatcher, DemandMatcherAll, PresenceMatcher}
+|import esw.ocs.api.models._
+|import esw.ocs.api.protocol._
+|import esw.sm.api.models.ProvisionConfig
+|import esw.sm.api.protocol._
+|import esw.agent.service.api.models._
+|import esw.shell.utils._
+|import esw.commons.extensions.FutureExt._
+|import esw.shell.utils.Timeouts._
+|import eswWiring._
+|import eswWiring.factories._
+|import eswWiring.cswWiring.cswContext._
+|import csw.framework.scaladsl.DefaultComponentHandlers</code></pre></dd>
+</dl>
 <h2><a href="#usage-of-command-service-to-interact-with-hcds-assemblies-and-sequencers" name="usage-of-command-service-to-interact-with-hcds-assemblies-and-sequencers" class="anchor"><span class="anchor-link"></span></a>Usage of Command Service to interact with HCDs, Assemblies and Sequencers</h2>
 <h3><a href="#spawning-simulated-hcd-assembly" name="spawning-simulated-hcd-assembly" class="anchor"><span class="anchor-link"></span></a>Spawning simulated HCD/Assembly</h3>
-<h4><a href="#using-agent" name="using-agent" class="anchor"><span class="anchor-link"></span></a>Using Agent</h4>
-<p><code>esw-shell</code> can be used to spawn simulated HCD/Assembly which uses the handlers specified in <code>esw-shell/src/main/scala/esw/shell/component/SimulatedComponentHandlers.scala</code></p>
-<p>Below example commands will spawn a simulated HCD/Assembly on <code>ESW.machine1</code> agent. It is assumed that <code>ESW.machine1</code> is already running.</p>
-<pre class="prettyprint"><code class="language-bash">spawnSimulatedHCD(&quot;ESW.testHCD&quot;, &quot;ESW.machine1&quot;) // &quot;ESW.testHCD&quot; is the HCD prefix
-spawnSimulatedAssembly(&quot;ESW.testAssembly&quot;, &quot;ESW.machine1&quot;) // &quot;ESW.testAssembly&quot; is the assembly prefix
-</code></pre>
+<p><code>esw-shell</code> can be used to spawn simulated HCD/Assembly which uses the handlers specified in <a href="https://github.com/tmtsoftware/esw/blob/master/esw-shell/src/main/scala/esw/shell/component/SimulatedComponentHandlers.scala">Simulated Component Handlers</a></p>
+<p><code>SimulatedComponentHandlers</code> supports two commands.</p>
+<ul>
+  <li><code>noop</code> : This command immediately returns <code>Completed</code> response with <code>runId</code></li>
+  <li><code>sleep</code> : This command immediately returns <code>Started</code> response with <code>runId</code> and <code>Completed</code> response after some sleep time. This sleep time is specified in <code>timeInMs</code> parameter of command itself.</li>
+</ul>
 <h4><a href="#using-predefined-component-handlers" name="using-predefined-component-handlers" class="anchor"><span class="anchor-link"></span></a>Using predefined component handlers</h4>
-<p><code>esw-shell</code> can be used to spawn simulated HCD/Assembly which uses the handlers specified in <code>esw-shell/src/main/scala/esw/shell/component/SimulatedComponentHandlers.scala</code></p>
-<p>Below example commands will spawn a simulated HCD/Assembly without having the need of running</p>
+<p>Below example commands will spawn a simulated HCD/Assembly without having the need of running agent</p>
 <pre class="prettyprint"><code class="language-bash">spawnSimulatedHCD(&quot;ESW.testHCD1&quot;) // &quot;ESW.testHCD1&quot; is the HCD prefix
 spawnSimulatedAssembly(&quot;ESW.testAssembly&quot;) // &quot;ESW.testAssembly&quot; is the assembly prefix
+</code></pre>
+<h4><a href="#using-predefined-component-handlers-on-agent" name="using-predefined-component-handlers-on-agent" class="anchor"><span class="anchor-link"></span></a>Using predefined component handlers on Agent</h4>
+<p>Below example commands will spawn a simulated HCD/Assembly on <code>ESW.machine1</code> agent. It is assumed that <code>ESW.machine1</code> is already running. For running agent refer <a href="../technical/apps/agent-app.html">Agent App</a></p>
+<pre class="prettyprint"><code class="language-bash">spawnSimulatedHCD(&quot;ESW.testHCD&quot;, &quot;ESW.machine1&quot;) // &quot;ESW.testHCD&quot; is the HCD prefix
+spawnSimulatedAssembly(&quot;ESW.testAssembly&quot;, &quot;ESW.machine1&quot;) // &quot;ESW.testAssembly&quot; is the assembly prefix
 </code></pre>
 <h4><a href="#using-custom-component-handlers" name="using-custom-component-handlers" class="anchor"><span class="anchor-link"></span></a>Using custom component handlers</h4>
 <p><code>esw-shell</code> can be used to spawn real HCD/Assembly which uses the custom component handlers passed by the user.</p>
@@ -261,7 +317,7 @@ spawnHCDWithHandler(&quot;ESW.testAssembly&quot;, componentHandlers) // &quot;ES
 <ul>
   <li><code>val assemblyComponent = assemblyCommandService(&quot;iris.assembly_name&quot;)</code></li>
 </ul>
-<p>For Sequencers</p>
+<p>For <a href="../technical/sequencer-tech.html">Sequencers</a></p>
 <ul>
   <li><code>val sequencer = sequencerCommandService(IRIS, &quot;darknight&quot;)</code></li>
 </ul>
@@ -270,62 +326,49 @@ spawnHCDWithHandler(&quot;ESW.testAssembly&quot;, componentHandlers) // &quot;ES
 <p>Note - The above calls internally uses location service to resolve the required HCD/Assembly/Sequencer.</p>
 <h3><a href="#creating-the-commands-to-submit-to-hcd-assembly" name="creating-the-commands-to-submit-to-hcd-assembly" class="anchor"><span class="anchor-link"></span></a>Creating the commands to submit to HCD/Assembly</h3>
 <p>Create a setup command object using similar command to what is shown below</p>
-<pre class="prettyprint"><code class="language-scala">import csw.params.commands._
-import csw.prefix.models.Prefix
-import csw.params.core.models.ObsId
-// above imports are available in shell, user does not need to import again
+<pre class="prettyprint"><code class="language-scala">val longKey                     = LongKey.make(&quot;timeInMs&quot;)
+val paramSet: Set[Parameter[_]] = Set(longKey.set(1000))
 
-val setup = Setup(Prefix(&quot;iris.filter.wheel&quot;),CommandName(&quot;move&quot;),Some(ObsId(&quot;2020A-001-123&quot;)))
+val setup = Setup(Prefix(&quot;iris.filter.wheel&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2020A-001-123&quot;)), paramSet)
 </code></pre>
 <h3><a href="#creating-the-sequence-to-submit-to-sequencer" name="creating-the-sequence-to-submit-to-sequencer" class="anchor"><span class="anchor-link"></span></a>Creating the sequence to submit to Sequencer</h3>
-<pre class="prettyprint"><code class="language-scala">import csw.params.commands._
-import csw.prefix.models.Prefix
-import csw.params.core.models.ObsId
-// above imports are available in shell, user does not need to import again
+<pre class="prettyprint"><code class="language-scala">val byteKey                     = ByteKey.make(&quot;byteKey&quot;)
+val paramSet: Set[Parameter[_]] = Set(byteKey.set(100, 100))
 
-val setup = Setup(Prefix(&quot;iris.filter.wheel&quot;),CommandName(&quot;move&quot;),Some(ObsId(&quot;2020A-001-123&quot;)))
+val setup = Setup(Prefix(&quot;iris.filter.wheel&quot;), CommandName(&quot;move&quot;), Some(ObsId(&quot;2020A-001-123&quot;)), paramSet)
 val sequence = Sequence(setup)
 </code></pre>
 <p>Other than command service handles, following pre-defined handles or factories are available in shell to interact with different services:</p>
 <ul>
   <li>For Sequence Manager, use pre-imported <code>sequenceManager()</code> handle</li>
   <li>For Agent, create new handle using <code>agentClient(&quot;iris.machine_1&quot;)</code></li>
+  <li>For SequenceComponent, create new handle using <code>sequenceComponentService(&quot;ESW.ESW_1&quot;)</code></li>
   <li>For AdminApi, use pre-imported <code>adminApi</code> handle</li>
   <li>For EventService, use pre-imported <code>eventService</code> handle</li>
   <li>For AlarmService, use pre-imported <code>alarmService</code> handle</li>
 </ul>
 <h3><a href="#creating-componentid" name="creating-componentid" class="anchor"><span class="anchor-link"></span></a>Creating ComponentId</h3>
-<pre class="prettyprint"><code class="language-scala">import csw.prefix.models.Prefix
-import csw.prefix.models.Subsystem.ESW
-import csw.location.api.models.ComponentId
-import csw.location.api.models.ComponentType.Assembly
-// above imports are available in shell, user does not need to import again
-
-val componentId = ComponentId(Prefix(ESW, &quot;test1&quot;), Assembly)
+<pre class="prettyprint"><code class="language-scala">val componentId = ComponentId(Prefix(ESW, &quot;test1&quot;), Assembly)
 </code></pre>
 <h3><a href="#creating-event" name="creating-event" class="anchor"><span class="anchor-link"></span></a>Creating Event</h3>
-<pre class="prettyprint"><code class="language-scala">import csw.params.core.generics.Parameter
-import csw.params.core.generics.KeyType.ByteKey
-import csw.prefix.models.Prefix
-import csw.params.events.{EventName, SystemEvent}
-
-val byteKey = ByteKey.make(&quot;byteKey&quot;)
+<pre class="prettyprint"><code class="language-scala">val byteKey = ByteKey.make(&quot;byteKey&quot;)
 val paramSet: Set[Parameter[_]] = Set(byteKey.set(100, 100 ))
 val prefix = Prefix(&quot;tcs.assembly&quot;)
 val event = SystemEvent(prefix, EventName(&quot;event_1&quot;), paramSet)
 </code></pre>
 <h3><a href="#creating-alarmkey" name="creating-alarmkey" class="anchor"><span class="anchor-link"></span></a>Creating AlarmKey</h3>
-<pre class="prettyprint"><code class="language-scala">import csw.alarm.models.Key.AlarmKey
-import csw.prefix.models.Prefix
-import csw.prefix.models.Subsystem.NFIRAOS
-
-val alarmKey = AlarmKey(Prefix(NFIRAOS, &quot;trombone&quot;), &quot;tromboneAxisHighLimitAlarm&quot;)
+<pre class="prettyprint"><code class="language-scala">val alarmKey = AlarmKey(Prefix(NFIRAOS, &quot;trombone&quot;), &quot;tromboneAxisHighLimitAlarm&quot;)
 </code></pre>
 <h3><a href="#submitting-the-commands-to-components" name="submitting-the-commands-to-components" class="anchor"><span class="anchor-link"></span></a>Submitting the commands to components</h3>
 <p>Submit the setup command object created in a previous step using command service for the HCD/Assembly</p>
+<p>Submit returns a response wrapped in Future, you can use <code>get</code> to extract response out of any Future response, it has default wait timeout of <code>10.seconds</code> for future to complete.</p>
 <ul>
   <li><code>val hcdResponse = hcdComponent.submit(setup).get</code></li>
   <li><code>val assemblyResponse = assemblyComponent.submit(setup).get</code></li>
+</ul>
+<p>If you have a long running command, you can use <code>await</code> method with your custom timeout</p>
+<ul>
+  <li><code>val hcdResponse = hcdComponent.submit(setup).await(20.seconds)</code></li>
 </ul>
 <p>Submit the sequence object created in a previous step using command service for the Sequencer</p>
 <ul>
@@ -350,13 +393,22 @@ val alarmKey = AlarmKey(Prefix(NFIRAOS, &quot;trombone&quot;), &quot;tromboneAxi
   <li><code>val response = alarmService.setSeverity(alarmKey, AlarmSeverity.Major).get</code></li>
 </ul>
 <h2><a href="#interacting-with-sequence-manager" name="interacting-with-sequence-manager" class="anchor"><span class="anchor-link"></span></a>Interacting with Sequence Manager</h2>
-<p>Handler to running Sequence Manager can be obtained using:</p>
+<p>Handler to running <a href="../technical/apps/sequence-manager-app.html">Sequence Manager</a> can be obtained using:</p>
 <pre class="prettyprint"><code class="language-bash">val sm = sequenceManager()
 </code></pre>
 <p>All Sequence Manager APIs can be called upon the handle. For example:</p>
 <pre class="prettyprint"><code class="language-bash">val configureResponse = sequenceManager.configure(ObsMode(&quot;darknight&quot;)).get
 val shutdownSequencerResponse = sequenceManager.shutdownSequencer(ESW, ObsMode(&quot;darknight&quot;)).get
 val resources = sm.getResources.get
+</code></pre>
+<h2><a href="#interacting-with-sequence-component" name="interacting-with-sequence-component" class="anchor"><span class="anchor-link"></span></a>Interacting with Sequence Component</h2>
+<p>Handler to running <a href="../sequencersandscripts/sequencer-app.html">Sequence Component</a> can be obtained using:</p>
+<pre class="prettyprint"><code class="language-bash">val sc = sequenceComponentService(&quot;ESW.ESW_1&quot;)
+</code></pre>
+<p>All Sequence Component APIs can be called upon the handle. For example:</p>
+<pre class="prettyprint"><code class="language-bash">val loadScriptResponse =  sc.loadScript(ESW,ObsMode(&quot;darknight&quot;)).get
+val unloadScriptResponse =  sc.unloadScript().get
+val restartScriptResponse =  sc.restartScript().get
 </code></pre>
 <h3><a href="#provisioning-sequence-components" name="provisioning-sequence-components" class="anchor"><span class="anchor-link"></span></a>Provisioning sequence components</h3>
 <p>In order to provision sequence components that use some custom version of sequencer scripts, we have provided special method in <code>esw-shell</code>:</p>
