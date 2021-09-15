@@ -187,7 +187,7 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L92-L159" target="_blank" title="Go to snippet source"></a><code class="language-ts">// response handlers
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/ErrorHandlingExample.ts#L92-L158" target="_blank" title="Go to snippet source">source</a><code class="language-ts">// response handlers
 const onCancelled = () =&gt; {
   // do something on receiving Cancelled type
 }
@@ -209,10 +209,9 @@ const onLocked = () =&gt; {
 
 const prefix = new Prefix(&#39;ESW&#39;, &#39;component_1&#39;)
 const componentId = new ComponentId(prefix, &#39;Assembly&#39;)
-const commandService: CommandService = await CommandService(
-  componentId,
+const commandService: CommandService = await CommandService(componentId, {
   tokenFactory
-)
+})
 
 const setup = new Setup(prefix, &#39;move&#39;, [])
 const submitResponse: SubmitResponse = await commandService.submit(setup)
@@ -268,7 +267,7 @@ switch (submitResponse._type) {
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/Promises.ts#L11-L62" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>const prefix = new Prefix(&#39;ESW&#39;, &#39;component_1&#39;)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/Promises.ts#L5-L54" target="_blank" title="Go to snippet source">source</a><code class="language-ts"><br/>const prefix = new Prefix(&#39;ESW&#39;, &#39;component_1&#39;)
 const componentId = new ComponentId(prefix, &#39;HCD&#39;)
 
 CommandService(componentId)
@@ -293,15 +292,13 @@ CommandService(componentId)
     // parallel way to handle multiple promises
     const responsePromise3 = commandService.submit(setup3)
 
-    Promise.all([responsePromise, responsePromise3]).then(
-      (submitResponses) =&gt; {
-        submitResponses.forEach(handleResponse)
-        const lastResponse = submitResponses.pop()
-        if (lastResponse) {
-          commandService.query(lastResponse.runId).then(fetchNewESWState)
-        }
+    Promise.all([responsePromise, responsePromise3]).then((submitResponses) =&gt; {
+      submitResponses.forEach(handleResponse)
+      const lastResponse = submitResponses.pop()
+      if (lastResponse) {
+        commandService.query(lastResponse.runId).then(fetchNewESWState)
       }
-    )
+    })
   })
   .catch((err) =&gt; {
     handleError(err)
@@ -327,7 +324,7 @@ const fetchNewESWState = () =&gt; {
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/Promises.ts#L68-L108" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>const handleError = (error: Error) =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/Promises.ts#L60-L97" target="_blank" title="Go to snippet source">source</a><code class="language-ts"><br/>const handleError = (error: Error) =&gt; {
   // See Error handling section for details
   throw new Error(error.message)
 }
@@ -354,10 +351,7 @@ try {
   const responsePromise3 = commandService.submit(setup3)
   const responsePromise4 = commandService.submit(setup1)
 
-  const submitResponses = await Promise.all([
-    responsePromise3,
-    responsePromise4
-  ])
+  const submitResponses = await Promise.all([responsePromise3, responsePromise4])
 
   submitResponses.forEach(handleResponse)
   const lastResponse = submitResponses.pop()
@@ -365,7 +359,7 @@ try {
     const queryRes = commandService.query(lastResponse.runId)
   }
 } catch (err) {
-  handleError(err)
+  handleError(err as Error)
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">async-await</div>
 <p>We strongly recommend to use async-await while writing asynchronous code in Javascript.</p></div>

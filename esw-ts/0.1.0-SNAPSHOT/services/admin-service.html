@@ -148,6 +148,8 @@ TMT JavaScript/Typescript Library
     <li><a href="../services/admin-service.html#creation-of-admin-service" class="header">Creation of Admin Service</a></li>
     <li><a href="../services/admin-service.html#usages-of-admin-service" class="header">Usages of Admin Service</a></li>
     <li><a href="../services/admin-service.html#fetching-logmetadata-setting-log-level" class="header">Fetching LogMetadata &amp; Setting log level</a></li>
+    <li><a href="../services/admin-service.html#component-container-level-actions" class="header">Component &amp; Container level actions</a></li>
+    <li><a href="../services/admin-service.html#querying-lifecycle-states-of-component-container" class="header">Querying lifecycle states of Component &amp; Container</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -174,6 +176,8 @@ TMT JavaScript/Typescript Library
     <li><a href="../services/admin-service.html#creation-of-admin-service" class="header">Creation of Admin Service</a></li>
     <li><a href="../services/admin-service.html#usages-of-admin-service" class="header">Usages of Admin Service</a></li>
     <li><a href="../services/admin-service.html#fetching-logmetadata-setting-log-level" class="header">Fetching LogMetadata &amp; Setting log level</a></li>
+    <li><a href="../services/admin-service.html#component-container-level-actions" class="header">Component &amp; Container level actions</a></li>
+    <li><a href="../services/admin-service.html#querying-lifecycle-states-of-component-container" class="header">Querying lifecycle states of Component &amp; Container</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -191,27 +195,74 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L10" target="_blank" title="Go to snippet source"></a><code class="language-ts">const adminService: AdminService = await AdminService()</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L12" target="_blank" title="Go to snippet source">source</a><code class="language-ts">const adminService: AdminService = await AdminService()</code></pre></dd>
 </dl>
 <h2><a href="#usages-of-admin-service" name="usages-of-admin-service" class="anchor"><span class="anchor-link"></span></a>Usages of Admin Service</h2>
-<p>Type definitions for all Admin Service methods can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html">here</a></p>
+<p>Type definitions for all Admin Service methods can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html">here</a>.</p>
 <h2><a href="#fetching-logmetadata-setting-log-level" name="fetching-logmetadata-setting-log-level" class="anchor"><span class="anchor-link"></span></a>Fetching LogMetadata &amp; Setting log level</h2>
-<p>For instance, we need logging configuration to be known before setting log level of a component if it is not set to desired <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#level">log level</a>.</p>
-<p>Type definitions for <code>getLogMetadata</code> can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#getlogmetadata">here</a> Type definitions for <code>setLogLevel</code> can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#setloglevel">here</a></p>
+<p>For instance, we need logging configuration to be known before setting log level of a component if it is not set to desired <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#level">log level</a>.</p>
+<p>Type definitions for <code>getLogMetadata</code> can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#getlogmetadata">here</a>. Type definitions for <code>setLogLevel</code> can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#setloglevel">here</a>.</p>
 <p>In the given example, we want to set <code>ERROR</code> log level for the component if it&rsquo;s not already set to <code>ERROR</code>.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L14-L24" target="_blank" title="Go to snippet source"></a><code class="language-ts">const prefix = new Prefix(&#39;TCS&#39;, &#39;filter.wheel&#39;)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L16-L23" target="_blank" title="Go to snippet source">source</a><code class="language-ts">const prefix = new Prefix(&#39;TCS&#39;, &#39;filter.wheel&#39;)
 const componentId = new ComponentId(prefix, &#39;HCD&#39;)
 
 const logMetaData: LogMetadata = await adminService.getLogMetadata(componentId)
 
 if (logMetaData.componentLevel !== &#39;ERROR&#39;) {
-  const actionStatus: Done = await adminService.setLogLevel(
-    componentId,
-    &#39;ERROR&#39;
-  )
+  const actionStatus: Done = await adminService.setLogLevel(componentId, &#39;ERROR&#39;)
+}</code></pre></dd>
+</dl>
+<h2><a href="#component-container-level-actions" name="component-container-level-actions" class="anchor"><span class="anchor-link"></span></a>Component &amp; Container level actions</h2>
+<p>Admin actions like restarting, shutting down or making component(HCD, Assembly) or container to go online/offline are provided in Admin Service. Following examples represents admin actions provided on Admin Service.</p>
+<p>Type definitions for <code>restart</code> can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#restart">here</a>. Type definitions for <code>shutdown</code> can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#shutdown">here</a>. Type definitions for <code>goOffline</code> can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#goOffline">here</a>. Type definitions for <code>goOnline</code> can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#goOnline">here</a>.</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L27-L33" target="_blank" title="Go to snippet source">source</a><code class="language-ts">const restartResponse: Done = await adminService.restart(componentId)
+
+const shutdownResponse: Done = await adminService.shutdown(componentId)
+
+const goOfflineResponse: Done = await adminService.goOffline(componentId)
+
+const goOnlineResponse: Done = await adminService.goOnline(componentId)</code></pre></dd>
+</dl>
+<h2><a href="#querying-lifecycle-states-of-component-container" name="querying-lifecycle-states-of-component-container" class="anchor"><span class="anchor-link"></span></a>Querying lifecycle states of Component &amp; Container</h2>
+<p>Component(HCD, Assembly) lifecycle states are queried using <code>getComponentLifecycleState</code> API Method.</p>
+<p>Container lifecycle state is queried using <code>getContainerLifecycleState</code> API Method.</p>
+<p>Following examples shows how to make use of these API&rsquo;s.</p>
+<p>Type definitions for <code>getContainerLifecycleState</code> can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#getContainerLifecycleState">here</a> Type definitions for <code>getComponentLifecycleState</code> can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/interfaces/clients.adminservice.html#getComponentLifecycleState">here</a></p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/admin/AdminServiceExamples.ts#L37-L63" target="_blank" title="Go to snippet source">source</a><code class="language-ts">// component lifecycle state
+const response: Done = await adminService.goOnline(componentId)
+if (response === &#39;Done&#39;) {
+  const state: SupervisorLifecycleState = await adminService.getComponentLifecycleState(componentId)
+
+  switch (state) {
+    case &#39;Idle&#39;:
+      break
+    case &#39;Running&#39;:
+      break
+    case &#39;Shutdown&#39;:
+      break
+    default:
+      console.log(&#39;unhandled state&#39;)
+  }
+}
+
+// container lifecycle state
+const containerPrefix = Prefix.fromString(&#39;ESW.container1&#39;)
+const state: ContainerLifecycleState = await adminService.getContainerLifecycleState(containerPrefix)
+
+switch (state) {
+  case &#39;Idle&#39;:
+    break
+  case &#39;Running&#39;:
+    break
 }</code></pre></dd>
 </dl>
 </div>

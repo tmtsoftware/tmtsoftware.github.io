@@ -192,15 +192,7 @@ TMT JavaScript/Typescript Library
 <p>Web application needs following configurations in order to get access token from keycloak server. This application specific config object should be passed in <code>AuthContextProvider</code> component. There are two configurations needed for a web application i.e. <code>realm</code>, <code>clientId</code></p>
 <p><code>realm</code> is a mandatory configuration which specifies in keycloak server under which client your application is registered.</p>
 <p><code>clientId</code> is a mandatory configuration which specifies the client id of the app as per registration in keycloak server.</p>
-<dl>
-  <dt>Typescript</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/config/AppConfig.ts#L2-L6" target="_blank" title="Go to snippet source"></a><code class="language-ts">export const AppConfig = {
-  realm: &#39;TMT&#39;,
-  clientId: &#39;tmt-frontend-app&#39;,
-  applicationName: &#39;test-app&#39;
-}</code></pre></dd>
-</dl>
+<p>See, how to configure realm &amp; client-id <a href="../common/getting-started.html#ui-app-configuration-for-esw-ts">here</a></p>
 <h2><a href="#components" name="components" class="anchor"><span class="anchor-link"></span></a>Components</h2>
 <p><code>ESW-TS</code> exposes the following React components.</p>
 <ul>
@@ -219,44 +211,41 @@ TMT JavaScript/Typescript Library
   <li><a href="auth-components.html#example">Example</a></li>
   <li><a href="auth-components.html#technical-description">Technical Description</a></li>
 </ul>
-<p>Type definition for all components used by services can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/components.html">here</a></p>
+<p>Type definition for all components used by services can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/components.html">here</a></p>
 <p>Components can be imported as shown in code snippet below</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/NavComponent.tsx#L4" target="_blank" title="Go to snippet source"></a><code class="language-tsx">import { AuthContext, Logout, Login } from &#39;@tmtsoftware/esw-ts&#39;</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/NavComponent.tsx#L4" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">import { AuthContext, Logout, Login } from &#39;@tmtsoftware/esw-ts&#39;</code></pre></dd>
 </dl>
 <h3><a href="#authcontextprovider" name="authcontextprovider" class="anchor"><span class="anchor-link"></span></a>AuthContextProvider</h3>
 <p><code>AuthContextProvider</code> is wrapper over a React <a href="https://reactjs.org/docs/context.html#contextprovider">Context.Provider</a>. A JSON configuration must be passed in that contains the application specific AAS server configuration (e.g. clientId, realm). When a user logs in, an AAS Server is instantiated, with the UI application specific configuration overriding the predefined configuration. Once the AAS sever is instantiated, an <code>auth</code> object is created with the needed attributes and APIs. This <code>auth</code> object is available to other React components; since <code>AuthContextProvider</code> is a <code>Provider</code>, its data can be shared with any of the children React components in its tree in a <code>Consumer</code> component (see below). All <code>Consumer</code>s that are descendants of a <code>Provider</code> will re-render whenever the <code>AuthContextProvider</code>’s state changes, e.g. a user authorizes. It is recommended to use <code>AuthContextProvider</code> to wrap the entire application so that data can be shared anywhere in application via a <code>Consumer</code>.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/ExampleApp.tsx#L20-L75" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;AuthContextProvider config={AppConfig}&gt;
-  &lt;BrowserRouter&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/ExampleApp.tsx#L21-L70" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;AuthContextProvider config={{ realm: &#39;TMT&#39;, clientId: &#39;tmt-frontend-app&#39; }}&gt;
+  &lt;BrowserRouter basename={basename}&gt;
     &lt;div&gt;
       &lt;NavComponent /&gt;
       &lt;Route
         exact
         path=&#39;/secured&#39;
-        render={(_) =&gt; (
+        render={() =&gt; (
           &lt;CheckLogin error={&lt;LoginError /&gt;}&gt;
             &lt;Write /&gt;
           &lt;/CheckLogin&gt;
         )}
       /&gt;
-      &lt;Route exact path=&#39;/config&#39; render={(_) =&gt; &lt;ConfigApp /&gt;} /&gt;
+      &lt;Route exact path=&#39;/config&#39; render={() =&gt; &lt;ConfigApp /&gt;} /&gt;
       &lt;Route
         exact
         path=&#39;/example_admin&#39;
-        render={(_) =&gt; (
+        render={() =&gt; (
           &lt;CheckLogin error={&lt;LoginError /&gt;}&gt;
             &lt;RealmRole
               realmRole=&#39;example-admin-role&#39;
-              error={
-                &lt;RoleError
-                  message={&#39;User do not have role : example-admin-role&#39;}
-                /&gt;
-              }&gt;
+              error={&lt;RoleError message={&#39;User do not have role : example-admin-role&#39;} /&gt;}
+            &gt;
               &lt;div&gt;Example admin role specific functionality&lt;/div&gt;
             &lt;/RealmRole&gt;
           &lt;/CheckLogin&gt;
@@ -265,15 +254,12 @@ TMT JavaScript/Typescript Library
       &lt;Route
         exact
         path=&#39;/example_user&#39;
-        render={(_) =&gt; (
+        render={() =&gt; (
           &lt;CheckLogin error={&lt;LoginError /&gt;}&gt;
             &lt;RealmRole
               realmRole=&#39;person-role&#39;
-              error={
-                &lt;RoleError
-                  message={&#39;User do not have role : person-role&#39;}
-                /&gt;
-              }&gt;
+              error={&lt;RoleError message={&#39;User do not have role : person-role&#39;} /&gt;}
+            &gt;
               &lt;div&gt;Person role specific functionality&lt;/div&gt;
             &lt;/RealmRole&gt;
           &lt;/CheckLogin&gt;
@@ -289,7 +275,7 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/Read.tsx#L6-L21" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const { auth } = useContext(AuthContext)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/Read.tsx#L6-L21" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const { auth } = useContext(AuthContext)
 return (
   &lt;div className=&#39;nav-wrapper&#39;&gt;
     {auth &amp;&amp; auth.isAuthenticated() ? (
@@ -311,14 +297,14 @@ return (
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/NavComponent.tsx#L43" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;Login /&gt;</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/NavComponent.tsx#L43" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Login /&gt;</code></pre></dd>
 </dl>
 <h3><a href="#logout" name="logout" class="anchor"><span class="anchor-link"></span></a>Logout</h3>
 <p>The <code>Logout</code> component logs out the user from the AAS server. It clears the <code>auth</code> object stored in the context.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/NavComponent.tsx#L39-L40" target="_blank" title="Go to snippet source"></a><code class="language-tsx">  &lt;Logout /&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/NavComponent.tsx#L39-L40" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">  &lt;Logout /&gt;
 ) : (</code></pre></dd>
 </dl>
 <h3><a href="#checklogin" name="checklogin" class="anchor"><span class="anchor-link"></span></a>CheckLogin</h3>
@@ -326,7 +312,7 @@ return (
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/ExampleApp.tsx#L29-L31" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;CheckLogin error={&lt;LoginError /&gt;}&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/ExampleApp.tsx#L30-L32" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;CheckLogin error={&lt;LoginError /&gt;}&gt;
   &lt;Write /&gt;
 &lt;/CheckLogin&gt;</code></pre></dd>
 </dl>
@@ -335,13 +321,10 @@ return (
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/ExampleApp.tsx#L42-L50" target="_blank" title="Go to snippet source"></a><code class="language-tsx">&lt;RealmRole
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/ExampleApp.tsx#L43-L48" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;RealmRole
   realmRole=&#39;example-admin-role&#39;
-  error={
-    &lt;RoleError
-      message={&#39;User do not have role : example-admin-role&#39;}
-    /&gt;
-  }&gt;
+  error={&lt;RoleError message={&#39;User do not have role : example-admin-role&#39;} /&gt;}
+&gt;
   &lt;div&gt;Example admin role specific functionality&lt;/div&gt;
 &lt;/RealmRole&gt;</code></pre></dd>
 </dl>
@@ -350,36 +333,33 @@ return (
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/ExampleApp.tsx#L15-L80" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const ExampleApp = () =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/ExampleApp.tsx#L16-L75" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const ExampleApp = () =&gt; {
   return (
     &lt;div className=&#39;row card col s12 m7&#39;&gt;
       {
-        &lt;AuthContextProvider config={AppConfig}&gt;
-          &lt;BrowserRouter&gt;
+        &lt;AuthContextProvider config={{ realm: &#39;TMT&#39;, clientId: &#39;tmt-frontend-app&#39; }}&gt;
+          &lt;BrowserRouter basename={basename}&gt;
             &lt;div&gt;
               &lt;NavComponent /&gt;
               &lt;Route
                 exact
                 path=&#39;/secured&#39;
-                render={(_) =&gt; (
+                render={() =&gt; (
                   &lt;CheckLogin error={&lt;LoginError /&gt;}&gt;
                     &lt;Write /&gt;
                   &lt;/CheckLogin&gt;
                 )}
               /&gt;
-              &lt;Route exact path=&#39;/config&#39; render={(_) =&gt; &lt;ConfigApp /&gt;} /&gt;
+              &lt;Route exact path=&#39;/config&#39; render={() =&gt; &lt;ConfigApp /&gt;} /&gt;
               &lt;Route
                 exact
                 path=&#39;/example_admin&#39;
-                render={(_) =&gt; (
+                render={() =&gt; (
                   &lt;CheckLogin error={&lt;LoginError /&gt;}&gt;
                     &lt;RealmRole
                       realmRole=&#39;example-admin-role&#39;
-                      error={
-                        &lt;RoleError
-                          message={&#39;User do not have role : example-admin-role&#39;}
-                        /&gt;
-                      }&gt;
+                      error={&lt;RoleError message={&#39;User do not have role : example-admin-role&#39;} /&gt;}
+                    &gt;
                       &lt;div&gt;Example admin role specific functionality&lt;/div&gt;
                     &lt;/RealmRole&gt;
                   &lt;/CheckLogin&gt;
@@ -388,15 +368,12 @@ return (
               &lt;Route
                 exact
                 path=&#39;/example_user&#39;
-                render={(_) =&gt; (
+                render={() =&gt; (
                   &lt;CheckLogin error={&lt;LoginError /&gt;}&gt;
                     &lt;RealmRole
                       realmRole=&#39;person-role&#39;
-                      error={
-                        &lt;RoleError
-                          message={&#39;User do not have role : person-role&#39;}
-                        /&gt;
-                      }&gt;
+                      error={&lt;RoleError message={&#39;User do not have role : person-role&#39;} /&gt;}
+                    &gt;
                       &lt;div&gt;Person role specific functionality&lt;/div&gt;
                     &lt;/RealmRole&gt;
                   &lt;/CheckLogin&gt;
@@ -415,7 +392,7 @@ return (
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/config/ConfigApp.tsx#L11-L37" target="_blank" title="Go to snippet source"></a><code class="language-tsx">const ConfigApp = () =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/config/ConfigApp.tsx#L11-L32" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const ConfigApp = () =&gt; {
   return (
     &lt;div className=&#39;row card col s12 m7&#39;&gt;
       &lt;ConfigServiceProvider authContext={AuthContext}&gt;
@@ -426,13 +403,8 @@ return (
             {/*// #create-config-component*/}
             &lt;RealmRole
               realmRole=&#39;config-admin&#39;
-              error={
-                &lt;RoleError
-                  message={
-                    &quot;User do not have role &#39;config-admin&#39; to create config&quot;
-                  }
-                /&gt;
-              }&gt;
+              error={&lt;RoleError message={&quot;User do not have role &#39;config-admin&#39; to create config&quot;} /&gt;}
+            &gt;
               &lt;CreateConfig /&gt;
             &lt;/RealmRole&gt;
             {/*// #create-config-component*/}
@@ -447,7 +419,7 @@ return (
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/config/context/ConfigServiceProvider.tsx#L6-L38" target="_blank" title="Go to snippet source"></a><code class="language-tsx">export interface ConfigServiceProps {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/components/config/context/ConfigServiceProvider.tsx#L6-L30" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export interface ConfigServiceProps {
   authContext: typeof AuthContext
   children: React.ReactNode
 }
@@ -455,9 +427,7 @@ return (
 const ConfigServiceProvider = (props: ConfigServiceProps) =&gt; {
   const { authContext, children } = props
 
-  const [configService, setConfigService] = useState&lt;ConfigService&gt;(
-    defaultConfigServiceState
-  )
+  const [configService, setConfigService] = useState&lt;ConfigService&gt;(defaultConfigServiceState)
   const { auth } = useContext(authContext)
 
   const resetConfigService = async () =&gt; {
@@ -467,16 +437,10 @@ const ConfigServiceProvider = (props: ConfigServiceProps) =&gt; {
   }
 
   useEffect(() =&gt; {
-    resetConfigService().catch(() =&gt;
-      window.alert(&#39;config server is not available&#39;)
-    )
+    resetConfigService().catch(() =&gt; window.alert(&#39;config server is not available&#39;))
   }, [auth])
 
-  return (
-    &lt;ConfigContext.Provider value={configService}&gt;
-      {children}
-    &lt;/ConfigContext.Provider&gt;
-  )
+  return &lt;ConfigContext.Provider value={configService}&gt;{children}&lt;/ConfigContext.Provider&gt;
 }</code></pre></dd>
 </dl>
 <p>Source code for the full example can be found <a href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src">here</a></p>

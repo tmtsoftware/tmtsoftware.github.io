@@ -148,6 +148,7 @@ TMT JavaScript/Typescript Library
     <li><a href="../common/getting-started.html#installation" class="header">Installation</a></li>
     <li><a href="../common/getting-started.html#create-a-starter-project" class="header">Create a Starter Project</a></li>
     <li><a href="../common/getting-started.html#ui-app-configuration-for-esw-ts" class="header">UI App Configuration for ESW-TS</a></li>
+    <li><a href="../common/getting-started.html#ui-app-deployment-for-esw-ts" class="header">UI App Deployment for ESW-TS</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -174,6 +175,7 @@ TMT JavaScript/Typescript Library
     <li><a href="../common/getting-started.html#installation" class="header">Installation</a></li>
     <li><a href="../common/getting-started.html#create-a-starter-project" class="header">Create a Starter Project</a></li>
     <li><a href="../common/getting-started.html#ui-app-configuration-for-esw-ts" class="header">UI App Configuration for ESW-TS</a></li>
+    <li><a href="../common/getting-started.html#ui-app-deployment-for-esw-ts" class="header">UI App Deployment for ESW-TS</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -189,40 +191,36 @@ TMT JavaScript/Typescript Library
 <h2><a href="#installation" name="installation" class="anchor"><span class="anchor-link"></span></a>Installation</h2>
 <p><code>node</code> is mandatory to be installed on a machine for using ESW-TS. To install the latest version of node, visit the <a href="https://nodejs.org/en/">official website</a>.</p>
 <h2><a href="#create-a-starter-project" name="create-a-starter-project" class="anchor"><span class="anchor-link"></span></a>Create a Starter Project</h2>
-<p>It is recommended to use Giter8 template <code>esw-ui-template.g8</code> to get started with building web application. Follow <a href="https://github.com/tmtsoftware/esw-ui-template.g8/blob/master/README.md" title="readme.md">readme.md</a> for more details on how to use the template to create starter project. <code>ESW-TS</code> comes pre-packaged as a dependency in the template.</p>
+<p>It is recommended to use Giter8 template <code>esw-gateway-ui-template.g8</code> to get started with building web application. Follow <a href="https://github.com/tmtsoftware/esw-gateway-ui-template.g8" title="readme.md">readme.md</a> for more details on how to use the template to create starter project. <code>ESW-TS</code> comes pre-packaged as a dependency in the template.</p>
 <p>If you already have a UI application and want to add ESW-TS dependency, then</p>
 <p>To install the latest version of ESW-TS from npm</p>
 <p><code>npm install @tmtsoftware/esw-ts</code></p>
 <p>Or, to install a specific version</p>
 <p><code>npm install @tmtsoftware/esw-ts@{version}</code></p>
 <h2><a href="#ui-app-configuration-for-esw-ts" name="ui-app-configuration-for-esw-ts" class="anchor"><span class="anchor-link"></span></a>UI App Configuration for ESW-TS</h2>
-<p>If you have used <code>esw-ui-template.g8</code> template for generating the application source code. Template generates <code>AppConfig.ts</code> file with default ApplicationName same as the given <code>projectname</code>. ESW-TS library will try to load this <code>ApplicationName</code> before making any backend service calls. Therefore, it is required <code>AppConfig.ts</code> must export the <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#appconfig">AppConfig</a>.</p>
-<p>Follow the steps to add a configuration file if you have not used the template before which has Application related information required by ESW-TS at application runtime.</p>
-<ul>
-  <li>Add <code>AppConfig.ts</code> inside config folder.</li>
-</ul>
-<dl>
-  <dt>Folder structure</dt>
-  <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/AppPath.tsx#L14-L19" target="_blank" title="Go to snippet source"></a><code class="language-tsx">/AppRoot
-  /src
-    /config
-      /AppConfig.ts
-  /test
-  /types</code></pre></dd>
-</dl>
-<p>if you choose to add config file with some other name at random file path (i.e. <code>src/randomFolder/RandomFileName.ts</code>). you must set the ESW-TS&rsquo;s internal variable(<code>APP_CONFIG_PATH</code>) pointing to the <code>RandomFileName.ts</code> using <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/config.html#setappconfigpath">setAppConfigPath</a> before creating any ESW-TS Service instance.</p><div class="callout warning "><div class="callout-title">Warning</div>
-<p>Next step is only required if you have file name other than <code>AppConfig.ts</code> or the file is located other than <code>config</code> folder.</p></div>
+<p>If you have used <code>esw-gateway-ui-template.g8</code> template for generating the application source code. Template generates a <code>AppConfig.js</code> file in <code>src/config/AppConfig.js</code>. It has applicationName that you provided while creating template. if you wish to change your application name this is the place where you can change it. Note that this change effects metrics &amp; the deployment time folder name.</p>
+<p>Note: ESW-TS library will try to load this <code>applicationName</code> before making any backend service calls. <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#appconfig">AppConfig</a>.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/AppPath.tsx#L4-L9" target="_blank" title="Go to snippet source"></a><code class="language-tsx">// inside App.tsx
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/common/AppPath.tsx#L4-L9" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">// inside App.tsx
 
-setAppConfigPath(&#39;randomFolder/randomFile.ts&#39;)
+setAppName(&#39;ocs-application&#39;)
 
 export default () =&gt; &lt;div&gt;{/* children components */}&lt;/div&gt;
 </code></pre></dd>
 </dl>
+<h2><a href="#ui-app-deployment-for-esw-ts" name="ui-app-deployment-for-esw-ts" class="anchor"><span class="anchor-link"></span></a>UI App Deployment for ESW-TS</h2>
+<p>Applications that are built using <code>ui-template.g8</code> are meant to be deployed under one common folder <code>/apps</code>. this folder will contain all tmt ui applications which can be together deployed using any static server(nginx, python http server, s3 static server, etc).</p>
+<p>ESW-TS assumes that static server contains a <code>config.js</code> file which has configuration related to all applications.</p>
+<p>Refer <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/config.html#ConfigModule">this</a> for the structure of config module.</p>
+<p>In future if needed, other configuration can be added here which are applicable to all tmt applications.</p>
+<p>Refer <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/config.html#Config">this</a> for the structure of config.</p>
+<p>Note:</p>
+<ol>
+  <li>Without this file, Application won&rsquo;t be able to communicate to tmt backend service&rsquo;s.</li>
+  <li>Folder name of the application which is getting copied at the static server should have exactly same name as it is in the AppConfig.js&rsquo;s applicationName field. (g8 template by default takes care of this, only if you wish to change your application name, Make a note of this configuration).</li>
+</ol>
 </div>
 <div>
 <a href="https://github.com/tmtsoftware/esw-ts/tree/master/docs/src/main/common/getting-started.md" title="Edit this page" class="md-source-file md-edit">

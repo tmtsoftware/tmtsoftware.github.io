@@ -194,7 +194,7 @@ TMT JavaScript/Typescript Library
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/ParameterExample.ts#L25-L55" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>// primitives
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/ParameterExample.ts#L22-L52" target="_blank" title="Go to snippet source">source</a><code class="language-ts"><br/>// primitives
 const booleanParam: Parameter&lt;BooleanKey&gt; = booleanKey(&#39;flag&#39;).set([false])
 
 const intParam: Parameter&lt;IntKey&gt; = intKey(&#39;RandomKeyName&#39;).set([123, 12432])
@@ -213,7 +213,7 @@ const filterParam: Parameter&lt;IntArrayKey&gt; = filterkey.set([
 // -------------
 
 // matrices
-const positionMatrixKey = byteMatrixKey(&#39;positions&#39;, &#39;meter&#39;)
+const positionMatrixKey = byteMatrixKey(&#39;positions&#39;, Units.meter)
 const positions: Parameter&lt;ByteMatrixKey&gt; = positionMatrixKey.set([
   [
     [1, 2],
@@ -280,6 +280,18 @@ const positions: Parameter&lt;ByteMatrixKey&gt; = positionMatrixKey.set([
       <td>BooleanKey </td>
       <td>booleanKey </td>
     </tr>
+  </tbody>
+</table>
+<h3><a href="#tmt-time-types" name="tmt-time-types" class="anchor"><span class="anchor-link"></span></a>TMT Time types</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Primitive </th>
+      <th>Typescript Key Type </th>
+      <th>Helper functions </th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td>UTCTime </td>
       <td>UTCTimeKey </td>
@@ -292,6 +304,22 @@ const positions: Parameter&lt;ByteMatrixKey&gt; = positionMatrixKey.set([
     </tr>
   </tbody>
 </table>
+<p>This data types are based on TMT Time models <code>UTCTime</code> &amp; <code>TAITime</code>.</p>
+<p>Example usage of Time models:</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/StateVariableExample.ts#L61-L69" target="_blank" title="Go to snippet source">source</a><code class="language-ts">const utcTime1 = UTCTime.now()
+const taiFromUTC = utcTime1.toTAI()
+const utcTimeParam = utcTimeKey(&#39;utcTimeKey1&#39;)
+utcTimeParam.set([utcTime1])
+
+const taiTimeParam = taiTimeKey(&#39;taiTimeKey1&#39;)
+const taiTime1 = TAITime.now()
+const utcFromTaiTime = taiTime1.toUTC()
+taiTimeParam.set([taiTime1])</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>The precision date at javascript is only in milliseconds. However, at backend server date precision is in microseconds. (&ldquo;2021-09-07T08:04:07.745274Z&rdquo;). The following in browser javascript <code>new Date(&quot;2021-09-07T08:04:07.745274Z&quot;)</code> truncates the last 3 digits of milliseconds <code>2021-09-07T08:04:07.745Z</code>.</p></div>
 <h3><a href="#array-data-types" name="array-data-types" class="anchor"><span class="anchor-link"></span></a>Array Data types</h3>
 <table>
   <thead>
@@ -379,7 +407,6 @@ const positions: Parameter&lt;ByteMatrixKey&gt; = positionMatrixKey.set([
 <h3><a href="#domain-specific-types" name="domain-specific-types" class="anchor"><span class="anchor-link"></span></a>Domain Specific Types</h3>
 <ul>
   <li>choice : A key for a choice item similar to an enumeration</li>
-  <li>struct : Structs can be used to create a hierarchy of parameters</li>
 </ul>
 <table>
   <thead>
@@ -395,18 +422,13 @@ const positions: Parameter&lt;ByteMatrixKey&gt; = positionMatrixKey.set([
       <td>ChoiceKey </td>
       <td>choiceKey </td>
     </tr>
-    <tr>
-      <td>Struct </td>
-      <td>StructKey </td>
-      <td>Struct </td>
-    </tr>
   </tbody>
 </table>
-<h4><a href="#example-snippets-for-creating-choice-and-struct-parameters" name="example-snippets-for-creating-choice-and-struct-parameters" class="anchor"><span class="anchor-link"></span></a>Example snippets for creating choice and struct parameters</h4>
+<h4><a href="#example-snippets-for-creating-choice-parameters" name="example-snippets-for-creating-choice-parameters" class="anchor"><span class="anchor-link"></span></a>Example snippets for creating choice parameters</h4>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/ParameterExample.ts#L58-L81" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>// choice key
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/ParameterExample.ts#L55-L65" target="_blank" title="Go to snippet source">source</a><code class="language-ts"><br/>// choice key
 
 const choices = [&#39;Sun&#39;, &#39;Mon&#39;, &#39;Tue&#39;, &#39;Wed&#39;, &#39;Thu&#39;, &#39;Fri&#39;, &#39;Sat&#39;] as const
 
@@ -415,19 +437,6 @@ const weekDayParam = weekDaysKey.set(&#39;Mon&#39;, &#39;Wed&#39;)
 // weekDayParam === Parameter(&#39;weekDaysKey&#39;, &#39;ChoiceKey&#39;, [&#39;Mon&#39;, &#39;Wed&#39;], &#39;NoUnits&#39;)
 
 // -------------
-
-// example for struct key
-// leaf parameters
-const ra: Parameter&lt;StringKey&gt; = stringKey(&#39;ra&#39;).set([&#39;12:13:14.1&#39;])
-const dec = stringKey(&#39;dec&#39;).set([&#39;32:33:34.4&#39;])
-const epoch = doubleKey(&#39;epoch&#39;).set([1970.0])
-
-// initialise struct key
-const struct = new Struct().add(ra)
-struct.madd([dec, epoch])
-
-// create struct Parameter using structKey
-const structParameter = structKey(&#39;my struct&#39;).set([struct])
 </code></pre></dd>
 </dl>
 <h3><a href="#coordinate-types" name="coordinate-types" class="anchor"><span class="anchor-link"></span></a>Coordinate Types</h3>
@@ -440,11 +449,6 @@ const structParameter = structKey(&#39;my struct&#39;).set([struct])
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>RaDec </td>
-      <td>RaDecKey </td>
-      <td>raDecKey </td>
-    </tr>
     <tr>
       <td>EqCoord </td>
       <td>EqCoordKey </td>
@@ -481,24 +485,19 @@ const structParameter = structKey(&#39;my struct&#39;).set([struct])
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/ParameterExample.ts#L85-L103" target="_blank" title="Go to snippet source"></a><code class="language-ts"><br/>const cometCoord = new CometCoord(
-  &#39;BASE&#39;,
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/ParameterExample.ts#L69-L82" target="_blank" title="Go to snippet source">source</a><code class="language-ts"><br/>const cometCoord = new CometCoord(
+  new Tag(&#39;BASE&#39;),
   2000,
-  324000000000,
-  7200000000,
-  360000000000,
+  new Angle(324000000000),
+  new Angle(7200000000),
+  new Angle(360000000000),
   1.4,
   0.234
 )
-const cometParam: Parameter&lt;CometCoordKey&gt; = cometCoordKey(
-  &#39;comet key&#39;,
-  &#39;degree&#39;
-).set([cometCoord])
+const cometParam: Parameter&lt;CometCoordKey&gt; = cometCoordKey(&#39;comet key&#39;, Units.degree).set([cometCoord])
 
 //coord key is base trait of all coordinate key types.
-const coordParam: Parameter&lt;CoordKey&gt; = coordKey(&#39;base coordinate&#39;).set([
-  cometCoord
-])</code></pre></dd>
+const coordParam: Parameter&lt;CoordKey&gt; = coordKey(&#39;base coordinate&#39;).set([cometCoord])</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>Note that since <code>Coord</code> is the base trait of the other coordinate types, you can use it as the key for any of the coordinate types.</p></div>
 </div>

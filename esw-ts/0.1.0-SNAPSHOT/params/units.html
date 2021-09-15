@@ -151,6 +151,7 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/units.html#astrophysical-units" class="header">Astrophysical Units</a></li>
     <li><a href="../params/units.html#imperial-units" class="header">Imperial Units</a></li>
     <li><a href="../params/units.html#others-engineering" class="header">Others - Engineering</a></li>
+    <li><a href="../params/units.html#time-units" class="header">Time units</a></li>
     <li><a href="../params/units.html#usage-examples" class="header">Usage Examples</a></li>
   </ul></li>
 </ul>
@@ -181,6 +182,7 @@ TMT JavaScript/Typescript Library
     <li><a href="../params/units.html#astrophysical-units" class="header">Astrophysical Units</a></li>
     <li><a href="../params/units.html#imperial-units" class="header">Imperial Units</a></li>
     <li><a href="../params/units.html#others-engineering" class="header">Others - Engineering</a></li>
+    <li><a href="../params/units.html#time-units" class="header">Time units</a></li>
     <li><a href="../params/units.html#usage-examples" class="header">Usage Examples</a></li>
   </ul></li>
 </ul>
@@ -194,7 +196,7 @@ TMT JavaScript/Typescript Library
 <div class="md-content__searchable">
 <h1><a href="#units" name="units" class="anchor"><span class="anchor-link"></span></a>Units</h1>
 <p>Listed below are Units of Measurement, supported by TMT observatory framework and are available as Enumerated values. <code>Units</code> are optionally attached to <code>Parameter</code> Keys.</p>
-<p>Type definition for Units can be found <a href="file:///Users/manish.gowardipe/Desktop/projects/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#units">here</a></p><div class="callout note "><div class="callout-title">Note</div>
+<p>Type definition for Units can be found <a href="file:///Users/manishgowardipe/projects/tmt/esw-ts/target/site/esw-ts/0.1.0-SNAPSHOT/ts-docs/modules/models.html#units">here</a></p><div class="callout note "><div class="callout-title">Note</div>
 <p>The set of supported Units will be modified as more required Units will be discovered.</p></div>
 <h2><a href="#default-units-for-keys" name="default-units-for-keys" class="anchor"><span class="anchor-link"></span></a>Default Units for Keys</h2>
 <p>The default unit for <code>UTCTimeKey</code> and <code>TAITimeKey</code> is <code>second</code>. For all the remaining keys, default unit is NoUnits.</p>
@@ -508,16 +510,38 @@ TMT JavaScript/Typescript Library
     </tr>
   </tbody>
 </table>
+<h2><a href="#time-units" name="time-units" class="anchor"><span class="anchor-link"></span></a>Time units</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Name </th>
+      <th>Abbreviation </th>
+      <th>Description </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>tai </td>
+      <td>tai </td>
+      <td>TAI Time unit </td>
+    </tr>
+    <tr>
+      <td>utc </td>
+      <td>utc </td>
+      <td>UTC Time unit </td>
+    </tr>
+  </tbody>
+</table>
 <h2><a href="#usage-examples" name="usage-examples" class="anchor"><span class="anchor-link"></span></a>Usage Examples</h2>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/UnitExample.ts#L15-L41" target="_blank" title="Go to snippet source"></a><code class="language-ts">//declare keyName
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-ts/tree/master/example/src/documentation/params/UnitExample.ts#L6-L30" target="_blank" title="Go to snippet source">source</a><code class="language-ts">//declare keyName
 const s1: string = &#39;encoder&#39;
 
 //making 2 keys
 const k1 = booleanKey(s1)
-const k2 = shortKey(&#39;RandomKeyName&#39;, &#39;meter&#39;)
+const k2 = shortKey(&#39;RandomKeyName&#39;, Units.meter)
 
 //storing a single value
 const booleanParam: Parameter&lt;BooleanKey&gt; = k1.set([true])
@@ -534,11 +558,9 @@ const allValues: Array&lt;number&gt; = paramWithShorts1.values
 // allValues === Array(1, 2, 3, 4))
 // paramWithUnits3.units === &quot;meter&quot;)
 
-//default unit for UTCTimeKey is second
-const tParam: Parameter&lt;UTCTimeKey&gt; = utcTimeKey(&#39;now&#39;).set([
-  new Date().toUTCString()
-])
-const defaultTimeUnit: Units = tParam.units //is second</code></pre></dd>
+//default unit for UTCTimeKey is utc
+const tParam: Parameter&lt;UTCTimeKey&gt; = utcTimeKey(&#39;now&#39;).set([UTCTime.now()])
+const defaultTimeUnit: Units = tParam.units //is utc</code></pre></dd>
 </dl>
 </div>
 <div>
