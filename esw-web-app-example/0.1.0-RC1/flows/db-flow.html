@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="description" content="docs">
+<meta name="generator" content="Paradox, paradox-material-theme=0.7.0, mkdocs-material=3.0.3">
+
+<meta name="lang:clipboard.copy" content="Copy to clipboard">
+<meta name="lang:clipboard.copied" content="Copied to clipboard">
+<meta name="lang:search.language" content="">
+<meta name="lang:search.pipeline.stopwords" content="true">
+<meta name="lang:search.pipeline.trimmer" content="true">
+<meta name="lang:search.result.none" content="No matching documents">
+<meta name="lang:search.result.one" content="1 matching document">
+<meta name="lang:search.result.other" content="# matching documents">
+<meta name="lang:search.tokenizer" content="[\s\-]+">
+
+
+<meta name="description" content="docs">
+<link rel="shortcut icon" href="../assets/images/favicon.png">
+<title>Adding Database Persistence · ESW Web Application Tutorial</title>
+<link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
+<link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
+<link rel="stylesheet" href="../lib/prettify/prettify.css">
+<script src="../assets/javascripts/modernizr.1aa3b519.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+<style>
+body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}
+code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
+</style>
+<link rel="stylesheet" href="../assets/fonts/font-awesome.css">
+<link rel="stylesheet" href="../assets/fonts/material-icons.css">
+<link rel="stylesheet" href="../assets/stylesheets/paradox-material-theme.css">
+</head>
+<body
+>
+<input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+<input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+<label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+<header class="md-header" data-md-component="header">
+<nav class="md-header-nav md-grid">
+<div class="md-flex">
+<div class="md-flex__cell md-flex__cell--shrink">
+<a href="../index.html" title="ESW Web Application Tutorial" class="md-header-nav__button md-logo">
+<i class="md-icon">local_library</i>
+</a>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+</div>
+<div class="md-flex__cell md-flex__cell--stretch">
+<div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+<span class="md-header-nav__topic">
+ESW Web Application Tutorial
+</span>
+<span class="md-header-nav__topic">
+Adding Database Persistence
+</span>
+</div>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+<label class="md-icon md-search__icon" for="__search"></label>
+<button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">&#xE5CD;</button>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix>
+<div class="md-search-result" data-md-component="result">
+<div class="md-search-result__meta">
+Type to start searching
+</div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</nav>
+</header>
+
+<div class="md-container">
+<main class="md-main">
+<div class="md-main__inner md-grid" data-md-component="container">
+<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
+<label class="md-nav__title md-nav__title--site" for="drawer">
+<a href="../index.html" title="ESW Web Application Tutorial" class="md-nav__button md-logo">
+<span class="md-nav__button md-logo">
+<i class="md-icon">local_library</i>
+</a>
+<a href="../index.html" title="ESW Web Application Tutorial">
+ESW Web Application Tutorial
+</a>
+</label>
+<ul>
+  <li><a href="../flows/base-flow.html" class="page">Creating a Web Application</a></li>
+  <li><a href="../flows/auth-flow.html" class="page">Adding Authentication</a></li>
+  <li><a href="../flows/db-flow.html" class="active page">Adding Database Persistence</a></li>
+  <li><a href="../flows/docs-flow.html" class="page">Adding Paradox Documentation</a></li>
+</ul>
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../flows/db-flow.html#adding-database-persistence" class="header">Adding Database Persistence</a>
+  <ul>
+    <li><a href="../flows/db-flow.html#update-the-backend-implementation" class="header">Update the Backend Implementation</a></li>
+    <li><a href="../flows/db-flow.html#run-the-new-application" class="header">Run the New Application</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</nav>
+<ul style="display: none">
+<li class="md-nav__item md-version" id="project.version">
+<label class="md-nav__link" for="__version">
+<i class="md-icon" title="Version">label_outline</i> 0.1.0-RC1
+</label>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="../flows/db-flow.html#adding-database-persistence" class="header">Adding Database Persistence</a>
+  <ul>
+    <li><a href="../flows/db-flow.html#update-the-backend-implementation" class="header">Update the Backend Implementation</a></li>
+    <li><a href="../flows/db-flow.html#run-the-new-application" class="header">Run the New Application</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
+<div class="md-content">
+<article class="md-content__inner md-typeset">
+<div class="md-content__searchable">
+<h1><a href="#adding-database-persistence" name="adding-database-persistence" class="anchor"><span class="anchor-link"></span></a>Adding Database Persistence</h1>
+<p>In this section of the tutorial, we will add a database to our backend application to store the RA/Dec coordinates entered through the UI instead of the state variable in the backend. With this change our coordinates will be stored between observing runs, and we won&rsquo;t lose all our precious coordinates. </p>
+<p>This flow also shows how to use the CSW Database Service in a backend and how to pass database query results back to the UI. We will be using the CSW Database Service&rsquo;s Jooq DSL to write our queries. Under the covers CSW Database Service is using the <code>PostgreSQL</code> relational database to persist our data.</p>
+<p>First, we will update our backend server to use the database, then we will set up the database itself, and then we will run the application.</p>
+<h2><a href="#update-the-backend-implementation" name="update-the-backend-implementation" class="anchor"><span class="anchor-link"></span></a>Update the Backend Implementation</h2>
+<p>First, we have to make the CSW Database Service accessible in our project.<br/>Add a <code>csw-database</code> dependency in <code>project/Libs.scala</code></p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/project/Libs.scala#L6" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val `csw-database` = &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-database&quot; % &quot;4.0.0-RC2&quot;</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>In this example, we use version 3.0.1 of CSW, but any later version will work as well.</p></div>
+<p>Use the <code>csw-database</code> dependency in your <code>build.sbt</code> file and reload the project in your IDE (in IntelliJ, this can be done from the sbt tab, typically on the right side of the IDE). Or type <code>reload</code> at the sbt prompt.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/build.sbt#L14-L17" target="_blank" title="Go to snippet source">source</a><code class="language-sbt">libraryDependencies ++= Seq(
+  Libs.`esw-http-template-wiring` % &quot;compile-&gt;compile;test-&gt;test&quot;,
+  Libs.`csw-database`, // &lt;---
+  Libs.`embedded-keycloak` % Test,</code></pre></dd>
+</dl>
+<h3><a href="#create-a-database-access-class" name="create-a-database-access-class" class="anchor"><span class="anchor-link"></span></a>Create a Database access class</h3>
+<p>Now we can implement our database access code. Go to the <code>impl</code> package in the backend and add a repository class <code>RaDecRepository.scala</code> using the DSL context provided by JOOQ as part of the CSW Database Service. This will be constructed and injected later in our wiring.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L13-L35" target="_blank" title="Go to snippet source">source</a><code class="language-scala">class RaDecRepository(dsl: DSLContext)(implicit ec: ExecutionContext) {
+}</code></pre></dd>
+</dl>
+<p>Add a method to this class to insert data into the DB. The <code>query</code> method of the <code>DSLContext</code> is used to construct an SQL <code>INSERT</code> statement to insert our formatted RA/Dec strings along with a UUID. The CSW Database Service provides an asynchronous execute method, which returns a negative value on error. Since the insert is done asynchronously, this method returns a <code>Future</code>.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L17-L26" target="_blank" title="Go to snippet source">source</a><code class="language-scala">def insertRaDec(formattedRa: String, formattedDec: String): Future[String] = {
+  val id = UUID.randomUUID().toString
+  dsl
+    .query(s&quot;INSERT INTO RaDecValues (id,formattedRa,formattedDec) values (?,?,?)&quot;, id, formattedRa, formattedDec)
+    .executeAsyncScala()
+    .map {
+      case x if x &lt; 0 =&gt; throw new RuntimeException(s&quot;Failed to insert the (ra ,dec) value ($formattedRa, $formattedDec )&quot;)
+      case _          =&gt; id
+    }
+}</code></pre></dd>
+</dl>
+<p>We will similarly add a method to get data from the DB:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L30-L31" target="_blank" title="Go to snippet source">source</a><code class="language-scala">def getRaDecValues: Future[scala.List[RaDecResponse]] =
+  dsl.resultQuery(&quot;SELECT * from RaDecValues&quot;).fetchAsyncScala[RaDecResponse]</code></pre></dd>
+</dl>
+<p>Add the necessary imports. The imports should look something like this:</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L4-L9" target="_blank" title="Go to snippet source">source</a><code class="language-scala">import csw.database.scaladsl.JooqExtentions.{RichQuery, RichResultQuery}
+import org.jooq.DSLContext
+import org.tmt.sample.core.models.RaDecResponse
+
+import java.util.UUID
+import scala.concurrent.{ExecutionContext, Future}</code></pre></dd>
+</dl>
+<h3><a href="#update-backend-service-implementation" name="update-backend-service-implementation" class="anchor"><span class="anchor-link"></span></a>Update backend service implementation</h3>
+<p>Update <code>RaDecImpl.scala</code> to inject the repository dependency. We will also need an implicit execution context curried into this class since our <code>RaDecRepository</code> class requires one.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L10" target="_blank" title="Go to snippet source">source</a><code class="language-scala">class RaDecImpl(raDecRepository: RaDecRepository)(implicit ec: ExecutionContext) extends RaDecService {</code></pre></dd>
+</dl>
+<p>Update the <code>raDecToString</code> implementation in <code>RaDecImpl.scala</code> to use the insert query method instead the locally stored list.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L14-L18" target="_blank" title="Go to snippet source">source</a><code class="language-scala">override def raDecToString(raDecRequest: RaDecRequest): Future[RaDecResponse] = {
+  val formattedRa  = Angle.raToString(raDecRequest.raInDecimals)
+  val formattedDec = Angle.deToString(raDecRequest.decInDecimals)
+  raDecRepository.insertRaDec(formattedRa, formattedDec).map(id =&gt; RaDecResponse(id, formattedRa, formattedDec))
+}</code></pre></dd>
+</dl>
+<p>Update the <code>getRaDecValues</code> implementation in <code>RaDecImpl.scala</code> to use the get values query method.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L22-L23" target="_blank" title="Go to snippet source">source</a><code class="language-scala">override def getRaDecValues: Future[scala.List[RaDecResponse]] =
+  raDecRepository.getRaDecValues</code></pre></dd>
+</dl>
+<p>References to the locally stored coordinate list can now be deleted since it is no longer needed.</p>
+<h3><a href="#update-wiring" name="update-wiring" class="anchor"><span class="anchor-link"></span></a>Update wiring</h3>
+<p>Now we need to put everything together by updating the application wiring.</p>
+<p>First, create the DB setup in <code>SampleWiring.scala</code></p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/SampleWiring.scala#L19-L27" target="_blank" title="Go to snippet source">source</a><code class="language-scala">private lazy val databaseServiceFactory = new DatabaseServiceFactory(actorRuntime.typedSystem)
+private val dbName                      = settings.config.getString(&quot;dbName&quot;)
+private val dbUsernameHolder            = settings.config.getString(&quot;dbUsernameHolder&quot;)
+private val dbPasswordHolder            = settings.config.getString(&quot;dbPasswordHolder&quot;)
+private lazy val dslContext: DSLContext =
+  Await.result(
+    databaseServiceFactory.makeDsl(cswServices.locationService, dbName, dbUsernameHolder, dbPasswordHolder),
+    10.seconds
+  )</code></pre></dd>
+</dl>
+<p>Here you can see the database name, username, and password are obtained from the application configuration. These values are used to create the JOOQ <code>DSLContext</code> passed into our repository class. Let&rsquo;s instantiate the repository, passing in our DSL context, and then update the implementation reference to receive the repository.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/SampleWiring.scala#L15-L32" target="_blank" title="Go to snippet source">source</a><code class="language-scala">import actorRuntime.ec
+lazy val repository = new RaDecRepository(dslContext)
+lazy val raDecImpl  = new RaDecImpl(repository)</code></pre></dd>
+</dl><div class="callout note "><div class="callout-title">Note</div>
+<p>It may not be a great security practice to keep database login info in a config file checked into GitHub, but we are not working on bank software here. Some applications may need a different approach but for most applications this is probably good enough. See also the CSW documentation.</p></div>
+<p>We now need to update our application configuration file with the database configuration. Edit <code>application.conf</code> in the <code>src/main/resources</code> folder.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/resources/application.conf#L8-L13" target="_blank" title="Go to snippet source">source</a><code class="language-conf">http-server {
+  prefix: &quot;ESW.sample&quot;
+  dbName: postgres
+  dbUsernameHolder: DB_USERNAME
+  dbPasswordHolder: DB_PASSWORD
+}</code></pre></dd>
+</dl>
+<p>The database username and password are obtained from the environment variables <code>DB_USERNAME</code> and <code>DB_PASSWORD</code> respectively. We will set these variables later before we run our backend.</p>
+<h2><a href="#run-the-new-application" name="run-the-new-application" class="anchor"><span class="anchor-link"></span></a>Run the New Application</h2>
+<p>CSW Database Service uses the PostgreSQL database, which must be installed for the application to work properly. Once it is installed, the application database must be initially configured with to work with our application.</p>
+<h3><a href="#database-setup" name="database-setup" class="anchor"><span class="anchor-link"></span></a>Database setup</h3>
+<p>Follow the installation guide to download and install PostgreSQL on your machine, if not already installed <a href="https://www.postgresql.org/download/">Link</a>. See also the CSW documentation. For linux specific troubleshooting <a href="https://github.com/tmtsoftware/csw/blob/master/docs/src/main/services/database.md#database-service">refer</a></p>
+<p>At this point, we will re-run <code>csw-services</code> with the CSW Database Service enabled. This will run a PostgreSQL instance that we can then configure.</p>
+<p>The following instructions show how to run the Database Service along with the Location Service and the Authentication and Authorization Service using <code>csw-services</code>:</p><div class="callout note "><div class="callout-title">Note</div>
+<p>For running the Database Service using <code>csw-services</code>, the PGDATA environment variable must be set to the Postgres data directory where Postgres is installed e.g. for mac: “/usr/local/var/postgres”.</p></div>
+<pre class="prettyprint"><code class="language-bash">cs install csw-services
+csw-services start -k -d
+</code></pre>
+<p>Login to postgres with your default user and create a new user to be used with our application. The example code below sets up a user &ldquo;postgres&rdquo; with a password &ldquo;postgres&rdquo;, but you can use different credentials if you prefer.</p>
+<pre class="prettyprint"><code class="language-bash">psql -d postgres
+postgres =&gt; CREATE USER postgres with password &#39;postgres&#39;;
+postgres =&gt; \q
+psql -d postgres -U postgres
+</code></pre>
+<p>Now for the application initialization. We will create an <code>RADECVALUES</code> table in the database that the application can use to perform fetch and insert queries. The following commands can be used to create a table:</p>
+<pre class="prettyprint"><code class="language-bash">postgres =&gt;
+CREATE TABLE RADECVALUES(
+id           TEXT             PRIMARY KEY,
+formattedRa  TEXT             NOT NULL,
+formattedDec TEXT             NOT NULL
+);
+</code></pre>
+<p>As mentioned above, we depend on environment variables to pick up your username and password for the database, thus DB_USERNAME and DB_PASSWORD need to be set to the credentials you provided above.</p>
+<p>To set environment variables, use the command</p>
+<pre class="prettyprint"><code class="language-bash">export DB_USERNAME=&lt;VALUE&gt; DB_PASSWORD=&lt;VALUE&gt;
+</code></pre>
+<p>Now, we are ready to run the backend application:</p>
+<pre class="prettyprint"><code class="language-bash">sbt:sample-backend&gt; run start
+</code></pre>
+<p>Test your application either with the UI or by using <code>apptest.http</code> as described in previous tutorials, and verify the data is saved in your postgres table. This can be done in <code>psql</code> using the <code>TABLE</code> command:</p>
+<pre class="prettyprint"><code class="language-bash">postgres =&gt; SELECT * FROM RADECVALUES;
+</code></pre>
+</div>
+<div>
+<a href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/docs/src/main/flows/db-flow.md" title="Edit this page" class="md-source-file md-edit">
+Edit this page
+</a>
+</div>
+<div class="print-only">
+<span class="md-source-file md-version">
+0.1.0-RC1
+</span>
+</div>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-nav">
+<nav class="md-footer-nav__inner md-grid">
+<a href="../flows/auth-flow.html" title="Adding Authentication" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+</div>
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Previous
+</span>
+Adding Authentication
+</span>
+</div>
+</a>
+<a href="../flows/docs-flow.html" title="Adding Paradox Documentation" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
+Adding Paradox Documentation
+</span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+</div>
+</a>
+</nav>
+</div>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+Powered by
+<a href="https://github.com/lightbend/paradox">Paradox</a>
+and
+<a href="https://jonas.github.io/paradox-material-theme/">Paradox Material Theme</a>
+
+</div>
+</div>
+</div>
+</footer>
+
+</div>
+<script src="../assets/javascripts/application.583bbe55.js"></script>
+<script src="../assets/javascripts/paradox-material-theme.js"></script>
+<script>app.initialize({version:"0.17",url:{base:"../."}})</script>
+<script type="text/javascript" src="../lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="../lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(event) {
+window.prettyPrint && prettyPrint();
+});
+</script>
+</body>
+</html>
