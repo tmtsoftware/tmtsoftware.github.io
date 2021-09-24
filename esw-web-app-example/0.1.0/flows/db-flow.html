@@ -161,14 +161,14 @@ ESW Web Application Tutorial
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/project/Libs.scala#L6" target="_blank" title="Go to snippet source"></a><code class="language-scala">val `csw-database` = &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-database&quot; % &quot;3.0.1&quot;</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/project/Libs.scala#L6" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val `csw-database` = &quot;com.github.tmtsoftware.csw&quot; %% &quot;csw-database&quot; % &quot;4.0.0&quot;</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
 <p>In this example, we use version 3.0.1 of CSW, but any later version will work as well.</p></div>
 <p>Use the <code>csw-database</code> dependency in your <code>build.sbt</code> file and reload the project in your IDE (in IntelliJ, this can be done from the sbt tab, typically on the right side of the IDE). Or type <code>reload</code> at the sbt prompt.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/build.sbt#L14-L17" target="_blank" title="Go to snippet source"></a><code class="language-sbt">libraryDependencies ++= Seq(
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/build.sbt#L14-L17" target="_blank" title="Go to snippet source">source</a><code class="language-sbt">libraryDependencies ++= Seq(
   Libs.`esw-http-template-wiring` % &quot;compile-&gt;compile;test-&gt;test&quot;,
   Libs.`csw-database`, // &lt;---
   Libs.`embedded-keycloak` % Test,</code></pre></dd>
@@ -178,14 +178,14 @@ ESW Web Application Tutorial
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L13-L35" target="_blank" title="Go to snippet source"></a><code class="language-scala">class RaDecRepository(dsl: DSLContext)(implicit ec: ExecutionContext) {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L13-L35" target="_blank" title="Go to snippet source">source</a><code class="language-scala">class RaDecRepository(dsl: DSLContext)(implicit ec: ExecutionContext) {
 }</code></pre></dd>
 </dl>
 <p>Add a method to this class to insert data into the DB. The <code>query</code> method of the <code>DSLContext</code> is used to construct an SQL <code>INSERT</code> statement to insert our formatted RA/Dec strings along with a UUID. The CSW Database Service provides an asynchronous execute method, which returns a negative value on error. Since the insert is done asynchronously, this method returns a <code>Future</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L17-L26" target="_blank" title="Go to snippet source"></a><code class="language-scala">def insertRaDec(formattedRa: String, formattedDec: String): Future[String] = {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L17-L26" target="_blank" title="Go to snippet source">source</a><code class="language-scala">def insertRaDec(formattedRa: String, formattedDec: String): Future[String] = {
   val id = UUID.randomUUID().toString
   dsl
     .query(s&quot;INSERT INTO RaDecValues (id,formattedRa,formattedDec) values (?,?,?)&quot;, id, formattedRa, formattedDec)
@@ -200,14 +200,14 @@ ESW Web Application Tutorial
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L30-L31" target="_blank" title="Go to snippet source"></a><code class="language-scala">def getRaDecValues: Future[scala.List[RaDecResponse]] =
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L30-L31" target="_blank" title="Go to snippet source">source</a><code class="language-scala">def getRaDecValues: Future[scala.List[RaDecResponse]] =
   dsl.resultQuery(&quot;SELECT * from RaDecValues&quot;).fetchAsyncScala[RaDecResponse]</code></pre></dd>
 </dl>
 <p>Add the necessary imports. The imports should look something like this:</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L4-L9" target="_blank" title="Go to snippet source"></a><code class="language-scala">import csw.database.scaladsl.JooqExtentions.{RichQuery, RichResultQuery}
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecRepository.scala#L4-L9" target="_blank" title="Go to snippet source">source</a><code class="language-scala">import csw.database.scaladsl.JooqExtentions.{RichQuery, RichResultQuery}
 import org.jooq.DSLContext
 import org.tmt.sample.core.models.RaDecResponse
 
@@ -219,13 +219,13 @@ import scala.concurrent.{ExecutionContext, Future}</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L10" target="_blank" title="Go to snippet source"></a><code class="language-scala">class RaDecImpl(raDecRepository: RaDecRepository)(implicit ec: ExecutionContext) extends RaDecService {</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L10" target="_blank" title="Go to snippet source">source</a><code class="language-scala">class RaDecImpl(raDecRepository: RaDecRepository)(implicit ec: ExecutionContext) extends RaDecService {</code></pre></dd>
 </dl>
 <p>Update the <code>raDecToString</code> implementation in <code>RaDecImpl.scala</code> to use the insert query method instead the locally stored list.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L14-L18" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def raDecToString(raDecRequest: RaDecRequest): Future[RaDecResponse] = {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L14-L18" target="_blank" title="Go to snippet source">source</a><code class="language-scala">override def raDecToString(raDecRequest: RaDecRequest): Future[RaDecResponse] = {
   val formattedRa  = Angle.raToString(raDecRequest.raInDecimals)
   val formattedDec = Angle.deToString(raDecRequest.decInDecimals)
   raDecRepository.insertRaDec(formattedRa, formattedDec).map(id =&gt; RaDecResponse(id, formattedRa, formattedDec))
@@ -235,7 +235,7 @@ import scala.concurrent.{ExecutionContext, Future}</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L22-L23" target="_blank" title="Go to snippet source"></a><code class="language-scala">override def getRaDecValues: Future[scala.List[RaDecResponse]] =
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/RaDecImpl.scala#L22-L23" target="_blank" title="Go to snippet source">source</a><code class="language-scala">override def getRaDecValues: Future[scala.List[RaDecResponse]] =
   raDecRepository.getRaDecValues</code></pre></dd>
 </dl>
 <p>References to the locally stored coordinate list can now be deleted since it is no longer needed.</p>
@@ -245,7 +245,7 @@ import scala.concurrent.{ExecutionContext, Future}</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/SampleWiring.scala#L19-L27" target="_blank" title="Go to snippet source"></a><code class="language-scala">private lazy val databaseServiceFactory = new DatabaseServiceFactory(actorRuntime.typedSystem)
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/SampleWiring.scala#L19-L27" target="_blank" title="Go to snippet source">source</a><code class="language-scala">private lazy val databaseServiceFactory = new DatabaseServiceFactory(actorRuntime.typedSystem)
 private val dbName                      = settings.config.getString(&quot;dbName&quot;)
 private val dbUsernameHolder            = settings.config.getString(&quot;dbUsernameHolder&quot;)
 private val dbPasswordHolder            = settings.config.getString(&quot;dbPasswordHolder&quot;)
@@ -259,7 +259,7 @@ private lazy val dslContext: DSLContext =
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/SampleWiring.scala#L15-L32" target="_blank" title="Go to snippet source"></a><code class="language-scala">import actorRuntime.ec
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/impl/db/SampleWiring.scala#L15-L32" target="_blank" title="Go to snippet source">source</a><code class="language-scala">import actorRuntime.ec
 lazy val repository = new RaDecRepository(dslContext)
 lazy val raDecImpl  = new RaDecImpl(repository)</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
@@ -268,7 +268,7 @@ lazy val raDecImpl  = new RaDecImpl(repository)</code></pre></dd>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/resources/application.conf#L8-L13" target="_blank" title="Go to snippet source"></a><code class="language-conf">http-server {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/resources/application.conf#L8-L13" target="_blank" title="Go to snippet source">source</a><code class="language-conf">http-server {
   prefix: &quot;ESW.sample&quot;
   dbName: postgres
   dbUsernameHolder: DB_USERNAME
@@ -283,7 +283,7 @@ lazy val raDecImpl  = new RaDecImpl(repository)</code></pre></dd>
 <p>At this point, we will re-run <code>csw-services</code> with the CSW Database Service enabled. This will run a PostgreSQL instance that we can then configure.</p>
 <p>The following instructions show how to run the Database Service along with the Location Service and the Authentication and Authorization Service using <code>csw-services</code>:</p><div class="callout note "><div class="callout-title">Note</div>
 <p>For running the Database Service using <code>csw-services</code>, the PGDATA environment variable must be set to the Postgres data directory where Postgres is installed e.g. for mac: “/usr/local/var/postgres”.</p></div>
-<pre class="prettyprint"><code class="language-bash">cs install csw-services:v4.0.0-M1
+<pre class="prettyprint"><code class="language-bash">cs install csw-services
 csw-services start -k -d
 </code></pre>
 <p>Login to postgres with your default user and create a new user to be used with our application. The example code below sets up a user &ldquo;postgres&rdquo; with a password &ldquo;postgres&rdquo;, but you can use different credentials if you prefer.</p>
