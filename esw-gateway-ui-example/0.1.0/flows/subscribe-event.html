@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Adding Subscribing An Event Example · ESW Gateway UI Application Tutorial</title>
+<title>Adding Event Subscription · Gateway UI Application Tutorial</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -43,7 +43,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <nav class="md-header-nav md-grid">
 <div class="md-flex">
 <div class="md-flex__cell md-flex__cell--shrink">
-<a href="../index.html" title="ESW Gateway UI Application Tutorial" class="md-header-nav__button md-logo">
+<a href="../index.html" title="Gateway UI Application Tutorial" class="md-header-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
 </div>
@@ -53,10 +53,10 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <div class="md-flex__cell md-flex__cell--stretch">
 <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
 <span class="md-header-nav__topic">
-ESW Gateway UI Application Tutorial
+Gateway UI Application Tutorial
 </span>
 <span class="md-header-nav__topic">
-Adding Subscribing An Event Example
+Adding Event Subscription
 </span>
 </div>
 </div>
@@ -96,26 +96,26 @@ Type to start searching
 <div class="md-sidebar__inner">
 <nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
 <label class="md-nav__title md-nav__title--site" for="drawer">
-<a href="../index.html" title="ESW Gateway UI Application Tutorial" class="md-nav__button md-logo">
+<a href="../index.html" title="Gateway UI Application Tutorial" class="md-nav__button md-logo">
 <span class="md-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
-<a href="../index.html" title="ESW Gateway UI Application Tutorial">
-ESW Gateway UI Application Tutorial
+<a href="../index.html" title="Gateway UI Application Tutorial">
+Gateway UI Application Tutorial
 </a>
 </label>
 <ul>
   <li><a href="../flows/base-flow.html" class="page">Creating Gateway UI Application</a></li>
-  <li><a href="../flows/submit-commands.html" class="page">Adding Submit Command Example</a></li>
-  <li><a href="../flows/subscribe-event.html" class="active page">Adding Subscribing An Event Example</a></li>
+  <li><a href="../flows/submit-commands.html" class="page">Adding a Submit Command</a></li>
+  <li><a href="../flows/subscribe-event.html" class="active page">Adding Event Subscription</a></li>
   <li><a href="../flows/docs-flow.html" class="page">Adding Paradox Documentation</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../flows/subscribe-event.html#adding-subscribing-an-event-example" class="header">Adding Subscribing An Event Example</a>
+  <li><a href="../flows/subscribe-event.html#adding-event-subscription" class="header">Adding Event Subscription</a>
   <ul>
-    <li><a href="../flows/subscribe-event.html#add-subscribe-event-component" class="header">Add Subscribe Event Component</a></li>
+    <li><a href="../flows/subscribe-event.html#add-a-subscribe-event-component" class="header">Add a Subscribe Event Component</a></li>
     <li><a href="../flows/subscribe-event.html#integrate-subscribeevent-component" class="header">Integrate SubscribeEvent Component</a></li>
     <li><a href="../flows/subscribe-event.html#publish-events-using-esw-shell" class="header">Publish events using esw-shell</a></li>
   </ul></li>
@@ -139,9 +139,9 @@ ESW Gateway UI Application Tutorial
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="../flows/subscribe-event.html#adding-subscribing-an-event-example" class="header">Adding Subscribing An Event Example</a>
+  <li><a href="../flows/subscribe-event.html#adding-event-subscription" class="header">Adding Event Subscription</a>
   <ul>
-    <li><a href="../flows/subscribe-event.html#add-subscribe-event-component" class="header">Add Subscribe Event Component</a></li>
+    <li><a href="../flows/subscribe-event.html#add-a-subscribe-event-component" class="header">Add a Subscribe Event Component</a></li>
     <li><a href="../flows/subscribe-event.html#integrate-subscribeevent-component" class="header">Integrate SubscribeEvent Component</a></li>
     <li><a href="../flows/subscribe-event.html#publish-events-using-esw-shell" class="header">Publish events using esw-shell</a></li>
   </ul></li>
@@ -154,18 +154,19 @@ ESW Gateway UI Application Tutorial
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#adding-subscribing-an-event-example" name="adding-subscribing-an-event-example" class="anchor"><span class="anchor-link"></span></a>Adding Subscribing An Event Example</h1>
-<p>In this use case, we want to Subscribe to an event which will be published by an Backend Component. We will be using EventService to publish a SystemEvent(counterEvent) every 2 seconds inside esw-shell utility.</p>
-<p>Visit <a href="https://tmtsoftware.github.io/csw/4.0.0-RC1/params/events.html">here</a> to learn more about events.</p>
-<h2><a href="#add-subscribe-event-component" name="add-subscribe-event-component" class="anchor"><span class="anchor-link"></span></a>Add Subscribe Event Component</h2>
-<p>Assuming that you have followed atleast the <a href="base-flow.html">basic flow</a>, we can go further and add subscribing to an event feature in our UI.</p>
-<p>Add <code>SubscribeEvent.tsx</code> file in <code>src/components</code> folder.</p>
-<p>SubscribeEvent component looks like following:</p><div class="callout note "><div class="callout-title">Note</div>
+<h1><a href="#adding-event-subscription" name="adding-event-subscription" class="anchor"><span class="anchor-link"></span></a>Adding Event Subscription</h1>
+<p>In this part of the tutorial, we want to add the ability to subscribe to an Event published through the Event Service and display the results. We will be using the esw-shell utility to publish a SystemEvent every 2 seconds to the Event Service.</p>
+<p>This section of the app will display a form at the top to specify which event to subscribe to and a table below it showing a list of received values.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/csw/4.0.0/params/events.html">here</a> to learn more about events.</p>
+<h2><a href="#add-a-subscribe-event-component" name="add-a-subscribe-event-component" class="anchor"><span class="anchor-link"></span></a>Add a Subscribe Event Component</h2>
+<p>Create a <code>SubscribeEvent.tsx</code> file in <code>src/components</code> folder.</p>
+<p>In this tutorial, we will build up the SubscribeEvent component gradually. </p><div class="callout note "><div class="callout-title">Note</div>
 <p>You can refer the source code of the completed application at any point in the course of this tutorial. You can find it <a href="https://github.com/tmtsoftware/esw-gateway-ui-example">here</a></p></div>
+<p>Start with the following code, which defines the component, enables authorization, and creates a base Card component to put our other components in. </p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L28-L150" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SubscribeEvent = ({
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L25-L139" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SubscribeEvent = ({
   _eventService
 }: {
   _eventService?: EventService
@@ -185,135 +186,66 @@ ESW Gateway UI Application Tutorial
   )
 }</code></pre></dd>
 </dl>
-<p>We need to add form element to take input from the user. This Form includes two input fields</p>
+<p>Next, we will add a form to take input from the user.</p>
+<p>Add the following in the <code>SubscribeEvent</code> component inside the <code>&lt;Card&gt;</code> component just below the <code>title</code> attribute.</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L95-L124" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Form
+  onFinish={() =&gt; {
+    subscription ? unSubscribe() : subscribe()
+  }}&gt;
+  &lt;Form.Item label=&#39;Source Prefix&#39;&gt;
+    &lt;Input
+      role=&#39;SourcePrefix&#39;
+      value={prefix}
+      placeholder=&#39;ESW.assembly123&#39;
+      onChange={(e) =&gt; setPrefix(e.target.value)}
+    /&gt;
+  &lt;/Form.Item&gt;
+  &lt;Form.Item label=&#39;Event Keyname&#39;&gt;
+    &lt;Input
+      role=&#39;keyName&#39;
+      value={keyName}
+      placeholder=&#39;counterEvent&#39;
+      onChange={(e) =&gt; setKeyName(e.target.value)}
+    /&gt;
+  &lt;/Form.Item&gt;
+  &lt;Form.Item wrapperCol={{ offset: 16, span: 16 }}&gt;
+    &lt;Button
+      role=&#39;subscribe&#39;
+      onClick={() =&gt; (subscription ? unSubscribe() : subscribe())}
+      type=&#39;primary&#39;
+      disabled={keyName === &#39;&#39;}&gt;
+      {subscription ? &#39;UnSubscribe&#39; : &#39;Subscribe&#39;}
+    &lt;/Button&gt;
+  &lt;/Form.Item&gt;
+&lt;/Form&gt;</code></pre></dd>
+</dl>
+<p>This Form includes the following items:</p>
 <ul>
   <li>SourcePrefix - A free text input box for putting Source Prefix of the desired subscription.</li>
   <li>Event KeyName - A free text input box for putting Event&rsquo;s keyname of the desired subscription.</li>
-  <li>Subscribe - A button for creating subscription. It gets toggled to <code>UnSubscribe</code> on success.</li>
+  <li>Subscribe - A button for creating subscription. It gets toggled to <code>UnSubscribe</code> on when the subscription is  successfully started.</li>
 </ul>
-<p>Add the following in the SubscribeEvent component inside <code>&lt;Card&gt;</code> component.</p>
+<p>Next, we will add the React state hooks for storing and setting the values of these components:</p>
+<p>Add the following snippet in the SubscribeEvent component below the <code>authData</code> react state, above the return statement.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L28-L150" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SubscribeEvent = ({
-  _eventService
-}: {
-  _eventService?: EventService
-}): JSX.Element =&gt; {
-  const { auth } = useAuth()
-  const authData = { tokenFactory: () =&gt; auth?.token() }
-  return (
-    &lt;Card
-      style={{
-        maxWidth: &#39;30rem&#39;,
-        maxHeight: &#39;45rem&#39;
-      }}
-      title={
-        &lt;Typography.Title level={2}&gt;Subscribe Event Example&lt;/Typography.Title&gt;
-      }&gt;
-      &lt;Form
-        onFinish={() =&gt; {
-          subscription ? unSubscribe() : subscribe()
-        }}&gt;
-        &lt;Form.Item label=&#39;Source Prefix&#39;&gt;
-          &lt;Input
-            role=&#39;SourcePrefix&#39;
-            value={prefix}
-            placeholder=&#39;ESW.assembly123&#39;
-            onChange={(e) =&gt; setPrefix(e.target.value)}
-          /&gt;
-        &lt;/Form.Item&gt;
-        &lt;Form.Item label=&#39;Event Keyname&#39;&gt;
-          &lt;Input
-            role=&#39;keyName&#39;
-            value={keyName}
-            placeholder=&#39;counterEvent&#39;
-            onChange={(e) =&gt; setKeyName(e.target.value)}
-          /&gt;
-        &lt;/Form.Item&gt;
-        &lt;Form.Item wrapperCol={{ offset: 16, span: 16 }}&gt;
-          &lt;Button
-            role=&#39;subscribe&#39;
-            onClick={() =&gt; (subscription ? unSubscribe() : subscribe())}
-            type=&#39;primary&#39;
-            disabled={keyName === &#39;&#39;}&gt;
-            {subscription ? &#39;UnSubscribe&#39; : &#39;Subscribe&#39;}
-          &lt;/Button&gt;
-        &lt;/Form.Item&gt;
-      &lt;/Form&gt;
-    &lt;/Card&gt;
-  )
-}</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L34-L37" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const [prefix, setPrefix] = useState(&#39;&#39;)
+const [keyName, setKeyName] = useState(&#39;&#39;)
+const [events, setEvents] = useState&lt;Event[]&gt;([])
+const [subscription, setSubscription] = useState&lt;Subscription&gt;()</code></pre></dd>
 </dl>
-<p>Add the following react states to hold the information of their corresponding user inputs.</p>
-<p>Add the following snippet in the SubscribeEvent component below <code>authData</code> react state.</p>
+<p>The <code>onFinish</code> attribute of the form component specifies the method to be called when the form is submitted. We have specified this to be the <code>subscribe</code> method. We will implement this now. </p>
+<p>This method makes use of the ESW-TS <a href="https://tmtsoftware.github.io/esw-ts/services/event-service.html">Event Service</a> Typescript client which provides access to the Event Service through the Event Service routes of the Gateway. In this method, we call the <code>subscribe</code> API of the Event Service to create a subscription using a callback. The callback method <code>handleEvent</code>, defined at the top of this block, gets triggered whenever an event is received on that subscription.</p>
+<p>We also define an unsubscribe function which cancels the subscription through the ESW-TS client.</p>
+<p>Define these functions following the React state hooks inside component.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L28-L150" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SubscribeEvent = ({
-  _eventService
-}: {
-  _eventService?: EventService
-}): JSX.Element =&gt; {
-  const { auth } = useAuth()
-  const authData = { tokenFactory: () =&gt; auth?.token() }
-  const [prefix, setPrefix] = useState(&#39;&#39;)
-  const [keyName, setKeyName] = useState(&#39;&#39;)
-  const [events, setEvents] = useState&lt;Event[]&gt;([])
-  const [subscription, setSubscription] = useState&lt;Subscription&gt;()
-  return (
-    &lt;Card
-      style={{
-        maxWidth: &#39;30rem&#39;,
-        maxHeight: &#39;45rem&#39;
-      }}
-      title={
-        &lt;Typography.Title level={2}&gt;Subscribe Event Example&lt;/Typography.Title&gt;
-      }&gt;
-      &lt;Form
-        onFinish={() =&gt; {
-          subscription ? unSubscribe() : subscribe()
-        }}&gt;
-        &lt;Form.Item label=&#39;Source Prefix&#39;&gt;
-          &lt;Input
-            role=&#39;SourcePrefix&#39;
-            value={prefix}
-            placeholder=&#39;ESW.assembly123&#39;
-            onChange={(e) =&gt; setPrefix(e.target.value)}
-          /&gt;
-        &lt;/Form.Item&gt;
-        &lt;Form.Item label=&#39;Event Keyname&#39;&gt;
-          &lt;Input
-            role=&#39;keyName&#39;
-            value={keyName}
-            placeholder=&#39;counterEvent&#39;
-            onChange={(e) =&gt; setKeyName(e.target.value)}
-          /&gt;
-        &lt;/Form.Item&gt;
-        &lt;Form.Item wrapperCol={{ offset: 16, span: 16 }}&gt;
-          &lt;Button
-            role=&#39;subscribe&#39;
-            onClick={() =&gt; (subscription ? unSubscribe() : subscribe())}
-            type=&#39;primary&#39;
-            disabled={keyName === &#39;&#39;}&gt;
-            {subscription ? &#39;UnSubscribe&#39; : &#39;Subscribe&#39;}
-          &lt;/Button&gt;
-        &lt;/Form.Item&gt;
-      &lt;/Form&gt;
-    &lt;/Card&gt;
-  )
-}</code></pre></dd>
-</dl>
-<p>Now, lets add subscribe method which gets called <code>onFinish</code> of the form component.</p>
-<p>This method makes use of <a href="https://tmtsoftware.github.io/esw-ts/services/event-service.html">event service</a> typescript client which sits on top of the gateway server EventServer routes. In this method, We call <code>subscribe</code> api of eventService to create subscription in a callback based fashion. the callback named <code>handleEvent</code> gets triggered when ever an event is recieved on that subscription.</p>
-<p>Define this function adjacent to all the react state&rsquo;s inside component.</p>
-<dl>
-  <dt>Typescript</dt>
-  <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L41-L97" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const [events, setEvents] = useState&lt;Event[]&gt;([])
-const [subscription, setSubscription] = useState&lt;Subscription&gt;()
-
-const handleEvent = (event: Event) =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L41-L64" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const handleEvent = (event: Event) =&gt; {
   if (event.eventId !== &#39;-1&#39;) {
     setEvents((events) =&gt; [...events, event])
   } else {
@@ -336,69 +268,43 @@ const subscribe = async () =&gt; {
     1
   )(handleEvent)
   setSubscription(subscription)
-}
-return (
-  &lt;Card
-    style={{
-      maxWidth: &#39;30rem&#39;,
-      maxHeight: &#39;45rem&#39;
-    }}</code></pre></dd>
+}</code></pre></dd>
 </dl>
-<p>Now we have fully added the functionality of susbcribing to an event. all the events received on that subscription are added to list of <code>events</code> which is a react state. we can use this <code>events</code> react state to render event however we want to show them.</p>
-<p>In this tutorial, we will make use of Table Antd component.</p>
-<p>Lets add this final piece to our UI component below the <code>Form</code> component to visualize the recieved events.</p>
+<p>Now we have fully added the functionality of subscribing to an event. The <code>events</code> state variable maintains a list of all received events, so events received in the callback are added to this list. </p>
+<p>We will use an Antd Table component to display the values in the <code>event</code> state variable.</p>
+<p>First, we will define the columns in the table. Add the following code above the return statement:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L28-L150" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SubscribeEvent = ({
-  _eventService
-}: {
-  _eventService?: EventService
-}): JSX.Element =&gt; {
-  const { auth } = useAuth()
-  const authData = { tokenFactory: () =&gt; auth?.token() }
-  const columns = [
-    {
-      title: &#39;Event Name&#39;,
-      dataIndex: &#39;eventName&#39;,
-      render: (eventName: EventName) =&gt; eventName.name
-    },
-    {
-      title: &#39;Values&#39;,
-      // eslint-disable-next-line react/display-name
-      render: (_: string, event: Event) =&gt; {
-        const counterParam = event.get(intKey(&#39;counter&#39;)) ?? { values: [] }
-        return &lt;span&gt;{counterParam.values.join(&#39;,&#39;)}&lt;/span&gt;
-      }
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L67-L81" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const columns = [
+  {
+    title: &#39;Event Name&#39;,
+    dataIndex: &#39;eventName&#39;,
+    render: (eventName: EventName) =&gt; eventName.name
+  },
+  {
+    title: &#39;Values&#39;,
+    // eslint-disable-next-line react/display-name
+    render: (_: string, event: Event) =&gt; {
+      const counterParam = event.get(intKey(&#39;counter&#39;)) ?? { values: [] }
+      return &lt;span&gt;{counterParam.values.join(&#39;,&#39;)}&lt;/span&gt;
     }
-  ]
-  return (
-    &lt;Card
-      style={{
-        maxWidth: &#39;30rem&#39;,
-        maxHeight: &#39;45rem&#39;
-      }}
-      title={
-        &lt;Typography.Title level={2}&gt;Subscribe Event Example&lt;/Typography.Title&gt;
-      }&gt;
-      &lt;Form
-        onFinish={() =&gt; {
-          subscription ? unSubscribe() : subscribe()
-        }}&gt;
-      &lt;/Form&gt;
-      &lt;Divider /&gt;
-      &lt;Table
-        scroll={{ y: 240 }}
-        pagination={false}
-        rowKey={(e) =&gt; e.eventId}
-        dataSource={events}
-        columns={columns}
-      /&gt;
-    &lt;/Card&gt;
-  )
-}</code></pre></dd>
+  }
+]</code></pre></dd>
 </dl>
-<p>Also, Make sure to add appropriate imports to the file.</p>
+<p>Add this final piece to our UI component below the <code>Form</code> component to visualize the received events.</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L128-L134" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Table
+  scroll={{ y: 240 }}
+  pagination={false}
+  rowKey={(e) =&gt; e.eventId}
+  dataSource={events}
+  columns={columns}
+/&gt;</code></pre></dd>
+</dl>
+<p>At this point, make sure to add appropriate imports to the file. The should look something like this:</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -426,7 +332,7 @@ import { useAuth } from &#39;../hooks/useAuth&#39;</code></pre></dd>
 </dl>
 <h2><a href="#integrate-subscribeevent-component" name="integrate-subscribeevent-component" class="anchor"><span class="anchor-link"></span></a>Integrate SubscribeEvent Component</h2>
 <p>Finally, update Main.tsx to include <code>SubscribeEvent</code> component.</p>
-<p>Add the following <code>&lt;SubscribeEvent /&gt;</code> adjacent to <code>&lt;SubmitCommand /&gt;</code> component inside <code>&lt;div&gt;</code>.</p>
+<p>Add the following <code>&lt;SubscribeEvent /&gt;</code> immediately after the <code>&lt;SubmitCommand /&gt;</code> component inside <code>&lt;div&gt;</code>. Update imports as needed.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -451,23 +357,22 @@ export const Main = (): JSX.Element =&gt; {
   )
 }</code></pre></dd>
 </dl>
-<p>UI should render the following view at this moment.</p>
+<p>The UI should now render the following view.</p>
 <p><img src="../images/subscribe-event.png" alt="subscribe-event.png" /></p>
-<p>Fill in the values for all input fields and subscribe.</p>
+<p>Fill in the values for the input fields and hit subscribe.</p>
 <pre class="prettyprint"><code class="nocode">Source Prefix : ESW.assembly123
 Event KeyName : counterEvent
 </code></pre>
-<p>That&rsquo;s all we needed to do for adding an Subscribe Event feature!!!</p>
-<p>Now, let&rsquo;s simulate an backend publishing some events and see them reflecting on UI in real-time.</p>
+<p>You may see an Invalid Event warning the first time you run this. This is expected because the Event has not yet been published with valid data. This can be ignored.</p>
+<p>Now, let&rsquo;s simulate a component publishing some events and see them reflected in the UI in real-time.</p>
 <h2><a href="#publish-events-using-esw-shell" name="publish-events-using-esw-shell" class="anchor"><span class="anchor-link"></span></a>Publish events using esw-shell</h2>
-<p>Before moving ahead, if you have not started backend services. Then let&rsquo;s start backend services by following <a href="base-flow.html">this</a> steps.</p>
-<p>Now, lets start esw-shell utility. It starts an ammonite repl with basic api&rsquo;s for us to publish events.</p>
+<p>If necessary, start the esw-shell utility.</p>
 <pre class="prettyprint"><code class="language-bash">cs install esw-shell
 esw-shell start 
 @                 // you are inside ammonite repl now
 </code></pre>
-<p>Visit <a href="https://tmtsoftware.github.io/esw/0.3.0-RC1/eswshell/esw-shell.html">here</a> to learn more about the esw-shell utility.</p>
-<p>We are using eventService&rsquo;s defaultPublisher API to publish events.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/esw/0.3.0/eswshell/esw-shell.html">here</a> to learn more about the esw-shell utility.</p>
+<p>We are using the Event Service <code>defaultPublisher</code> API provided in the shell to publish events.</p>
 <pre class="prettyprint"><code class="language-scala">@ var counter = 0
 @ def eventGenerator = Option{
     counter+=1
@@ -476,7 +381,7 @@ esw-shell start
 @ eventService.defaultPublisher.publish(eventGenerator, 2.seconds)
 </code></pre>
 <p>This should start publishing events every 2 seconds from the source prefix <code>ESW.assembly123</code>.</p>
-<p>UI should now start showing events</p>
+<p>UI should now start showing events. You may need to scroll down to see new events.</p>
 <p><img src="../images/events.png" alt="events" /></p>
 </div>
 <div>
@@ -496,7 +401,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../flows/submit-commands.html" title="Adding Submit Command Example" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../flows/submit-commands.html" title="Adding a Submit Command" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -505,7 +410,7 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-Adding Submit Command Example
+Adding a Submit Command
 </span>
 </div>
 </a>

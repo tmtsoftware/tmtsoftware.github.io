@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="assets/images/favicon.png">
-<title>ESW Gateway UI Application Tutorial</title>
+<title>Gateway UI Application Tutorial</title>
 <link rel="stylesheet" href="assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="lib/prettify/prettify.css">
@@ -43,7 +43,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <nav class="md-header-nav md-grid">
 <div class="md-flex">
 <div class="md-flex__cell md-flex__cell--shrink">
-<a href="index.html" title="ESW Gateway UI Application Tutorial" class="md-header-nav__button md-logo">
+<a href="index.html" title="Gateway UI Application Tutorial" class="md-header-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
 </div>
@@ -52,7 +52,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 </div>
 <div class="md-flex__cell md-flex__cell--stretch">
 <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
-ESW Gateway UI Application Tutorial
+Gateway UI Application Tutorial
 </div>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
@@ -91,24 +91,24 @@ Type to start searching
 <div class="md-sidebar__inner">
 <nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
 <label class="md-nav__title md-nav__title--site" for="drawer">
-<a href="index.html" title="ESW Gateway UI Application Tutorial" class="md-nav__button md-logo">
+<a href="index.html" title="Gateway UI Application Tutorial" class="md-nav__button md-logo">
 <span class="md-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
-<a href="index.html" title="ESW Gateway UI Application Tutorial">
-ESW Gateway UI Application Tutorial
+<a href="index.html" title="Gateway UI Application Tutorial">
+Gateway UI Application Tutorial
 </a>
 </label>
 <ul>
   <li><a href="flows/base-flow.html" class="page">Creating Gateway UI Application</a></li>
-  <li><a href="flows/submit-commands.html" class="page">Adding Submit Command Example</a></li>
-  <li><a href="flows/subscribe-event.html" class="page">Adding Subscribing An Event Example</a></li>
+  <li><a href="flows/submit-commands.html" class="page">Adding a Submit Command</a></li>
+  <li><a href="flows/subscribe-event.html" class="page">Adding Event Subscription</a></li>
   <li><a href="flows/docs-flow.html" class="page">Adding Paradox Documentation</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="index.html#esw-gateway-ui-application-tutorial" class="header">ESW Gateway UI Application Tutorial</a>
+  <li><a href="index.html#gateway-ui-application-tutorial" class="header">Gateway UI Application Tutorial</a>
   <ul>
     <li><a href="index.html#tutorial-welcome" class="header">Tutorial Welcome</a></li>
   </ul></li>
@@ -132,7 +132,7 @@ ESW Gateway UI Application Tutorial
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
-  <li><a href="index.html#esw-gateway-ui-application-tutorial" class="header">ESW Gateway UI Application Tutorial</a>
+  <li><a href="index.html#gateway-ui-application-tutorial" class="header">Gateway UI Application Tutorial</a>
   <ul>
     <li><a href="index.html#tutorial-welcome" class="header">Tutorial Welcome</a></li>
   </ul></li>
@@ -145,33 +145,32 @@ ESW Gateway UI Application Tutorial
 <div class="md-content">
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
-<h1><a href="#esw-gateway-ui-application-tutorial" name="esw-gateway-ui-application-tutorial" class="anchor"><span class="anchor-link"></span></a>ESW Gateway UI Application Tutorial</h1>
-<p>In the ESW user interface design, a Gateway-UI template is used when the user interface has to make use of the interfaces of the control system provided by the User Interface Gateway. For instance, a UI application should be used if Services behind Gateway server needs to be accessed.</p>
-<p>Services which are behind the Gateway server are among these :</p>
+<h1><a href="#gateway-ui-application-tutorial" name="gateway-ui-application-tutorial" class="anchor"><span class="anchor-link"></span></a>Gateway UI Application Tutorial</h1>
+<p>For TMT, many highly functional user interfaces can be written that do not require their own backend logic; that is, while running, they only need to access existing HTTP services, such as CSW Services like the Location Service and the Configuration Service, and the ESW UI Gateway, which provides HTTP access to components and other CSW Services.</p>
+<p>The services which are provided by the UI Gateway include:</p>
 <ul>
-  <li>Command Service</li>
-  <li>Sequencer Service</li>
+  <li>Command Service (sending commands to Assemblies and HCDs)</li>
+  <li>Sequencer Service (sending sequences to a Sequencer)</li>
   <li>Event Service</li>
   <li>Alarm Service</li>
   <li>Admin Service</li>
   <li>Logger Service</li>
 </ul>
-<p>Creating a UI application is not trivial and requires the programmer to understand several technologies as well as the ESW authentication and authorization system. Therefore, it is recommended that this approach be taken only when necessary.</p>
+<p>These applications are called &ldquo;Gateway UI Apps&rdquo; and are contrasted with &ldquo;Web Apps&rdquo;, which in our context implies custom backend logic. Despite the name, Gateway UI Apps may interact with other existing HTTP services along with the UI Gateway. The distinction is that is does not require its own HTTP service to operate, other that something to serve the pages. In fact, the ESW Gateway UI <a href="https://github.com/tmtsoftware/esw-gateway-ui-template.g8">template</a> can be used to create UI apps that do not use the Gateway, although that is the intention, as the template will set up the necessary wiring for it.</p>
 <h2><a href="#tutorial-welcome" name="tutorial-welcome" class="anchor"><span class="anchor-link"></span></a>Tutorial Welcome</h2>
-<p>This tutorial uses a set of smaller tutorials to create a UI Application using the ESW Gateway UI <a href="https://github.com/tmtsoftware/esw-gateway-ui-template.g8">template</a>. This template is meant to be used when developers want to create application&rsquo;s which talks with gateway server only.</p>
-<p>The application created in this tutorial has 2 example features.</p>
+<p>This tutorial uses a set of smaller tutorials to create a UI Application using the ESW Gateway UI template. The application created in this tutorial has 2 example features.</p>
 <ol>
-  <li>Submmiting a command to an assembly/HCD by giving appropriate values in the UI form.</li>
-  <li>Subscribing to an event and display the event&rsquo;s content on the UI as soon as the event is received.</li>
+  <li>Creating a command in the UI using a form, and submitting the command to an assembly/HCD.</li>
+  <li>Subscribing to an event and displaying the event content on the UI when the event is received.</li>
 </ol>
-<p>The tutorial has been divided into 3 main flows that incrementally demonstrate the addition of both the above 2 features using the interfaces of Gateway server.</p>
-<p>The basic flow in &ldquo;Creating Gateway UI Application&rdquo; will show you how to add a route to the backend application and consume them in your frontend. The flows following the basic flow are incremental steps to make the application more complete.</p>
+<p>The tutorial has been divided into 3 main flows. First, you will create the application using the tutorial, set up a simple login component, and run the bare-bones version of the app. Next, the form for creating a command is added, and you will learn how to send the command to a component through the gateway. Lastly, it will be demonstrated how to subscribe to an Event via the Gateway and display the result in the UI. </p>
+<p>An additional flow is provided to show how to add documentation to your UI.</p>
 <p>If at any point in time you want to see the completed tutorial, you can view the final code <a href="https://github.com/tmtsoftware/esw-gateway-ui-example">here</a>.</p>
 <div class="toc ">
 <ul>
   <li><a href="flows/base-flow.html" class="page">Creating Gateway UI Application</a></li>
-  <li><a href="flows/submit-commands.html" class="page">Adding Submit Command Example</a></li>
-  <li><a href="flows/subscribe-event.html" class="page">Adding Subscribing An Event Example</a></li>
+  <li><a href="flows/submit-commands.html" class="page">Adding a Submit Command</a></li>
+  <li><a href="flows/subscribe-event.html" class="page">Adding Event Subscription</a></li>
   <li><a href="flows/docs-flow.html" class="page">Adding Paradox Documentation</a></li>
 </ul>
 </div>

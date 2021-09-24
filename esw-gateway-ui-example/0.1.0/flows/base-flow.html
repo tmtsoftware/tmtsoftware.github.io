@@ -20,7 +20,7 @@
 
 <meta name="description" content="docs">
 <link rel="shortcut icon" href="../assets/images/favicon.png">
-<title>Creating Gateway UI Application · ESW Gateway UI Application Tutorial</title>
+<title>Creating Gateway UI Application · Gateway UI Application Tutorial</title>
 <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="../lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="../lib/prettify/prettify.css">
@@ -43,7 +43,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <nav class="md-header-nav md-grid">
 <div class="md-flex">
 <div class="md-flex__cell md-flex__cell--shrink">
-<a href="../index.html" title="ESW Gateway UI Application Tutorial" class="md-header-nav__button md-logo">
+<a href="../index.html" title="Gateway UI Application Tutorial" class="md-header-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
 </div>
@@ -53,7 +53,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 <div class="md-flex__cell md-flex__cell--stretch">
 <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
 <span class="md-header-nav__topic">
-ESW Gateway UI Application Tutorial
+Gateway UI Application Tutorial
 </span>
 <span class="md-header-nav__topic">
 Creating Gateway UI Application
@@ -96,18 +96,18 @@ Type to start searching
 <div class="md-sidebar__inner">
 <nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
 <label class="md-nav__title md-nav__title--site" for="drawer">
-<a href="../index.html" title="ESW Gateway UI Application Tutorial" class="md-nav__button md-logo">
+<a href="../index.html" title="Gateway UI Application Tutorial" class="md-nav__button md-logo">
 <span class="md-nav__button md-logo">
 <i class="md-icon">local_library</i>
 </a>
-<a href="../index.html" title="ESW Gateway UI Application Tutorial">
-ESW Gateway UI Application Tutorial
+<a href="../index.html" title="Gateway UI Application Tutorial">
+Gateway UI Application Tutorial
 </a>
 </label>
 <ul>
   <li><a href="../flows/base-flow.html" class="active page">Creating Gateway UI Application</a></li>
-  <li><a href="../flows/submit-commands.html" class="page">Adding Submit Command Example</a></li>
-  <li><a href="../flows/subscribe-event.html" class="page">Adding Subscribing An Event Example</a></li>
+  <li><a href="../flows/submit-commands.html" class="page">Adding a Submit Command</a></li>
+  <li><a href="../flows/subscribe-event.html" class="page">Adding Event Subscription</a></li>
   <li><a href="../flows/docs-flow.html" class="page">Adding Paradox Documentation</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
@@ -117,7 +117,7 @@ ESW Gateway UI Application Tutorial
   <ul>
     <li><a href="../flows/base-flow.html#generate-application" class="header">Generate Application</a></li>
     <li><a href="../flows/base-flow.html#open-in-development-environment" class="header">Open in Development Environment</a></li>
-    <li><a href="../flows/base-flow.html#create-the-frontend" class="header">Create the Frontend</a></li>
+    <li><a href="../flows/base-flow.html#create-the-ui" class="header">Create the UI</a></li>
     <li><a href="../flows/base-flow.html#starting-backend-services" class="header">Starting backend services</a></li>
   </ul></li>
 </ul>
@@ -144,7 +144,7 @@ ESW Gateway UI Application Tutorial
   <ul>
     <li><a href="../flows/base-flow.html#generate-application" class="header">Generate Application</a></li>
     <li><a href="../flows/base-flow.html#open-in-development-environment" class="header">Open in Development Environment</a></li>
-    <li><a href="../flows/base-flow.html#create-the-frontend" class="header">Create the Frontend</a></li>
+    <li><a href="../flows/base-flow.html#create-the-ui" class="header">Create the UI</a></li>
     <li><a href="../flows/base-flow.html#starting-backend-services" class="header">Starting backend services</a></li>
   </ul></li>
 </ul>
@@ -158,31 +158,29 @@ ESW Gateway UI Application Tutorial
 <div class="md-content__searchable">
 <h1><a href="#creating-gateway-ui-application" name="creating-gateway-ui-application" class="anchor"><span class="anchor-link"></span></a>Creating Gateway UI Application</h1>
 <p>This flow demonstrates how to use the template to create our project, how to add UI components for adding particular features, and how to build and test it.</p>
-<p>In this tutorial, we will first generate the application from the template, and build it to ensure tools are in place. Then, we will delete the default implementation and replace it with our own implementation of a <code>Submit command to an assembly</code> &amp; <code>Subscribe to an event</code> UI component. To do this, we will delete much of the template code and rewrite our own components custom to our implementation.</p>
 <h2><a href="#generate-application" name="generate-application" class="anchor"><span class="anchor-link"></span></a>Generate Application</h2>
 <p>First we need to generate a scaffolding application using our giter8 template:</p>
 <pre class="prettyprint"><code class="language-bash">g8 tmtsoftware/esw-gateway-ui-template.g8 --project_name=sample
 </code></pre>
 <p>This will generate a sample folder with <code>docs</code> and <code>src</code> folders. For a sanity check, let&rsquo;s go ahead and build the frontend created by the template. This will also help ensure you have the necessary tools installed.</p>
-<p>You are welcome to try out the generated sample project, which is basically a &ldquo;Hello World&rdquo; application, by following the instructions in the READMEs in each sub-folder.</p>
 <h3><a href="#compile-the-frontend" name="compile-the-frontend" class="anchor"><span class="anchor-link"></span></a>Compile the Frontend</h3>
 <p>The <code>sample/src</code> sub-folder is where your frontend application is located. It uses Typescript, React and node. Make sure node version <code>v16.0.0</code> or higher is installed in your machine. Let&rsquo;s compile our generated application.</p>
 <pre class="prettyprint"><code class="language-bash">cd sample
 npm install
 npm start
 </code></pre>
-<p>You would be greeted with the following screen.</p>
+<p>You will be greeted with the following screen.</p>
 <p><img src="../images/hello-world.png" alt="hello-world" /></p><div class="callout note "><div class="callout-title">Note</div>
-<p>This tutorial uses the current ESW.UISTD selections for user interface languages, libraries, and tools. These are the current selections. They will be reviewed and updated once again as part of ESW Phase 2.</p></div>
+<p>This tutorial uses the current ESW.UISTD selections for user interface languages, libraries, and tools. These selections will be reviewed and updated once again as part of ESW Phase 2.</p></div>
 <h2><a href="#open-in-development-environment" name="open-in-development-environment" class="anchor"><span class="anchor-link"></span></a>Open in Development Environment</h2>
-<p>At this point, you may want to open the project in an Integrated Development Environment (IDE), such as Intellij, if you are using one. The template creates a Typescript/npm-based frontend. We recommend VS Code or Intellij for the frontend applications.</p>
-<p>To open the UI project in VS Code, click on <code>File-&gt;Open</code> Or To open the UI project in Intellij, click on <code>File-&gt;New Project from Existing Sources</code></p>
-<p>Then browsing to the UI directory, open the <code>sample</code> project. It should have a package.json file in it.</p>
-<h2><a href="#create-the-frontend" name="create-the-frontend" class="anchor"><span class="anchor-link"></span></a>Create the Frontend</h2>
-<p>In this section, we will be constructing a browser-based UI using React components in Typescript. We will create components that allow the user to specify various inputs in a form (e.g Setup/Observe command to be sent an Assembly or an HCD via <code>select</code> html tags), and then the a Submit button that will send the data to our backend. The response will then be rendered in UI components. This section of the tutorial will show how to add and render custom components within the application that act as clients to consume our gateway backend routes.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>The frontend tutorial uses functionality from the ESW-TS library. Be sure and look at the documentation for ESW-TS once you start working on your own UI. ESW-TS documentation can be found <a href="http://tmtsoftware.github.io/esw-ts">here</a>.</p></div>
+<p>At this point, you may want to open the project in an Integrated Development Environment (IDE), such as Intellij, if you are using one. The template creates a Typescript/npm-based frontend. We recommend VS Code or Intellij.</p>
+<p>To open the UI project in VS Code, click on <code>File-&gt;Open</code>. To open the UI project in Intellij, click on <code>File-&gt;New Project from Existing Sources</code></p>
+<p>Then browse to the UI directory, open the <code>sample</code> project. It should have a package.json file in it.</p>
+<h2><a href="#create-the-ui" name="create-the-ui" class="anchor"><span class="anchor-link"></span></a>Create the UI</h2>
+<p>In this section, we will begin constructing our browser-based UI using React components in Typescript. We will start by adding a login component.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>The frontend tutorial uses functionality from the ESW-TS library. The documentation for ESW-TS can be useful when building your UI. ESW-TS documentation can be found <a href="http://tmtsoftware.github.io/esw-ts">here</a>.</p></div>
 <h3><a href="#create-login-component" name="create-login-component" class="anchor"><span class="anchor-link"></span></a>Create login component</h3>
-<p>We need the user to login via keycloak&rsquo;s login page. So we need to have a way to redirect the user. hence, Add the <code>Login.tsx</code> in components folder which will redirect the user to keycloak&rsquo;s login page. Later we will use this <code>Login</code> Component in <code>Main.tsx</code>.</p>
+<p>Use of the TMT Command Service via the UI Gateway requires authentication. The user must login via the TMT AAS login page, so we will add a login component from the ESW-TS library. Create a <code>Login.tsx</code> file in the <code>src/components</code> folder which will redirect the user to the TMT login page. Later we will use this <code>Login</code> Component in <code>Main.tsx</code>.</p>
 <p>Copy the full snippet shown below &amp; paste it in Login.tsx</p>
 <dl>
   <dt>Typescript</dt>
@@ -199,8 +197,36 @@ export const Login = (): JSX.Element =&gt; {
 }</code></pre></dd>
 </dl>
 <h3><a href="#update-main-app-component-with-authentication" name="update-main-app-component-with-authentication" class="anchor"><span class="anchor-link"></span></a>Update Main &amp; App component with authentication</h3>
-<p>First lets wrap our Main application with <code>AuthContextProvider</code> from <code>esw-ts</code> in <code>App.tsx</code> as shown below</p>
-<p>Copy the snippet within <code>return</code> statement from the following &amp; update <code>App.tsx</code>.</p>
+<p>First, add the component to our UI by updating the <code>Main.tsx</code> component in <code>/src/components</code>.</p>
+<p>Copy the full snippet shown below and replace the contents in <code>Main.tsx</code>.</p>
+<dl>
+  <dt>Typescript</dt>
+  <dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/Main.tsx#L2-L55" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">import * as React from &#39;react&#39;
+import { useAuth } from &#39;../hooks/useAuth&#39;
+import { Login } from &#39;./Login&#39;
+export const Main = (): JSX.Element =&gt; {
+  const { auth } = useAuth()
+  if (!auth) return &lt;div&gt;Loading&lt;/div&gt;
+  const isAuthenticated = auth?.isAuthenticated() ?? false
+
+  return isAuthenticated ? (
+    &lt;div
+      style={{
+        display: &#39;flex&#39;,
+        placeContent: &#39;space-around&#39;,
+        paddingTop: &#39;2rem&#39;
+      }}&gt;
+      Hello world
+    &lt;/div&gt;
+  ) : (
+    &lt;Login /&gt;
+  )
+}</code></pre></dd>
+</dl>
+<p>Here, you will see that there is a check to see if the user is authenticated, and if not, the login component will be shown. If the user is authenticated, the normal functionality of the app is presented, which right now, is just the Hello World page.</p>
+<p>In order for our main component to have access to authentication logic from ESW-TS, we need to add a <a href="https://reactjs.org/docs/context.html">context provider</a> to the component. We do this when the component is constructed at the top level. We will wrap our Main application with <code>AuthContextProvider</code> from <code>esw-ts</code> in <code>App.tsx</code> as shown below</p>
+<p>Copy the snippet within the <code>return</code> statement from the following &amp; update <code>App.tsx</code>.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
@@ -230,68 +256,41 @@ const App = (): JSX.Element =&gt; {
   )
 }</code></pre></dd>
 </dl>
-<p>Now, lets update the <code>Main.tsx</code> component in our frontend UI to have login functionality.</p>
-<p>Copy the full snippet shown below in <code>Main.tsx</code>.</p>
-<dl>
-  <dt>Typescript</dt>
-  <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/Main.tsx#L2-L55" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">import * as React from &#39;react&#39;
-import { useAuth } from &#39;../hooks/useAuth&#39;
-import { Login } from &#39;./Login&#39;
-export const Main = (): JSX.Element =&gt; {
-  const { auth } = useAuth()
-  if (!auth) return &lt;div&gt;Loading&lt;/div&gt;
-  const isAuthenticated = auth?.isAuthenticated() ?? false
-
-  return isAuthenticated ? (
-    &lt;div
-      style={{
-        display: &#39;flex&#39;,
-        placeContent: &#39;space-around&#39;,
-        paddingTop: &#39;2rem&#39;
-      }}&gt;
-      Hello world
-    &lt;/div&gt;
-  ) : (
-    &lt;Login /&gt;
-  )
-}</code></pre></dd>
-</dl>
 <p>After adding this section, run the following command to see the progress that we made till now.</p>
 <pre class="prettyprint"><code class="language-bash">npm start
 </code></pre>
-<p>you must be getting <code>Loading...</code> on the browser screen. Because, The UI is now trying to find the Auth server &amp; we have not yet started any of the required backend services.</p>
+<p>You should now see <code>Loading...</code> on the browser screen. </p>
 <p><img src="../images/login.png" alt="login" /></p>
-<p>Let&rsquo;s start the required backend services along with Auth server for further use cases.</p>
+<p>This is because the UI is now trying to find the AAS authorization server, but we have not yet started CSW services. We will start them now, as well as the UI Gateway which will be needed for our subsequent flows.</p>
 <h2><a href="#starting-backend-services" name="starting-backend-services" class="anchor"><span class="anchor-link"></span></a>Starting backend services</h2>
-<p>Start the Location Service with the Authorization and Authentication Service, Config Service &amp; Event Service(we will use event service in the next section of the tutorial).</p>
+<p>Start the Location Service with the Authorization and Authentication Service, Config Service &amp; the Event Service.</p>
 <pre class="prettyprint"><code class="language-bash">cs install csw-services
 csw-services start -k -c -e
 </code></pre>
-<p>Start Gateway Service using esw-services.</p>
+<p>Start the UI Gateway Service using esw-services.</p>
 <pre class="prettyprint"><code class="language-bash">cs install esw-services
 esw-services start -g
 
 </code></pre>
-<p>Try reloading the front end in browser,</p>
+<p>Now try reloading the front end in browser. If the page is still up, refresh the page. If you closed it, restart the server using:</p>
 <pre class="prettyprint"><code class="language-bash">npm start
 </code></pre>
 <p>You should be getting redirected to keycloak login page.</p>
 <p><img src="../images/user-login.png" alt="user-login" /></p>
 <p>Try logging in with one of predefined users in csw-services.</p>
-<p>Visit <a href="https://tmtsoftware.github.io/csw/4.0.0-RC1/apps/cswservices.html#predefined-users-">here</a> to find the predefined users.</p>
-<p>Visit <a href="https://tmtsoftware.github.io/esw/0.3.0-RC1/uisupport/gateway.html">here</a> to know more about users &amp; the roles.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/csw/4.0.0/apps/cswservices.html#predefined-users-">here</a> to find the predefined users.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/esw/0.3.0/uisupport/gateway.html">here</a> to know more about users &amp; the roles.</p>
 <p>Once you are logged in, you would be greeted again with <code>Hello world</code>.</p>
-<p>Now, we can make use of Auth data to send request on the protected route of Gateway server.</p>
+<p>Now, we can make use of authorization data to send a request to a protected route of the Gateway server.</p>
 <h3><a href="#cleanup" name="cleanup" class="anchor"><span class="anchor-link"></span></a>Cleanup</h3>
 <p>We can get rid of the unwanted css generated from the template:</p>
 <ul>
-  <li>Go to the <code>components</code> folder in <code>src</code> and delete <code>Main.module.css</code> file under this directory</li>
+  <li>Go to the <code>components</code> folder in <code>src</code> and delete <code>Main.module.css</code> file in this directory</li>
 </ul>
 <h3><a href="#next-steps" name="next-steps" class="anchor"><span class="anchor-link"></span></a>Next Steps</h3>
 <ul>
-  <li>Follow the tutorial <a href="submit-commands.html">here</a> to add Submit Command Example.</li>
-  <li>Follow the tutorial <a href="subscribe-event.html">here</a> to add Subscribe Event Example.</li>
+  <li>Follow the tutorial <a href="submit-commands.html">here</a> to add the Submit Command functionality.</li>
+  <li>Follow the tutorial <a href="subscribe-event.html">here</a> to add the Subscribe Event functionality.</li>
 </ul>
 </div>
 <div>
@@ -311,7 +310,7 @@ Edit this page
 <footer class="md-footer">
 <div class="md-footer-nav">
 <nav class="md-footer-nav__inner md-grid">
-<a href="../index.html" title="ESW Gateway UI Application Tutorial" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<a href="../index.html" title="Gateway UI Application Tutorial" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
 <div class="md-flex__cell md-flex__cell--shrink">
 <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
 </div>
@@ -320,17 +319,17 @@ Edit this page
 <span class="md-footer-nav__direction">
 Previous
 </span>
-ESW Gateway UI Application Tutorial
+Gateway UI Application Tutorial
 </span>
 </div>
 </a>
-<a href="../flows/submit-commands.html" title="Adding Submit Command Example" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<a href="../flows/submit-commands.html" title="Adding a Submit Command" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
 <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
 <span class="md-flex__ellipsis">
 <span class="md-footer-nav__direction">
 Next
 </span>
-Adding Submit Command Example
+Adding a Submit Command
 </span>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
