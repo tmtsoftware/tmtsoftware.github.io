@@ -132,7 +132,6 @@ TMT Executive Software Documentation
     <li><a href="../technical/apps/sequence-manager-app.html" class="page">Starting the Sequence Manager Application</a></li>
     <li><a href="../technical/apps/agent-service-app.html" class="page">The Agent Service Application</a></li>
     <li><a href="../technical/apps/agent-app.html" class="page">The Agent Application</a></li>
-    <li><a href="../technical/apps/eng-ui.html" class="page">ESW OCS Engineering User Interface User Manual</a></li>
   </ul></li>
   <li><a href="../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -140,6 +139,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
+    <li><a href="../technical/apps/eng-ui.html" class="page">ESW OCS Engineering User Interface User Manual</a></li>
     <li><a href="../technical/agent-service-tech.html" class="page">Agent Service and Agent Technical Documentation</a></li>
     <li><a href="../technical/esw-application-parts.html" class="page">ESW Application Architecture</a></li>
     <li><a href="../technical/contracts.html" class="page">Service Contracts</a></li>
@@ -156,7 +156,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/testing-philosophy.html#layered-testing" class="header">Layered Testing</a></li>
     <li><a href="../technical/testing-philosophy.html#client-server-interfaces" class="header">Client-Server interfaces</a></li>
     <li><a href="../technical/testing-philosophy.html#sequence-manager-as-an-example" class="header">Sequence Manager as an Example</a></li>
-    <li><a href="../technical/testing-philosophy.html#integration-tests" class="header">Integration Tests</a></li>
+    <li><a href="../technical/testing-philosophy.html#component-tests" class="header">Component Tests</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -184,7 +184,7 @@ TMT Executive Software Documentation
     <li><a href="../technical/testing-philosophy.html#layered-testing" class="header">Layered Testing</a></li>
     <li><a href="../technical/testing-philosophy.html#client-server-interfaces" class="header">Client-Server interfaces</a></li>
     <li><a href="../technical/testing-philosophy.html#sequence-manager-as-an-example" class="header">Sequence Manager as an Example</a></li>
-    <li><a href="../technical/testing-philosophy.html#integration-tests" class="header">Integration Tests</a></li>
+    <li><a href="../technical/testing-philosophy.html#component-tests" class="header">Component Tests</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -196,9 +196,9 @@ TMT Executive Software Documentation
 <article class="md-content__inner md-typeset">
 <div class="md-content__searchable">
 <h1><a href="#osw-testing-philosophy" name="osw-testing-philosophy" class="anchor"><span class="anchor-link"></span></a>OSW Testing Philosophy</h1>
-<p>This document serves to describe the OSW Testing Philosophy, using the Sequence Manager code as an example. The philosophy can be summarized with the belief that unit tests should be favored over integration tests, in the sense that a comprehensive set of unit tests paired with a small set of integration tests can provide a complete test suite without the need for a large set of integration tests that pursue every possible code path. </p>
-<p>Software today often follows the <a href="https://en.wikipedia.org/wiki/Single-responsibility_principle">Single Responsibility Principle</a>, in which code is often broken down into components and layers that cover one function of the program. This leads to more isolated “units” to test, but branching at each layer of code can lead to an exponential number of code paths to cover. Writing a complete set of integration tests that explore every branch of code can be extremely time consuming or even impossible.</p>
-<p>Testing with a full set of integration tests can actually be entirely unnecessary. A comprehensive set of unit tests, when written properly, can demonstrate every code path sufficiently. Then, they can be combined with a few integration tests as both a sanity check and to ensure the connections are complete throughout the layers of code.</p>
+<p>This document serves to describe the OSW Testing Philosophy, using the Sequence Manager code as an example. The philosophy can be summarized with the belief that unit tests should be favored over &ldquo;integrated&rdquo; component tests, in the sense that a comprehensive set of unit tests paired with a small set of component tests can provide a complete test suite without the need for a large set of component tests that pursue every possible code path. </p>
+<p>Software today often follows the <a href="https://en.wikipedia.org/wiki/Single-responsibility_principle">Single Responsibility Principle</a>, in which code is often broken down into components and layers that cover one function of the program. This leads to more isolated “units” to test, but branching at each layer of code can lead to an exponential number of code paths to cover. Writing a complete set of integrated tests that explore every branch of code can be extremely time consuming or even impossible.</p>
+<p>Testing with a full set of component tests can actually be entirely unnecessary. A comprehensive set of unit tests, when written properly, can demonstrate every code path sufficiently. Then, they can be combined with a few component tests as both a sanity check and to ensure the connections are complete throughout the layers of code.</p>
 <h2><a href="#layered-software" name="layered-software" class="anchor"><span class="anchor-link"></span></a>Layered Software</h2>
 <p>As mentioned, it is common that software today is composed of layers, each with its own responsibility. This facilitates understanding of the software as well as making it easier to test. When we talk about the ordering of layers, we often start with the outward facing API layer as the top-most. This layer then will call methods of the layer below. That layer may call methods of the layer below it, an so on. It is important to note that typically a lower layer does not call methods of the layer above it. It simply returns responses back up the layers to the external user. A layer may have call methods from more than one class and therefore can have multiple layers directly beneath it. The layers directly beneath are called dependencies.</p>
 <p>An important facet of our component construction is that, it follows the <a href="https://en.wikipedia.org/wiki/Dependency_injection">Dependency Injection</a> pattern. For each layer in our component, its dependencies are injected into the layer by passing them in the constructor of the layer. For OSW software, this is done by instantiating all layers in a wiring class. Lowest layer dependencies are instantiated first, and then layers are created going up the layers, each time passing in the dependencies for the layers below. The constructor of each layer should use the interface of the dependency, so that various implementations of the dependency can be passed in, such as a version for testing or simulation. This also allows mocks to be used for each dependency. This is essential for layered testing.</p>
@@ -357,8 +357,8 @@ TMT Executive Software Documentation
 </code></pre>
 <p>This test verifies when we send this model to this endpoint, <code>sPost</code> is called, and then the <code>shutdownSequencer</code> method of our Akka client is called, and the response matches the mocked response set up to return from that client method call. Note, in this case, the response here is a single real type of expected response, and not a mocked response. This is because the response requires serialization and we don’t have serialization set up for mocked typed. This is okay because we have tested serialization for all of our responses with round trip testing.</p>
 <h3><a href="#round-trip-testing" name="round-trip-testing" class="anchor"><span class="anchor-link"></span></a>Round Trip Testing</h3>
-<p>As mentioned above, de/serialization for all the public facing models are done using <a href="https://github.com/tmtsoftware/esw/blob/master/esw-contract/src/test/scala/esw/contract/data/RoundTripTest.scala">RoundTripTest</a></p>
-<p><a href="https://github.com/tmtsoftware/esw/tree/master/esw-contract/src/main/scala">esw-contract</a> module contains sample examples for all the models which are sent over the wire in case of HTTP requests/responses and AKKA messages. <strong>RoundTripTest</strong> consumes all these models and verifies that they are serialized and deserialized using both <code>CBOR</code> and <code>JSON</code> formats.</p>
+<p>As mentioned above, testing of de/serialization for all the public facing models is done using <a href="https://github.com/tmtsoftware/esw/blob/master/esw-contract/src/test/scala/esw/contract/data/RoundTripTest.scala">RoundTripTest</a></p>
+<p>The <a href="https://github.com/tmtsoftware/esw/tree/master/esw-contract/src/main/scala">esw-contract</a> module contains examples for all the models which are sent over the wire for HTTP requests/responses and AKKA messages. <strong>RoundTripTest</strong> consumes all these models and verifies that they are serialized and deserialized properly using both <code>CBOR</code> and <code>JSON</code> formats.</p>
 <pre class="prettyprint"><code class="language-scala">class RoundTripTest extends AnyFreeSpec with Matchers {
   EswData.services.data.foreach { case (serviceName, service) =&gt;
     s&quot;$serviceName&quot; - {
@@ -390,11 +390,11 @@ object RoundTrip {
   }
 }
 </code></pre>
-<p>As seen in above code, following actions are performed:</p>
+<p>As seen in code above, the following actions are performed:</p>
 <ul>
-  <li>Iterate over all the <code>EswData.services.data</code> that includes <em>models</em>, <em>http requests</em> and  <em>websocket requests</em> models and call <code>validate</code> method for each of them.</li>
-  <li><code>validate</code> method iterates over all the models and calls <code>RoundTrip.roundTrip</code> method for each of  them with both <code>CBOR</code> and <code>JSON</code> format.</li>
-  <li><code>roundTrip</code> method convert the <code>modelData</code> to <code>bytes</code> and then <code>bytes</code> to original <code>modelData</code>  using passed in <code>codec</code> and <code>format</code> parameter which is one of <code>CBOR</code> or <code>JSON</code>.</li>
+  <li>Iterate over all the types of models in <code>EswData.services.data</code>, which includes <em>models</em> for Akka, <em>HTTP request models</em> and  <em>websocket request models</em>, and call the <code>validate</code> method for each of them.</li>
+  <li>The <code>validate</code> method iterates over all the models of each type and calls the <code>RoundTrip.roundTrip</code> method for each of  them with both <code>CBOR</code> and <code>JSON</code> format.</li>
+  <li>The<code>roundTrip</code> method converts the <code>modelData</code> to <code>bytes</code> and then <code>bytes</code> back to the original <code>modelData</code>  using the <code>codec</code> and <code>format</code> parameters passed in for <code>CBOR</code> and <code>JSON</code>.</li>
 </ul>
 <h3><a href="#sequencemanagerimpl" name="sequencemanagerimpl" class="anchor"><span class="anchor-link"></span></a>SequenceManagerImpl</h3>
 <p>The next layer down is the Akka Client, <a href="https://github.com/tmtsoftware/esw/blob/master/esw-sm/esw-sm-api/jvm/src/main/scala/esw/sm/api/actor/client/SequenceManagerImpl.scala">SequenceManagerImpl</a>. It takes API method calls and turns them into Akka ask calls to the Sequence Manager actor. The lower layer in this case is the Sequence Manager actor, implemented in <strong>SequenceManagerBehavior</strong>. </p>
@@ -663,9 +663,10 @@ private def locationErrorToShutdownSequencersResponse(err: EswLocationError) =
 }
 </code></pre>
 <p>The <code>sequencerUtil</code> method is mocked to return the error response, and it is verified that if the actor receives the shutdown message, this is returned to the <code>replyTo</code>.</p>
-<h2><a href="#integration-tests" name="integration-tests" class="anchor"><span class="anchor-link"></span></a>Integration Tests</h2>
-<p>For completeness, an integration test should be added. Integration tests should not use any mocks. This test should involve methods that go up and down the chain, but not all methods need to be included, nor all code paths for the methods used. That is what the units tests are for. However, for completeness, there should be an integration test for every public method in outward facing APIs showing at least one code path.</p>
-<p>Following example demonstrates how to write an integration test for the Sequence Manager&rsquo;s <code>configure</code> and <code>shutdownObsModeSequencers</code> APIs.</p>
+<h2><a href="#component-tests" name="component-tests" class="anchor"><span class="anchor-link"></span></a>Component Tests</h2>
+<p>For completeness, a component test should be added. Component tests should not use any mocks. This test should involve methods that go up and down the chain, but not all methods need to be included, nor all code paths for the methods used. That is what the units tests are for. However, for completeness, there should be a component test for every public method in outward facing APIs showing at least one code path.</p>
+<p>Following example demonstrates how to write a component test for the Sequence Manager&rsquo;s <code>configure</code> and <code>shutdownObsModeSequencers</code> APIs. </p><div class="callout note "><div class="callout-title">Note</div>
+<p>The class name for the tests in our example have the words &ldquo;integration test&rdquo; in it, but this is a bit of a misnomer. While the tests are performed on the <em>integrated</em> component, it should not be confused with the integration tests as described in the TMT Software Development Process, which involve multiple components. The name of these types of tests will be changed in subsequent release to avoid confusion.</p></div>
 <pre class="prettyprint"><code class="language-scala">class SequenceManagerSossIntegrationTest extends EswTestKit(EventServer) {
 
   &quot;SOSS&quot; must {
@@ -712,19 +713,19 @@ private def locationErrorToShutdownSequencersResponse(err: EswLocationError) =
   }
 }
 </code></pre>
-<p>Few things to note in above test, <a href="https://github.com/tmtsoftware/esw/blob/master/esw-integration-test/src/test/scala/esw/sm/app/TestSetup.scala">TestSetup</a> is a utility class which supports starting real Sequence Component and Sequence Manager without mocks. It just delegates call to underlying Sequencer or Sequence Manager application/wiring.</p>
+<p>There are a few things to note about this test. <a href="https://github.com/tmtsoftware/esw/blob/master/esw-integration-test/src/test/scala/esw/sm/app/TestSetup.scala">TestSetup</a> is a utility class which supports starting real Sequence Component and Sequence Manager without mocks. It just delegates call to underlying Sequencer or Sequence Manager application/wiring.</p>
 <p><a href="https://github.com/tmtsoftware/esw/blob/master/esw-integration-test/src/test/scala/esw/sm/app/SequenceManagerSossIntegrationTest.scala">SequenceManagerSossIntegrationTest</a> demonstrates starting <code>IRIS_Cal</code> observation mode, submitting <code>sequence</code> to the top level sequencer and then stopping the observation.</p>
-<p>This integration test is divided into following three parts:</p>
+<p>This component test is divided into following three parts:</p>
 <h3><a href="#setup" name="setup" class="anchor"><span class="anchor-link"></span></a>Setup</h3>
 <ul>
-  <li>Start required Sequence Components that are <code>ESW</code>, <code>AOESW</code> and <code>IRIS</code> for the <code>IRIS_Cal</code>  observation using <code>TestSetup.spawnSequenceComponent(ESW, None)</code> method.</li>
-  <li>Start Sequence Manager using <code>TestSetup.startSequenceManager(sequenceManagerPrefix)</code> method.</li>
+  <li>Start required Sequence Components that are <code>ESW</code>, <code>AOESW</code> and <code>IRIS</code> for the <code>IRIS_Cal</code>  observation using <code>TestSetup.spawnSequenceComponent</code> method.</li>
+  <li>Start Sequence Manager using the <code>TestSetup.startSequenceManager(sequenceManagerPrefix)</code> method.</li>
 </ul>
 <h3><a href="#verification" name="verification" class="anchor"><span class="anchor-link"></span></a>Verification</h3>
 <ul>
-  <li>Submit <code>configure</code> command to Sequence Manager and verify successful configure response is returned.</li>
-  <li>Resolve the location of the top level sequencer and create <strong>SequencerApi</strong> using that location.</li>
-  <li>Submit <code>sequence</code> using <code>sequencerApi.submitAndWait(sequence)</code> method and verify it returns  <strong>Completed</strong> response</li>
+  <li>Submit the <code>configure</code> command to the Sequence Manager and verify a successful configure response is returned.</li>
+  <li>Resolve the location of the top level sequencer and create a <strong>SequencerApi</strong> using that location.</li>
+  <li>Submit a <code>sequence</code> using the <code>sequencerApi.submitAndWait(sequence)</code> method and verify it returns  a <strong>Completed</strong> response</li>
 </ul>
 <h3><a href="#cleanup" name="cleanup" class="anchor"><span class="anchor-link"></span></a>Cleanup</h3>
 <ul>

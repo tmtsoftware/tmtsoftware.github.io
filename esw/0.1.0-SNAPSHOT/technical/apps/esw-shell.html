@@ -132,7 +132,6 @@ TMT Executive Software Documentation
     <li><a href="../../technical/apps/sequence-manager-app.html" class="page">Starting the Sequence Manager Application</a></li>
     <li><a href="../../technical/apps/agent-service-app.html" class="page">The Agent Service Application</a></li>
     <li><a href="../../technical/apps/agent-app.html" class="page">The Agent Application</a></li>
-    <li><a href="../../technical/apps/eng-ui.html" class="page">ESW OCS Engineering User Interface User Manual</a></li>
   </ul></li>
   <li><a href="../../technical/tech-index.html" class="page">Technical Design Documents</a>
   <ul>
@@ -140,6 +139,7 @@ TMT Executive Software Documentation
     <li><a href="../../technical/sequencer-tech.html" class="page">Sequencer Technical Documentation</a></li>
     <li><a href="../../technical/sequence-component-tech.html" class="page">Sequence Component Technical Documentation</a></li>
     <li><a href="../../technical/gateway-tech.html" class="page">Gateway Technical Documentation</a></li>
+    <li><a href="../../technical/apps/eng-ui.html" class="page">ESW OCS Engineering User Interface User Manual</a></li>
     <li><a href="../../technical/agent-service-tech.html" class="page">Agent Service and Agent Technical Documentation</a></li>
     <li><a href="../../technical/esw-application-parts.html" class="page">ESW Application Architecture</a></li>
     <li><a href="../../technical/contracts.html" class="page">Service Contracts</a></li>
@@ -207,7 +207,7 @@ TMT Executive Software Documentation
 <pre class="prettyprint"><code class="language-bash">cs launch esw-shell
 </code></pre>
 <p>If you need to start with a specific version, the following can be used:</p>
-<pre class="prettyprint"><code class="language-bash">cs launch esw-shell:&lt;version | SHA&gt;
+<pre class="prettyprint"><code class="language-bash">cs launch esw-shell
 </code></pre>
 <p>Normally, you don&rsquo;t need to start the app with a specific version.</p>
 <h2><a href="#4-exiting-esw-shell" name="4-exiting-esw-shell" class="anchor"><span class="anchor-link"></span></a>4. Exiting esw-shell</h2>
@@ -316,16 +316,16 @@ spawnHCDWithHandler(&quot;ESW.testAssembly&quot;, componentHandlers) // &quot;ES
 <p>The above calls internally use Location Service to resolve the required HCD/Assembly/Sequencer.</p></div>
 <h3><a href="#creating-a-setup-to-submit-to-hcd-assembly-using-command-service" name="creating-a-setup-to-submit-to-hcd-assembly-using-command-service" class="anchor"><span class="anchor-link"></span></a>Creating a Setup to submit to HCD/Assembly using Command Service</h3>
 <p>To send a Setup or Observe command to a component, create the Parameters and add them to the Setup or Observe.</p>
-<pre class="prettyprint"><code class="language-scala">val longKey                     = LongKey.make(&quot;timeInMs&quot;)
-val paramSet: Set[Parameter[_]] = Set(longKey.set(1000))
+<pre class="prettyprint"><code class="language-scala">val longKey  = LongKey.make(&quot;timeInMs&quot;)
+val paramSet = Set(longKey.set(1000))
 
-val setup = Setup(Prefix(&quot;iris.filter.wheel&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2020A-001-123&quot;)), paramSet)
+val setup = Setup(Prefix(&quot;iris.filter.wheel&quot;), CommandName(&quot;sleep&quot;), Some(ObsId(&quot;2020A-001-123&quot;))).madd(paramSet)
 </code></pre>
 <h3><a href="#creating-a-sequence-to-submit-to-a-sequencer-using-command-service" name="creating-a-sequence-to-submit-to-a-sequencer-using-command-service" class="anchor"><span class="anchor-link"></span></a>Creating a Sequence to submit to a Sequencer using Command Service</h3>
-<pre class="prettyprint"><code class="language-scala">val byteKey                     = ByteKey.make(&quot;byteKey&quot;)
-val paramSet: Set[Parameter[_]] = Set(byteKey.set(100, 100))
+<pre class="prettyprint"><code class="language-scala">val byteKey  = ByteKey.make(&quot;byteKey&quot;)
+val paramSet = Set(byteKey.set(100, 100))
 
-val setup = Setup(Prefix(&quot;iris.filter.wheel&quot;), CommandName(&quot;move&quot;), Some(ObsId(&quot;2020A-001-123&quot;)), paramSet)
+val setup = Setup(Prefix(&quot;iris.filter.wheel&quot;), CommandName(&quot;move&quot;), Some(ObsId(&quot;2020A-001-123&quot;))).madd(paramSet)
 val sequence = Sequence(setup)
 </code></pre>
 <p>Note that in the last step, the Setup is wrapped in a Sequence to make a Sequence with one Step.</p>
@@ -343,10 +343,10 @@ val sequence = Sequence(setup)
 </code></pre>
 <h3><a href="#creating-an-event" name="creating-an-event" class="anchor"><span class="anchor-link"></span></a>Creating an Event</h3>
 <p>Events work much like Setups.</p>
-<pre class="prettyprint"><code class="language-scala">val byteKey = ByteKey.make(&quot;byteKey&quot;)
-val paramSet: Set[Parameter[_]] = Set(byteKey.set(100, 100 ))
-val prefix = Prefix(&quot;tcs.assembly&quot;)
-val event = SystemEvent(prefix, EventName(&quot;event_1&quot;), paramSet)
+<pre class="prettyprint"><code class="language-scala">val byteKey  = ByteKey.make(&quot;byteKey&quot;)
+val paramSet = Set(byteKey.set(100, 100 ))
+val prefix   = Prefix(&quot;tcs.assembly&quot;)
+val event    = SystemEvent(prefix, EventName(&quot;event_1&quot;)).madd(paramSet)
 </code></pre>
 <h3><a href="#creating-an-alarmkey" name="creating-an-alarmkey" class="anchor"><span class="anchor-link"></span></a>Creating an AlarmKey</h3>
 <pre class="prettyprint"><code class="language-scala">val alarmKey = AlarmKey(Prefix(NFIRAOS, &quot;trombone&quot;), &quot;tromboneAxisHighLimitAlarm&quot;)
@@ -392,8 +392,8 @@ val event = SystemEvent(prefix, EventName(&quot;event_1&quot;), paramSet)
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
 <p>Unlike Assemblies, and HCDs, there is only one Sequence Manager service at a time.</p></div>
 <p>All Sequence Manager APIs can be called upon the handle. For example:</p>
-<pre class="prettyprint"><code class="language-bash">val configureResponse = sequenceManager.configure(ObsMode(&quot;darknight&quot;)).get
-val shutdownSequencerResponse = sequenceManager.shutdownSequencer(ESW, ObsMode(&quot;darknight&quot;)).get
+<pre class="prettyprint"><code class="language-bash">val configureResponse = sm.configure(ObsMode(&quot;darknight&quot;)).get
+val shutdownSequencerResponse = sm.shutdownSequencer(ESW, ObsMode(&quot;darknight&quot;)).get
 val resources = sm.getResources.get
 </code></pre>
 <h2><a href="#interacting-with-sequence-component" name="interacting-with-sequence-component" class="anchor"><span class="anchor-link"></span></a>Interacting with Sequence Component</h2>
