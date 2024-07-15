@@ -322,15 +322,15 @@ digraph foo {
 <pre><code>icd-db -s NFIRAOS -o NFIRAOS.html
 </code></pre>
 <p>Note that the name attribute is used in the generated HTML instead of id, since the PDF generator required that. Many of the anchors have the following syntax:</p>
-<p><em>&lt;thisComponent-&gt;action-&lt;itemType-&gt;subsystem.&lt;component.&gt;name</em></p>
+<p><em>thisComponent-action-itemType-subsystem.component.name</em></p>
 <p>where</p>
 <ul>
-  <li><em>$thisComponent</em> is the component being described</li>
-  <li><em>$action</em> is one of {publishes, subscribes, sends, receives}</li>
-  <li><em>$itemType</em> is one of {Event, ObserveEvent, Alarm, Command}</li>
-  <li><em>$subsystem</em> is the subsystem for the item</li>
-  <li><em>$component</em> is the component for the item</li>
-  <li><em>$name</em> is the name of the item being published, subscribed to, or the command being sent or received</li>
+  <li><em>thisComponent</em> is the component being described</li>
+  <li><em>action</em> is one of {publishes, subscribes, sends, receives}</li>
+  <li><em>itemType</em> is one of {Event, ObserveEvent, Alarm, Command}</li>
+  <li><em>subsystem</em> is the subsystem for the item</li>
+  <li><em>component</em> is the component for the item</li>
+  <li><em>name</em> is the name of the item being published, subscribed to, or the command being sent or received</li>
 </ul>
 <p>For example, to link to the description of a published event named <code>heartbeat</code> in the lgsWfs component in the TEST subsystem:</p>
 <pre><code>See: [here](#lgsWfs-publishes-Event-TEST.lgsWfs.heartbeat). 
@@ -1721,6 +1721,28 @@ subscribe {
       component = rtc
       name = oiwfsImage
       usage = &quot;OIWFS ellipticity correction stream for ADCs&quot;
+    }
+  ]
+}
+</code></pre>
+<p>Here is another example <code>subscribe-model.conf</code> that also subscribes to a published image stream:</p>
+<pre><code>subscribe {
+
+  events = [
+    {
+      subsystem = TEST
+      component = lgsWfs
+      name = engMode
+    }
+  ]
+
+  // Components can also subscribe to VIZ image streams
+  images = [
+    {
+      subsystem = TEST
+      component = lgsWfs
+      name = guider1
+      usage = &quot;WFOS guider images use for acquisition&quot;
     }
   ]
 }
