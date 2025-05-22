@@ -126,7 +126,7 @@ ESW Web Application Tutorial
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.1.0
+<i class="md-icon" title="Version">label_outline</i> 0.1.0*
 </label>
 </li>
 </ul>
@@ -156,7 +156,7 @@ ESW Web Application Tutorial
 <div class="md-content__searchable">
 <h1><a href="#adding-authentication" name="adding-authentication" class="anchor"><span class="anchor-link"></span></a>Adding Authentication</h1>
 <p>Like the User Interface Gateway, a web application backend is a boundary between the public side of the observatory software system and the authenticated, protected control system. Because of this, a web application developer must be conscious of and support the authentication and authorization of its users according to the observatory security approach. </p>
-<p>It&rsquo;s okay to have unprotected routes that are read-only and can not cause any changes, but any route that can change the control system must be protected with the correct level of authorization. This flow describes how to integrate authentication and authorization through the use of CSW AAS Service.</p>
+<p>It&rsquo;s okay to have unprotected routes that are read-only and cannot cause any changes, but any route that can change the control system must be protected with the correct level of authorization. This flow describes how to integrate authentication and authorization through the use of CSW AAS Service.</p>
 <h2><a href="#add-a-protected-route-in-backend" name="add-a-protected-route-in-backend" class="anchor"><span class="anchor-link"></span></a>Add a Protected Route in Backend</h2>
 <p>To demonstrate authorization, we will need to create a &ldquo;protected&rdquo; route, that is, an endpoint that requires a valid authorization token to access.</p>
 <h3><a href="#add-new-route-with-protection" name="add-new-route-with-protection" class="anchor"><span class="anchor-link"></span></a>Add new route with protection</h3>
@@ -167,12 +167,10 @@ ESW Web Application Tutorial
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/http/SampleRoute.scala#L32-L40" target="_blank" title="Go to snippet source">source</a><code class="language-scala">path(&quot;securedRaDecValues&quot;) {
-  post {
-    securityDirectives.sPost(RealmRolePolicy(&quot;Esw-user&quot;)) { _ =&gt;
-      entity(as[RaDecRequest]) { raDecRequest =&gt;
-        complete(raDecService.raDecToString(raDecRequest))
-      }
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/http/SampleRoute.scala#L32-L38" target="_blank" title="Go to snippet source">source</a><code class="language-scala">path(&quot;securedRaDecValues&quot;) {
+  securityDirectives.sPost(RealmRolePolicy(&quot;Esw-user&quot;)) { _ =&gt;
+    entity(as[RaDecRequest]) { raDecRequest =&gt;
+      complete(raDecService.raDecToString(raDecRequest))
     }
   }
 }</code></pre></dd>
@@ -205,7 +203,7 @@ ESW Web Application Tutorial
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/SecuredRaDecInput.tsx#L11-L70" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SecuredRaDecInput = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/SecuredRaDecInput.tsx#L11-L70" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SecuredRaDecInput = (): React.JSX.Element =&gt; {
   return (
     &lt;Form
       onFinish={onFinish}
@@ -234,7 +232,7 @@ ESW Web Application Tutorial
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/SecuredRaDecInput.tsx#L11-L14" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SecuredRaDecInput = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/SecuredRaDecInput.tsx#L11-L14" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SecuredRaDecInput = (): React.JSX.Element =&gt; {
   const locationService = useLocationService()
   const { auth } = useAuth()</code></pre></dd>
 </dl>
@@ -279,20 +277,29 @@ ESW Web Application Tutorial
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/routes/Routes.tsx#L15" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;ProtectedRoute path=&#39;/securedRaDec&#39; component={SecuredRaDecInput} /&gt;</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/routes/Routes.tsx#L15-L22" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Route
+  path=&#39;/securedRaDec&#39;
+  element={
+    &lt;ProtectedRoute&gt;
+      &lt;SecuredRaDecInput /&gt;
+    &lt;/ProtectedRoute&gt;
+  }
+/&gt;</code></pre></dd>
 </dl>
 <p>Add an action for our new route in <code>MenuBar.tsx</code> below the previously added RaDec <code>Menu.Item</code></p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L18-L32" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Menu mode=&#39;horizontal&#39;&gt;
-  &lt;Menu.Item key=&#39;raDec&#39;&gt;
-    &lt;Link to=&#39;/&#39;&gt;RaDec&lt;/Link&gt;
-  &lt;/Menu.Item&gt;
-  &lt;Menu.Item key=&#39;securedRaDec&#39;&gt;
-    &lt;Link to=&#39;/securedRaDec&#39;&gt;SecuredRaDec&lt;/Link&gt;
-  &lt;/Menu.Item&gt;
-&lt;/Menu&gt;</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L14-L40" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const items: MenuItem[] = [
+  {
+    key: &#39;raDec&#39;,
+    label: &lt;Link to=&#39;/&#39;&gt;RaDec&lt;/Link&gt;
+  },
+  {
+    key: &#39;securedRaDec&#39;,
+    label: &lt;Link to=&#39;/securedRaDec&#39;&gt;SecuredRaDec&lt;/Link&gt;
+  },
+]</code></pre></dd>
 </dl>
 <h3><a href="#add-login-logout-functionality" name="add-login-logout-functionality" class="anchor"><span class="anchor-link"></span></a>Add Login &amp; Logout functionality</h3>
 <p>To get the authorization token the user needs to log in. To provide login and logout capabilities, we will make use of the generated <code>Login</code> and <code>Logout</code> components.</p>
@@ -300,16 +307,27 @@ ESW Web Application Tutorial
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L24-L28" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Menu.Item key=&#39;securedRaDec&#39;&gt;
-  &lt;Link to=&#39;/securedRaDec&#39;&gt;SecuredRaDec&lt;/Link&gt;
-&lt;/Menu.Item&gt;
-{isAuthenticated ? &lt;Logout logout={logout} /&gt; : &lt;Login login={login} /&gt;}</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L21-L36" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">{
+  key: &#39;securedRaDec&#39;,
+  label: &lt;Link to=&#39;/securedRaDec&#39;&gt;SecuredRaDec&lt;/Link&gt;
+},
+isAuthenticated
+  ? {
+      key: &#39;logout&#39;,
+      label: &#39;Logout&#39;,
+      onClick: logout
+    }
+  : {
+      key: &#39;login&#39;,
+      label: &#39;Login&#39;,
+      onClick: login
+    }</code></pre></dd>
 </dl>
 <p>Note the authorization hook is used again here to get a handle to the authorization store.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L9-L11" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const MenuBar = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L7-L9" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const MenuBar = (): React.JSX.Element =&gt; {
   const { auth, login, logout } = useAuth()
   const isAuthenticated = auth?.isAuthenticated() ?? false</code></pre></dd>
 </dl>
@@ -330,7 +348,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.1.0
+0.1.0*
 </span>
 </div>
 </article>

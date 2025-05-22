@@ -127,7 +127,7 @@ ESW Web Application Tutorial
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.1.0
+<i class="md-icon" title="Version">label_outline</i> 0.1.0*
 </label>
 </li>
 </ul>
@@ -166,7 +166,7 @@ ESW Web Application Tutorial
 <p>This will generate a sample folder with two sub-folders, <code>sample-frontend</code> and <code>sample-backend</code>. For a sanity check, let&rsquo;s go ahead and build the front and back ends created by the template. This will also help ensure you have the necessary tools installed.</p>
 <p>You are welcome to try out the generated sample project, which is basically a &ldquo;Hello World&rdquo; application, by following the instructions in the READMEs in each sub-folder. </p>
 <h3><a href="#compile-the-frontend" name="compile-the-frontend" class="anchor"><span class="anchor-link"></span></a>Compile the Frontend</h3>
-<p>The <code>sample-frontend</code> sub-folder is where your frontend application is located. It uses Typescript, React and node. Make sure node version <code>v16.0.0</code> or higher is installed in your machine. Let&rsquo;s compile our generated application.</p>
+<p>The <code>sample-frontend</code> sub-folder is where your frontend application is located. It uses Typescript, React and node. Make sure node version <code>v22.15.1</code> and npm version 10.9.2 or higher are installed in your machine. Let&rsquo;s compile our generated application.</p>
 <pre class="prettyprint"><code class="language-bash">cd sample/sample-frontend
 npm install
 npm run build
@@ -182,7 +182,7 @@ sbt:sample-backend&gt; compile
 </code></pre>
 <h2><a href="#open-in-development-environment" name="open-in-development-environment" class="anchor"><span class="anchor-link"></span></a>Open in Development Environment</h2>
 <p>At this point, you may want to open the project in an Integrated Development Environment (IDE), such as Intellij, if you are using one. The template creates two projects, a Scala/sbt-based backend amd a Typescript/npm-based frontend, and because the two projects have different build systems, it is better to open each part, the frontend and backend, in separate IDE projects. We recommend Intellij for the backend, and VS Code or Intellij for the frontend. </p>
-<p>To open the backend in Intellij, click on File-&gt;New Project from Existing Sources&hellip; and then browsing to the backend directory, <code>sample/sample-backend</code>. It should have a build.sbt file in it. Create an sbt-based project, and then accept the defaults, making sure the JDK is set to your installation of OpenJDK 11.</p>
+<p>To open the backend in Intellij, click on File-&gt;New Project from Existing Sources&hellip; and then browsing to the backend directory, <code>sample/sample-backend</code>. It should have a build.sbt file in it. Create an sbt-based project, and then accept the defaults, making sure the JDK is set to your installation of OpenJDK 21.</p>
 <h2><a href="#develop-backend" name="develop-backend" class="anchor"><span class="anchor-link"></span></a>Develop Backend</h2>
 <p>We will start with the backend HTTP service first. We will start by deleting the existing application and then create our custom code. Our backend will be written in Scala, so all Java code will be removed.</p>
 <p>In ESW, a specialized backend service is only needed in the cases where the application has complicated or compute-expensive tasks that can not be satisfied by CSW-based components. In this case, an application-specific backend is created that is dedicated to the application UI and only provides the needed application functionality.</p><div class="callout note "><div class="callout-title">Note</div>
@@ -310,12 +310,12 @@ class RaDecImpl extends RaDecService {
     ec: ExecutionContext
 ) extends HttpCodecs {</code></pre></dd>
 </dl>
-<p>Next, we will add our routes. We will have a single endpoint <code>raDecValues</code> that supports two methods: POST and GET. The POST method will cause our backend service method <code>raDecToString</code> to be called, and GET will call <code>getRaDecValues</code>. We are using the Akka routing DSL to compose our HTTP routes. Visit <a href="https://doc.akka.io/docs/akka-http/current/routing-dsl/overview.html">here</a> to learn more about the routing DSL.</p>
+<p>Next, we will add our routes. We will have a single endpoint <code>raDecValues</code> that supports two methods: POST and GET. The POST method will cause our backend service method <code>raDecToString</code> to be called, and GET will call <code>getRaDecValues</code>. We are using the Pekko routing DSL to compose our HTTP routes. Visit <a href="https://doc.pekko.io/docs/pekko-http/current/routing-dsl/overview.html">here</a> to learn more about the routing DSL.</p>
 <p>Be sure to add an import for our model <code>RaDecRequest</code>.</p>
 <dl>
   <dt>Scala</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/http/SampleRoute.scala#L19-L43" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val route: Route = {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/backend/src/main/scala/org/tmt/sample/http/SampleRoute.scala#L19-L41" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val route: Route = {
   path(&quot;raDecValues&quot;) {
     post {
       entity(as[RaDecRequest]) { raDecRequest =&gt;
@@ -328,7 +328,7 @@ class RaDecImpl extends RaDecService {
   } ~
 }</code></pre></dd>
 </dl><div class="callout note "><div class="callout-title">Note</div>
-<p>The tilda (~) at the end, is used to concatenate paths in the Akka DSL. You can safely remove it for now. However, in the following section of this tutorial we are going to add new routes to this file. At that point, you would want to add it again to concatenate multiple routes.</p></div>
+<p>The tilda (~) at the end, is used to concatenate paths in the Pekko DSL. You can safely remove it for now. However, in the following section of this tutorial we are going to add new routes to this file. At that point, you would want to add it again to concatenate multiple routes.</p></div>
 <p>Next, let&rsquo;s connect our routes to our service implementation in the wiring.</p>
 <ul>
   <li>Go to <code>SampleWiring.scala</code></li>
@@ -481,12 +481,12 @@ import { get, post } from &#39;./Http&#39;</code></pre></dd>
   <dt>Typescript</dt>
   <dd>
   <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecInput.tsx#L11-L66" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const RaDecInput = ({
-  reload,
-  setReload
+  reload = true,
+  setReload = () =&gt; ({})
 }: {
-  reload: boolean
-  setReload: (s: boolean) =&gt; void
-}): JSX.Element =&gt; {
+  reload?: boolean
+  setReload?: (s: boolean) =&gt; void
+}): React.JSX.Element =&gt; {
   const locationService = useLocationService()
   return (
     &lt;Form
@@ -559,7 +559,11 @@ import { getBackendUrl } from &#39;../../utils/resolveBackend&#39;</code></pre><
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L35-L65" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const RaDecTable = ({ reload }: { reload: boolean }): JSX.Element =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L35-L69" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const RaDecTable = ({
+  reload
+}: {
+  reload: boolean
+}): React.JSX.Element =&gt; {
   return (
     &lt;Table
       rowKey={(record) =&gt; record.id}
@@ -576,7 +580,7 @@ import { getBackendUrl } from &#39;../../utils/resolveBackend&#39;</code></pre><
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L13-L30" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const HeaderTitle = ({ title }: { title: string }): JSX.Element =&gt; (
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L13-L30" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const HeaderTitle = ({ title }: { title: string }): React.JSX.Element =&gt; (
   &lt;Typography.Title level={5} style={{ marginBottom: 0 }}&gt;
     {title}
   &lt;/Typography.Title&gt;
@@ -599,7 +603,11 @@ const columns: ColumnsType&lt;RaDecResponse&gt; = [
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L35-L65" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const RaDecTable = ({ reload }: { reload: boolean }): JSX.Element =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDecTable.tsx#L35-L69" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const RaDecTable = ({
+  reload
+}: {
+  reload: boolean
+}): React.JSX.Element =&gt; {
   const locationService = useLocationService()
   const [raDecValues, setRaValues] = useState&lt;RaDecResponse[]&gt;()
 
@@ -647,7 +655,7 @@ import { getBackendUrl } from &#39;../../utils/resolveBackend&#39;</code></pre><
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDec.tsx#L6-L14" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const RaDec = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/pages/RaDec.tsx#L6-L14" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const RaDec = (): React.JSX.Element =&gt; {
   const [reload, setReload] = useState&lt;boolean&gt;(false)
   return (
     &lt;&gt;
@@ -662,18 +670,19 @@ import { getBackendUrl } from &#39;../../utils/resolveBackend&#39;</code></pre><
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/routes/Routes.tsx#L12" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Route exact path=&#39;/&#39; component={RaDec} /&gt;</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/routes/Routes.tsx#L12" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Route path=&#39;/&#39; element={&lt;RaDec /&gt;} /&gt;</code></pre></dd>
 </dl>
 <p>Now, we need a link to let the user navigate to the RA/Dec form from different parts of the application.</p>
 <p>Update <code>MenuBar.tsx</code> and delete the existing <code>Menu</code> and its <code>Menu.Item</code>. Add our menu item.</p>
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L18-L32" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Menu mode=&#39;horizontal&#39;&gt;
-  &lt;Menu.Item key=&#39;raDec&#39;&gt;
-    &lt;Link to=&#39;/&#39;&gt;RaDec&lt;/Link&gt;
-  &lt;/Menu.Item&gt;
-&lt;/Menu&gt;</code></pre></dd>
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-web-app-example/tree/master/frontend/src/components/menu/MenuBar.tsx#L14-L40" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const items: MenuItem[] = [
+  {
+    key: &#39;raDec&#39;,
+    label: &lt;Link to=&#39;/&#39;&gt;RaDec&lt;/Link&gt;
+  },
+]</code></pre></dd>
 </dl>
 <p>Now, we have linked all pieces of our frontend application.</p>
 <pre class="prettyprint"><code class="language-bash">$:sample-frontend&gt; npm start
@@ -695,7 +704,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.1.0
+0.1.0*
 </span>
 </div>
 </article>
