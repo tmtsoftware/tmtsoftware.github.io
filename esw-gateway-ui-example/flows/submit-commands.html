@@ -156,15 +156,15 @@ Gateway UI Application Tutorial
 <div class="md-content__searchable">
 <h1><a href="#adding-a-submit-command" name="adding-a-submit-command" class="anchor"><span class="anchor-link"></span></a>Adding a Submit Command</h1>
 <p>In this part of the tutorial, we want to send a Setup Command to an Assembly from the UI application via Gateway server.</p>
-<p>Visit <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/params/commands.html">here</a> to learn more about commands.</p>
-<p>Visit <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/commons/create-component.html">here</a> to learn more about components.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/csw/6.0.0/params/commands.html">here</a> to learn more about commands.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/csw/6.0.0/commons/create-component.html">here</a> to learn more about components.</p>
 <h2><a href="#start-an-assembly-using-esw-shell" name="start-an-assembly-using-esw-shell" class="anchor"><span class="anchor-link"></span></a>Start an Assembly using esw-shell</h2>
-<p>We will use the esw-shell utility to create and start a simple Assembly. The esw-shell is a REPL application that provides numerous tools for TMT programming. Visit <a href="https://tmtsoftware.github.io/esw/0.1.0-SNAPSHOT/eswshell/esw-shell.html">here</a> to learn more about the esw-shell utility.</p>
+<p>We will use the esw-shell utility to create and start a simple Assembly. The esw-shell is a REPL application that provides numerous tools for TMT programming. Visit <a href="https://tmtsoftware.github.io/esw/1.0.2/eswshell/esw-shell.html">here</a> to learn more about the esw-shell utility.</p>
 <pre class="prettyprint"><code class="language-bash">cs install esw-shell
 esw-shell start
 @                 // you are inside ammonite repl now
 </code></pre>
-<p>We will use an esw-shell <a href="https://tmtsoftware.github.io/esw/0.1.0-SNAPSHOT/technical/apps/esw-shell.html#using-custom-component-handlers">feature</a> that allows the dynamic creation of component by specifying command handler functionality when spawning the component.</p>
+<p>We will use an esw-shell <a href="https://tmtsoftware.github.io/esw/1.0.2/technical/apps/esw-shell.html#using-custom-component-handlers">feature</a> that allows the dynamic creation of component by specifying command handler functionality when spawning the component.</p>
 <p>Our assembly will take a <code>sleep</code> command with <code>sleepInSeconds</code> (LongKey) parameter. This is a long-running command which will return a <code>Started</code> response immediately and then a <code>Completed</code> response after sleeping the time provided in the parameter. Any other command other than <code>sleep</code> immediately returns a <code>Completed</code> response.</p>
 <p>Run this command inside esw-shell&rsquo;s ammonite shell:</p>
 <pre class="prettyprint"><code class="language-bash">spawnAssemblyWithHandler(
@@ -194,7 +194,7 @@ esw-shell start
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubmitCommand.tsx#L2-L179" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">import {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubmitCommand.tsx#L2-L178" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">import {
   CommandService,
   ComponentId,
   longKey,
@@ -237,7 +237,7 @@ export const SubmitCommand = ({
   _commandService
 }: {
   _commandService?: CommandService
-}): JSX.Element =&gt; {
+}): React.JSX.Element =&gt; {
   const { auth } = useAuth()
   const authData = { tokenFactory: () =&gt; auth?.token() }
 
@@ -272,8 +272,7 @@ export const SubmitCommand = ({
       switch (result._type) {
         case &#39;Started&#39;:
           setResult(result)
-          const res = await commandService.queryFinal(result.runId, 5)
-          setResult(res)
+          setResult(await commandService.queryFinal(result.runId, 5))
           break
         default:
           setResult(result)
@@ -391,7 +390,7 @@ const [componentType, setComponentType] = useState&lt;&#39;HCD&#39; | &#39;Assem
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubmitCommand.tsx#L63-L95" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const submit = async () =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubmitCommand.tsx#L63-L94" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const submit = async () =&gt; {
   try {
     const sleepInMs = longKey(&#39;sleepInSeconds&#39;).set([
       sleepTime ? sleepTime : 0
@@ -413,8 +412,7 @@ const [componentType, setComponentType] = useState&lt;&#39;HCD&#39; | &#39;Assem
     switch (result._type) {
       case &#39;Started&#39;:
         setResult(result)
-        const res = await commandService.queryFinal(result.runId, 5)
-        setResult(res)
+        setResult(await commandService.queryFinal(result.runId, 5))
         break
       default:
         setResult(result)
@@ -429,7 +427,7 @@ const [componentType, setComponentType] = useState&lt;&#39;HCD&#39; | &#39;Assem
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubmitCommand.tsx#L165-L174" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Typography.Title level={2}&gt;Result&lt;/Typography.Title&gt;
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubmitCommand.tsx#L164-L173" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Typography.Title level={2}&gt;Result&lt;/Typography.Title&gt;
 &lt;Typography.Paragraph&gt;
   {result &amp;&amp; (
     &lt;Badge.Ribbon
@@ -465,7 +463,7 @@ const [componentType, setComponentType] = useState&lt;&#39;HCD&#39; | &#39;Assem
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/Main.tsx#L11-L32" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const Main = (): JSX.Element =&gt; {
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/Main.tsx#L11-L32" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const Main = (): React.JSX.Element =&gt; {
   const { auth } = useAuth()
   if (!auth) return &lt;div&gt;Loading&lt;/div&gt;
   const isAuthenticated = auth?.isAuthenticated() ?? false

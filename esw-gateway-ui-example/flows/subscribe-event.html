@@ -157,7 +157,7 @@ Gateway UI Application Tutorial
 <h1><a href="#adding-event-subscription" name="adding-event-subscription" class="anchor"><span class="anchor-link"></span></a>Adding Event Subscription</h1>
 <p>In this part of the tutorial, we want to add the ability to subscribe to an Event published through the Event Service and display the results. We will be using the esw-shell utility to publish a SystemEvent every 2 seconds to the Event Service.</p>
 <p>This section of the app will display a form at the top to specify which event to subscribe to and a table below it showing a list of received values.</p>
-<p>Visit <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/params/events.html">here</a> to learn more about events.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/csw/6.0.0/params/events.html">here</a> to learn more about events.</p>
 <h2><a href="#add-a-subscribe-event-component" name="add-a-subscribe-event-component" class="anchor"><span class="anchor-link"></span></a>Add a Subscribe Event Component</h2>
 <p>Create a <code>SubscribeEvent.tsx</code> file in <code>src/components</code> folder.</p>
 <p>In this tutorial, we will build up the SubscribeEvent component gradually. </p><div class="callout note "><div class="callout-title">Note</div>
@@ -166,11 +166,11 @@ Gateway UI Application Tutorial
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L24-L138" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SubscribeEvent = ({
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L24-L137" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">export const SubscribeEvent = ({
   _eventService
 }: {
   _eventService?: EventService
-}): JSX.Element =&gt; {
+}): React.JSX.Element =&gt; {
   const { auth } = useAuth()
   const authData = { tokenFactory: () =&gt; auth?.token() }
   return (
@@ -191,7 +191,7 @@ Gateway UI Application Tutorial
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L94-L123" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Form
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L93-L122" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Form
   onFinish={() =&gt; {
     subscription ? unSubscribe() : subscribe()
   }}&gt;
@@ -276,7 +276,7 @@ const subscribe = async () =&gt; {
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L66-L80" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const columns = [
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L66-L79" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">const columns = [
   {
     title: &#39;Event Name&#39;,
     dataIndex: &#39;eventName&#39;,
@@ -284,7 +284,6 @@ const subscribe = async () =&gt; {
   },
   {
     title: &#39;Values&#39;,
-    // eslint-disable-next-line react/display-name
     render: (_: string, event: Event) =&gt; {
       const counterParam = event.get(intKey(&#39;counter&#39;)) ?? { values: [] }
       return &lt;span&gt;{counterParam.values.join(&#39;,&#39;)}&lt;/span&gt;
@@ -296,7 +295,7 @@ const subscribe = async () =&gt; {
 <dl>
   <dt>Typescript</dt>
   <dd>
-  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L127-L133" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Table
+  <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/SubscribeEvent.tsx#L126-L132" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">&lt;Table
   scroll={{ y: 240 }}
   pagination={false}
   rowKey={(e) =&gt; e.eventId}
@@ -336,7 +335,7 @@ import { useAuth } from &#39;../hooks/useAuth&#39;</code></pre></dd>
   <dt>Typescript</dt>
   <dd>
   <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/Main.tsx#L8-L32" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">import { SubscribeEvent } from &#39;./SubscribeEvent&#39;
-export const Main = (): JSX.Element =&gt; {
+export const Main = (): React.JSX.Element =&gt; {
   const { auth } = useAuth()
   if (!auth) return &lt;div&gt;Loading&lt;/div&gt;
   const isAuthenticated = auth?.isAuthenticated() ?? false
@@ -370,7 +369,7 @@ Event KeyName : counterEvent
 esw-shell start 
 @                 // you are inside ammonite repl now
 </code></pre>
-<p>Visit <a href="https://tmtsoftware.github.io/esw/0.1.0-SNAPSHOT/eswshell/esw-shell.html">here</a> to learn more about the esw-shell utility.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/esw/1.0.2/eswshell/esw-shell.html">here</a> to learn more about the esw-shell utility.</p>
 <p>We are using the Event Service <code>defaultPublisher</code> API provided in the shell to publish events.</p>
 <pre class="prettyprint"><code class="language-scala">@ var counter = 0
 @ def eventGenerator = Option{

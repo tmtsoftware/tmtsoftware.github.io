@@ -164,7 +164,7 @@ Gateway UI Application Tutorial
 </code></pre>
 <p>This will generate a sample folder with <code>docs</code> and <code>src</code> folders. For a sanity check, let&rsquo;s go ahead and build the frontend created by the template. This will also help ensure you have the necessary tools installed.</p>
 <h3><a href="#compile-the-frontend" name="compile-the-frontend" class="anchor"><span class="anchor-link"></span></a>Compile the Frontend</h3>
-<p>The <code>sample/src</code> sub-folder is where your frontend application is located. It uses Typescript, React and node. Make sure node version <code>v16.0.0</code> or higher is installed in your machine. Let&rsquo;s compile our generated application.</p>
+<p>The <code>sample/src</code> sub-folder is where your frontend application is located. It uses Typescript, React and node. Make sure node version <code>v22.15.1</code> and npm 10.9.2 or higher are installed on your machine. Let&rsquo;s compile our generated application.</p>
 <pre class="prettyprint"><code class="language-bash">cd sample
 npm install
 npm start
@@ -188,7 +188,7 @@ npm start
   <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/Login.tsx#L2-L11" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">import React, { useEffect } from &#39;react&#39;
 import { useAuth } from &#39;../hooks/useAuth&#39;
 
-export const Login = (): JSX.Element =&gt; {
+export const Login = (): React.JSX.Element =&gt; {
   const { login } = useAuth()
 
   useEffect(login, [login])
@@ -205,7 +205,7 @@ export const Login = (): JSX.Element =&gt; {
   <pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/tmtsoftware/esw-gateway-ui-example/tree/master/src/components/Main.tsx#L2-L55" target="_blank" title="Go to snippet source">source</a><code class="language-tsx">import * as React from &#39;react&#39;
 import { useAuth } from &#39;../hooks/useAuth&#39;
 import { Login } from &#39;./Login&#39;
-export const Main = (): JSX.Element =&gt; {
+export const Main = (): React.JSX.Element =&gt; {
   const { auth } = useAuth()
   if (!auth) return &lt;div&gt;Loading&lt;/div&gt;
   const isAuthenticated = auth?.isAuthenticated() ?? false
@@ -235,7 +235,7 @@ export const Main = (): JSX.Element =&gt; {
   LocationService,
   loadGlobalConfig
 } from &#39;@tmtsoftware/esw-ts&#39;
-const App = (): JSX.Element =&gt; {
+export const App = (): React.JSX.Element =&gt; {
   // ..
   // ..
   const { error, data: initialised } = useQuery(() =&gt;
@@ -259,7 +259,7 @@ const App = (): JSX.Element =&gt; {
 <p>After adding this section, run the following command to see the progress that we made till now.</p>
 <pre class="prettyprint"><code class="language-bash">npm start
 </code></pre>
-<p>You should now see <code>Loading...</code> on the browser screen. </p>
+<p>You should now see <code>Loading...</code> on the browser screen.</p>
 <p><img src="../images/login.png" alt="login" /></p>
 <p>This is because the UI is now trying to find the AAS authorization server, but we have not yet started CSW services. We will start them now, as well as the UI Gateway which will be needed for our subsequent flows.</p>
 <h2><a href="#starting-backend-services" name="starting-backend-services" class="anchor"><span class="anchor-link"></span></a>Starting backend services</h2>
@@ -269,7 +269,7 @@ csw-services start -k -c -e
 </code></pre>
 <p>Start the UI Gateway Service using esw-services.</p>
 <pre class="prettyprint"><code class="language-bash">cs install esw-services
-esw-services start -g
+esw-services start start-eng-ui-services
 
 </code></pre>
 <p>Now try reloading the front end in browser. If the page is still up, refresh the page. If you closed it, restart the server using:</p>
@@ -278,8 +278,8 @@ esw-services start -g
 <p>You should be getting redirected to keycloak login page.</p>
 <p><img src="../images/user-login.png" alt="user-login" /></p>
 <p>Try logging in with one of predefined users in csw-services.</p>
-<p>Visit <a href="https://tmtsoftware.github.io/csw/0.1.0-SNAPSHOT/apps/cswservices.html#predefined-users-">here</a> to find the predefined users.</p>
-<p>Visit <a href="https://tmtsoftware.github.io/esw/0.1.0-SNAPSHOT/uisupport/gateway.html">here</a> to know more about users &amp; the roles.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/csw/6.0.0/apps/cswservices.html#predefined-users-">here</a> to find the predefined users.</p>
+<p>Visit <a href="https://tmtsoftware.github.io/esw/1.0.2/uisupport/gateway.html">here</a> to know more about users &amp; the roles.</p>
 <p>Once you are logged in, you would be greeted again with <code>Hello world</code>.</p>
 <p>Now, we can make use of authorization data to send a request to a protected route of the Gateway server.</p>
 <h3><a href="#cleanup" name="cleanup" class="anchor"><span class="anchor-link"></span></a>Cleanup</h3>
